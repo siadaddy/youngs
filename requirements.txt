@@ -1,9 +1,17 @@
-streamlit
-pandas
-numpy
-matplotlib
-seaborn
-plotly
-lightfm
-gdown
-scikit-learn
+-streamlit
+-pandas
+-numpy
+-matplotlib
+-seaborn
+-plotly
+-lightfm        ← 이 줄을 삭제
+-gdown
+-scikit-learn
++streamlit
++pandas
++numpy
++matplotlib
++seaborn
++plotly
++gdown
++scikit-learn
