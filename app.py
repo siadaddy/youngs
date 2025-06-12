@@ -58,31 +58,33 @@ try:
         )
         return vip_df, products, orders, order_products
 
-    @st.cache_resource(show_spinner=False)
-    def load_model():
-        with open(f"{DATA_DIR}/diamond_2_3_lightfm_model.pkl", 'rb') as f:
-            model, user_id_map, product_id_map = pickle.load(f)
-        return model, user_id_map, product_id_map
+    # ★ LightFM 모델 로딩 주석 처리 ★
+    # @st.cache_resource(show_spinner=False)
+    # def load_model():
+    #     with open(f"{DATA_DIR}/diamond_2_3_lightfm_model.pkl", 'rb') as f:
+    #         model, user_id_map, product_id_map = pickle.load(f)
+    #     return model, user_id_map, product_id_map
 
     vip_df, products, orders, order_products = load_data()
-    model, user_id_map, product_id_map = load_model()
+    # model, user_id_map, product_id_map = load_model()
 
-    # 4) VIP 등급 분류 및 추천 함수
+    # 4) VIP 등급 분류
     bins = [-0.1, 60, 70, 80, 90, 100]
     labels = ['5.Bronze','4.Silver','3.Gold','2.Platinum','1.Diamond']
     vip_df['vip_grade'] = pd.cut(vip_df['vip_score'], bins=bins, labels=labels)
 
-    inv_user_map = {v:k for k,v in user_id_map.items()}
-    inv_product_map = {v:k for k,v in product_id_map.items()}
-
-    @st.cache_data(show_spinner=False)
-    def cached_recommend_products(user_id, N=5):
-        if user_id not in user_id_map:
-            return []
-        user_x = user_id_map[user_id]
-        scores = model.predict(user_x, np.arange(len(product_id_map)))
-        top_items = np.argsort(-scores)[:N]
-        return [inv_product_map[i] for i in top_items]
+    # ★ 추천 함수 주석 처리 ★
+    # inv_user_map = {v:k for k,v in user_id_map.items()}
+    # inv_product_map = {v:k for k,v in product_id_map.items()}
+    #
+    # @st.cache_data(show_spinner=False)
+    # def cached_recommend_products(user_id, N=5):
+    #     if user_id not in user_id_map:
+    #         return []
+    #     user_x = user_id_map[user_id]
+    #     scores = model.predict(user_x, np.arange(len(product_id_map)))
+    #     top_items = np.argsort(-scores)[:N]
+    #     return [inv_product_map[i] for i in top_items]
 
     # 5) 전략 탭용 데이터 준비
     @st.cache_data(show_spinner=False)
@@ -111,13 +113,14 @@ try:
     )
 
     # 6) 탭 구성 및 시각화
-    탭_개요, 탭_등급, 탭_1등급, 탭_전략, 탭_추천 = st.tabs([
+    tabs = st.tabs([
         "🏠 개요","📊 등급별 고객 분석","🔎 1등급 고객 집중 분석",
         "💡 2~3등급 전환 전략","🎯 맞춤형 추천 시스템"
     ])
+    tab_home, tab_dist, tab_diamond, tab_strategy, tab_reco = tabs
 
-    # ── 탭_개요 ─────────────────────────
-    with 탭_개요:
+    # ── 홈 탭 ─────────────────────────
+    with tab_home:
         st.header("🚀 InstaCart VIP 고객 분석 개요")
         grade_counts = vip_df['vip_grade'].value_counts(normalize=True).reindex(labels).fillna(0)
         grade_percents = (grade_counts*100).round(1)
@@ -131,16 +134,16 @@ try:
         c2.metric("1등급 고객 비율", f"{grade_percents['1.Diamond']}%")
         c3.metric("평균 VIP Score", f"{vip_df['vip_score'].mean():.2f}")
 
-    # ── 탭_등급 ─────────────────────────
-    with 탭_등급:
-        st.header("📌 고객 등급 분포")
+    # ── 등급별 분포 탭 ─────────────────────────
+    with tab_dist:
+        st.header("📊 고객 등급 분포")
         counts = vip_df['vip_grade'].value_counts().reindex(labels)
         fig = px.bar(x=counts.index, y=counts.values, color=counts.index,
                      color_discrete_sequence=px.colors.sequential.Blues_r,
                      labels={'x':'VIP 등급','y':'고객 수'},
                      title='고객 등급 분포')
         st.plotly_chart(fig, use_container_width=True)
-        with st.expander("🔍 등급별 행동 비교 보기"):
+        with st.expander("🔍 등급별 행동 비교"):
             st.markdown("1등급 vs 2~3등급 주요 행동 지표 비교")
             metrics = ['total_orders','total_products','reorder_rate','avg_cart_size','recency','unique_product_count']
             fig2, axes = plt.subplots(2,3,figsize=(18,8))
@@ -150,44 +153,44 @@ try:
                 ax.set_title(f"{m} 비교")
             fig2.delaxes(axes[1][2])
             st.pyplot(fig2)
-            st.markdown("#### 평균값 비교표")
+            st.markdown("#### 평균값")
             st.dataframe(compare_df.groupby('group')[metrics].mean().round(2))
 
-    # ── 탭_1등급 ─────────────────────────
-    with 탭_1등급:
+    # ── 1등급 집중 분석 탭 ─────────────────────────
+    with tab_diamond:
         st.header("🔎 1등급 고객 집중 분석")
         op = order_products.merge(
             orders[['order_id','user_id','order_number','order_dow','order_hour_of_day']],
             on='order_id', how='left'
         ).merge(products[['product_id','product_name']], on='product_id', how='left')
-        with st.expander("🛒 상위 구매 상품 분석"):
+        with st.expander("🛒 상위 구매 상품"):
             tp = op[op['user_id'].isin(vip_df[vip_df['vip_grade']=='1.Diamond']['user_id'])]
             tp_counts = tp['product_name'].value_counts().head(10)
             fig3, ax3 = plt.subplots()
             sns.barplot(x=tp_counts.values, y=tp_counts.index, palette='viridis', ax=ax3)
-            ax3.set_title("1등급 고객 TOP 구매 상품")
+            ax3.set_title("TOP 10 상품")
             st.pyplot(fig3)
-        with st.expander("📆 활동 요일/시간대 분석"):
+        with st.expander("📆 요일·시간대"):
             c1, c2 = st.columns(2)
             with c1:
                 fig4, ax4 = plt.subplots()
                 sns.countplot(x='order_dow', data=op, palette='Blues', ax=ax4)
-                ax4.set_title("요일별 주문 분포")
+                ax4.set_title("요일별 주문")
                 st.pyplot(fig4)
             with c2:
                 fig5, ax5 = plt.subplots()
                 sns.countplot(x='order_hour_of_day', data=op, palette='Greens', ax=ax5)
-                ax5.set_title("시간대별 주문 분포")
+                ax5.set_title("시간대별 주문")
                 st.pyplot(fig5)
-        with st.expander("📈 재구매 주기 분석"):
+        with st.expander("📈 재구매 주기"):
             fig6, ax6 = plt.subplots(figsize=(10,5))
             sns.histplot(avg_interval_df['avg_reorder_interval'], bins=30, kde=True, ax=ax6)
-            ax6.set_title("1등급 고객 평균 재구매 주기 분포")
+            ax6.set_title("평균 재구매 주기 분포")
             st.pyplot(fig6)
-            st.markdown(f"**평균 재구매 주기:** {avg_interval_df['avg_reorder_interval'].mean():.2f}일")
+            st.markdown(f"**평균:** {avg_interval_df['avg_reorder_interval'].mean():.2f}일")
 
-    # ── 탭_전략 ─────────────────────────
-    with 탭_전략:
+    # ── 전환 전략 탭 ─────────────────────────
+    with tab_strategy:
         st.header("💡 2~3등급 → 1등급 전환 전략")
         strategies = [
             ("상품 다양성 확대", 'unique_product_count'),
@@ -203,9 +206,9 @@ try:
                 ax.set_title(f"{title} 비교")
                 st.pyplot(fig)
 
-    # ── 탭_추천 ─────────────────────────
-    with 탭_추천:
-        st.header("🎯 맞춤형 추천 시스템")
+    # ── 추천 시스템 탭 ─────────────────────────
+    with tab_reco:
+        st.header("🎯 추천 시스템 (준비 중)")
         grade_opt = st.selectbox("고객 등급 선택", ["1등급 (Diamond)", "2~3등급 (Platinum+Gold)"])
         sel = ['1.Diamond'] if grade_opt.startswith('1') else ['2.Platinum','3.Gold']
         candidates = vip_df[vip_df['vip_grade'].isin(sel)]['user_id'].tolist()
@@ -222,14 +225,7 @@ try:
             ]
         })
         if st.button("추천 받기"):
-            recs = cached_recommend_products(uid)
-            if recs:
-                st.write("추천 상품:")
-                for pid in recs:
-                    name = products.loc[products['product_id']==pid,'product_name'].values[0]
-                    st.write(f"- {name}")
-            else:
-                st.info("추천할 상품이 없습니다.")
+            st.info("현재 추천 기능은 준비 중입니다.")
 
     st.success("✅ 대시보드 로드 완료")
 
