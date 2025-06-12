@@ -3,7 +3,12 @@ import gdown
 import streamlit as st
 
 # ============================
-# 1) Google Drive 폴더 URL (Secrets)
+# Streamlit 페이지 설정 (가장 먼저 호출)
+# ============================
+st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
+
+# ============================
+# 1) Google Drive 폴더 URL
 # ============================
 GDRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/11ZilE7WPPlFMslvnUy4tIFzoJgNTQtpN"
 
@@ -23,7 +28,7 @@ if not os.listdir(DATA_DIR):
     st.success("✅ 데이터 다운로드 완료")
 
 # ============================
-# Streamlit 및 데이터 분석 코드
+# 라이브러리 임포트 (st.* 호출 이후)
 # ============================
 import pandas as pd
 import numpy as np
@@ -36,9 +41,6 @@ import pickle
 # Mac에서 한글 깨짐 방지
 plt.rcParams['font.family'] = 'AppleGothic'
 mpl.rcParams['axes.unicode_minus'] = False
-
-# Streamlit 페이지 설정
-st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
 # 대시보드 제목 및 설명
 st.title("🚀 InstaCart VIP 고객 전환 전략 및 행동 분석 대시보드")
@@ -103,14 +105,9 @@ def prepare_strategy_data(vip_df, orders, order_products):
 
 compare_df, avg_interval_df = prepare_strategy_data(vip_df, orders, order_products)
 
-# 탭 구성 및 이름 변경
-탭_개요, 탭_등급, 탭_1등급, 탭_전략, 탭_추천 = st.tabs([
-    "🏠 개요", 
-    "📊 등급별 고객 분석", 
-    "🔎 1등급 고객 집중 분석", 
-    "💡 2~3등급 전환 전략", 
-    "🎯 맞춤형 추천 시스템"
-])
+# 탭 구성
+tabs = st.tabs(["🏠 개요","📊 등급별 고객 분석","🔎 1등급 고객 집중 분석","💡 2~3등급 전환 전략","🎯 맞춤형 추천 시스템"])
+
 
 with 탭_개요:
     st.header("InstaCart VIP 고객 분석 개요")
