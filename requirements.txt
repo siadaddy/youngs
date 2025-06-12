@@ -5,5 +5,5 @@ matplotlib
 seaborn
 plotly
 gdown
-lightfm-cpu
+
 
