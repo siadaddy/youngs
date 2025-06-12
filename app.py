@@ -22,13 +22,13 @@ try:
 
     # 구글 드라이브 파일 ID 매핑
     # (공유 폴더 안의 각 파일 ID를 직접 적어 주세요)
+    # 구글 드라이브 파일 ID 매핑 (요약본만)
     FILE_IDS = {
-        "vip_summary_v2.csv": "1PlOEkoWZjfkbEB7pIoOveIoRPCBHY26_",
-        "products.csv":        "1w0FOTvUsW-2yfPnCqqWsbQUtOhQmXWN3",
-        "orders.csv":          "18q3WSsBvPMQLRyYCy868AfYY795P4Raw",
-        "order_products__prior.csv": "1p87GV2QV9D99X2TtKM5J4kbs6phtfeNb",
+        "user_metrics_top3.csv":       "15burF431bA9iR3FanRqYUx7w4-fbJ0Je",
+        "top10_products_diamond.csv":  "1Fo5ow7APMBlaiV-CI-Qc7L4HW2s6sg2e",
         "diamond_2_3_lightfm_model.pkl": "1uOwXXvKPZQFcO-KSIdHgWDD58iqSIrBK"
     }
+
 
     DATA_DIR = "data_InstaCart"
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -45,11 +45,10 @@ try:
     # 데이터 로드
     @st.cache_data(show_spinner=False)
     def load_data():
-        vip_df = pd.read_csv(f"{DATA_DIR}/vip_summary_v2.csv")
-        products = pd.read_csv(f"{DATA_DIR}/products.csv")
-        orders = pd.read_csv(f"{DATA_DIR}/orders.csv")
-        order_products = pd.read_csv(f"{DATA_DIR}/order_products__prior.csv")
-        return vip_df, products, orders, order_products
+        metrics = pd.read_csv(f"{DATA_DIR}/user_metrics_top3.csv")
+        top_prods = pd.read_csv(f"{DATA_DIR}/top10_products_diamond.csv")
+        return metrics, top_prods
+
 
     @st.cache_resource(show_spinner=False)
     def load_model():
