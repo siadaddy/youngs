@@ -1,16 +1,6 @@
+import os
+import gdown
 import streamlit as st
-try:
-    import pandas as pd
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import plotly.express as px
-    import gdown
-    import pickle
-except Exception as e:
-    st.error(f"라이브러리 로드 실패: {e}")
-    st.stop()
-
 
 # ============================
 # Streamlit 페이지 설정 (가장 먼저 호출)
@@ -18,27 +8,7 @@ except Exception as e:
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
 # ============================
-# 1) Google Drive 폴더 URL
-# ============================
-GDRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/11ZilE7WPPlFMslvnUy4tIFzoJgNTQtpN"
-
-# ============================
-# 2) 로컬 데이터 디렉토리 준비 및 다운로드
-# ============================
-DATA_DIR = "data_InstaCart"
-os.makedirs(DATA_DIR, exist_ok=True)
-if not os.listdir(DATA_DIR):
-    st.info("📥 Google Drive에서 데이터 다운로드 중...")
-    gdown.download_folder(
-        url=GDRIVE_FOLDER_URL,
-        output=DATA_DIR,
-        quiet=False,
-        use_cookies=False
-    )
-    st.success("✅ 데이터 다운로드 완료")
-
-# ============================
-# 라이브러리 임포트 (st.* 호출 이후)
+# 라이브러리 임포트 (이후 st 호출)
 # ============================
 import pandas as pd
 import numpy as np
@@ -52,14 +22,30 @@ import pickle
 plt.rcParams['font.family'] = 'AppleGothic'
 mpl.rcParams['axes.unicode_minus'] = False
 
-# 대시보드 제목 및 설명
-st.title("🚀 InstaCart VIP 고객 전환 전략 및 행동 분석 대시보드")
-st.markdown("""
-이 대시보드는 1등급 고객 행동 분석을 기반으로,  
-2~3등급 고객을 1등급으로 전환하기 위한 전략과 맞춤 추천을 제공합니다.
-""")
+# ============================
+# 1) Google Drive 폴더 URL
+# ============================
+GDRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/11ZilE7WPPlFMslvnUy4tIFzoJgNTQtpN"
 
-# 데이터 로드 (캐시)
+# ============================
+# 2) 로컬 데이터 디렉토리 준비 및 다운로드
+# ============================
+DATA_DIR = "data_InstaCart"
+if not os.path.isdir(DATA_DIR):
+    os.makedirs(DATA_DIR, exist_ok=True)
+if not os.listdir(DATA_DIR):
+    st.info("📥 Google Drive에서 데이터 다운로드 중...")
+    gdown.download_folder(
+        url=GDRIVE_FOLDER_URL,
+        output=DATA_DIR,
+        quiet=False,
+        use_cookies=False
+    )
+    st.success("✅ 데이터 다운로드 완료")
+
+# ============================================
+# 3) 데이터 로드 및 모델 로드
+# ============================================
 @st.cache_data(show_spinner=False)
 def load_data():
     vip_df = pd.read_csv(f"{DATA_DIR}/vip_summary_v2.csv")
@@ -68,26 +54,25 @@ def load_data():
     order_products = pd.read_csv(f"{DATA_DIR}/order_products__prior.csv")
     return vip_df, products, orders, order_products
 
-# 모델 로드 (캐시 리소스)
 @st.cache_resource(show_spinner=False)
 def load_model():
-    with open(f'{DATA_DIR}/diamond_2_3_lightfm_model.pkl', 'rb') as f:
+    with open(f"{DATA_DIR}/diamond_2_3_lightfm_model.pkl", 'rb') as f:
         model, user_id_map, product_id_map = pickle.load(f)
     return model, user_id_map, product_id_map
 
 vip_df, products, orders, order_products = load_data()
 model, user_id_map, product_id_map = load_model()
 
-# VIP 등급 분류
+# ============================================
+# 4) VIP 등급 분류 및 추천 함수
+# ============================================
 bins = [-0.1, 60, 70, 80, 90, 100]
-labels = ['5.Bronze','4.Silver','3.Gold','2.Platinum','1.Diamond']
+labels = ['5.Bronze', '4.Silver', '3.Gold', '2.Platinum', '1.Diamond']
 vip_df['vip_grade'] = pd.cut(vip_df['vip_score'], bins=bins, labels=labels)
 
-# invert maps for 추천
 inv_user_map = {v: k for k, v in user_id_map.items()}
 inv_product_map = {v: k for k, v in product_id_map.items()}
 
-# 추천 함수 캐시
 @st.cache_data(show_spinner=False)
 def cached_recommend_products(user_id, N=5):
     if user_id not in user_id_map:
@@ -97,7 +82,9 @@ def cached_recommend_products(user_id, N=5):
     top_items = np.argsort(-scores)[:N]
     return [inv_product_map[i] for i in top_items]
 
-# 준비 함수
+# ============================================
+# 5) 전략 탭용 데이터 준비
+# ============================================
 @st.cache_data(show_spinner=False)
 def prepare_strategy_data(vip_df, orders, order_products):
     op_u = order_products.merge(orders[['order_id','user_id']], on='order_id', how='left')
@@ -105,18 +92,20 @@ def prepare_strategy_data(vip_df, orders, order_products):
     vip = vip_df.set_index('user_id').join(diversity).reset_index()
     g1 = vip[vip['vip_grade']=='1.Diamond'].copy(); g1['group']='1등급'
     g23 = vip[vip['vip_grade'].isin(['2.Platinum','3.Gold'])].copy(); g23['group']='2~3등급'
-    comp = pd.concat([g1,g23])
-    # 재구매 주기
+    comp = pd.concat([g1, g23])
     d_users = vip[vip['vip_grade']=='1.Diamond']['user_id']
     d_orders = orders[orders['user_id'].isin(d_users)].sort_values(['user_id','order_number'])
     d_orders['days_since_prior_order'] = d_orders['days_since_prior_order'].fillna(0)
-    avg_int = d_orders.groupby('user_id')['days_since_prior_order'].mean().reset_index().rename(columns={'days_since_prior_order':'avg_reorder_interval'})
+    avg_int = d_orders.groupby('user_id')['days_since_prior_order'].mean().reset_index()
+    avg_int.rename(columns={'days_since_prior_order':'avg_reorder_interval'}, inplace=True)
     return comp, avg_int
 
 compare_df, avg_interval_df = prepare_strategy_data(vip_df, orders, order_products)
 
-# 탭 구성
-tabs = st.tabs(["🏠 개요","📊 등급별 고객 분석","🔎 1등급 고객 집중 분석","💡 2~3등급 전환 전략","🎯 맞춤형 추천 시스템"])
+# ============================================
+# 6) 탭 구성 및 시각화 (이후 기존 코드 유지)
+# ============================================
+tabs = st.tabs(["🏠 개요", "📊 등급별 고객 분석", "🔎 1등급 고객 집중 분석", "💡 2~3등급 전환 전략", "🎯 맞춤형 추천 시스템"])
 
 
 with 탭_개요:
