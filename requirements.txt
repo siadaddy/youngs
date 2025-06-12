@@ -7,4 +7,5 @@ plotly
 gdown
 scipy
 Cython
-lightfm
+lightfm-cpu
+
