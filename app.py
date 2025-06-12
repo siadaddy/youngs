@@ -1,4 +1,30 @@
+import os
+import gdown
 import streamlit as st
+
+# ============================
+# 1) Google Drive 폴더 URL (Secrets)
+# ============================
+GDRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/11ZilE7WPPlFMslvnUy4tIFzoJgNTQtpN"
+
+# ============================
+# 2) 로컬 데이터 디렉토리 준비 및 다운로드
+# ============================
+DATA_DIR = "data_InstaCart"
+os.makedirs(DATA_DIR, exist_ok=True)
+if not os.listdir(DATA_DIR):
+    st.info("📥 Google Drive에서 데이터 다운로드 중...")
+    gdown.download_folder(
+        url=GDRIVE_FOLDER_URL,
+        output=DATA_DIR,
+        quiet=False,
+        use_cookies=False
+    )
+    st.success("✅ 데이터 다운로드 완료")
+
+# ============================
+# Streamlit 및 데이터 분석 코드
+# ============================
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,72 +50,56 @@ st.markdown("""
 # 데이터 로드 (캐시)
 @st.cache_data(show_spinner=False)
 def load_data():
-    vip_df = pd.read_csv("data_InstaCart/vip_summary_v2.csv")
-    products = pd.read_csv("data_InstaCart/products.csv")
-    orders = pd.read_csv("data_InstaCart/orders.csv")
-    order_products = pd.read_csv("data_InstaCart/order_products__prior.csv")
+    vip_df = pd.read_csv(f"{DATA_DIR}/vip_summary_v2.csv")
+    products = pd.read_csv(f"{DATA_DIR}/products.csv")
+    orders = pd.read_csv(f"{DATA_DIR}/orders.csv")
+    order_products = pd.read_csv(f"{DATA_DIR}/order_products__prior.csv")
     return vip_df, products, orders, order_products
 
 # 모델 로드 (캐시 리소스)
 @st.cache_resource(show_spinner=False)
 def load_model():
-    with open('data_InstaCart/diamond_2_3_lightfm_model.pkl', 'rb') as f:
+    with open(f'{DATA_DIR}/diamond_2_3_lightfm_model.pkl', 'rb') as f:
         model, user_id_map, product_id_map = pickle.load(f)
     return model, user_id_map, product_id_map
 
 vip_df, products, orders, order_products = load_data()
 model, user_id_map, product_id_map = load_model()
 
+# VIP 등급 분류
 bins = [-0.1, 60, 70, 80, 90, 100]
 labels = ['5.Bronze','4.Silver','3.Gold','2.Platinum','1.Diamond']
 vip_df['vip_grade'] = pd.cut(vip_df['vip_score'], bins=bins, labels=labels)
 
+# invert maps for 추천
 inv_user_map = {v: k for k, v in user_id_map.items()}
 inv_product_map = {v: k for k, v in product_id_map.items()}
 
-# 추천 함수 캐시 (빠른 재호출 가능)
+# 추천 함수 캐시
 @st.cache_data(show_spinner=False)
 def cached_recommend_products(user_id, N=5):
     if user_id not in user_id_map:
         return []
     user_x = user_id_map[user_id]
-    n_items = len(product_id_map)
-    scores = model.predict(user_x, np.arange(n_items))
+    scores = model.predict(user_x, np.arange(len(product_id_map)))
     top_items = np.argsort(-scores)[:N]
     return [inv_product_map[i] for i in top_items]
 
-# 전략 탭용 데이터 준비 함수 (unique_product_count 포함, user_id 병합 포함)
+# 준비 함수
 @st.cache_data(show_spinner=False)
 def prepare_strategy_data(vip_df, orders, order_products):
-    # order_products에 user_id 병합 (없으면 groupby 불가)
-    order_products_user = order_products.merge(
-        orders[['order_id', 'user_id']], on='order_id', how='left'
-    )
-    
-    # 상품 다양성 (고객별 고유 상품 수)
-    product_diversity = order_products_user.groupby('user_id')['product_id'].nunique().rename('unique_product_count')
-
-    # vip_df에 병합
-    vip_df = vip_df.set_index('user_id')
-    vip_df = vip_df.join(product_diversity)
-    vip_df.reset_index(inplace=True)
-
-    # 그룹 나누기
-    group1 = vip_df[vip_df['vip_grade'] == '1.Diamond'].copy()
-    group2 = vip_df[vip_df['vip_grade'].isin(['2.Platinum', '3.Gold'])].copy()
-    group1['group'] = '1등급'
-    group2['group'] = '2~3등급'
-    compare_df = pd.concat([group1, group2])
-
-    # 1등급 고객 재구매 주기 계산
-    diamond_users = vip_df[vip_df['vip_grade'] == '1.Diamond']['user_id'].unique()
-    diamond_orders = orders[orders['user_id'].isin(diamond_users)].copy()
-    diamond_orders.sort_values(by=['user_id', 'order_number'], inplace=True)
-    diamond_orders['days_since_prior_order'] = diamond_orders['days_since_prior_order'].fillna(0)
-    avg_interval_df = diamond_orders.groupby('user_id')['days_since_prior_order'].mean().reset_index()
-    avg_interval_df.rename(columns={'days_since_prior_order': 'avg_reorder_interval'}, inplace=True)
-
-    return compare_df, avg_interval_df
+    op_u = order_products.merge(orders[['order_id','user_id']], on='order_id', how='left')
+    diversity = op_u.groupby('user_id')['product_id'].nunique().rename('unique_product_count')
+    vip = vip_df.set_index('user_id').join(diversity).reset_index()
+    g1 = vip[vip['vip_grade']=='1.Diamond'].copy(); g1['group']='1등급'
+    g23 = vip[vip['vip_grade'].isin(['2.Platinum','3.Gold'])].copy(); g23['group']='2~3등급'
+    comp = pd.concat([g1,g23])
+    # 재구매 주기
+    d_users = vip[vip['vip_grade']=='1.Diamond']['user_id']
+    d_orders = orders[orders['user_id'].isin(d_users)].sort_values(['user_id','order_number'])
+    d_orders['days_since_prior_order'] = d_orders['days_since_prior_order'].fillna(0)
+    avg_int = d_orders.groupby('user_id')['days_since_prior_order'].mean().reset_index().rename(columns={'days_since_prior_order':'avg_reorder_interval'})
+    return comp, avg_int
 
 compare_df, avg_interval_df = prepare_strategy_data(vip_df, orders, order_products)
 
