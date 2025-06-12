@@ -1,7 +1,7 @@
 import streamlit as st
 import traceback
 
-# 예외를 잡아 화면에 출력하도록 전체 코드를 try/except로 감쌉니다
+# 전체 예외 잡아서 웹에 띄우기
 try:
     import os
     import gdown
@@ -17,25 +17,32 @@ try:
     plt.rcParams['font.family'] = 'AppleGothic'
     mpl.rcParams['axes.unicode_minus'] = False
 
-    # Streamlit 페이지 설정 (가장 먼저 호출)
+    # 페이지 설정
     st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-    # Google Drive에서 데이터 내려받기
-    GDRIVE_FOLDER_URL = "https://drive.google.com/drive/folders/11ZilE7WPPlFMslvnUy4tIFzoJgNTQtpN"
-    DATA_DIR = "data_InstaCart"
-    if not os.path.isdir(DATA_DIR):
-        os.makedirs(DATA_DIR, exist_ok=True)
-    if not os.listdir(DATA_DIR):
-        st.info("📥 Google Drive에서 데이터 다운로드 중...")
-        gdown.download_folder(
-            url=GDRIVE_FOLDER_URL,
-            output=DATA_DIR,
-            quiet=False,
-            use_cookies=False
-        )
-        st.success("✅ 데이터 다운로드 완료")
+    # 구글 드라이브 파일 ID 매핑
+    # (공유 폴더 안의 각 파일 ID를 직접 적어 주세요)
+    FILE_IDS = {
+        "vip_summary_v2.csv": "1PlOEkoWZjfkbEB7pIoOveIoRPCBHY26_",
+        "products.csv":        "1w0FOTvUsW-2yfPnCqqWsbQUtOhQmXWN3",
+        "orders.csv":          "h18q3WSsBvPMQLRyYCy868AfYY795P4Raw",
+        "order_products__prior.csv": "1p87GV2QV9D99X2TtKM5J4kbs6phtfeNb",
+        "diamond_2_3_lightfm_model.pkl": "1uOwXXvKPZQFcO-KSIdHgWDD58iqSIrBK"
+    }
 
-    # 데이터 및 모델 로드 함수
+    DATA_DIR = "data_InstaCart"
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+    # 개별 파일 다운로드
+    for fname, fid in FILE_IDS.items():
+        out_path = os.path.join(DATA_DIR, fname)
+        if not os.path.exists(out_path):
+            st.info(f"📥 {fname} 다운로드 중...")
+            url = f"https://drive.google.com/uc?id={fid}"
+            gdown.download(url, out_path, quiet=False)
+            st.success(f"✅ {fname} 다운로드 완료")
+
+    # 데이터 로드
     @st.cache_data(show_spinner=False)
     def load_data():
         vip_df = pd.read_csv(f"{DATA_DIR}/vip_summary_v2.csv")
@@ -46,7 +53,7 @@ try:
 
     @st.cache_resource(show_spinner=False)
     def load_model():
-        with open(f"{DATA_DIR}/diamond_2_3_lightfm_model.pkl", 'rb') as f:
+        with open(f"{DATA_DIR}/diamond_2_3_lightfm_model.pkl", "rb") as f:
             model, user_id_map, product_id_map = pickle.load(f)
         return model, user_id_map, product_id_map
 
