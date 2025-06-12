@@ -1,6 +1,16 @@
-import os
-import gdown
 import streamlit as st
+try:
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import plotly.express as px
+    import gdown
+    import pickle
+except Exception as e:
+    st.error(f"라이브러리 로드 실패: {e}")
+    st.stop()
+
 
 # ============================
 # Streamlit 페이지 설정 (가장 먼저 호출)
