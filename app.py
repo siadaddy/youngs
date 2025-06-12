@@ -1,22 +1,18 @@
-import os
-import gdown
 import streamlit as st
+# 라이브러리 임포트 중 에러가 나면 화면에 표시하고 종료
+try:
+    import os
+    import gdown
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import plotly.express as px
+    import pickle
+except Exception as e:
+    st.error(f"⚠️ 초기화 중 실패: {e}")
+    st.stop()
 
-# ============================
-# Streamlit 페이지 설정 (가장 먼저 호출)
-# ============================
-st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
-
-# ============================
-# 라이브러리 임포트 (이후 st 호출)
-# ============================
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib as mpl
-import plotly.express as px
-import pickle
 
 # Mac에서 한글 깨짐 방지
 plt.rcParams['font.family'] = 'AppleGothic'
