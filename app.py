@@ -12,8 +12,18 @@ import pickle
 
 try:
     # 한글 깨짐 방지
+    # OS별 한글 폰트 설정
+    system = platform.system()
+    if system == 'Darwin':        # macOS
+        font_family = 'AppleGothic'
+    elif system == 'Windows':     # Windows
+        font_family = 'Malgun Gothic'
+    else:                         # Linux (Ubuntu 등)
+        font_family = 'NanumGothic'
+    
+    mpl.rcParams['font.family']       = font_family
     mpl.rcParams['axes.unicode_minus'] = False
-    plt.rcParams['font.family'] = 'AppleGothic'
+    plt.rcParams['font.family']       = font_family
 
     # Streamlit 페이지 설정
     st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
