@@ -10,7 +10,6 @@ import seaborn as sns
 import plotly.express as px
 import pickle
 import traceback
-from lightfm import LightFM
 
 # (Optional) Mac 한글 깨짐 방지
 plt.rcParams['font.family'] = 'AppleGothic'
