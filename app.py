@@ -1,3 +1,5 @@
+import streamlit as st
+import os
 import duckdb
 import gdown
 from pathlib import Path
