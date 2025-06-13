@@ -6,3 +6,4 @@ numpy
 plotly-express
 seaborn
 matplotlib
+lightfm
