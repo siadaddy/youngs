@@ -4,6 +4,16 @@ import duckdb
 import gdown
 from pathlib import Path
 
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import plotly.express as px    # ← 이 줄이 반드시 최상단 import 모음에 있어야 합니다
+import pickle
+import traceback
+
 DATA_DIR = Path("data_InstaCart")
 os.makedirs(DATA_DIR, exist_ok=True)
 
