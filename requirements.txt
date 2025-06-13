@@ -1,9 +1,8 @@
 streamlit
+duckdb
+gdown
 pandas
 numpy
-matplotlib
+plotly-express
 seaborn
-plotly
-gdown
-
-
+matplotlib
