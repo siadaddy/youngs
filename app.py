@@ -38,7 +38,7 @@ try:
 
     # 3) 데이터 및 모델 로드 함수 (샘플 로드 적용)
     @st.cache_data(show_spinner=False)
-    def load_data(sample_rows: int = 50000):
+    def load_data():
         vip_df = pd.read_csv(f"{DATA_DIR}/vip_summary_v2.csv")
         products = pd.read_csv(f"{DATA_DIR}/products.csv")
         orders = pd.read_csv(
