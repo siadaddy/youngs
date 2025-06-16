@@ -2,21 +2,26 @@ import streamlit as st
 import pandas as pd
 import duckdb
 import gdown
-import os  # ✅ 이 줄이 빠져있었음
+import os
+import requests
 
-# ─────────────────────────────────────────────────────────────
-# 📁 DuckDB 파일 다운로드 (최초 1회만)
-# ─────────────────────────────────────────────────────────────
 @st.cache_data
 def download_duckdb():
-    DB_ID = "1tV0K_v7XY9YfDLO7a0ZBr5iSR5EYTHMI"  # ← 공유 링크 ID
-    DB_PATH = "data_cache/instacart.duckdb"
+    file_id = "1tV0K_v7XY9YfDLO7a0ZBr5iSR5EYTHMI"  # 구글 드라이브 파일 ID
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    output_path = "data_cache/instacart.duckdb"
 
     os.makedirs("data_cache", exist_ok=True)
-    if not os.path.exists(DB_PATH):
-        gdown.download(f"https://drive.google.com/uc?id={DB_ID}", DB_PATH, quiet=False)
 
-    return DB_PATH
+    # Streamlit Cloud에서는 gdown 대신 requests 사용
+    response = requests.get(url, allow_redirects=True)
+    if response.status_code == 200:
+        with open(output_path, "wb") as f:
+            f.write(response.content)
+    else:
+        raise Exception("❌ Google Drive 파일 다운로드 실패")
+
+    return output_path
 
 # DB 경로 확보
 DB_PATH = download_duckdb()
