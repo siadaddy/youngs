@@ -8,9 +8,9 @@ import seaborn as sns  # 히트맵 등 추가 시각화를 위해 필요
 
 @st.cache_data
 def download_duckdb():
-    file_id = "1BY8nUq5OfyrDnxyZRiuSACf3TDbrdx7m"
+    file_id = "1aeX2UxziwFmTJWKszFxfMTre4rmZ_2OH"
     url = f"https://drive.google.com/uc?id={file_id}"
-    output_path = "data_cache/instacart.duckdb"
+    output_path = "data_cache/instacart_light.duckdb"
     
     os.makedirs("data_cache", exist_ok=True)
     if not os.path.exists(output_path):
