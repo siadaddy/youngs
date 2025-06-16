@@ -1,23 +1,21 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
 import duckdb
-
+import gdown
+import os  # ✅ 이 줄이 빠져있었음
 
 # ─────────────────────────────────────────────────────────────
 # 📁 DuckDB 파일 다운로드 (최초 1회만)
 # ─────────────────────────────────────────────────────────────
 @st.cache_data
 def download_duckdb():
-    DB_ID = "1BY8nUq5OfyrDnxyZRiuSACf3TDbrdx7m"  # ← Drive ID를 여기에 입력
+    DB_ID = "1tV0K_v7XY9YfDLO7a0ZBr5iSR5EYTHMI"  # ← 공유 링크 ID
     DB_PATH = "data_cache/instacart.duckdb"
 
     os.makedirs("data_cache", exist_ok=True)
     if not os.path.exists(DB_PATH):
         gdown.download(f"https://drive.google.com/uc?id={DB_ID}", DB_PATH, quiet=False)
-    
+
     return DB_PATH
 
 # DB 경로 확보
