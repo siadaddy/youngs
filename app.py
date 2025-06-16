@@ -7,7 +7,7 @@ import requests
 
 @st.cache_data
 def download_duckdb():
-    file_id = "1tV0K_v7XY9YfDLO7a0ZBr5iSR5EYTHMI"  # 구글 드라이브 파일 ID
+    file_id = "1BY8nUq5OfyrDnxyZRiuSACf3TDbrdx7m"  # 구글 드라이브 파일 ID
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
     output_path = "data_cache/instacart.duckdb"
 
