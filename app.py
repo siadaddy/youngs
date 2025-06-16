@@ -3,37 +3,31 @@ import pandas as pd
 import duckdb
 import gdown
 import os
-import requests
 
 @st.cache_data
 def download_duckdb():
-    file_id = "1BY8nUq5OfyrDnxyZRiuSACf3TDbrdx7m"  # 구글 드라이브 파일 ID
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    file_id = "1BY8nUq5OfyrDnxyZRiuSACf3TDbrdx7m"
+    url = f"https://drive.google.com/uc?id={file_id}"
     output_path = "data_cache/instacart.duckdb"
-
+    
     os.makedirs("data_cache", exist_ok=True)
-
-    # Streamlit Cloud에서는 gdown 대신 requests 사용
-    response = requests.get(url, allow_redirects=True)
-    if response.status_code == 200:
-        with open(output_path, "wb") as f:
-            f.write(response.content)
-    else:
-        raise Exception("❌ Google Drive 파일 다운로드 실패")
-
+    if not os.path.exists(output_path):
+        gdown.download(url, output_path, quiet=False)
+    
     return output_path
 
-# DB 경로 확보
+# DuckDB 파일 다운로드 및 연결
 DB_PATH = download_duckdb()
-
-# DuckDB 연결 및 테이블 로드
 con = duckdb.connect(DB_PATH)
-vip_df      = con.execute("SELECT * FROM _customscore").df()
-orders      = con.execute("SELECT * FROM orders").df()
+
+# 테이블 불러오기
+vip_df         = con.execute("SELECT * FROM _customscore").df()
+orders         = con.execute("SELECT * FROM orders").df()
 order_products = con.execute("SELECT * FROM order_products__prior").df()
-products    = con.execute("SELECT * FROM products").df()
-rec_df      = con.execute("SELECT * FROM user_recommendations").df()
+products       = con.execute("SELECT * FROM products").df()
+rec_df         = con.execute("SELECT * FROM user_recommendations").df()
 con.close()
+
 
 
 tab1, tab2, tab3, tab4 = st.tabs([
