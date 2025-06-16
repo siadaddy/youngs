@@ -3,6 +3,8 @@ import pandas as pd
 import duckdb
 import gdown
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns  # 히트맵 등 추가 시각화를 위해 필요
 
 @st.cache_data
 def download_duckdb():
