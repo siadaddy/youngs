@@ -150,19 +150,28 @@ with tab4:
     st.markdown("2~3등급 고객의 추천 상품 Top 5를 확인하고, 1등급 전환 전략을 유도해보세요.")
 
     # 고객 선택 드롭다운 (화면 내 위치)
-    user_list = rec_df['user_id'].tolist()
+    user_list = rec_df['user_id'].dropna().unique().tolist()
     selected_user = st.selectbox("👤 고객 선택 (2~3등급)", user_list)
 
-    # 선택한 고객의 추천 상품 표시
-    selected_row = rec_df[rec_df['user_id'] == selected_user]
-    if not selected_row.empty:
-        recommended_products = selected_row.iloc[0, 1:].tolist()
+    try:
+        # 선택한 고객의 추천 상품 표시
+        selected_row = rec_df[rec_df['user_id'] == selected_user]
 
-        st.markdown(f"### 🛍️ 추천 상품 목록 (User ID: `{selected_user}`)")
-        for i, product_name in enumerate(recommended_products, 1):
-            st.markdown(f"- **{i}. {product_name}**")
-    else:
-        st.warning("해당 고객에 대한 추천 결과가 없습니다.")
+        if not selected_row.empty:
+            # NaN 값 제거 후 리스트로 변환
+            recommended_products = selected_row.iloc[0, 1:].dropna().tolist()
+
+            if recommended_products:
+                st.markdown(f"### 🛍️ 추천 상품 목록 (User ID: `{selected_user}`)")
+                for i, product_name in enumerate(recommended_products, 1):
+                    st.markdown(f"- **{i}. {product_name}**")
+            else:
+                st.warning("추천 상품이 등록되어 있지 않습니다.")
+        else:
+            st.warning("해당 고객에 대한 추천 결과가 없습니다.")
+    except Exception as e:
+        st.error(f"❌ 추천 상품 표시 중 오류 발생: {e}")
+
 
 
 
