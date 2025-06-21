@@ -1092,10 +1092,9 @@ with tab4:
 
     st.markdown('<div id="product_detail"></div>', unsafe_allow_html=True)
     with st.expander("🛍 평균 상품 수 상세 분석 (고객별 상품 다양성 분포)"):
-
+        
         # 스타일 설정
         sns.set(style="whitegrid")
-        plt.rcParams["font.family"] = "AppleGothic"  # Mac용 (Windows는 'Malgun Gothic')
         plt.rcParams['axes.unicode_minus'] = False
 
         # 좌우 레이아웃 분할
