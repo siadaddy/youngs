@@ -2,41 +2,40 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import matplotlib.font_manager as fm
 import plotly.express as px
 import plotly.io as pio
-import plotly.graph_objects as go
 import duckdb
+import urllib.request
+import os
+import matplotlib.font_manager as fm
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ minus 부호 깨짐 방지
+# ✅ 폰트 설정
+FONT_URL = "https://raw.githubusercontent.com/siadaddy/youngs/main/NanumGothic.ttf"
+FONT_PATH = "/tmp/NanumGothic.ttf"
+
+# 다운로드 후 설정
+if not os.path.exists(FONT_PATH):
+    urllib.request.urlretrieve(FONT_URL, FONT_PATH)
+
+# matplotlib + seaborn 적용
+fm.fontManager.addfont(FONT_PATH)
+font_name = fm.FontProperties(fname=FONT_PATH).get_name()
+plt.rcParams['font.family'] = font_name
+sns.set(font=font_name)
+
+# plotly 적용
+pio.templates["custom_font"] = pio.templates["plotly_white"]
+pio.templates["custom_font"]["layout"]["font"] = {"family": font_name}
+pio.templates.default = "custom_font"
+
+# 마이너스 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
 
-# ✅ 한글 폰트 자동 설정
-def set_korean_fonts():
-    available_fonts = [f.name for f in fm.fontManager.ttflist]
-    preferred_fonts = ["NanumGothic", "AppleGothic", "Malgun Gothic", "Noto Sans CJK KR", "DejaVu Sans"]
-    for font in preferred_fonts:
-        if font in available_fonts:
-            plt.rcParams['font.family'] = font
-            sns.set(font=font)
-
-            # plotly용 폰트 템플릿 설정
-            pio.templates["custom_kr"] = go.layout.Template(pio.templates["plotly_white"].layout.template)
-            pio.templates["custom_kr"].layout.font.family = font
-            pio.templates.default = "custom_kr"
-
-            print(f"✅ 한글 폰트 설정 완료: {font}")
-            return
-    print("⚠️ 시스템에 한글 폰트 없음. 기본 폰트 사용 중")
-
-# ✅ 폰트 적용 실행
-set_korean_fonts()
-
-
-
+# ✅ 확인용 출력
+st.success(f"✅ 한글 폰트 설정 완료: {font_name}")
 
 
 # ✅ 캐시 기반 데이터 로딩 함수
