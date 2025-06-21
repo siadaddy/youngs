@@ -184,22 +184,39 @@ image_dict  = data['image_dict']
 # ────────────────────────────────────────────────────────
 
 st.markdown("""
-<div style='
-    background-color: #f0f4f8;
-    padding: 20px 25px;
-    border-radius: 10px;
-    border-left: 6px solid #1a73e8;
-    margin-bottom: 20px;
-'>
-    <h2 style='margin-bottom: 5px;'>📊 InstaCart 분석 대시보드</h2>
-    <p style='font-size:15px; color:#333; margin-top: 0;'>
-        이 대시보드는 <b>1~3등급 고객 각 1,000명</b>을 기준으로 요약된 분석 결과를 제공합니다.
-    </p>
-    <p style='font-size:13px; color:#777; margin-top: 8px;'>
-        👨‍💻 Made by <b>시아아빠</b>
-    </p>
+<style>
+.title-banner {
+    background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
+    padding: 28px 30px;
+    border-radius: 12px;
+    border-left: 8px solid #1a73e8;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.title-banner h1 {
+    font-size: 30px;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+    color: #1a237e;
+}
+.title-banner p {
+    font-size: 15px;
+    color: #333;
+    margin: 0;
+}
+.title-banner small {
+    font-size: 12px;
+    color: #888;
+}
+</style>
+
+<div class="title-banner">
+    <h1>🛒 InstaCart 분석 대시보드</h1>
+    <p>이 대시보드는 <b>1~3등급 고객 각 1,000명</b>을 기준으로 요약된 분석 결과를 제공합니다.</p>
+    <small>👨‍💻 Made by <b>시아 아빠</b></small>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
