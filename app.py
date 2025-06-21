@@ -12,11 +12,11 @@ import urllib.request
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ 폰트 경로
-font_url = "https://github.com/naver/nanumfont/blob/master/ttf/NanumGothic.ttf?raw=true"
+# ✅ NanumGothic 다운로드 (정확한 Raw URL)
+font_url = "https://raw.githubusercontent.com/naver/nanumfont/master/ttf/NanumGothic.ttf"
 font_path = "/tmp/NanumGothic.ttf"
 
-# ✅ NanumGothic 폰트 설치 및 적용
+# ✅ 폰트 설치 및 등록
 if not os.path.exists(font_path):
     urllib.request.urlretrieve(font_url, font_path)
     fm.fontManager.addfont(font_path)
