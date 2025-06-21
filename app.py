@@ -12,17 +12,24 @@ import urllib.request
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ NanumGothic 다운로드 (정확한 Raw URL)
-font_url = "https://raw.githubusercontent.com/naver/nanumfont/master/ttf/NanumGothic.ttf"
-font_path = "/tmp/NanumGothic.ttf"
-
-# ✅ 폰트 설치 및 등록
-if not os.path.exists(font_path):
-    urllib.request.urlretrieve(font_url, font_path)
-    fm.fontManager.addfont(font_path)
-
-matplotlib.rc('font', family='NanumGothic')
+# ✅ minus 부호 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
+
+# ✅ 한글 폰트 자동 설정 (리눅스/Cloud 환경 고려)
+def set_korean_font():
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    preferred_fonts = ["NanumGothic", "Malgun Gothic", "AppleGothic", "Noto Sans CJK KR", "DejaVu Sans"]
+
+    for font in preferred_fonts:
+        if font in available_fonts:
+            plt.rcParams['font.family'] = font
+            print(f"✅ 폰트 설정됨: {font}")
+            return
+
+    # fallback
+    print("⚠️ 한글 폰트 없음 — 기본 폰트 사용 중")
+
+set_korean_font()
 
 
 # ✅ 캐시 기반 데이터 로딩 함수
