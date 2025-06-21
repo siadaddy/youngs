@@ -7,6 +7,7 @@ import duckdb
 import matplotlib
 import platform
 import os
+import gdown
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
