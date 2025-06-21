@@ -12,24 +12,38 @@ import urllib.request
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ minus 부호 깨짐 방지
+# ✅ minus 부호 깨짐 방지 (matplotlib)
 plt.rcParams['axes.unicode_minus'] = False
 
-# ✅ 한글 폰트 자동 설정 (리눅스/Cloud 환경 고려)
-def set_korean_font():
+# ✅ 한글 폰트 자동 설정 (Linux/Cloud/Mac/Windows 대응)
+def set_korean_fonts():
     available_fonts = [f.name for f in fm.fontManager.ttflist]
-    preferred_fonts = ["NanumGothic", "Malgun Gothic", "AppleGothic", "Noto Sans CJK KR", "DejaVu Sans"]
+    preferred_fonts = [
+        "NanumGothic", "Malgun Gothic", "AppleGothic",  # Mac/Windows
+        "Noto Sans CJK KR", "DejaVu Sans"               # Linux/Cloud
+    ]
 
+    selected_font = None
     for font in preferred_fonts:
         if font in available_fonts:
-            plt.rcParams['font.family'] = font
-            print(f"✅ 폰트 설정됨: {font}")
-            return
+            selected_font = font
+            break
 
-    # fallback
-    print("⚠️ 한글 폰트 없음 — 기본 폰트 사용 중")
+    if selected_font:
+        # ✅ matplotlib / seaborn 적용
+        plt.rcParams['font.family'] = selected_font
+        sns.set(font=selected_font)
 
-set_korean_font()
+        # ✅ plotly 적용 (default template 업데이트)
+        pio.templates["custom"] = pio.templates["plotly_white"]
+        pio.templates["custom"]["layout"]["font"] = {"family": selected_font}
+        pio.templates.default = "custom"
+
+        print(f"✅ 한글 폰트 설정 완료: {selected_font}")
+    else:
+        print("⚠️ 시스템에 한글 폰트가 없습니다. 한글이 깨질 수 있습니다.")
+
+set_korean_fonts()
 
 
 # ✅ 캐시 기반 데이터 로딩 함수
