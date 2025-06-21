@@ -167,7 +167,8 @@ rec_df      = data['rec_df']
 departments = data['departments']
 image_map     = data['image_map']
 
-
+# ✅ 딕셔너리 변환
+image_dict = dict(zip(image_map['product_name'], image_map['image_url']))
 
 
 # ────────────────────────────────────────────────────────
