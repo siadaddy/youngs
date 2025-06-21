@@ -5,38 +5,19 @@ import seaborn as sns
 import plotly.express as px
 import duckdb
 import matplotlib
-import platform
-import os
-import gdown
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ 운영체제에 따라 폰트 설정
-if platform.system() == 'Darwin':  # macOS
-    matplotlib.rc('font', family='AppleGothic')
-elif platform.system() == 'Windows':
-    matplotlib.rc('font', family='Malgun Gothic')  # Windows
-else:
-    matplotlib.rc('font', family='DejaVu Sans')  # Linux (ex. Streamlit Cloud)
-
-# ✅ 마이너스 깨짐 방지
+# ✅ 폰트 설정 (Mac용)
+matplotlib.rc('font', family='AppleGothic')
 plt.rcParams['axes.unicode_minus'] = False
 
-# ✅ Google Drive에서 duckdb 파일 다운로드 후 로딩
-@st.cache_data(show_spinner="📦 DuckDB 파일 로딩 중... 잠시만 기다려주세요!")
+# ✅ 캐시 기반 데이터 로딩 함수
+@st.cache_data(show_spinner="📦 데이터 로딩 중... 조금만 기다려주세요!")
 def load_data():
-    file_id = "1fOaUJKJXz9BS8RpulqW3zJNVC2K7_pWF"
-    url = f"https://drive.google.com/uc?id={file_id}"
-
-    db_path = "data_downloaded/instacart_min.duckdb"
-    os.makedirs("data_downloaded", exist_ok=True)
-
-    # ✅ DuckDB 파일 다운로드
-    gdown.download(url, db_path, quiet=False)
-
-    # ✅ DuckDB 연결 및 데이터 로딩
-    con = duckdb.connect(db_path)
+    DB_PATH = "instacart_min_v1_1000.duckdb"  # ← 변경된 경량 버전 경로
+    con = duckdb.connect(DB_PATH)
 
     queries = {
         "vip_df":        "SELECT * FROM customscore_min",
@@ -53,6 +34,12 @@ def load_data():
         result[key] = con.execute(query).df()
 
     con.close()
+
+    # ✅ 이미지 딕셔너리 구성
+    image_dict = dict(zip(result['image_map']['product_name'], result['image_map']['image_url']))
+    result['image_dict'] = image_dict
+    del result['image_map']
+
     return result
 
 # ✅ 고객 주문 전처리 함수
@@ -165,10 +152,9 @@ order_products = data['order_products']
 products    = data['products']
 rec_df      = data['rec_df']
 departments = data['departments']
-image_map     = data['image_map']
+image_dict  = data['image_dict']
 
-# ✅ 딕셔너리 변환
-image_dict = dict(zip(image_map['product_name'], image_map['image_url']))
+
 
 
 # ────────────────────────────────────────────────────────
