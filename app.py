@@ -16,26 +16,23 @@ st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 FONT_URL = "https://raw.githubusercontent.com/siadaddy/youngs/main/NanumGothic.ttf"
 FONT_PATH = "/tmp/NanumGothic.ttf"
 
-# 다운로드 후 설정
+# 다운로드 및 등록
 if not os.path.exists(FONT_PATH):
     urllib.request.urlretrieve(FONT_URL, FONT_PATH)
 
-# matplotlib + seaborn 적용
 fm.fontManager.addfont(FONT_PATH)
-font_name = fm.FontProperties(fname=FONT_PATH).get_name()
+font_prop = fm.FontProperties(fname=FONT_PATH)
+font_name = font_prop.get_name()
+
+# ✅ matplotlib + seaborn 기본 설정
 plt.rcParams['font.family'] = font_name
+plt.rcParams['axes.unicode_minus'] = False
 sns.set(font=font_name)
 
-# plotly 적용
+# ✅ plotly 기본 템플릿 설정
 pio.templates["custom_font"] = pio.templates["plotly_white"]
 pio.templates["custom_font"]["layout"]["font"] = {"family": font_name}
 pio.templates.default = "custom_font"
-
-# 마이너스 깨짐 방지
-plt.rcParams['axes.unicode_minus'] = False
-
-# ✅ 확인용 출력
-st.success(f"✅ 한글 폰트 설정 완료: {font_name}")
 
 
 # ✅ 캐시 기반 데이터 로딩 함수
