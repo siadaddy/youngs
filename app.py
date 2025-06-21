@@ -183,7 +183,26 @@ image_dict  = data['image_dict']
 # 📊 대시보드 제목
 # ────────────────────────────────────────────────────────
 
-st.title("InstaCart 분석 대시보드")
+st.markdown("""
+<div style='
+    background-color: #f0f4f8;
+    padding: 20px 25px;
+    border-radius: 10px;
+    border-left: 6px solid #1a73e8;
+    margin-bottom: 20px;
+'>
+    <h2 style='margin-bottom: 5px;'>📊 InstaCart 분석 대시보드</h2>
+    <p style='font-size:15px; color:#333; margin-top: 0;'>
+        이 대시보드는 <b>1~3등급 고객 각 1,000명</b>을 기준으로 요약된 분석 결과를 제공합니다.
+    </p>
+    <p style='font-size:13px; color:#777; margin-top: 8px;'>
+        👨‍💻 Made by <b>시아아빠</b>
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+
+
 
 
 # ────────────────────────────────────────────────────────
