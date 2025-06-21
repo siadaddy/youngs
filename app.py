@@ -5,7 +5,8 @@ import seaborn as sns
 import plotly.express as px
 import duckdb
 import matplotlib
-import platform 
+import platform
+import os
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
@@ -163,7 +164,7 @@ order_products = data['order_products']
 products    = data['products']
 rec_df      = data['rec_df']
 departments = data['departments']
-image_dict  = data['image_dict']
+image_map     = data['image_map']
 
 
 
