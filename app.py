@@ -3,20 +3,23 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
-import plotly.io as pio  # ✅ plotly 폰트 설정용
+import plotly.io as pio
+import plotly.graph_objects as go
 import duckdb
-import koreanize_matplotlib  # ✅ matplotlib & seaborn 한글 자동 설정
+import koreanize_matplotlib  # matplotlib & seaborn 한글 자동 설정
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ plotly 한글 폰트 적용 (koreanize가 커버 못함)
-pio.templates["custom"] = pio.templates["plotly_white"]
-pio.templates["custom"]["layout"]["font"] = {"family": "NanumGothic"}
-pio.templates.default = "custom"
+# ✅ plotly 한글 폰트 적용 (plotly_white 복사 후 커스터마이징)
+custom_template = pio.templates["plotly_white"].layout.template
+pio.templates["custom_kr"] = go.layout.Template(custom_template)
+pio.templates["custom_kr"].layout.font.family = "NanumGothic"
+pio.templates.default = "custom_kr"
 
-# ✅ minus 부호 깨짐 방지 (matplotlib)
+# ✅ minus 부호 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
+
 
 
 
