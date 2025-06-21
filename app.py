@@ -5,13 +5,25 @@ import seaborn as sns
 import plotly.express as px
 import duckdb
 import matplotlib
+import os
+import matplotlib.font_manager as fm
+import urllib.request
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ 폰트 설정 (Mac용)
-matplotlib.rc('font', family='AppleGothic')
+# ✅ 폰트 경로
+font_url = "https://github.com/naver/nanumfont/blob/master/ttf/NanumGothic.ttf?raw=true"
+font_path = "/tmp/NanumGothic.ttf"
+
+# ✅ NanumGothic 폰트 설치 및 적용
+if not os.path.exists(font_path):
+    urllib.request.urlretrieve(font_url, font_path)
+    fm.fontManager.addfont(font_path)
+
+matplotlib.rc('font', family='NanumGothic')
 plt.rcParams['axes.unicode_minus'] = False
+
 
 # ✅ 캐시 기반 데이터 로딩 함수
 @st.cache_data(show_spinner="📦 데이터 로딩 중... 조금만 기다려주세요!")
