@@ -1092,7 +1092,10 @@ with tab4:
 
     st.markdown('<div id="product_detail"></div>', unsafe_allow_html=True)
     with st.expander("🛍 평균 상품 수 상세 분석 (고객별 상품 다양성 분포)"):
-        
+
+        FONT_PATH = "/tmp/NanumGothic.ttf"
+        font_prop = fm.FontProperties(fname=FONT_PATH)
+
         # 스타일 설정
         sns.set(style="whitegrid")
         plt.rcParams['axes.unicode_minus'] = False
@@ -1121,13 +1124,13 @@ with tab4:
                 linewidth=2
             )
 
-            # 제목/축/범례 스타일
-            ax.set_title("📈 고객별 총 구매 상품 수 분포", fontsize=14, weight='bold')
-            ax.set_xlabel("총 구매 상품 수", fontsize=12)
-            ax.set_ylabel("밀도", fontsize=12)
-            ax.legend(title="고객 등급", title_fontsize=12, fontsize=11)
+            # ✅ 제목/축/범례에 직접 폰트 적용
+            ax.set_title("📈 고객별 총 구매 상품 수 분포", fontsize=14, weight='bold', fontproperties=font_prop)
+            ax.set_xlabel("총 구매 상품 수", fontsize=12, fontproperties=font_prop)
+            ax.set_ylabel("밀도", fontsize=12, fontproperties=font_prop)
+            ax.legend(title="고객 등급", title_fontproperties=font_prop, prop=font_prop)
             ax.grid(True, linestyle='--', alpha=0.5)
-
+        
             st.pyplot(fig)
 
         with col2:
