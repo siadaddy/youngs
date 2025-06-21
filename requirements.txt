@@ -7,5 +7,4 @@ seaborn
 matplotlib
 duckdb
 gcsfs
-google-cloud-storage
-koreanize-matplotlib
+
