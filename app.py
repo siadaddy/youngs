@@ -5,6 +5,7 @@ import seaborn as sns
 import plotly.express as px
 import duckdb
 import matplotlib
+import platform 
 
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
@@ -13,9 +14,9 @@ st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 if platform.system() == 'Darwin':  # macOS
     matplotlib.rc('font', family='AppleGothic')
 elif platform.system() == 'Windows':
-    matplotlib.rc('font', family='Malgun Gothic')  # Windows 한글 폰트
+    matplotlib.rc('font', family='Malgun Gothic')  # Windows
 else:
-    matplotlib.rc('font', family='DejaVu Sans')  # Linux나 기타 환경
+    matplotlib.rc('font', family='DejaVu Sans')  # Linux (ex. Streamlit Cloud)
 
 # ✅ 마이너스 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
