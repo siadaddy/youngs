@@ -9,15 +9,31 @@ import matplotlib
 # ✅ 페이지 설정
 st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
 
-# ✅ 폰트 설정 (Mac용)
-matplotlib.rc('font', family='AppleGothic')
+# ✅ 운영체제에 따라 폰트 설정
+if platform.system() == 'Darwin':  # macOS
+    matplotlib.rc('font', family='AppleGothic')
+elif platform.system() == 'Windows':
+    matplotlib.rc('font', family='Malgun Gothic')  # Windows 한글 폰트
+else:
+    matplotlib.rc('font', family='DejaVu Sans')  # Linux나 기타 환경
+
+# ✅ 마이너스 깨짐 방지
 plt.rcParams['axes.unicode_minus'] = False
 
-# ✅ 캐시 기반 데이터 로딩 함수
-@st.cache_data(show_spinner="📦 데이터 로딩 중... 조금만 기다려주세요!")
+# ✅ Google Drive에서 duckdb 파일 다운로드 후 로딩
+@st.cache_data(show_spinner="📦 DuckDB 파일 로딩 중... 잠시만 기다려주세요!")
 def load_data():
-    DB_PATH = "data_raw/instacart_min.duckdb"  # ← 변경된 경량 버전 경로
-    con = duckdb.connect(DB_PATH)
+    file_id = "1fOaUJKJXz9BS8RpulqW3zJNVC2K7_pWF"
+    url = f"https://drive.google.com/uc?id={file_id}"
+
+    db_path = "data_downloaded/instacart_min.duckdb"
+    os.makedirs("data_downloaded", exist_ok=True)
+
+    # ✅ DuckDB 파일 다운로드
+    gdown.download(url, db_path, quiet=False)
+
+    # ✅ DuckDB 연결 및 데이터 로딩
+    con = duckdb.connect(db_path)
 
     queries = {
         "vip_df":        "SELECT * FROM customscore_min",
@@ -34,12 +50,6 @@ def load_data():
         result[key] = con.execute(query).df()
 
     con.close()
-
-    # ✅ 이미지 딕셔너리 구성
-    image_dict = dict(zip(result['image_map']['product_name'], result['image_map']['image_url']))
-    result['image_dict'] = image_dict
-    del result['image_map']
-
     return result
 
 # ✅ 고객 주문 전처리 함수
