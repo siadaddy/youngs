@@ -234,7 +234,7 @@ st.markdown("""
     </h1>
     <p style='font-size: 16px; color: #333; line-height:1.6; max-width:800px; margin:auto;'>
         InstaCart 주문 데이터를 기반으로 고객의 <b style="color:#007ACC;">구매 행동 패턴</b>과 
-        <b style="color:#007ACC;">VIP 등급</b>을 심층 분석하여,<br>
+        <b style="color:#007ACC;">고객 등급</b>을 심층 분석하여,<br>
         맞춤형 마케팅 전략 수립을 위한 <b style="color:#007ACC;">실질적 인사이트</b>를 제공합니다.
     </p>
 </div>
