@@ -247,7 +247,7 @@ st.markdown("""
 <a href='https://www.kaggle.com/datasets/yasserh/instacart-online-grocery-basket-analysis-dataset' target='_blank' style='color:#007ACC; text-decoration:underline;'>
 InstaCart Open Dataset (Kaggle)
 </a><br>
-🛠️ <b>대시보드 제작</b>: 시아아빠 · 🗓️ 2025년 07월 작성
+🛠️ <b>대시보드 제작</b>: Basic 1 Team · 🗓️ 2025년 07월 작성
 </p>
 """, unsafe_allow_html=True)
 
