@@ -234,7 +234,7 @@ st.markdown("""
     </h1>
     <p style='font-size: 16px; color: #333; line-height:1.6; max-width:800px; margin:auto;'>
         InstaCart 주문 데이터를 기반으로 고객의 <b style="color:#007ACC;">구매 행동 패턴</b>과 
-        <b style="color:#007ACC;">고객 등급</b>을 심층 분석하여,<br>
+        <b style="color:#007ACC;">VIP 등급</b>을 심층 분석하여,<br>
         맞춤형 마케팅 전략 수립을 위한 <b style="color:#007ACC;">실질적 인사이트</b>를 제공합니다.
     </p>
 </div>
@@ -247,7 +247,8 @@ st.markdown("""
 <a href='https://www.kaggle.com/datasets/yasserh/instacart-online-grocery-basket-analysis-dataset' target='_blank' style='color:#007ACC; text-decoration:underline;'>
 InstaCart Open Dataset (Kaggle)
 </a><br>
-🛠️ <b>대시보드 제작</b>: Basic 1 Team · 🗓️ 2025년 07월 작성
+🛠️ <b>대시보드 제작</b>: ICB 2기 Basic 1팀 · 🗓️ 2025년 07월 작성<br><br>
+✅ 본 데이터는 1등급, 2등급, 3등급 고객 각 1,000명씩의 요약 데이터로 구성되어 있습니다.
 </p>
 """, unsafe_allow_html=True)
 
@@ -294,6 +295,109 @@ with tab1:
     user_list = rec_df['user_id'].tolist()
     selected_user = st.selectbox("👤 고객 선택 (2~3등급)", user_list)
 
+
+    # 주문 정보 필터링
+    user_orders = orders[orders['user_id'] == selected_user]['order_id']
+    user_order_products = order_products[order_products['order_id'].isin(user_orders)]
+
+    # Top 5 구매 상품 집계
+    top_purchased = (
+        user_order_products['product_id']
+        .value_counts()
+        .head(5)
+        .reset_index()
+    )
+    top_purchased.columns = ['product_id', 'count']
+
+    # 상품명 병합
+    top_purchased = top_purchased.merge(products[['product_id', 'product_name']], on='product_id', how='left')
+
+    # 구분선
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 📊 고객정보")
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+
+    # ✅ Top 5 바차트 & 파이차트
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"##### 🛒 고객 {selected_user}님의 Top 5 구매 상품 카드")
+        top_cols = st.columns(1) if len(top_purchased) <= 1 else st.columns(len(top_purchased))
+        for i, row in enumerate(top_purchased.itertuples(), 1):
+            product_name = row.product_name
+            count = row.count
+            image_url = image_dict.get(product_name)
+            short_name = product_name if len(product_name) <= 25 else product_name[:22] + "..."
+            with top_cols[i - 1]:
+                st.markdown(f"""
+                <div style="background-color:#f9f9f9; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
+                    {"<img src='" + image_url + "' style='width:80px; height:auto; margin-bottom:8px;' />" if image_url else "<div style='font-size:40px;'>🖼️</div>"}
+                    <div style="font-size:13px; font-weight:600; margin-bottom:4px;">{short_name}</div>
+                    <div style="font-size:12px; color:#666;">구매 횟수: <b style='color:#ef6c00;'>{count}회</b></div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"##### 📊 고객 {selected_user}님의 카테고리별 구매 비율 카드")
+
+        # 계산 유지: merged, dept_counts
+        merged = user_order_products.merge(products[['product_id', 'department_id']], on='product_id', how='left')
+        merged = merged.merge(departments[['department_id', 'department']], on='department_id', how='left')
+        dept_counts = merged['department'].value_counts().head(5)
+
+        total_count = dept_counts.sum()
+        cat_cols = st.columns(1) if len(dept_counts) <= 1 else st.columns(len(dept_counts))
+
+        for i, (dept, count) in enumerate(dept_counts.items(), 1):
+            percent = (count / total_count) * 100
+            with cat_cols[i - 1]:
+                st.markdown(f"""
+                <div style="background-color:#f9f9f9; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
+                    <div style="font-size:14px; font-weight:600; margin-bottom:4px;">📂 {dept}</div>
+                    <div style="font-size:12px; color:#666;">구매 비중: <b style='color:#7e57c2;'>{percent:.1f}%</b></div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # 요약문 생성 예제
+    top_product_name = top_purchased.iloc[0]['product_name']
+    top_product_count = top_purchased.iloc[0]['count']
+    top_category = dept_counts.index[0]
+    top_category_ratio = dept_counts.iloc[0] / dept_counts.sum() * 100
+
+    with st.container():
+        st.markdown("""
+        <style>
+        .summary-card {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="summary-card">
+        <h4 style="text-align:center;">🛒 선택 고객 핵심 요약</h4>
+        <hr>
+
+        ✅ <b>Top 상품</b><br>
+        • 이 고객은 <b>{top_product_name}</b>을(를) 총 <b>{top_product_count}회</b> 구매했어요!<br>
+        • 해당 상품에 대한 높은 구매 빈도로 보아, <b>충성도 높은 주력 제품</b>임을 알 수 있어요.<br><br>
+
+        📊 <b>카테고리 1위</b><br>
+        • 주요 구매 카테고리는 <b>{top_category}</b>로, 전체 구매 중 <b>{top_category_ratio:.1f}%</b>를 차지합니다.<br>
+        • 관심 카테고리에 맞춘 <b>연관 상품 추천</b>이 효과적일 것으로 예상됩니다.<br><br>
+
+        ✨ <b>한줄 분석</b><br>
+        • 이 고객은 특정 제품을 <b>지속적으로 반복 구매</b>하면서도, 주요 카테고리에서도 활발한 소비를 보입니다.<br>
+        • 이를 기반으로 <b>맞춤형 추천</b>과 <b>리텐션 전략</b>을 설계하면 고객 충성도를 더욱 높일 수 있어요!
+        </div>
+        """, unsafe_allow_html=True)
+
+
+
     # avg_cart_size 없으면 계산해서 추가
     if 'avg_cart_size' not in vip_df.columns:
         vip_df['avg_cart_size'] = vip_df['total_products'] / vip_df['total_orders']
@@ -324,149 +428,39 @@ with tab1:
         ]
 
 
-        st.markdown("### 선택 고객 vs 1등급 평균 비교")
-        for label, user_val, avg_val in metrics:
-            col1, col2, col3 = st.columns(3)
-            diff = user_val - avg_val
-            diff_color = '#2e7d32' if diff >= 0 else '#c62828'
-            diff_str = f"{diff:+.1f}" if '재구매율' not in label else f"{diff:+.1f}%"
-            v1_formatted = f"{avg_val:.1f}" if '재구매율' not in label else f"{avg_val:.1f}%"
-            user_formatted = f"{user_val:.1f}" if '재구매율' not in label else f"{user_val:.1f}%"
+        with st.expander("🔎 선택 고객 vs 1등급 평균 상세 비교", expanded=False):
+            for label, user_val, avg_val in metrics:
+                col1, col2, col3 = st.columns(3)
+                diff = user_val - avg_val
+                diff_color = '#2e7d32' if diff >= 0 else '#c62828'
+                diff_str = f"{diff:+.1f}" if '재구매율' not in label else f"{diff:+.1f}%"
+                v1_formatted = f"{avg_val:.1f}" if '재구매율' not in label else f"{avg_val:.1f}%"
+                user_formatted = f"{user_val:.1f}" if '재구매율' not in label else f"{user_val:.1f}%"
 
-            st.markdown(f"<span style='font-size:14px; font-weight:600;'>📌 {label}</span>", unsafe_allow_html=True)  # ✅ 항목 이름 표시 (글씨 크기 조정)
+                st.markdown(f"<span style='font-size:14px; font-weight:600;'>📌 {label}</span>", unsafe_allow_html=True)
 
-            with col1:
-                st.markdown(f"""
-                <div style="background-color:#f0f4f8;padding:16px;border-radius:12px;text-align:center">
-                    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">1등급 평균</div>
-                    <div style="font-size:18px;font-weight:bold;color:#2e7d32;">{v1_formatted}</div>
-                </div>
-                """, unsafe_allow_html=True)
-            with col2:
-                st.markdown(f"""
-                <div style="background-color:#fff8e1;padding:16px;border-radius:12px;text-align:center">
-                    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">선택 고객</div>
-                    <div style="font-size:18px;font-weight:bold;color:#ef6c00;">{user_formatted}</div>
-                </div>
-                """, unsafe_allow_html=True)
-            with col3:
-                st.markdown(f"""
-                <div style="background-color:#fafafa;padding:16px;border-radius:12px;text-align:center">
-                    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">차이</div>
-                    <div style="font-size:18px;font-weight:bold;color:{diff_color};">{diff_str}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                with col1:
+                    st.markdown(f"""
+                    <div style="background-color:#f0f4f8;padding:16px;border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">1등급 평균</div>
+                        <div style="font-size:18px;font-weight:bold;color:#2e7d32;">{v1_formatted}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    st.markdown(f"""
+                    <div style="background-color:#fff8e1;padding:16px;border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">선택 고객</div>
+                        <div style="font-size:18px;font-weight:bold;color:#ef6c00;">{user_formatted}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with col3:
+                    st.markdown(f"""
+                    <div style="background-color:#fafafa;padding:16px;border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">차이</div>
+                        <div style="font-size:18px;font-weight:bold;color:{diff_color};">{diff_str}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-
-
-    # 주문 정보 필터링
-    user_orders = orders[orders['user_id'] == selected_user]['order_id']
-    user_order_products = order_products[order_products['order_id'].isin(user_orders)]
-
-    # Top 5 구매 상품 집계
-    top_purchased = (
-        user_order_products['product_id']
-        .value_counts()
-        .head(5)
-        .reset_index()
-    )
-    top_purchased.columns = ['product_id', 'count']
-
-    # 상품명 병합
-    top_purchased = top_purchased.merge(products[['product_id', 'product_name']], on='product_id', how='left')
-
-    # 🎯 실제 구매 Top 5 상품
-    st.markdown("### 🛒 실제 구매 Top 5 상품")
-    cols = st.columns(5)
-    for i, row in enumerate(top_purchased.itertuples(), 1):
-        product_name = row.product_name
-        count = row.count
-        image_url = image_dict.get(product_name)
-        short_name = product_name if len(product_name) <= 25 else product_name[:22] + "..."
-
-        with cols[i - 1]:
-            if image_url:
-                st.image(image_url, width=100)
-            else:
-                st.markdown("🖼️ (이미지 없음)", unsafe_allow_html=True)
-            st.markdown(
-                f"<div style='text-align:center; font-size:13px'><b>{short_name}</b><br><span style='font-size:11px;'>구매 {count}회</span></div>",
-                unsafe_allow_html=True
-            )
-
-    # 구분선
-    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
-    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
-    st.markdown("### 📊 구매 데이터 요약 시각화")
-
-    # ✅ Top 5 바차트 & 파이차트
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown("#### ✅ Top 5 상품 구매 횟수")
-        fig_bar = px.bar(
-            top_purchased.sort_values(by='count'),
-            x='count',
-            y='product_name',
-            orientation='h',
-            text='count',
-            labels={'product_name': '상품명', 'count': '구매 수'}
-        )
-        fig_bar.update_traces(
-            marker_color='#7e57c2',
-            textposition='outside',
-            hovertemplate='%{y}<br>구매 수: %{x}회'
-        )
-        fig_bar.update_layout(
-            title_text=None,
-            plot_bgcolor='#f9f9f9',
-            paper_bgcolor='#f9f9f9',
-            margin=dict(l=10, r=10, t=40, b=10),
-            yaxis=dict(categoryorder='total ascending'),
-            xaxis_title=None,
-            yaxis_title=None
-        )
-        st.plotly_chart(fig_bar, use_container_width=True)
-
-    with col2:
-        st.markdown("#### ✅ 카테고리별 구매 비율")
-
-        merged = user_order_products.merge(products[['product_id', 'department_id']], on='product_id', how='left')
-        merged = merged.merge(departments[['department_id', 'department']], on='department_id', how='left')
-        dept_counts = merged['department'].value_counts().head(5)
-
-        labels = [
-            f"{dept} ({p:.1f}%)" for dept, p in zip(
-                dept_counts.index,
-                100 * dept_counts.values / dept_counts.values.sum()
-            )
-        ]
-
-        fig_pie, ax = plt.subplots(figsize=(4.5, 4.5))
-        colors = ['#d1c4e9', '#b39ddb', '#9575cd', '#7e57c2', '#5e35b1']
-        explode = [0.05] * len(dept_counts)
-        wedges, texts, autotexts = ax.pie(
-            dept_counts.values,
-            labels=labels,
-            startangle=140,
-            colors=colors,
-            explode=explode,
-            autopct='%1.1f%%',
-            pctdistance=0.8,
-            textprops={'fontsize': 10}
-        )
-
-        for text in texts:
-            text.set_fontsize(10)
-        for autotext in autotexts:
-            autotext.set_fontweight('bold')
-            autotext.set_color('black')
-
-        ax.set_facecolor('#f9f9f9')
-        fig_pie.patch.set_facecolor('#f9f9f9')
-        ax.axis('equal')
-
-        st.pyplot(fig_pie)
 
     st.markdown("---")
 
