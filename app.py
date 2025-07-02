@@ -163,6 +163,43 @@ def compute_top5_reorder_products(diamond_orders, pg_orders):
     return reorder_melted
 
 
+# ✅ KPI 계산 함수
+@st.cache_data(show_spinner="📊 KPI 계산 중...")
+def compute_kpis(vip_df, orders, order_products):
+    # ✅ 전체 고객 수
+    total_users = vip_df['user_id'].nunique()
+
+    # ✅ 1~3등급 평균 점수
+    diamond_avg = vip_df[vip_df['vip_grade'] == '1.Diamond']['vip_score'].mean()
+    platinum_avg = vip_df[vip_df['vip_grade'] == '2.Platinum']['vip_score'].mean()
+    gold_avg = vip_df[vip_df['vip_grade'] == '3.Gold']['vip_score'].mean()
+
+    # ✅ 전체 평균 점수
+    total_avg = vip_df['vip_score'].mean()
+
+    # ✅ 평균 주문 수
+    user_order_counts = orders.groupby('user_id')['order_id'].nunique()
+    avg_order_count = user_order_counts.mean()
+
+    # ✅ 평균 구매 상품 수
+    order_user = orders[['order_id', 'user_id']]
+    merged = order_products.merge(order_user, on='order_id', how='left')
+    user_product_counts = merged.groupby('user_id')['product_id'].count()
+    avg_product_count = user_product_counts.mean()
+
+    # ✅ 평균 재구매율
+    user_reorders = merged.groupby('user_id')['reordered'].mean()
+    avg_reorder_rate = user_reorders.mean() * 100
+
+    return (
+        total_users, diamond_avg, platinum_avg, gold_avg,
+        total_avg, avg_reorder_rate, avg_order_count, avg_product_count
+    )
+
+
+
+
+
 
 # ✅ 데이터 로딩
 data = load_data()
@@ -183,46 +220,7 @@ image_dict  = data['image_dict']
 # 📊 대시보드 제목
 # ────────────────────────────────────────────────────────
 
-st.markdown("""
-<style>
-.title-banner {
-    background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
-    padding: 28px 30px;
-    border-radius: 12px;
-    border-left: 8px solid #1a73e8;
-    margin-bottom: 32px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-.title-banner h1 {
-    font-size: 30px;
-    margin: 0 0 6px 0;
-    font-weight: 700;
-    color: #1a237e;
-}
-.title-banner p {
-    font-size: 15px;
-    color: #333;
-    margin: 0;
-}
-.title-banner small {
-    font-size: 12px;
-    color: #888;
-}
-</style>
-
-<div class="title-banner">
-    <h1>🛒 InstaCart 분석 대시보드</h1>
-    <p>
-    이 대시보드는 <b>1~3등급 고객 각 1,000명</b>의 데이터를 기반으로 구성된 <b>요약 버전</b>입니다.  
-    서비스 용량 및 성능을 고려하여 전체 데이터 중 <b>상위 고객 샘플</b>만을 추출해 분석했습니다.
-    </p>
-    <small>👨‍💻 Made by <b>시아 아빠</b></small>
-</div>
-""", unsafe_allow_html=True)
-
-
-
-
+st.title("InstaCart 분석 대시보드")
 
 
 # ────────────────────────────────────────────────────────
@@ -545,8 +543,15 @@ with tab1:
 
 with tab2:
     st.markdown("## 📊 고객 선정 및 등급 소개")
+    st.markdown("""
+    <p style='font-size:15px; color:#555; text-align:left; margin-top:5px; line-height:1.6;'>
+    고객 등급은 고객의 <b>구매 활동과 충성도</b>를 종합적으로 평가해 산출되며, 고객군을 체계적으로 분류해 <b>효과적인 맞춤형 마케팅과 관리</b>에 활용됩니다.
+    </p>
+    """, unsafe_allow_html=True)
 
     # 1. 스코어링 기준 표
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
     st.markdown("### 📈 고객 스코어링 기준 및 가중치")
     st.markdown("""
     고객의 구매 행동을 네 가지 핵심 지표로 수치화하고,  
@@ -554,67 +559,88 @@ with tab2:
     """)
 
     with st.container():
-        st.table(pd.DataFrame({
-            "항목": ["총 주문 수", "총 상품 수", "재구매율", "최신성(recency)"],
-            "가중치": ["30%", "20%", "25%", "25%"],
-            "설명": [
-                "전체 주문 횟수 (높을수록 우수)",
-                "구매한 전체 상품 개수",
-                "Reordered 상품 비율",
-                "최근 주문일 기준 경과일수"
-            ]
-        }))
+    # ✅ 4개 카드 컬럼 생성
+        col1, col2, col3, col4 = st.columns(4)
 
-    # 1-1. 항목별 해석 - 카드 스타일 블록
-    st.markdown("#### 📌 항목별 해석")
+        with col1:
+            st.markdown("""
+                <div style='background-color: #f0f4f8; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>📦</div>
+                    <h3 style='color: #2c3e50; margin: 10px 0;'>총 주문 수</h3>
+                    <p style='font-size: 18px; color: #34495e; margin: 5px 0;'>가중치: 30%</p>
+                    <p style='color: #555; margin: 5px 0;'>전체 주문 횟수</p>
+                    <p style='color: #777; font-size: 14px;'>반복 구매 여부는 장기 고객 관계를 반영하므로<br>가장 높은 비중을 부여.</p>
+                </div>
+            """, unsafe_allow_html=True)
 
-    with st.container():
-        st.markdown("""
-        <div style="background-color:#f9f9f9;padding:15px;border-radius:10px;line-height:1.7">
-        🛒 <b>총 주문 수 (30%)</b>  
-        반복 구매 여부는 장기 고객 관계를 반영하므로 가장 높은 비중을 부여했습니다.
-        </div>
-        """, unsafe_allow_html=True)
+        with col2:
+            st.markdown("""
+                <div style='background-color: #eafaf1; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>🛒</div>
+                    <h3 style='color: #2e7d32; margin: 10px 0;'>총 상품 수</h3>
+                    <p style='font-size: 18px; color: #388e3c; margin: 5px 0;'>가중치: 20%</p>
+                    <p style='color: #555; margin: 5px 0;'>구매한 전체 상품 개수</p>
+                    <p style='color: #777; font-size: 14px;'>다양한 상품을 구매한 고객은<br>니즈 확장성과 교차 판매 가능성이 높음.</p>
+                </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown("""
-        <div style="background-color:#f9f9f9;padding:15px;border-radius:10px;line-height:1.7">
-        📦 <b>총 상품 수 (20%)</b>  
-        다양한 상품을 구매한 고객은 니즈 확장성과 교차 판매 가능성이 높습니다.
-        </div>
-        """, unsafe_allow_html=True)
+        with col3:
+            st.markdown("""
+                <div style='background-color: #fff3e0; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>🔄</div>
+                    <h3 style='color: #ef6c00; margin: 10px 0;'>재구매율</h3>
+                    <p style='font-size: 18px; color: #f57c00; margin: 5px 0;'>가중치: 25%</p>
+                    <p style='color: #555; margin: 5px 0;'>Reordered 상품 비율</p>
+                    <p style='color: #777; font-size: 14px;'>동일 상품 반복 구매는<br>제품 충성도와 소비 습관의 일관성을 의미.</p>
+                </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown("""
-        <div style="background-color:#f9f9f9;padding:15px;border-radius:10px;line-height:1.7">
-        🔁 <b>재구매율 (25%)</b>  
-        동일 상품 반복 구매는 제품 충성도와 소비 습관의 일관성을 보여줍니다.
-        </div>
-        """, unsafe_allow_html=True)
+        with col4:
+            st.markdown("""
+                <div style='background-color: #e8eaf6; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>⏰</div>
+                    <h3 style='color: #3f51b5; margin: 10px 0;'>최신성</h3>
+                    <p style='font-size: 18px; color: #3949ab; margin: 5px 0;'>가중치: 25%</p>
+                    <p style='color: #555; margin: 5px 0;'>최근 주문일 기준 경과일수</p>
+                    <p style='color: #777; font-size: 14px;'>최근까지도 활발히 구매한 고객은<br>리텐션 우선 관리 대상.</p>
+                </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown("""
-        <div style="background-color:#f9f9f9;padding:15px;border-radius:10px;line-height:1.7">
-        ⏱️ <b>최신성 (25%)</b>  
-        최근까지도 활발히 구매한 고객은 리텐션 우선 관리 대상입니다.
-        </div>
-        """, unsafe_allow_html=True)
+
+    
 
     # 2. VIP 등급 기준 - 강조 블럭
-    st.markdown("### 🏅 VIP 등급 산정 기준")
+    # 공백 및 구분선 추가
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 🏅 고객 등급 산정 기준")
+    st.markdown("""
+    등급 구간은 상대적 위치를 기준으로 하며,  
+    각 고객 그룹별로 맞춤형 마케팅 전략을 설계하는 데 활용됩니다.
+    """)
 
     st.markdown("""
     <div style="background-color:#e6f0fa;padding:15px;border-radius:10px;line-height:1.8">
     VIP 점수 기반으로 전체 고객을 다음과 같이 분류합니다:<br><br>
-    💎 <b>1.Diamond</b> : 상위 5%<br>
-    🥈 <b>2.Platinum</b> : 상위 5~20%<br>
-    🥉 <b>3.Gold</b> : 상위 20~50%<br>
-    🔘 <b>4.Silver</b> : 하위 50~80%<br>
-    ⚪ <b>5.Bronze</b> : 하위 80% 이하
+    💎 <b>1. Diamond</b> : 상위 5%<br>
+    <span style='color:#555;font-size:14px;'>(가장 높은 기여도를 보이는 핵심 고객층으로, 우수 고객 관리 및 리텐션 전략의 최우선 대상)</span><br><br>
+
+    🥈 <b>2. Platinum</b> : 상위 5~20%<br>
+    <span style='color:#555;font-size:14px;'>(높은 구매력과 충성도를 보이며, VIP 혜택 및 추가 구매 유도가 효과적인 고객층)</span><br><br>
+
+    🥉 <b>3. Gold</b> : 상위 20~50%<br>
+    <span style='color:#555;font-size:14px;'>(일정 수준 이상의 구매 빈도와 금액을 가진 안정적인 중간 고객층)</span><br><br>
+
+    🔘 <b>4. Silver</b> : 하위 50~80%<br>
+    <span style='color:#555;font-size:14px;'>(구매력이 낮거나 활동성이 떨어져, 리마케팅과 관심 유도가 필요한 고객층)</span><br><br>
+
+    ⚪ <b>5. Bronze</b> : 하위 80% 이하<br>
+    <span style='color:#555;font-size:14px;'>(장기 미구매 또는 단발성 구매 고객으로, 우선순위 낮은 관리 대상)</span>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    등급 구간은 상대적 위치를 기준으로 하며,  
-    마케팅 타겟팅과 전환 전략 설계에 활용됩니다.
-    """)
+
+
 
 
 
@@ -625,10 +651,12 @@ with tab3:
     # 3. KPI 요약
     st.markdown("### 📌 전체 고객군 요약 KPI")
 
-    # 계산
-    total_users = len(vip_df)
-    diamond_avg = vip_df[vip_df['vip_grade'] == '1.Diamond']['vip_score'].mean()
-    total_avg = vip_df['vip_score'].mean()
+
+
+    # KPI 계산 실행 (캐시 활용)
+    (total_users, diamond_avg, platinum_avg, gold_avg,
+    total_avg, avg_reorder_rate, avg_order_count, avg_product_count) = compute_kpis(vip_df, orders, order_products)
+
 
     # 3-1. 예쁜 KPI 카드
     col1, col2, col3 = st.columns(3)
@@ -666,71 +694,96 @@ with tab3:
         </div>
         """.format(total_avg), unsafe_allow_html=True)
 
+
+    # KPI 두 번째 행
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
+    col4, col5, col6 = st.columns(3)
+
+    with col4:
+        st.markdown("""
+        <div style="background-color:#fff3e0;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">🔄</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">평균 재구매율</div>
+            <div style="font-size:20px;font-weight:bold;color:#ef6c00;margin-top:4px;">
+                {:.1f}%
+            </div>
+        </div>
+        """.format(avg_reorder_rate), unsafe_allow_html=True)
+
+    with col5:
+        st.markdown("""
+        <div style="background-color:#f0f0f0;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">🛒</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">평균 주문 수</div>
+            <div style="font-size:20px;font-weight:bold;color:#555;margin-top:4px;">
+                {:.1f}회
+            </div>
+        </div>
+        """.format(avg_order_count), unsafe_allow_html=True)
+
+    with col6:
+        st.markdown("""
+        <div style="background-color:#e0f7fa;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">📦</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">평균 구매 상품 수</div>
+            <div style="font-size:20px;font-weight:bold;color:#00796b;margin-top:4px;">
+                {:.1f}개
+            </div>
+        </div>
+        """.format(avg_product_count), unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="
+        background-color:#f9fbfd;
+        padding:20px 30px;
+        border-radius:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        text-align:center;
+        margin-top:25px;
+        font-size:16px;
+        color:#333;
+        line-height:1.6;
+        font-family:'Apple SD Gothic Neo', sans-serif;
+    ">
+        현재 전체 고객 <b style="color:#1565c0;">{:,}명</b>의 평균 재구매율은
+        <b style="color:#ef6c00;">{:.1f}%</b>로, 높은 재구매 성향을 보이고 있습니다.<br>
+        1등급 고객 평균 점수는 <b style="color:#2e7d32;">{:.1f}</b>로
+        전체 평균 <b style="color:#555;">{:.1f}</b> 대비 현저히 높은 수준을 기록했습니다.
+    </div>
+    """.format(total_users, avg_reorder_rate, diamond_avg, total_avg), unsafe_allow_html=True)
+
+
+
     # 3-2. 등급별 평균 점수 막대그래프
     # 칸 공백을 주는 용도로는 st.markdown("")(빈 줄)도 쓸 수 있지만,
     # 더 명확하게 여백을 주고 싶다면 st.write("") 또는 st.markdown("&nbsp;", unsafe_allow_html=True)도 사용합니다.
     # 시각적으로 더 큰 여백이 필요하면 아래처럼 스타일을 줄 수도 있습니다.
-    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
     st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
-    st.markdown("### 📊 등급별 평균 VIP 점수")
-
-    grade_order = ['1.Diamond', '2.Platinum', '3.Gold', '4.Silver', '5.Bronze']
-    grade_labels = {
-        '1.Diamond': '💎 Diamond',
-        '2.Platinum': '🥈 Platinum',
-        '3.Gold': '🥉 Gold',
-        '4.Silver': '🔘 Silver',
-        '5.Bronze': '⚪ Bronze'
-    }
-    grade_colors = ['#0B6E4F', '#3587A4', '#FFB400', '#C0C0C0', '#CD7F32']
-
-    # 평균 점수 계산
-    grade_avg = (
-        vip_df.groupby('vip_grade')['vip_score']
-        .mean()
-        .reindex(grade_order)
-        .reset_index()
-    )
-    grade_avg['vip_grade'] = grade_avg['vip_grade'].map(grade_labels)
-
-    # Plotly bar chart
-    fig = px.bar(
-        grade_avg,
-        x='vip_grade',
-        y='vip_score',
-        text='vip_score',
-        color='vip_grade',
-        color_discrete_sequence=grade_colors,
-        title='등급별 평균 VIP 점수'
-    )
-    fig.update_traces(
-        texttemplate='%{text:.1f}',
-        textposition='auto',
-        textfont_size=18  # 폰트 크기 키움
-    )
-    fig.update_layout(
-        xaxis_title="VIP 등급",
-        yaxis_title="평균 점수",
-        showlegend=False,
-        plot_bgcolor="#fafafa",
-        font=dict(size=16),  # 전체 폰트 크기 키움
-        xaxis=dict(title_font=dict(size=18), tickfont=dict(size=16)),
-        yaxis=dict(title_font=dict(size=18), tickfont=dict(size=16)),
-        title_font_size=20
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("## 💎 등급별 고객 분석")
+    st.markdown("""
+    <p style='font-size:14px; color:#555; text-align:left; margin-top:10px; margin-bottom:30px;'>
+    VIP 고객군을 등급별로 분류하고, 고객 규모와 구매 활동 특성을 비교하여<br>
+    각 등급의 핵심 행동 지표를 한눈에 파악할 수 있습니다.
+    </p>
+    """, unsafe_allow_html=True)
 
 
-    # 📊 3-3 ~ 3-4: 등급별 요약 테이블 + 레이더 차트 병렬 배치
-    col1, col2 = st.columns(2)
-    # Streamlit의 st.columns([1.0, 2.0])에서 숫자는 "비율"만 의미하고, 두 컬럼 사이의 "간격"은 자동으로 최소한만 들어갑니다.
-    # 컬럼 사이에 명시적으로 간격(여백)을 주고 싶다면, 빈 컬럼을 추가하세요.
-    # 예시: [1.0, 0.2, 2.0]로 하면 col1 | (여백) | col2 구조가 됩니다.
-
+    # ✅ 등급별 고객 수 및 평균 점수 요약 + 레이더 차트
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
     col1, spacer, col2 = st.columns([1.0, 0.2, 2.0])
 
     with col1:
-        st.markdown("#### 📋 등급별 고객 수 & 평균 점수 요약")
+        st.markdown("##### 📋 등급별 고객 수 & 평균 점수 요약")
+
+        grade_order = ['1.Diamond', '2.Platinum', '3.Gold', '4.Silver', '5.Bronze']
+        grade_labels = {
+            '1.Diamond': '💎 Diamond',
+            '2.Platinum': '🥈 Platinum',
+            '3.Gold': '🥉 Gold',
+            '4.Silver': '🔘 Silver',
+            '5.Bronze': '⚪ Bronze'
+        }
 
         grade_summary = (
             vip_df.groupby('vip_grade')
@@ -753,19 +806,15 @@ with tab3:
         st.dataframe(grade_summary, use_container_width=True)
 
     with col2:
-        st.markdown("#### 🕸️ 등급별 항목별 스코어 비교 (Radar Chart)")
+        st.markdown("##### 🕸️ 등급별 항목별 행동 점수 비교")
+
+        grade_colors = ['#0B6E4F', '#3587A4', '#FFB400', '#C0C0C0', '#CD7F32']
 
         radar_data = vip_df.groupby('vip_grade')[
             ['total_orders_score', 'total_products_score', 'reorder_rate_score', 'recency_score']
         ].mean().reindex(grade_order)
 
-        radar_data['label'] = radar_data.index.map({
-            '1.Diamond': '💎 Diamond',
-            '2.Platinum': '🥈 Platinum',
-            '3.Gold': '🥉 Gold',
-            '4.Silver': '🔘 Silver',
-            '5.Bronze': '⚪ Bronze'
-        })
+        radar_data['label'] = radar_data.index.map(grade_labels)
 
         radar_melted = pd.melt(
             radar_data.reset_index(drop=True),
@@ -775,7 +824,6 @@ with tab3:
         )
 
         radar_melted["항목"] = radar_melted["항목"].map(score_label_map)
-
 
         fig_radar = px.line_polar(
             radar_melted,
@@ -791,18 +839,28 @@ with tab3:
         fig_radar.update_layout(legend_title_text="VIP 등급")
         st.plotly_chart(fig_radar, use_container_width=True)
 
+    st.markdown("""
+    <div style='font-size:14px; color:#555; text-align:left; margin-top:20px; line-height:1.6;'>
+    📝 <b>요약:</b><br>
+    - 왼쪽 표를 통해 각 VIP 등급별 고객 수와 평균 점수를 확인할 수 있으며, Diamond와 Platinum 고객이 상대적으로 높은 점수를 기록했습니다.<br>
+    - 오른쪽 레이더 차트는 총 주문 수, 총 상품 수, 재구매율, 최신성 점수 등 항목별로 등급별 행동 특성을 한눈에 비교할 수 있어, 등급별 구매 패턴 차이를 직관적으로 파악할 수 있습니다.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
 
     # ───────────────────────────────────────────
     # 📊 시각화 - VIP 점수 분포 + 상관관계
     # ───────────────────────────────────────────
-    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
     st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
     st.markdown("### 📊 고객 점수 및 상관관계 시각화")
     col4, col5 = st.columns(2)
 
     with col4:
-        st.markdown("#### 📈 VIP 점수 분포 (등급별)")
-        fig2, ax2 = plt.subplots(figsize=(6, 4))
+        st.markdown("##### 📈 VIP 점수 분포 (등급별)")
+        fig2, ax2 = plt.subplots(figsize=(5, 3.5))
         sns.histplot(
             data=vip_df,
             x='vip_score',
@@ -827,62 +885,154 @@ with tab3:
 
 
     with col5:
-        st.markdown("#### 🔍 항목 간 상관관계")
+        st.markdown("##### 🔍 항목 간 상관관계")
 
         score_cols = [
             'total_orders_score', 'total_products_score',
             'reorder_rate_score', 'recency_score'
         ]
 
-        fig3, ax3 = plt.subplots(figsize=(5, 3))
+        fig3, ax3 = plt.subplots(figsize=(5, 3.5))
         corr = vip_df[score_cols].corr()
 
         # ✅ 한글 라벨로 변경
         corr.index = corr.index.map(score_label_map)
         corr.columns = corr.columns.map(score_label_map)
 
-        sns.heatmap(corr, annot=True, cmap='YlGnBu', fmt=".2f", ax=ax3)
-        ax3.set_title("VIP 항목 간 상관관계")
+        # ✅ 히트맵 스타일 개선
+        sns.heatmap(
+            corr, annot=True, cmap='YlGnBu', fmt=".2f", ax=ax3,
+            annot_kws={"size": 10},  # annotation 글씨 크기 조절
+            cbar_kws={"shrink": 0.75},  # 컬러바 크기 조절
+            linewidths=0.5, linecolor='white'  # 셀 경계선
+        )
+
+        # ✅ 폰트 및 레이아웃 조정
+        ax3.set_title("VIP 항목 간 상관관계", fontsize=13, pad=12)
+        ax3.tick_params(axis='x', labelrotation=0, labelsize=10)
+        ax3.tick_params(axis='y', labelrotation=0, labelsize=10)
+        ax3.set_xticklabels(ax3.get_xticklabels(), ha="center")  # 가운데 정렬
+
+        sns.despine(left=True, bottom=True)  # 테두리 제거
+        fig3.tight_layout()
+
         st.pyplot(fig3)
+
+
+    st.markdown("""
+    <div style='font-size:14px; color:#555; text-align:left; line-height:1.6; margin-top:20px;'>
+
+    📝 <b>요약:</b><br>
+
+    - <b>VIP 점수 분포</b>: VIP Score가 낮은 구간(40 이하)에 Bronze~Silver 고객이 밀집하고, 점수가 높아질수록 고객 수는 급감하지만 <b>핵심 고객층</b>이 집중되는 양상을 보입니다. 전체 고객은 대체로 <b>40–80</b> 점수 구간에 분포해 있으며, 등급별 경계가 명확하게 구분됩니다.<br><br>
+
+    - <b>항목 간 상관관계</b>: 총 주문 수와 총 상품 수는 <b>0.83</b>으로 매우 높은 상관을 보이고, 재구매율 또한 총 주문 수와 <b>0.75</b>의 상관관계를 나타내 <b>구매 빈도가 높을수록 재구매 가능성도 높음</b>을 알 수 있습니다. 최신성은 상대적으로 낮은 상관(<b>0.42–0.66</b>)을 보여 최근 활동은 다른 구매 지표와 독립적으로 나타납니다.<br><br>
+
+    ➡️ 이를 통해 <b>주요 고객의 특징</b>은 높은 구매 활동과 재구매 성향의 결합으로 나타나며, 최신성은 별도의 관리 포인트로 고려할 필요가 있음을 시사합니다.
+    </div>
+    """, unsafe_allow_html=True)
+
+
 
 
     # ───────────────────────────────────────────
     # 📊 시각화 - 항목별 분포 + 1등급 재구매율 비교
     # ───────────────────────────────────────────
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
     st.markdown("### 📦 항목별 점수 및 등급별 비교")
     col6, col7 = st.columns(2)
 
     with col6:
-        st.markdown("#### 🎯 항목별 스코어 분포")
+        st.markdown("##### 🎯 항목별 스코어 분포")
 
         # melt + 한글 라벨 매핑
         df_melted = vip_df[score_cols].melt(var_name="지표", value_name="점수")
         df_melted["지표"] = df_melted["지표"].map(score_label_map)
 
         # boxplot 시각화
-        fig4, ax4 = plt.subplots(figsize=(5, 3))
-        sns.boxplot(data=df_melted, x="지표", y="점수", palette="pastel", ax=ax4)
-        ax4.set_title("항목별 스코어 분포")
+        fig4, ax4 = plt.subplots(figsize=(5.5, 3.5))  # 가로를 조금 더 넓힘
+        sns.boxplot(
+            data=df_melted,
+            x="지표",
+            y="점수",
+            palette="Set2",  # pastel보다 컬러가 선명한 Set2
+            width=0.6,       # 상자 폭 줄여서 간격 강조
+            fliersize=2,     # 이상치 점 크기 축소
+            ax=ax4
+        )
+
+        # 제목 및 축 스타일
+        ax4.set_title("항목별 스코어 분포", fontsize=13, pad=12)
         ax4.set_xlabel("")
+        ax4.set_ylabel("점수", fontsize=11)
+        ax4.set_ylim(0, 100)  # 점수 범위를 0~100으로 고정
+
+        ax4.tick_params(axis='x', labelsize=10)
+        ax4.tick_params(axis='y', labelsize=10)
+
+        # grid 스타일 변경
+        ax4.yaxis.grid(True, linestyle='--', alpha=0.5)
+        ax4.xaxis.grid(False)
+
+        sns.despine()  # 불필요한 테두리 제거
+        fig4.tight_layout()
+
         st.pyplot(fig4)
 
 
+
     with col7:
-        st.markdown("#### 💎 재구매율: 1등급 vs 전체")
-        fig5, ax5 = plt.subplots(figsize=(5, 3))
-        sns.kdeplot(vip_df['reorder_rate'], label='전체 고객', linewidth=2, color='gray')
+        st.markdown("##### 💎 재구매율: 1등급 vs 전체")
+
+        fig5, ax5 = plt.subplots(figsize=(5.5, 3.5))
+
+        # 전체 고객 KDE
+        sns.kdeplot(
+            vip_df['reorder_rate'],
+            label='전체 고객',
+            linewidth=2,
+            color='gray',
+            fill=True,
+            alpha=0.2  # 전체 고객 분포는 살짝 투명한 면적 강조
+        )
+
+        # 1등급 고객 KDE
         sns.kdeplot(
             vip_df[vip_df['vip_grade'] == '1.Diamond']['reorder_rate'],
             label='1등급 고객',
             linewidth=2,
             linestyle="--",
-            color='blue'
+            color='#0077FF'  # 좀 더 선명한 블루
         )
-        ax5.set_title("재구매율 분포 비교")
-        ax5.set_xlabel("재구매율")
-        ax5.legend()
+
+        # 제목 및 축 스타일
+        ax5.set_title("재구매율 분포 비교", fontsize=13, pad=12)
+        ax5.set_xlabel("재구매율", fontsize=11)
+        ax5.set_ylabel("")  # y축 레이블 제거
+        ax5.tick_params(axis='x', labelsize=10)
+        ax5.tick_params(axis='y', left=False, labelleft=False)  # y축 눈금 숨김
+
+        # grid 및 legend 스타일
+        ax5.xaxis.grid(True, linestyle='--', alpha=0.4)
+        ax5.legend(title="", fontsize=10, loc='upper left', frameon=False)
+
+        sns.despine(left=True)  # y축 spine 제거
+        fig5.tight_layout()
+
         st.pyplot(fig5)
 
+
+    st.markdown("""
+    <div style='font-size:14px; color:#555; text-align:left; line-height:1.6; margin-top:20px;'>
+
+    📝 <b>요약:</b><br>
+
+    - <b>항목별 스코어 분포</b>: 총 주문 수, 총 상품 수, 재구매율, 최신성 등 주요 항목 점수 모두 전반적으로 <b>넓은 범위로 분포</b>하고 있으며, 일부 고객은 낮은 점수를 보이는 등 고객 간 행동 차이가 큽니다. 그러나 상위 고객군으로 갈수록 점수 분포가 집중되는 경향을 보여 <b>핵심 고객층의 특징</b>을 확인할 수 있습니다.<br><br>
+
+    - <b>재구매율: 1등급 vs 전체 비교</b>: 전체 고객의 재구매율은 고르게 분포하지만, 1등급 고객은 재구매율이 <b>0.7–0.9</b> 범위에 몰려 매우 높은 재구매 성향을 보입니다. 이는 VIP 핵심 고객이 반복 구매를 통해 높은 가치를 창출하고 있음을 시사합니다.
+    </div>
+    """, unsafe_allow_html=True)
 
 
 
@@ -1132,11 +1282,9 @@ with tab4:
     st.markdown('<div id="product_detail"></div>', unsafe_allow_html=True)
     with st.expander("🛍 평균 상품 수 상세 분석 (고객별 상품 다양성 분포)"):
 
-        FONT_PATH = "/tmp/NanumGothic.ttf"
-        font_prop = fm.FontProperties(fname=FONT_PATH)
-
         # 스타일 설정
         sns.set(style="whitegrid")
+        plt.rcParams["font.family"] = "AppleGothic"  # Mac용 (Windows는 'Malgun Gothic')
         plt.rcParams['axes.unicode_minus'] = False
 
         # 좌우 레이아웃 분할
@@ -1163,13 +1311,13 @@ with tab4:
                 linewidth=2
             )
 
-            # ✅ 제목/축/범례에 직접 폰트 적용
-            ax.set_title("📈 고객별 총 구매 상품 수 분포", fontsize=14, weight='bold', fontproperties=font_prop)
-            ax.set_xlabel("총 구매 상품 수", fontsize=12, fontproperties=font_prop)
-            ax.set_ylabel("밀도", fontsize=12, fontproperties=font_prop)
-            ax.legend(title="고객 등급", title_fontproperties=font_prop, prop=font_prop)
+            # 제목/축/범례 스타일
+            ax.set_title("📈 고객별 총 구매 상품 수 분포", fontsize=14, weight='bold')
+            ax.set_xlabel("총 구매 상품 수", fontsize=12)
+            ax.set_ylabel("밀도", fontsize=12)
+            ax.legend(title="고객 등급", title_fontsize=12, fontsize=11)
             ax.grid(True, linestyle='--', alpha=0.5)
-        
+
             st.pyplot(fig)
 
         with col2:
@@ -1198,6 +1346,10 @@ with tab4:
         <a href="#top_kpi" style='font-size:13px; color:#1565c0;'>🔝 돌아가기</a>
     </div>
     """, unsafe_allow_html=True)
+
+
+
+
 
 
 
