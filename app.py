@@ -247,9 +247,11 @@ st.markdown("""
 <a href='https://www.kaggle.com/datasets/yasserh/instacart-online-grocery-basket-analysis-dataset' target='_blank' style='color:#007ACC; text-decoration:underline;'>
 InstaCart Open Dataset (Kaggle)
 </a><br>
-🛠️ <b>대시보드 제작</b>: ICB 2기 Basic 1팀 · 🗓️ 2025년 07월 작성<br><br>
+🛠️ <b>대시보드 제작</b>: ICB 2기 Basic 1팀 · 🗓️ 2025년 07월 작성<br>
 ✅ 본 데이터는 1등급, 2등급, 3등급 고객 각 1,000명씩의 요약 데이터로 구성되어 있습니다.
 </p>
+
+<hr style='margin-top:15px; margin-bottom:15px;'>
 """, unsafe_allow_html=True)
 
 
