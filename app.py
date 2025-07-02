@@ -1097,6 +1097,10 @@ with tab4:
 
     st.markdown('<div id="top_kpi"></div>', unsafe_allow_html=True)
     st.markdown("### 💎 1등급 vs 🥈 2~3등급 핵심 지표 비교")
+    # 비교 목적 설명 추가
+    st.markdown(
+    "💡 1등급과 2~3등급 고객 그룹을 비교하여 행동 차이를 파악하고, 핵심 인사이트를 도출합니다.",
+    unsafe_allow_html=True
     st.markdown("<div style='text-align:right; font-size:14px; font-weight:600;'>(계산 : 2~3등급 - 1등급)</div>", unsafe_allow_html=True)
 
     for label, (v1, v2) in metrics.items():
