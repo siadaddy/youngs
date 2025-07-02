@@ -220,7 +220,36 @@ image_dict  = data['image_dict']
 # 📊 대시보드 제목
 # ────────────────────────────────────────────────────────
 
-st.title("InstaCart 분석 대시보드")
+# 대시보드 메인 타이틀
+st.markdown("""
+<div style='
+    background-color: #f0f4f8;
+    padding: 25px 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+'>
+    <h1 style='font-size: 38px; color: #1f4e79; margin-bottom: 15px;'>
+        🛒 InstaCart 고객 행동 분석 대시보드
+    </h1>
+    <p style='font-size: 16px; color: #333; line-height:1.6; max-width:800px; margin:auto;'>
+        InstaCart 주문 데이터를 기반으로 고객의 <b style="color:#007ACC;">구매 행동 패턴</b>과 
+        <b style="color:#007ACC;">VIP 등급</b>을 심층 분석하여,<br>
+        맞춤형 마케팅 전략 수립을 위한 <b style="color:#007ACC;">실질적 인사이트</b>를 제공합니다.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+st.markdown("""
+<hr style='margin-top:40px; margin-bottom:15px;'>
+
+<p style='font-size:13px; color:#555; text-align:left; line-height:1.6;'>
+📦 <b>데이터 출처</b>: 
+<a href='https://www.kaggle.com/datasets/yasserh/instacart-online-grocery-basket-analysis-dataset' target='_blank' style='color:#007ACC; text-decoration:underline;'>
+InstaCart Open Dataset (Kaggle)
+</a><br>
+🛠️ <b>대시보드 제작</b>: 데이터 분석가 시아아빠 · 🗓️ 2025년 07월 작성
+</p>
+""", unsafe_allow_html=True)
 
 
 # ────────────────────────────────────────────────────────
