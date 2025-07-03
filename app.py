@@ -246,13 +246,15 @@ st.markdown("""
 📦 <b>데이터 출처</b>: 
 <a href='https://www.kaggle.com/datasets/yasserh/instacart-online-grocery-basket-analysis-dataset' target='_blank' style='color:#007ACC; text-decoration:underline;'>
 InstaCart Open Dataset (Kaggle)
-</a><br>
-🛠️ <b>대시보드 제작</b>: ICB 2기 Basic 1팀 + AI · 🗓️ 2025년 07월 작성<br>
+</a><br><br>
+🎯 <b>데이터 분석 목적</b>: Python을 활용한 교육 과정에서 고객 그룹별 구매 행동을 비교 분석해 인사이트 도출을 목표로 했습니다.<br><br>
+🛠️ <b>대시보드 제작</b>: ICB 2기 Basic 1팀 with Chat GPT · 🗓️ 2025년 07월 작성<br>
 ✅ 본 데이터는 1등급, 2등급, 3등급 고객 각 1,000명씩의 요약 데이터로 구성되어 있습니다.
 </p>
 
 <hr style='margin-top:15px; margin-bottom:15px;'>
 """, unsafe_allow_html=True)
+
 
 
 # ────────────────────────────────────────────────────────
