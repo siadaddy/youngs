@@ -337,7 +337,7 @@ with tab1:
             short_name = product_name if len(product_name) <= 25 else product_name[:22] + "..."
             with top_cols[i - 1]:
                 st.markdown(f"""
-                <div style="background-color:#f9f9f9; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
+                <div style="background-color:#f6f0fb; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
                     {"<img src='" + image_url + "' style='width:80px; height:auto; margin-bottom:8px;' />" if image_url else "<div style='font-size:40px;'>🖼️</div>"}
                     <div style="font-size:13px; font-weight:600; margin-bottom:4px;">{short_name}</div>
                     <div style="font-size:12px; color:#666;">구매 횟수: <b style='color:#ef6c00;'>{count}회</b></div>
