@@ -325,7 +325,7 @@ with tab1:
     st.markdown("### 📊 고객정보")
     st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
 
-    # ✅ Top 5 바차트 & 파이차트
+    # ✅ Top 5 상품 구매 & 부서
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"##### 🛒 고객 {selected_user}님의 Top 5 구매 상품 카드")
@@ -359,7 +359,7 @@ with tab1:
             percent = (count / total_count) * 100
             with cat_cols[i - 1]:
                 st.markdown(f"""
-                <div style="background-color:#f9f9f9; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
+                <div style="background-color:#f0f7ff; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
                     <div style="font-size:14px; font-weight:600; margin-bottom:4px;">📂 {dept}</div>
                     <div style="font-size:12px; color:#666;">구매 비중: <b style='color:#7e57c2;'>{percent:.1f}%</b></div>
                 </div>
