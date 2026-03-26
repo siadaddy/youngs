@@ -6,85 +6,96 @@
   <title>🤖 시아아빠님의 AI 크리에이터</title>
   <style>
     :root {
-      --bg: #0f1117; --surface: #1a1d27; --card: #21253a; --border: #2e3350;
-      --accent: #5b8dee; --accent2: #a78bfa; --green: #34d399;
-      --text: #e2e8f0; --muted: #8892a4;
+      --bg:#0f1117; --surface:#1a1d27; --card:#21253a; --border:#2e3350;
+      --accent:#5b8dee; --accent2:#a78bfa; --green:#34d399;
+      --text:#e2e8f0; --muted:#8892a4;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif; line-height: 1.7; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;line-height:1.7;}
 
     /* 히어로 */
-    .hero { text-align: center; padding: 64px 20px 48px; background: linear-gradient(135deg,#1a1d27,#0f1117); border-bottom: 1px solid var(--border); }
-    .hero-badge { display:inline-block; background:rgba(91,141,238,.15); border:1px solid rgba(91,141,238,.4); color:var(--accent); font-size:.78rem; font-weight:700; letter-spacing:.08em; padding:5px 14px; border-radius:99px; margin-bottom:20px; }
-    .hero h1 { font-size:clamp(1.8rem,5vw,3rem); font-weight:800; letter-spacing:-.02em; margin-bottom:12px; }
-    .hero h1 span { color:var(--accent); }
-    .hero p { color:var(--muted); font-size:1rem; max-width:500px; margin:0 auto 28px; }
-    .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:10px; font-size:.9rem; font-weight:600; text-decoration:none; transition:all .2s; }
-    .btn-primary { background:var(--accent); color:#fff; }
-    .btn-primary:hover { background:#4a7de0; transform:translateY(-2px); }
+    .hero{text-align:center;padding:56px 20px 44px;background:linear-gradient(135deg,#1a1d27,#0f1117);border-bottom:1px solid var(--border);}
+    .hero-badge{display:inline-block;background:rgba(91,141,238,.15);border:1px solid rgba(91,141,238,.4);color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.08em;padding:5px 14px;border-radius:99px;margin-bottom:18px;}
+    .hero h1{font-size:clamp(1.7rem,5vw,2.8rem);font-weight:800;letter-spacing:-.02em;margin-bottom:10px;}
+    .hero h1 span{color:var(--accent);}
+    .hero p{color:var(--muted);font-size:.95rem;max-width:480px;margin:0 auto 24px;}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:.88rem;font-weight:600;text-decoration:none;transition:all .2s;}
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-primary:hover{background:#4a7de0;transform:translateY(-2px);}
+
+    /* 날짜 네비게이션 */
+    .date-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;position:sticky;top:0;z-index:100;}
+    .date-nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .date-nav-label{font-size:.8rem;font-weight:700;color:var(--muted);white-space:nowrap;}
+    .date-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;flex:1;}
+    .date-list::-webkit-scrollbar{height:3px;}
+    .date-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+    .date-chip{flex-shrink:0;padding:6px 14px;border-radius:99px;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:.2s;white-space:nowrap;}
+    .date-chip:hover{border-color:var(--accent);color:var(--accent);}
+    .date-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .date-chip.today-chip::after{content:'  오늘';font-size:.7rem;opacity:.8;}
 
     /* 레이아웃 */
-    .container { max-width:960px; margin:0 auto; padding:0 20px; }
-    section { padding:56px 0; }
-    section + section { border-top: 1px solid var(--border); }
-    h2 { font-size:1.4rem; font-weight:700; margin-bottom:6px; }
-    .sub { color:var(--muted); font-size:.9rem; margin-bottom:32px; }
+    .container{max-width:960px;margin:0 auto;padding:0 20px;}
+    section{padding:52px 0;}
+    section+section{border-top:1px solid var(--border);}
+    h2{font-size:1.35rem;font-weight:700;margin-bottom:6px;}
+    .sub{color:var(--muted);font-size:.88rem;margin-bottom:28px;}
 
     /* 날짜 배지 */
-    .date-badge { display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 16px; font-size:.85rem; font-weight:700; margin-bottom:32px; }
-    .date-dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .date-badge{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:7px 14px;font-size:.84rem;font-weight:700;margin-bottom:28px;}
+    .date-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
     /* 카드뉴스 */
-    .card-news { display:flex; flex-direction:column; gap:48px; }
-    .news-card { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; transition:border-color .2s; }
-    .news-card:hover { border-color:var(--accent); }
-    .card-image { width:100%; max-height:440px; object-fit:cover; display:block; }
-    .card-image-placeholder { width:100%; height:180px; background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:2rem; }
-    .card-body { padding:28px 32px; }
-    .card-num { font-size:.72rem; font-weight:700; color:var(--accent); letter-spacing:.12em; margin-bottom:8px; }
-    .card-headline { font-size:1.2rem; font-weight:800; margin-bottom:20px; line-height:1.4; }
-    .card-caption { font-size:.92rem; line-height:1.85; white-space:pre-wrap; word-break:break-word; }
-    .card-caption .lbl-fact  { color:#34d399; font-weight:700; }
-    .card-caption .lbl-anal  { color:#60a5fa; font-weight:700; }
-    .card-caption .lbl-forec { color:#c4b5fd; font-weight:700; }
+    .card-news{display:flex;flex-direction:column;gap:44px;}
+    .news-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:border-color .2s;}
+    .news-card:hover{border-color:var(--accent);}
+    .card-image{width:100%;max-height:440px;object-fit:cover;display:block;}
+    .card-image-placeholder{width:100%;height:160px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:2rem;}
+    .card-body{padding:26px 30px;}
+    .card-num{font-size:.72rem;font-weight:700;color:var(--accent);letter-spacing:.12em;margin-bottom:8px;}
+    .card-headline{font-size:1.15rem;font-weight:800;margin-bottom:18px;line-height:1.4;}
+    .card-caption{font-size:.91rem;line-height:1.85;white-space:pre-wrap;word-break:break-word;}
+    .lbl-fact{color:#34d399;font-weight:700;}
+    .lbl-anal{color:#60a5fa;font-weight:700;}
+    .lbl-forec{color:#c4b5fd;font-weight:700;}
 
     /* 블로그 아티클 */
-    .article-box { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:36px 40px; }
-    .article-body { font-size:.95rem; line-height:1.9; }
-    .article-body h1 { font-size:1.4rem; font-weight:800; margin:28px 0 12px; color:var(--text); }
-    .article-body h2 { font-size:1.15rem; font-weight:700; margin:24px 0 10px; color:var(--accent); border-left:3px solid var(--accent); padding-left:12px; }
-    .article-body h3 { font-size:1rem; font-weight:700; margin:18px 0 8px; color:var(--accent2); }
-    .article-body p { margin-bottom:12px; }
-    .article-body ul { margin:8px 0 12px 20px; }
-    .article-body li { margin-bottom:4px; }
+    .article-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px 36px;}
+    .article-body{font-size:.93rem;line-height:1.9;}
+    .article-body h1{font-size:1.3rem;font-weight:800;margin:24px 0 10px;}
+    .article-body h2{font-size:1.1rem;font-weight:700;margin:20px 0 8px;color:var(--accent);border-left:3px solid var(--accent);padding-left:10px;}
+    .article-body h3{font-size:1rem;font-weight:700;margin:16px 0 6px;color:var(--accent2);}
+    .article-body p{margin-bottom:10px;}
+    .article-body li{margin:4px 0 4px 18px;}
 
-    /* 로딩 */
-    .loading { text-align:center; padding:60px 20px; color:var(--muted); }
-    .spinner { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    /* 로딩 / 에러 */
+    .loading{text-align:center;padding:56px 20px;color:var(--muted);}
+    .spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
 
     /* 파이프라인 */
-    .pipeline { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:0; }
-    .pipe-step { text-align:center; padding:14px 16px; min-width:100px; }
-    .pipe-icon { font-size:1.7rem; margin-bottom:6px; }
-    .pipe-label { font-size:.76rem; font-weight:700; }
-    .pipe-arrow { color:var(--border); font-size:1.1rem; padding:0 4px; margin-bottom:28px; }
+    .pipeline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;}
+    .pipe-step{text-align:center;padding:14px 12px;min-width:100px;}
+    .pipe-icon{font-size:1.7rem;margin-bottom:6px;}
+    .pipe-label{font-size:.76rem;font-weight:700;}
+    .pipe-arrow{color:var(--border);font-size:1.1rem;padding:0 2px;margin-bottom:26px;}
 
-    /* 기술 스택 */
-    .stack-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; }
-    .stack-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; align-items:center; gap:12px; }
-    .stack-icon { font-size:1.4rem; flex-shrink:0; }
-    .stack-name { font-size:.84rem; font-weight:700; margin-bottom:2px; }
-    .stack-free { font-size:.68rem; color:var(--green); font-weight:700; }
+    /* 스택 */
+    .stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;}
+    .stack-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;}
+    .stack-icon{font-size:1.3rem;flex-shrink:0;}
+    .stack-name{font-size:.82rem;font-weight:700;}
+    .stack-free{font-size:.67rem;color:var(--green);font-weight:700;}
 
-    footer { text-align:center; padding:36px 20px; border-top:1px solid var(--border); color:var(--muted); font-size:.82rem; }
-    footer a { color:var(--accent); text-decoration:none; }
+    footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;}
+    footer a{color:var(--accent);text-decoration:none;}
 
-    @media(max-width:600px) {
-      .pipe-arrow { display:none; }
-      .article-box { padding:24px 20px; }
-      .card-body { padding:20px; }
+    @media(max-width:600px){
+      .pipe-arrow{display:none;}
+      .article-box{padding:22px 18px;}
+      .card-body{padding:18px;}
     }
   </style>
 </head>
@@ -98,16 +109,23 @@
   <a class="btn btn-primary" href="https://github.com/siadaddy/youngs" target="_blank">⭐ GitHub</a>
 </div>
 
+<!-- 날짜 네비게이션 -->
+<div class="date-nav">
+  <div class="date-nav-inner">
+    <span class="date-nav-label">📅 날짜 선택</span>
+    <div class="date-list" id="date-list">
+      <span class="date-chip active" id="loading-chip">불러오는 중...</span>
+    </div>
+  </div>
+</div>
+
 <!-- 오늘의 카드뉴스 -->
 <section>
   <div class="container">
-    <h2>📰 오늘의 카드뉴스</h2>
+    <h2>📰 카드뉴스</h2>
     <div id="today-sub" class="sub">불러오는 중...</div>
     <div id="today-content">
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>오늘의 콘텐츠 불러오는 중...</p>
-      </div>
+      <div class="loading"><div class="spinner"></div><p>콘텐츠 불러오는 중...</p></div>
     </div>
   </div>
 </section>
@@ -165,6 +183,9 @@
 </footer>
 
 <script>
+  const today = new Date().toISOString().slice(0, 10);
+  let currentDate = today;
+
   function highlight(text) {
     return text
       .replace(/\[사실\]/g, '<span class="lbl-fact">[사실]</span>')
@@ -174,70 +195,138 @@
 
   function mdToHtml(md) {
     const lines = md.split('\n');
-    let html = '';
+    let html = '', inList = false;
     for (const line of lines) {
-      if      (line.startsWith('# '))  html += `<h1>${line.slice(2)}</h1>`;
-      else if (line.startsWith('## ')) html += `<h2>${line.slice(3)}</h2>`;
-      else if (line.startsWith('### '))html += `<h3>${line.slice(4)}</h3>`;
-      else if (line.startsWith('- '))  html += `<li>${line.slice(2)}</li>`;
-      else if (line.trim())            html += `<p>${line}</p>`;
-      else                             html += '<br>';
+      const l = line.trim();
+      if      (l.startsWith('# '))  { if(inList){html+='</ul>';inList=false;} html += `<h1>${l.slice(2)}</h1>`; }
+      else if (l.startsWith('## ')) { if(inList){html+='</ul>';inList=false;} html += `<h2>${l.slice(3)}</h2>`; }
+      else if (l.startsWith('### ')){ if(inList){html+='</ul>';inList=false;} html += `<h3>${l.slice(4)}</h3>`; }
+      else if (l.startsWith('- '))  { if(!inList){html+='<ul>';inList=true;} html += `<li>${l.slice(2)}</li>`; }
+      else if (l) { if(inList){html+='</ul>';inList=false;} html += `<p>${l}</p>`; }
     }
+    if (inList) html += '</ul>';
     return html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
 
-  async function loadContent() {
-    try {
-      const res  = await fetch('content.json?t=' + Date.now());
-      if (!res.ok) throw new Error('no content');
-      const data = await res.json();
+  function formatDate(d) {
+    const [y, m, day] = d.split('-');
+    return `${m}/${day}`;
+  }
 
-      // 날짜
-      document.getElementById('today-sub').innerHTML =
-        `<span class="date-badge"><span class="date-dot"></span>${data.date} 자동 생성</span>`;
+  function renderContent(data) {
+    const isToday = data.date === today;
 
-      // 카드뉴스
-      const wrap = document.createElement('div');
-      wrap.className = 'card-news';
+    // 날짜 배지
+    document.getElementById('today-sub').innerHTML =
+      `<span class="date-badge">` +
+      (isToday ? `<span class="date-dot"></span>` : `<span style="width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block"></span>`) +
+      `${data.date} ${isToday ? '오늘 자동 생성' : '아카이브'}</span>`;
 
-      (data.captions || []).forEach((item, i) => {
-        const card = document.createElement('div');
-        card.className = 'news-card';
-        const imgHtml = item.image_url
-          ? `<img class="card-image" src="${item.image_url}" alt="${item.headline}" loading="lazy">`
-          : `<div class="card-image-placeholder">🖼</div>`;
-        card.innerHTML = `
-          ${imgHtml}
-          <div class="card-body">
-            <div class="card-num">CARD ${String(i+1).padStart(2,'0')}</div>
-            <div class="card-headline">${item.headline}</div>
-            <div class="card-caption">${highlight(item.caption)}</div>
-          </div>`;
-        wrap.appendChild(card);
-      });
-
-      document.getElementById('today-content').replaceWith(wrap);
-      wrap.id = 'today-content';
-
-      // 블로그 아티클
-      if (data.article) {
-        document.getElementById('article-section').style.display = '';
-        document.getElementById('article-sub').textContent = data.blog_title || '';
-        document.getElementById('article-body').innerHTML = mdToHtml(data.article);
-      }
-
-    } catch {
-      document.getElementById('today-content').innerHTML =
-        `<div class="loading">
-          <p style="font-size:1.5rem">⏳</p>
-          <p style="margin-top:12px">오늘 콘텐츠가 아직 준비 중입니다.<br>
-          <span style="font-size:.85rem;color:var(--muted)">매일 07:30 이후 자동 업데이트됩니다.</span></p>
+    // 카드뉴스
+    const wrap = document.createElement('div');
+    wrap.className = 'card-news';
+    (data.captions || []).forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'news-card';
+      const imgHtml = item.image_url
+        ? `<img class="card-image" src="${item.image_url}" alt="${item.headline}" loading="lazy">`
+        : `<div class="card-image-placeholder">🖼</div>`;
+      card.innerHTML = `
+        ${imgHtml}
+        <div class="card-body">
+          <div class="card-num">CARD ${String(i+1).padStart(2,'0')}</div>
+          <div class="card-headline">${item.headline}</div>
+          <div class="card-caption">${highlight(item.caption)}</div>
         </div>`;
-      document.getElementById('today-sub').textContent = '아직 업데이트 전입니다.';
+      wrap.appendChild(card);
+    });
+    const old = document.getElementById('today-content');
+    wrap.id = 'today-content';
+    old.replaceWith(wrap);
+
+    // 블로그 아티클
+    if (data.article) {
+      document.getElementById('article-section').style.display = '';
+      document.getElementById('article-sub').textContent = data.blog_title || '';
+      document.getElementById('article-body').innerHTML = mdToHtml(data.article);
+    } else {
+      document.getElementById('article-section').style.display = 'none';
     }
   }
 
-  loadContent();
+  function showError() {
+    document.getElementById('today-content').innerHTML =
+      `<div class="loading">
+        <p style="font-size:1.4rem">⏳</p>
+        <p style="margin-top:10px">콘텐츠가 아직 준비 중입니다.<br>
+        <span style="font-size:.83rem;color:var(--muted)">매일 07:30 이후 자동 업데이트됩니다.</span></p>
+      </div>`;
+    document.getElementById('today-sub').textContent = '아직 업데이트 전입니다.';
+    document.getElementById('article-section').style.display = 'none';
+  }
+
+  async function loadDate(date) {
+    currentDate = date;
+
+    // 활성 칩 표시
+    document.querySelectorAll('.date-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.date === date);
+    });
+
+    // 로딩 표시
+    document.getElementById('today-content').innerHTML =
+      `<div class="loading"><div class="spinner"></div><p>불러오는 중...</p></div>`;
+    document.getElementById('article-section').style.display = 'none';
+
+    // 오늘이면 content.json, 아니면 content/{date}.json
+    const url = date === today
+      ? `content.json?t=${Date.now()}`
+      : `content/${date}.json?t=${Date.now()}`;
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      renderContent(data);
+    } catch {
+      showError();
+    }
+  }
+
+  async function init() {
+    try {
+      // 날짜 목록 로드
+      const res = await fetch(`archive.json?t=${Date.now()}`);
+      let dates = [];
+      if (res.ok) {
+        const arc = await res.json();
+        dates = arc.dates || [];
+      }
+      // 오늘이 목록에 없으면 맨 앞에 추가
+      if (!dates.includes(today)) dates.unshift(today);
+
+      // 날짜 칩 렌더링
+      const list = document.getElementById('date-list');
+      list.innerHTML = '';
+      dates.forEach(d => {
+        const chip = document.createElement('span');
+        chip.className = 'date-chip' + (d === today ? ' today-chip' : '') + (d === currentDate ? ' active' : '');
+        chip.textContent = formatDate(d);
+        chip.dataset.date = d;
+        chip.onclick = () => loadDate(d);
+        list.appendChild(chip);
+      });
+
+    } catch {
+      document.getElementById('date-list').innerHTML =
+        `<span class="date-chip active" data-date="${today}">${formatDate(today)}</span>`;
+    }
+
+    // 오늘 콘텐츠 로드
+    loadDate(today);
+  }
+
+  init();
 </script>
 </body>
 </html>
