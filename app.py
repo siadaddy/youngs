@@ -1,0 +1,1367 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import plotly.io as pio
+import duckdb
+import urllib.request
+import os
+import matplotlib.font_manager as fm
+
+
+# ✅ 페이지 설정
+st.set_page_config(page_title="InstaCart VIP 분석", layout="wide")
+
+# ✅ 폰트 설정
+FONT_URL = "https://raw.githubusercontent.com/siadaddy/youngs/main/NanumGothic.ttf"
+FONT_PATH = "/tmp/NanumGothic.ttf"
+
+# 다운로드 및 등록
+if not os.path.exists(FONT_PATH):
+    urllib.request.urlretrieve(FONT_URL, FONT_PATH)
+
+fm.fontManager.addfont(FONT_PATH)
+font_prop = fm.FontProperties(fname=FONT_PATH)
+font_name = font_prop.get_name()
+
+# ✅ matplotlib + seaborn 기본 설정
+plt.rcParams['font.family'] = font_name
+plt.rcParams['axes.unicode_minus'] = False
+sns.set(font=font_name)
+
+# ✅ plotly 기본 템플릿 설정
+pio.templates["custom_font"] = pio.templates["plotly_white"]
+pio.templates["custom_font"]["layout"]["font"] = {"family": font_name}
+pio.templates.default = "custom_font"
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 캐시 함수
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+# ✅ 캐시 기반 데이터 로딩 함수
+@st.cache_data(show_spinner="📦 데이터 로딩 중... 조금만 기다려주세요!")
+def load_data():
+    DB_PATH = "instacart_min_v2_1000.duckdb"  # ← 변경된 경량 버전 경로
+    con = duckdb.connect(DB_PATH)
+
+    queries = {
+        "vip_df":        "SELECT * FROM customscore_min",
+        "orders":        "SELECT * FROM orders_min",
+        "order_products":"SELECT * FROM order_products_min",
+        "products":      "SELECT * FROM products_min",
+        "rec_df":        "SELECT * FROM user_recommendations_min",
+        "departments":   "SELECT * FROM departments_min",
+        "image_map":     "SELECT product_name, image_url FROM product_image_min"
+    }
+
+    result = {}
+    for key, query in queries.items():
+        result[key] = con.execute(query).df()
+
+    con.close()
+
+    # ✅ 이미지 딕셔너리 구성
+    image_dict = dict(zip(result['image_map']['product_name'], result['image_map']['image_url']))
+    result['image_dict'] = image_dict
+    del result['image_map']
+
+    return result
+
+
+
+# ✅ 고객 주문 전처리 함수
+@st.cache_data(show_spinner=False)
+def preprocess_orders(order_products, orders, products, user_ids):
+    order_user = orders[['order_id', 'user_id']]
+    merged = order_products.merge(order_user, on='order_id', how='left')
+    filtered = merged[merged['user_id'].isin(user_ids)]
+    result = filtered.merge(products[['product_id', 'product_name']], on='product_id', how='left')
+    return result
+
+# ✅ 공통 인기 상품 함수
+@st.cache_data(show_spinner=False)
+def compute_top5_common_products(diamond_orders, pg_orders, n_diamond, n_pg):
+    diamond_counts = diamond_orders.groupby('product_name').size().reset_index(name='diamond_count')
+    pg_counts = pg_orders.groupby('product_name').size().reset_index(name='pg_count')
+    common_counts = pd.merge(diamond_counts, pg_counts, on='product_name', how='inner')
+
+    common_counts['total_count'] = common_counts['diamond_count'] + common_counts['pg_count']
+    common_counts['diamond_avg'] = common_counts['diamond_count'] / n_diamond
+    common_counts['pg_avg'] = common_counts['pg_count'] / n_pg
+
+    top5_common = common_counts.sort_values(by='total_count', ascending=False).head(5)
+
+    plot_df = pd.melt(
+        top5_common[['product_name', 'diamond_avg', 'pg_avg']],
+        id_vars='product_name',
+        var_name='grade',
+        value_name='avg_purchase_per_user'
+    )
+    plot_df['grade'] = plot_df['grade'].map({'diamond_avg': '1.Diamond', 'pg_avg': '2~3등급'})
+    return plot_df
+
+# ✅ 재구매율 함수
+@st.cache_data(show_spinner=False)
+def compute_reorder_ratio(diamond_orders, pg_orders):
+    # 1등급 재구매율
+    diamond_reorder = (
+        diamond_orders['reordered']
+        .value_counts(normalize=True)
+        .to_frame(name='ratio')
+        .reset_index()
+    )
+    diamond_reorder.columns = ['reordered_status', 'ratio']
+    diamond_reorder['grade'] = '1.Diamond'
+
+    # 2~3등급 재구매율
+    pg_reorder = (
+        pg_orders['reordered']
+        .value_counts(normalize=True)
+        .to_frame(name='ratio')
+        .reset_index()
+    )
+    pg_reorder.columns = ['reordered_status', 'ratio']
+    pg_reorder['grade'] = '2~3등급'
+
+    # 병합
+    reorder_df = pd.concat([diamond_reorder, pg_reorder], ignore_index=True)
+    reorder_df['reordered_status'] = reorder_df['reordered_status'].map({1: '재구매', 0: '최초구매'})
+    
+    return reorder_df
+
+# ✅ 재구매 Top 5 상품 함수
+@st.cache_data(show_spinner=False)
+def compute_top5_reorder_products(diamond_orders, pg_orders):
+    # 1등급 재구매 Top 5
+    d_top5 = (
+        diamond_orders[diamond_orders['reordered'] == 1]
+        .groupby('product_name').size()
+        .sort_values(ascending=False)
+        .head(5)
+        .reset_index(name='diamond_reorder_count')
+    )
+
+    # 2~3등급 재구매 Top 5
+    pg_top5 = (
+        pg_orders[pg_orders['reordered'] == 1]
+        .groupby('product_name').size()
+        .sort_values(ascending=False)
+        .head(5)
+        .reset_index(name='pg_reorder_count')
+    )
+
+    # 병합
+    reorder_top5 = pd.merge(d_top5, pg_top5, on='product_name', how='outer').fillna(0)
+
+    # melt
+    reorder_melted = pd.melt(
+        reorder_top5,
+        id_vars='product_name',
+        var_name='grade',
+        value_name='reorder_count'
+    )
+    reorder_melted['grade'] = reorder_melted['grade'].map({
+        'diamond_reorder_count': '1.Diamond',
+        'pg_reorder_count': '2~3등급'
+    })
+
+    return reorder_melted
+
+
+# ✅ KPI 계산 함수
+@st.cache_data(show_spinner="📊 KPI 계산 중...")
+def compute_kpis(vip_df, orders, order_products):
+    # ✅ 전체 고객 수
+    total_users = vip_df['user_id'].nunique()
+
+    # ✅ 1~3등급 평균 점수
+    diamond_avg = vip_df[vip_df['vip_grade'] == '1.Diamond']['vip_score'].mean()
+    platinum_avg = vip_df[vip_df['vip_grade'] == '2.Platinum']['vip_score'].mean()
+    gold_avg = vip_df[vip_df['vip_grade'] == '3.Gold']['vip_score'].mean()
+
+    # ✅ 전체 평균 점수
+    total_avg = vip_df['vip_score'].mean()
+
+    # ✅ 평균 주문 수
+    user_order_counts = orders.groupby('user_id')['order_id'].nunique()
+    avg_order_count = user_order_counts.mean()
+
+    # ✅ 평균 구매 상품 수
+    order_user = orders[['order_id', 'user_id']]
+    merged = order_products.merge(order_user, on='order_id', how='left')
+    user_product_counts = merged.groupby('user_id')['product_id'].count()
+    avg_product_count = user_product_counts.mean()
+
+    # ✅ 평균 재구매율
+    user_reorders = merged.groupby('user_id')['reordered'].mean()
+    avg_reorder_rate = user_reorders.mean() * 100
+
+    return (
+        total_users, diamond_avg, platinum_avg, gold_avg,
+        total_avg, avg_reorder_rate, avg_order_count, avg_product_count
+    )
+
+
+# ✅ 데이터 로딩
+data = load_data()
+
+# ✅ 변수 할당
+vip_df      = data['vip_df']
+orders      = data['orders']
+order_products = data['order_products']
+products    = data['products']
+rec_df      = data['rec_df']
+departments = data['departments']
+image_dict  = data['image_dict']
+
+
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 📊 대시보드 제목
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+# 대시보드 메인 타이틀
+st.markdown("""
+<div style='
+    background-color: #f0f4f8;
+    padding: 25px 20px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+'>
+    <h1 style='font-size: 38px; color: #1f4e79; margin-bottom: 15px;'>
+        🛒 InstaCart 고객 행동 분석 대시보드
+    </h1>
+    <p style='font-size: 16px; color: #333; line-height:1.6; max-width:800px; margin:auto;'>
+        InstaCart 주문 데이터를 기반으로 고객의 <b style="color:#007ACC;">구매 행동 패턴</b>과 
+        <b style="color:#007ACC;">고객 등급</b>을 심층 분석하여,<br>
+        맞춤형 마케팅 전략 수립을 위한 <b style="color:#007ACC;">실질적 인사이트</b>를 제공합니다.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+st.markdown("""
+<hr style='margin-top:40px; margin-bottom:15px;'>
+
+<p style='font-size:13px; color:#555; text-align:left; line-height:1.6;'>
+📦 <b>데이터 출처</b>: 
+<a href='https://www.kaggle.com/datasets/yasserh/instacart-online-grocery-basket-analysis-dataset' target='_blank' style='color:#007ACC; text-decoration:underline;'>
+InstaCart Open Dataset (Kaggle)
+</a><br>
+🎯 <b>데이터 분석 목적</b>: Python을 활용한 교육 과정에서 고객 그룹별 구매 행동을 비교 분석해 인사이트 도출을 목표로 했습니다.<br>
+🛠️ <b>대시보드 제작</b>: ICB 2기 Basic 1팀 with Chat GPT · 🗓️ 2025년 07월 작성<br>
+✅ 본 데이터는 1등급, 2등급, 3등급 고객 각 1,000명씩의 요약 데이터로 구성되어 있습니다.
+</p>
+
+<hr style='margin-top:15px; margin-bottom:15px;'>
+""", unsafe_allow_html=True)
+
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 📊 탭 구성 및 한글 매핑
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+tab1, tab2, tab3, tab4 = st.tabs([
+    "🎁 개인 맞춤 추천 시스템",
+    "🔎 고객 선정 및 등급 소개",
+    "📈 전체 고객 분석",
+    "🧑‍🤝‍🧑 고객 행동 분석(1등급 vs 2~3등급)"
+])
+
+
+# 항목 스코어 → 한글 매핑 (전역)
+score_label_map = {
+    'total_orders_score': '총 주문 수',
+    'total_products_score': '총 상품 수',
+    'reorder_rate_score': '재구매율',
+    'recency_score': '최신성'
+}
+
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 🎯 탭 1: 개인 맞춤 추천 시스템 구현
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+with tab1:
+    st.markdown("## 🎯 개인 맞춤 추천 시스템")
+    st.markdown("""
+    <div style='background-color:#f9f9f9; border-left: 6px solid #3f51b5; padding: 16px 20px; border-radius: 10px; margin-bottom: 20px; font-size:16px; line-height:1.6'>
+        <strong>🧐 추천 시스템 안내</strong><br><br>
+        선택한 <strong style="color:#3f51b5;">2~3등급 고객</strong>의 <strong>구매 이력</strong>을 확인하고,<br>
+        <strong style="color:#2e7d32;">1등급 고객군과의 행동 차이</strong>를 비교해보세요. <br><br>
+        👉 고객의 성향에 맞춘 <strong style="color:#ef6c00;">상품 추천</strong>을 통해 <strong>1등급 전환 전략</strong>을 제시할 수 있습니다!
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 고객 선택
+    user_list = rec_df['user_id'].tolist()
+    selected_user = st.selectbox("👤 고객 선택 (2~3등급)", user_list)
+
+
+    # 주문 정보 필터링
+    user_orders = orders[orders['user_id'] == selected_user]['order_id']
+    user_order_products = order_products[order_products['order_id'].isin(user_orders)]
+
+    # Top 5 구매 상품 집계
+    top_purchased = (
+        user_order_products['product_id']
+        .value_counts()
+        .head(5)
+        .reset_index()
+    )
+    top_purchased.columns = ['product_id', 'count']
+
+    # 상품명 병합
+    top_purchased = top_purchased.merge(products[['product_id', 'product_name']], on='product_id', how='left')
+
+    # 구분선
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 📊 고객정보")
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+
+    # ✅ Top 5 상품 구매 & 부서
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"##### 🛒 고객 {selected_user}님의 Top 5 구매 상품 카드")
+        top_cols = st.columns(1) if len(top_purchased) <= 1 else st.columns(len(top_purchased))
+        for i, row in enumerate(top_purchased.itertuples(), 1):
+            product_name = row.product_name
+            count = row.count
+            image_url = image_dict.get(product_name)
+            short_name = product_name if len(product_name) <= 25 else product_name[:22] + "..."
+            with top_cols[i - 1]:
+                st.markdown(f"""
+                <div style="background-color:#f6f0fb; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
+                    {"<img src='" + image_url + "' style='width:80px; height:auto; margin-bottom:8px;' />" if image_url else "<div style='font-size:40px;'>🖼️</div>"}
+                    <div style="font-size:13px; font-weight:600; margin-bottom:4px;">{short_name}</div>
+                    <div style="font-size:12px; color:#666;">구매 횟수: <b style='color:#ef6c00;'>{count}회</b></div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"##### 📊 고객 {selected_user}님의 카테고리별 구매 비율 카드")
+
+        # 계산 유지: merged, dept_counts
+        merged = user_order_products.merge(products[['product_id', 'department_id']], on='product_id', how='left')
+        merged = merged.merge(departments[['department_id', 'department']], on='department_id', how='left')
+        dept_counts = merged['department'].value_counts().head(5)
+
+        total_count = dept_counts.sum()
+        cat_cols = st.columns(1) if len(dept_counts) <= 1 else st.columns(len(dept_counts))
+
+        for i, (dept, count) in enumerate(dept_counts.items(), 1):
+            percent = (count / total_count) * 100
+            with cat_cols[i - 1]:
+                st.markdown(f"""
+                <div style="background-color:#f0f7ff; padding:14px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); text-align:center;">
+                    <div style="font-size:14px; font-weight:600; margin-bottom:4px;">📂 {dept}</div>
+                    <div style="font-size:12px; color:#666;">구매 비중: <b style='color:#7e57c2;'>{percent:.1f}%</b></div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # 요약문 생성 예제
+    top_product_name = top_purchased.iloc[0]['product_name']
+    top_product_count = top_purchased.iloc[0]['count']
+    top_category = dept_counts.index[0]
+    top_category_ratio = dept_counts.iloc[0] / dept_counts.sum() * 100
+
+    with st.container():
+        st.markdown("""
+        <style>
+        .summary-card {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="summary-card">
+        <h4 style="text-align:center;">🛒 선택 고객 핵심 요약</h4>
+        <hr>
+
+        ✅ <b>Top 상품</b><br>
+        • 이 고객은 <b>{top_product_name}</b>을(를) 총 <b>{top_product_count}회</b> 구매했어요!<br>
+        • 해당 상품에 대한 높은 구매 빈도로 보아, <b>충성도 높은 주력 제품</b>임을 알 수 있어요.<br><br>
+
+        📊 <b>카테고리 1위</b><br>
+        • 주요 구매 카테고리는 <b>{top_category}</b>로, 전체 구매 중 <b>{top_category_ratio:.1f}%</b>를 차지합니다.<br>
+        • 관심 카테고리에 맞춘 <b>연관 상품 추천</b>이 효과적일 것으로 예상됩니다.<br><br>
+
+        ✨ <b>한줄 분석</b><br>
+        • 이 고객은 특정 제품을 <b>지속적으로 반복 구매</b>하면서도, 주요 카테고리에서도 활발한 소비를 보입니다.<br>
+        • 이를 기반으로 <b>맞춤형 추천</b>과 <b>리텐션 전략</b>을 설계하면 고객 충성도를 더욱 높일 수 있어요!
+        </div>
+        """, unsafe_allow_html=True)
+
+
+
+    # avg_cart_size 없으면 계산해서 추가
+    if 'avg_cart_size' not in vip_df.columns:
+        vip_df['avg_cart_size'] = vip_df['total_products'] / vip_df['total_orders']
+
+    # 선택 고객 정보
+    selected_info = vip_df[vip_df['user_id'] == selected_user]
+    if not selected_info.empty:
+        user_score = selected_info['vip_score'].values[0]
+        user_reorder = selected_info['reorder_rate'].values[0]
+        user_total_orders = selected_info['total_orders'].values[0]
+        user_total_products = selected_info['total_products'].values[0]
+        user_avg_cart_size = selected_info['avg_cart_size'].values[0]
+
+        # 1등급 평균 계산
+        diamond_df = vip_df[vip_df['vip_grade'] == '1.Diamond']
+        avg_score = diamond_df['vip_score'].mean()
+        avg_reorder = diamond_df['reorder_rate'].mean()
+        avg_orders = diamond_df['total_orders'].mean()
+        avg_products = diamond_df['total_products'].mean()
+        avg_cart_size = diamond_df['avg_cart_size'].mean()
+
+        metrics = [
+            ("VIP 점수", user_score, avg_score),
+            ("평균 재구매율", user_reorder * 100, avg_reorder * 100),  # ✅ 퍼센트 변환
+            ("평균 주문 수", user_total_orders, avg_orders),
+            ("평균 상품 수", user_total_products, avg_products),
+            ("평균 장바구니 크기", user_avg_cart_size, avg_cart_size)
+        ]
+
+
+        with st.expander("🔎 선택 고객 vs 1등급 평균 상세 비교", expanded=False):
+            for label, user_val, avg_val in metrics:
+                col1, col2, col3 = st.columns(3)
+                diff = user_val - avg_val
+                diff_color = '#2e7d32' if diff >= 0 else '#c62828'
+                diff_str = f"{diff:+.1f}" if '재구매율' not in label else f"{diff:+.1f}%"
+                v1_formatted = f"{avg_val:.1f}" if '재구매율' not in label else f"{avg_val:.1f}%"
+                user_formatted = f"{user_val:.1f}" if '재구매율' not in label else f"{user_val:.1f}%"
+
+                st.markdown(f"<span style='font-size:14px; font-weight:600;'>📌 {label}</span>", unsafe_allow_html=True)
+
+                with col1:
+                    st.markdown(f"""
+                    <div style="background-color:#f0f4f8;padding:16px;border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">1등급 평균</div>
+                        <div style="font-size:18px;font-weight:bold;color:#2e7d32;">{v1_formatted}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    st.markdown(f"""
+                    <div style="background-color:#fff8e1;padding:16px;border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">선택 고객</div>
+                        <div style="font-size:18px;font-weight:bold;color:#ef6c00;">{user_formatted}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with col3:
+                    st.markdown(f"""
+                    <div style="background-color:#fafafa;padding:16px;border-radius:12px;text-align:center">
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;">차이</div>
+                        <div style="font-size:18px;font-weight:bold;color:{diff_color};">{diff_str}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+
+    st.markdown("---")
+
+    # ✅ LightFM 기반 추천 알고리즘 설명 추가
+    st.markdown("""
+    <div style='
+        background-color: #e8f0fe;
+        padding: 18px 20px;
+        border-left: 5px solid #1a73e8;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 15px;
+        line-height: 1.6;
+    '>
+    <b>📌 추천 방식 안내</b><br><br>
+    본 추천은 <b style='color:#1a73e8;'>LightFM</b> 머신러닝 기반의 추천 알고리즘으로 생성되었습니다. <br>
+    고객님의 <b>구매 이력</b>과 <b>유사 고객의 행동 패턴</b>을 함께 학습하여, 개인화된 상품을 제안합니다. <br><br>
+    <small style='color:#555;'>👉 LightFM은 협업 필터링(Collaborative Filtering)과 콘텐츠 기반 필터링(Content-Based)을 결합하여,<br>
+    상품 간 유사성뿐 아니라 사용자 간의 취향도 함께 고려합니다.</small>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    # 🎁 추천 상품 카드
+    if st.button("✨ 추천 상품 보기"):
+        selected_row = rec_df[rec_df['user_id'] == selected_user]
+        if not selected_row.empty:
+            recommended_products = selected_row.iloc[0, 1:].tolist()
+            purchased_names = top_purchased['product_name'].tolist()
+            overlap = set(purchased_names) & set(recommended_products)
+            diff = set(recommended_products) - set(purchased_names)
+            core_purchased = purchased_names[:3]
+
+            st.markdown(
+                f"### 🎁 추천 상품 목록 (User ID: <span style='color:green;'>{selected_user}</span>)",
+                unsafe_allow_html=True
+            )
+            rec_cols = st.columns(5)
+            for i, product_name in enumerate(recommended_products):
+                image_url = image_dict.get(product_name)
+                short_name = product_name if len(product_name) <= 25 else product_name[:22] + "..."
+
+                with rec_cols[i % 5]:
+                    if image_url:
+                        st.image(image_url, width=100)
+                    else:
+                        st.markdown("🖼️ (이미지 없음)")
+                    st.markdown(
+                        f"<div style='text-align:center; font-size:13px'><b>{short_name}</b></div>",
+                        unsafe_allow_html=True
+                    )
+
+            # 🤖 추천 사유
+            st.markdown("### 🤖 추천 사유")
+
+            if overlap:
+                st.markdown(
+                    f"""
+                    <div style='
+                        background-color: #f5f5f5;
+                        padding: 18px 20px;
+                        border-left: 5px solid #7e57c2;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                        font-size: 15px;
+                        line-height: 1.7;
+                    '>
+                    <b>🔎 고객 행동 인사이트</b><br><br>
+                    이 고객님은 <b style='color:#5e35b1'>{', '.join(core_purchased)}</b> 등을 자주 구매하는 경향이 있습니다.<br>
+                    이러한 성향을 가진 고객들은 <b style='color:#00897b'>{', '.join(diff)}</b> 같은 상품도 함께 선택하는 경우가 많아 추천드립니다.<br><br>
+                    <span style='color:#666;'>개인의 취향을 고려한 맞춤형 제안으로,<br>보다 만족스러운 쇼핑 경험을 기대할 수 있습니다 😊</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    f"""
+                    <div style='
+                        background-color: #f5f5f5;
+                        padding: 18px 20px;
+                        border-left: 5px solid #7e57c2;
+                        border-radius: 8px;
+                        margin-bottom: 20px;
+                        font-size: 15px;
+                        line-height: 1.7;
+                    '>
+                    <b>🔎 고객 행동 인사이트</b><br><br>
+                    이 고객님은 주로 <b style='color:#5e35b1'>{', '.join(core_purchased)}</b> 제품을 구매하셨습니다.<br>
+                    비슷한 소비 패턴을 가진 다른 고객들은 <b style='color:#00897b'>{', '.join(diff)}</b>도 함께 많이 구매하고 있어 추천드립니다.<br><br>
+                    <span style='color:#666;'>나와 유사한 고객의 선택을 참고해보는 건 언제나 좋은 선택이 될 수 있어요 😉</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 📌 탭 2: 고객 선정 및 등급 소개개
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+with tab2:
+    st.markdown("## 📊 고객 선정 및 등급 소개")
+    st.markdown("""
+    <p style='font-size:15px; color:#555; text-align:left; margin-top:5px; line-height:1.6;'>
+    고객 등급은 고객의 <b>구매 활동과 충성도</b>를 종합적으로 평가해 산출되며, 고객군을 체계적으로 분류해 <b>효과적인 맞춤형 마케팅과 관리</b>에 활용됩니다.
+    </p>
+    """, unsafe_allow_html=True)
+
+    # 1. 스코어링 기준 표
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 📈 고객 스코어링 기준 및 가중치")
+    st.markdown("""
+    고객의 구매 행동을 네 가지 핵심 지표로 수치화하고,  
+    각 항목에 가중치를 부여해 최종 VIP 점수를 산출합니다.
+    """)
+
+    with st.container():
+    # ✅ 4개 카드 컬럼 생성
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.markdown("""
+                <div style='background-color: #f0f4f8; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>📦</div>
+                    <h3 style='color: #2c3e50; margin: 10px 0;'>총 주문 수</h3>
+                    <p style='font-size: 18px; color: #34495e; margin: 5px 0;'>가중치: 30%</p>
+                    <p style='color: #555; margin: 5px 0;'>전체 주문 횟수</p>
+                    <p style='color: #777; font-size: 14px;'>반복 구매 여부는 장기 고객 관계를 반영하므로<br>가장 높은 비중을 부여.</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+                <div style='background-color: #eafaf1; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>🛒</div>
+                    <h3 style='color: #2e7d32; margin: 10px 0;'>총 상품 수</h3>
+                    <p style='font-size: 18px; color: #388e3c; margin: 5px 0;'>가중치: 20%</p>
+                    <p style='color: #555; margin: 5px 0;'>구매한 전체 상품 개수</p>
+                    <p style='color: #777; font-size: 14px;'>다양한 상품을 구매한 고객은<br>니즈 확장성과 교차 판매 가능성이 높음.</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+                <div style='background-color: #fff3e0; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>🔄</div>
+                    <h3 style='color: #ef6c00; margin: 10px 0;'>재구매율</h3>
+                    <p style='font-size: 18px; color: #f57c00; margin: 5px 0;'>가중치: 25%</p>
+                    <p style='color: #555; margin: 5px 0;'>Reordered 상품 비율</p>
+                    <p style='color: #777; font-size: 14px;'>동일 상품 반복 구매는<br>제품 충성도와 소비 습관의 일관성을 의미.</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        with col4:
+            st.markdown("""
+                <div style='background-color: #e8eaf6; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 40px;'>⏰</div>
+                    <h3 style='color: #3f51b5; margin: 10px 0;'>최신성</h3>
+                    <p style='font-size: 18px; color: #3949ab; margin: 5px 0;'>가중치: 25%</p>
+                    <p style='color: #555; margin: 5px 0;'>최근 주문일 기준 경과일수</p>
+                    <p style='color: #777; font-size: 14px;'>최근까지도 활발히 구매한 고객은<br>리텐션 우선 관리 대상.</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+
+    
+
+    # 2. VIP 등급 기준 - 강조 블럭
+    # 공백 및 구분선 추가
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 🏅 고객 등급 산정 기준")
+    st.markdown("""
+    등급 구간은 상대적 위치를 기준으로 하며,  
+    각 고객 그룹별로 맞춤형 마케팅 전략을 설계하는 데 활용됩니다.
+    """)
+
+    st.markdown("""
+    <div style="background-color:#e6f0fa;padding:15px;border-radius:10px;line-height:1.8">
+    VIP 점수 기반으로 전체 고객을 다음과 같이 분류합니다:<br><br>
+    💎 <b>1. Diamond</b> : 상위 5%<br>
+    <span style='color:#555;font-size:14px;'>(가장 높은 기여도를 보이는 핵심 고객층으로, 우수 고객 관리 및 리텐션 전략의 최우선 대상)</span><br><br>
+
+    🥈 <b>2. Platinum</b> : 상위 5~20%<br>
+    <span style='color:#555;font-size:14px;'>(높은 구매력과 충성도를 보이며, VIP 혜택 및 추가 구매 유도가 효과적인 고객층)</span><br><br>
+
+    🥉 <b>3. Gold</b> : 상위 20~50%<br>
+    <span style='color:#555;font-size:14px;'>(일정 수준 이상의 구매 빈도와 금액을 가진 안정적인 중간 고객층)</span><br><br>
+
+    🔘 <b>4. Silver</b> : 하위 50~80%<br>
+    <span style='color:#555;font-size:14px;'>(구매력이 낮거나 활동성이 떨어져, 리마케팅과 관심 유도가 필요한 고객층)</span><br><br>
+
+    ⚪ <b>5. Bronze</b> : 하위 80% 이하<br>
+    <span style='color:#555;font-size:14px;'>(장기 미구매 또는 단발성 구매 고객으로, 우선순위 낮은 관리 대상)</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 📊 탭 3: 전체 고객 분석 (KPI 요약 + 등급)
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+with tab3:
+    # 3. KPI 요약
+    st.markdown("### 📌 전체 고객군 요약 KPI")
+
+    # KPI 계산 실행 (캐시 활용)
+    (total_users, diamond_avg, platinum_avg, gold_avg,
+    total_avg, avg_reorder_rate, avg_order_count, avg_product_count) = compute_kpis(vip_df, orders, order_products)
+
+    # 3-1. 예쁜 KPI 카드
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("""
+        <div style="background-color:#f0f4f8;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">👥</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">전체 고객 수</div>
+            <div style="font-size:20px;font-weight:bold;color:#2c3e50;margin-top:4px;">
+                {:,}명
+            </div>
+        </div>
+        """.format(total_users), unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div style="background-color:#eafaf1;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">💎</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">1등급 평균 점수</div>
+            <div style="font-size:20px;font-weight:bold;color:#2e7d32;margin-top:4px;">
+                {:.1f}
+            </div>
+        </div>
+        """.format(diamond_avg), unsafe_allow_html=True)
+
+    with col3:
+        st.markdown("""
+        <div style="background-color:#eef6fb;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">📊</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">전체 평균 점수</div>
+            <div style="font-size:20px;font-weight:bold;color:#1565c0;margin-top:4px;">
+                {:.1f}
+            </div>
+        </div>
+        """.format(total_avg), unsafe_allow_html=True)
+
+
+    # KPI 두 번째 행
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
+    col4, col5, col6 = st.columns(3)
+
+    with col4:
+        st.markdown("""
+        <div style="background-color:#fff3e0;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">🔄</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">평균 재구매율</div>
+            <div style="font-size:20px;font-weight:bold;color:#ef6c00;margin-top:4px;">
+                {:.1f}%
+            </div>
+        </div>
+        """.format(avg_reorder_rate), unsafe_allow_html=True)
+
+    with col5:
+        st.markdown("""
+        <div style="background-color:#f0f0f0;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">🛒</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">평균 주문 수</div>
+            <div style="font-size:20px;font-weight:bold;color:#555;margin-top:4px;">
+                {:.1f}회
+            </div>
+        </div>
+        """.format(avg_order_count), unsafe_allow_html=True)
+
+    with col6:
+        st.markdown("""
+        <div style="background-color:#e0f7fa;padding:18px;border-radius:12px;text-align:center">
+            <div style="font-size:22px;">📦</div>
+            <div style="font-size:16px;font-weight:600;margin-top:6px;">평균 구매 상품 수</div>
+            <div style="font-size:20px;font-weight:bold;color:#00796b;margin-top:4px;">
+                {:.1f}개
+            </div>
+        </div>
+        """.format(avg_product_count), unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="
+        background-color:#f9fbfd;
+        padding:20px 30px;
+        border-radius:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        text-align:center;
+        margin-top:25px;
+        font-size:16px;
+        color:#333;
+        line-height:1.6;
+        font-family:'Apple SD Gothic Neo', sans-serif;
+    ">
+        현재 전체 고객 <b style="color:#1565c0;">{:,}명</b>의 평균 재구매율은
+        <b style="color:#ef6c00;">{:.1f}%</b>로, 높은 재구매 성향을 보이고 있습니다.<br>
+        1등급 고객 평균 점수는 <b style="color:#2e7d32;">{:.1f}</b>로
+        전체 평균 <b style="color:#555;">{:.1f}</b> 대비 현저히 높은 수준을 기록했습니다.
+    </div>
+    """.format(total_users, avg_reorder_rate, diamond_avg, total_avg), unsafe_allow_html=True)
+
+    
+    # ✅ 등급별 고객 분석
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("## 💎 등급별 고객 분석")
+    st.markdown("""
+    <p style='font-size:14px; color:#555; text-align:left; margin-top:10px; margin-bottom:30px;'>
+    VIP 고객군을 등급별로 분류하고, 고객 규모와 구매 활동 특성을 비교하여<br>
+    각 등급의 핵심 행동 지표를 한눈에 파악할 수 있습니다.
+    </p>
+    """, unsafe_allow_html=True)
+
+
+    # ✅ 등급별 고객 수 및 평균 점수 요약 + 레이더 차트
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
+    col1, spacer, col2 = st.columns([1.0, 0.2, 2.0])
+
+    with col1:
+        st.markdown("##### 📋 등급별 고객 수 & 평균 점수 요약")
+
+        grade_order = ['1.Diamond', '2.Platinum', '3.Gold', '4.Silver', '5.Bronze']
+        grade_labels = {
+            '1.Diamond': '💎 Diamond',
+            '2.Platinum': '🥈 Platinum',
+            '3.Gold': '🥉 Gold',
+            '4.Silver': '🔘 Silver',
+            '5.Bronze': '⚪ Bronze'
+        }
+
+        grade_summary = (
+            vip_df.groupby('vip_grade')
+            .agg(
+                고객수=('user_id', 'count'),
+                평균점수=('vip_score', 'mean')
+            )
+            .reindex(grade_order)
+            .reset_index()
+        )
+
+        grade_summary['vip_grade'] = grade_summary['vip_grade'].map(grade_labels)
+        total_users = grade_summary['고객수'].sum()
+
+        grade_summary['고객수'] = grade_summary['고객수'].apply(
+            lambda x: f"{x:,}명 ({x / total_users * 100:.1f}%)"
+        )
+        grade_summary['평균점수'] = grade_summary['평균점수'].round(1)
+
+        st.dataframe(grade_summary, use_container_width=True)
+
+    with col2:
+        st.markdown("##### 🕸️ 등급별 항목별 행동 점수 비교")
+
+        grade_colors = ['#0B6E4F', '#3587A4', '#FFB400', '#C0C0C0', '#CD7F32']
+
+        radar_data = vip_df.groupby('vip_grade')[
+            ['total_orders_score', 'total_products_score', 'reorder_rate_score', 'recency_score']
+        ].mean().reindex(grade_order)
+
+        radar_data['label'] = radar_data.index.map(grade_labels)
+
+        radar_melted = pd.melt(
+            radar_data.reset_index(drop=True),
+            id_vars='label',
+            var_name='항목',
+            value_name='점수'
+        )
+
+        radar_melted["항목"] = radar_melted["항목"].map(score_label_map)
+
+        fig_radar = px.line_polar(
+            radar_melted,
+            r='점수',
+            theta='항목',
+            color='label',
+            line_close=True,
+            color_discrete_sequence=grade_colors,
+            title='등급별 항목별 평균 점수 (Radar Chart)',
+            template='plotly_white'
+        )
+        fig_radar.update_traces(fill='toself', line=dict(width=2))
+        fig_radar.update_layout(legend_title_text="VIP 등급")
+        st.plotly_chart(fig_radar, use_container_width=True)
+
+    st.markdown("""
+    <div style='font-size:14px; color:#555; text-align:left; margin-top:20px; line-height:1.6;'>
+    📝 <b>요약:</b><br>
+    - 왼쪽 표를 통해 각 VIP 등급별 고객 수와 평균 점수를 확인할 수 있으며, Diamond와 Platinum 고객이 상대적으로 높은 점수를 기록했습니다.<br>
+    - 오른쪽 레이더 차트는 총 주문 수, 총 상품 수, 재구매율, 최신성 점수 등 항목별로 등급별 행동 특성을 한눈에 비교할 수 있어, 등급별 구매 패턴 차이를 직관적으로 파악할 수 있습니다.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+    # 📊 시각화 - VIP 점수 분포 + 상관관계
+    
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 📊 고객 점수 및 상관관계 시각화")
+    col4, col5 = st.columns(2)
+
+    with col4:
+        st.markdown("##### 📈 VIP 점수 분포 (등급별)")
+        fig2, ax2 = plt.subplots(figsize=(5, 3.5))
+        sns.histplot(
+            data=vip_df,
+            x='vip_score',
+            hue='vip_grade',
+            palette={
+                '1.Diamond': '#0B6E4F',
+                '2.Platinum': '#3587A4',
+                '3.Gold': '#FFB400',
+                '4.Silver': '#C0C0C0',
+                '5.Bronze': '#CD7F32'
+            },
+            bins=30,
+            kde=True,
+            multiple='stack',  # 또는 'layer' (겹침)
+            ax=ax2
+        )
+        ax2.set_title("VIP Score 분포 (등급별)")
+        ax2.set_xlabel("VIP Score")
+        ax2.set_ylabel("고객 수")
+        ax2.legend(title='등급')
+        st.pyplot(fig2)
+
+
+    with col5:
+        st.markdown("##### 🔍 항목 간 상관관계")
+
+        score_cols = [
+            'total_orders_score', 'total_products_score',
+            'reorder_rate_score', 'recency_score'
+        ]
+
+        fig3, ax3 = plt.subplots(figsize=(5, 3.5))
+        corr = vip_df[score_cols].corr()
+
+        # ✅ 한글 라벨로 변경
+        corr.index = corr.index.map(score_label_map)
+        corr.columns = corr.columns.map(score_label_map)
+
+        # ✅ 히트맵 스타일 개선
+        sns.heatmap(
+            corr, annot=True, cmap='YlGnBu', fmt=".2f", ax=ax3,
+            annot_kws={"size": 10},  # annotation 글씨 크기 조절
+            cbar_kws={"shrink": 0.75},  # 컬러바 크기 조절
+            linewidths=0.5, linecolor='white'  # 셀 경계선
+        )
+
+        # ✅ 폰트 및 레이아웃 조정
+        ax3.set_title("VIP 항목 간 상관관계", fontsize=13, pad=12)
+        ax3.tick_params(axis='x', labelrotation=0, labelsize=10)
+        ax3.tick_params(axis='y', labelrotation=0, labelsize=10)
+        ax3.set_xticklabels(ax3.get_xticklabels(), ha="center")  # 가운데 정렬
+
+        sns.despine(left=True, bottom=True)  # 테두리 제거
+        fig3.tight_layout()
+
+        st.pyplot(fig3)
+
+
+    st.markdown("""
+    <div style='font-size:14px; color:#555; text-align:left; line-height:1.6; margin-top:20px;'>
+
+    📝 <b>요약:</b><br>
+
+    - <b>VIP 점수 분포</b>: VIP Score가 낮은 구간(40 이하)에 Bronze~Silver 고객이 밀집하고, 점수가 높아질수록 고객 수는 급감하지만 <b>핵심 고객층</b>이 집중되는 양상을 보입니다. 전체 고객은 대체로 <b>40–80</b> 점수 구간에 분포해 있으며, 등급별 경계가 명확하게 구분됩니다.<br><br>
+
+    - <b>항목 간 상관관계</b>: 총 주문 수와 총 상품 수는 <b>0.83</b>으로 매우 높은 상관을 보이고, 재구매율 또한 총 주문 수와 <b>0.75</b>의 상관관계를 나타내 <b>구매 빈도가 높을수록 재구매 가능성도 높음</b>을 알 수 있습니다. 최신성은 상대적으로 낮은 상관(<b>0.42–0.66</b>)을 보여 최근 활동은 다른 구매 지표와 독립적으로 나타납니다.<br><br>
+
+    ➡️ 이를 통해 <b>주요 고객의 특징</b>은 높은 구매 활동과 재구매 성향의 결합으로 나타나며, 최신성은 별도의 관리 포인트로 고려할 필요가 있음을 시사합니다.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+    # 📊 시각화 - 항목별 분포 + 1등급 재구매율 비교
+    
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("### 📦 항목별 점수 및 등급별 비교")
+    col6, col7 = st.columns(2)
+
+    with col6:
+        st.markdown("##### 🎯 항목별 스코어 분포")
+
+        # melt + 한글 라벨 매핑
+        df_melted = vip_df[score_cols].melt(var_name="지표", value_name="점수")
+        df_melted["지표"] = df_melted["지표"].map(score_label_map)
+
+        # boxplot 시각화
+        fig4, ax4 = plt.subplots(figsize=(5.5, 3.5))  # 가로를 조금 더 넓힘
+        sns.boxplot(
+            data=df_melted,
+            x="지표",
+            y="점수",
+            palette="Set2",  # pastel보다 컬러가 선명한 Set2
+            width=0.6,       # 상자 폭 줄여서 간격 강조
+            fliersize=2,     # 이상치 점 크기 축소
+            ax=ax4
+        )
+
+        # 제목 및 축 스타일
+        ax4.set_title("항목별 스코어 분포", fontsize=13, pad=12)
+        ax4.set_xlabel("")
+        ax4.set_ylabel("점수", fontsize=11)
+        ax4.set_ylim(0, 100)  # 점수 범위를 0~100으로 고정
+
+        ax4.tick_params(axis='x', labelsize=10)
+        ax4.tick_params(axis='y', labelsize=10)
+
+        # grid 스타일 변경
+        ax4.yaxis.grid(True, linestyle='--', alpha=0.5)
+        ax4.xaxis.grid(False)
+
+        sns.despine()  # 불필요한 테두리 제거
+        fig4.tight_layout()
+
+        st.pyplot(fig4)
+
+
+    with col7:
+        st.markdown("##### 💎 재구매율: 1등급 vs 전체")
+
+        fig5, ax5 = plt.subplots(figsize=(5.5, 3.5))
+
+        # 전체 고객 KDE
+        sns.kdeplot(
+            vip_df['reorder_rate'],
+            label='전체 고객',
+            linewidth=2,
+            color='gray',
+            fill=True,
+            alpha=0.2  # 전체 고객 분포는 살짝 투명한 면적 강조
+        )
+
+        # 1등급 고객 KDE
+        sns.kdeplot(
+            vip_df[vip_df['vip_grade'] == '1.Diamond']['reorder_rate'],
+            label='1등급 고객',
+            linewidth=2,
+            linestyle="--",
+            color='#0077FF'  # 좀 더 선명한 블루
+        )
+
+        # 제목 및 축 스타일
+        ax5.set_title("재구매율 분포 비교", fontsize=13, pad=12)
+        ax5.set_xlabel("재구매율", fontsize=11)
+        ax5.set_ylabel("")  # y축 레이블 제거
+        ax5.tick_params(axis='x', labelsize=10)
+        ax5.tick_params(axis='y', left=False, labelleft=False)  # y축 눈금 숨김
+
+        # grid 및 legend 스타일
+        ax5.xaxis.grid(True, linestyle='--', alpha=0.4)
+        ax5.legend(title="", fontsize=10, loc='upper left', frameon=False)
+
+        sns.despine(left=True)  # y축 spine 제거
+        fig5.tight_layout()
+
+        st.pyplot(fig5)
+
+
+    st.markdown("""
+    <div style='font-size:14px; color:#555; text-align:left; line-height:1.6; margin-top:20px;'>
+
+    📝 <b>요약:</b><br>
+
+    - <b>항목별 스코어 분포</b>: 총 주문 수, 총 상품 수, 재구매율, 최신성 등 주요 항목 점수 모두 전반적으로 <b>넓은 범위로 분포</b>하고 있으며, 일부 고객은 낮은 점수를 보이는 등 고객 간 행동 차이가 큽니다. 그러나 상위 고객군으로 갈수록 점수 분포가 집중되는 경향을 보여 <b>핵심 고객층의 특징</b>을 확인할 수 있습니다.<br><br>
+
+    - <b>재구매율: 1등급 vs 전체 비교</b>: 전체 고객의 재구매율은 고르게 분포하지만, 1등급 고객은 재구매율이 <b>0.7–0.9</b> 범위에 몰려 매우 높은 재구매 성향을 보입니다. 이는 VIP 핵심 고객이 반복 구매를 통해 높은 가치를 창출하고 있음을 시사합니다.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+# 🎯 탭 4: 행동분석(1등급 vs 2~3등급
+# ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+with tab4:
+    # 등급별 데이터 분리
+    diamond_df = vip_df[vip_df['vip_grade'] == '1.Diamond']
+    tier23_df = vip_df[vip_df['vip_grade'].isin(['2.Platinum', '3.Gold'])]
+
+    # KPI 계산
+    metrics = {
+        "1등급 고객 수": [len(diamond_df), len(tier23_df)],
+        "평균 VIP 점수": [diamond_df['vip_score'].mean(), tier23_df['vip_score'].mean()],
+        "평균 재구매율": [diamond_df['reorder_rate'].mean(), tier23_df['reorder_rate'].mean()],
+        "평균 주문 수": [diamond_df['total_orders'].mean(), tier23_df['total_orders'].mean()],
+        "평균 상품 수": [diamond_df['total_products'].mean(), tier23_df['total_products'].mean()],
+        "평균 장바구니 크기": [
+            (diamond_df['total_products'] / diamond_df['total_orders']).mean(),
+            (tier23_df['total_products'] / tier23_df['total_orders']).mean()
+        ]
+    }
+
+    # 카드 스타일
+    card_styles = {
+        "1등급 고객 수":        ("👤", "#f0f4f8", "#2c3e50"),
+        "평균 VIP 점수":        ("📊", "#eafaf1", "#2e7d32"),
+        "평균 재구매율":        ("🔁", "#fff3e0", "#ef6c00"),
+        "평균 주문 수":         ("📦", "#fce4ec", "#c2185b"),
+        "평균 상품 수":         ("🛍️", "#ede7f6", "#5e35b1"),
+        "평균 장바구니 크기":   ("🧺", "#e0f7fa", "#00838f"),
+    }
+
+    # 항목 → 앵커 ID 매핑
+    anchor_map = {
+        "평균 주문 수": "order_detail",
+        "평균 재구매율": "reorder_detail",
+        "평균 상품 수": "product_detail"
+    }
+
+    st.markdown('<div id="top_kpi"></div>', unsafe_allow_html=True)
+    st.markdown("### 💎 1등급 vs 🥈 2~3등급 핵심 지표 비교")
+    # 비교 목적 설명 추가
+    st.markdown(
+    "💡 1등급과 2~3등급 고객 그룹을 비교하여 행동 차이를 파악하고, 핵심 인사이트를 도출합니다.",
+    unsafe_allow_html=True
+)
+    st.markdown("<div style='text-align:right; font-size:14px; font-weight:600;'>(계산 : 2~3등급 - 1등급)</div>", unsafe_allow_html=True)
+
+    for label, (v1, v2) in metrics.items():
+        col1, col2, col3 = st.columns(3)
+        icon, bg, color = card_styles[label]
+
+        def format_value(val, label):
+            if '율' in label:
+                return f"{val:.1%}"
+            elif '평균' in label or '크기' in label:
+                return f"{val:.2f}"
+            else:
+                return f"{int(val):,}"
+
+        def get_diff_display(v1, v2, label):
+            diff = v2 - v1
+            if '율' in label:
+                diff_str = f"{diff:+.1%}"
+            elif '평균' in label or '크기' in label:
+                diff_str = f"{diff:+.2f}"
+            else:
+                diff_str = f"{diff:+,.0f}"
+            diff_color = "#2e7d32" if diff > 0 else "#d32f2f"
+            return diff_str, diff_color
+
+        v1_formatted = format_value(v1, label)
+        v2_formatted = format_value(v2, label)
+        diff_str, diff_color = get_diff_display(v1, v2, label)
+
+        # 항목 라벨 및 링크
+        label_line = f"<span style='font-size:14px; font-weight:600;'>📌 {label}</span>"
+        if label in anchor_map:
+            label_line += f" <a href='#{anchor_map[label]}' style='font-size:12px; margin-left:8px;'>🔎 상세 분석 보기</a>"
+        st.markdown(label_line, unsafe_allow_html=True)
+
+        with col1:
+            st.markdown(f"""
+            <div style="background-color:{bg};padding:16px;border-radius:12px;text-align:center">
+                <div style="font-size:22px;">{icon}</div>
+                <div style="font-size:14px;font-weight:600;margin-top:4px;">1등급</div>
+                <div style="font-size:18px;font-weight:bold;color:{color};margin-top:4px;">
+                    {v1_formatted}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"""
+            <div style="background-color:{bg};padding:16px;border-radius:12px;text-align:center">
+                <div style="font-size:22px;">{icon}</div>
+                <div style="font-size:14px;font-weight:600;margin-top:4px;">2~3등급</div>
+                <div style="font-size:18px;font-weight:bold;color:{color};margin-top:4px;">
+                    {v2_formatted}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col3:
+            st.markdown(f"""
+            <div style="background-color:#fafafa;padding:16px;border-radius:12px;text-align:center">
+                <div style="font-size:22px;">➖</div>
+                <div style="font-size:14px;font-weight:600;margin-top:4px;">차이</div>
+                <div style="font-size:18px;font-weight:bold;color:{diff_color};margin-top:4px;">
+                    {diff_str}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+
+    # 등급별 필터링
+    diamond_df = vip_df[vip_df['vip_grade'] == '1.Diamond']
+    tier23_df = vip_df[vip_df['vip_grade'].isin(['2.Platinum', '3.Gold'])]
+
+    diamond_users = diamond_df['user_id']
+    pg_users = tier23_df['user_id']
+    n_diamond = len(diamond_users)
+    n_pg = len(pg_users)
+
+    
+    # ✅ 캐시 기반 전처리 함수 사용
+    diamond_orders = preprocess_orders(order_products, orders, products, diamond_users)
+    pg_orders = preprocess_orders(order_products, orders, products, pg_users)
+
+    # 📦 평균 주문 수 → 공통 인기 상품 분석
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
+    st.markdown('<hr style="border: 1px solid #e0e0e0; margin-top: 20px; margin-bottom: 20px;">', unsafe_allow_html=True)
+    st.markdown("## 🔎 상세 분석")
+    st.markdown("""
+    <div style="background-color:#f9f9f9; border-left: 6px solid #0B6E4F; padding: 16px 18px; border-radius: 10px; margin-bottom: 18px; font-size:17px;">
+        <b>📦 분석 개요</b><br>
+        고객 등급별 행동을 비교해 <span style="color:#0B6E4F;font-weight:600;">상위 상품군 선호도</span>,<br>
+        <span style="color:#3587A4;font-weight:600;">재구매 패턴</span>, <span style="color:#5e35b1;font-weight:600;">구매 상품 다양성</span> 측면에서 차이를 분석합니다.<br><br>
+        🔎 아래의 각 항목을 클릭해 등급별 행동 차이와 <strong>1등급 전환 전략</strong>을 확인해보세요.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div id="order_detail"></div>', unsafe_allow_html=True)
+    with st.expander("📦 평균 주문 수 상세 분석 (공통 인기 상품 비교)"):
+        plot_df = compute_top5_common_products(diamond_orders, pg_orders, n_diamond, n_pg)
+
+        fig1 = px.bar(
+            plot_df,
+            x='avg_purchase_per_user',
+            y='product_name',
+            color='grade',
+            orientation='h',
+            barmode='group',
+            title="공통 상품 Top 5 비교 (고객 1인당 평균 구매 수 기준)",
+            labels={"avg_purchase_per_user": "고객 1인당 평균 구매 수"}
+        )
+        fig1.update_layout(yaxis={'categoryorder': 'total ascending'})
+
+        st.plotly_chart(fig1, use_container_width=True)
+
+
+        # 시각화된 인사이트 해설
+        st.markdown("""
+        <div style='padding: 15px; background-color: #fef8e7; border-left: 6px solid #ff9800; border-radius: 5px;'>
+        <h4>🔍 <strong>인사이트 요약</strong></h4>
+        <ul>
+            <li>1등급 고객은 특정 상품에 대한 <strong>구매 집중도</strong>가 매우 높음</li>
+            <li>2~3등급 고객도 동일한 상품을 구매하지만, <strong>1인당 평균 구매량이 낮음</strong></li>
+        </ul>
+
+        <h4>🎯 <strong>전환 전략 제안</strong></h4>
+        <ul>
+            <li>🛍️ <strong>1등급의 인기 상품을 중심으로 세트 구성 & 할인 프로모션 기획</strong></li>
+            <li>🔁 <strong>공통 상품 Top 5에 대해 “다시 구매” 캠페인</strong> (리마인드 알림)</li>
+            <li>📢 <strong>상품별 구매빈도 기반 추천 모델로 개인화 마케팅 적용</strong></li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align:right; margin-top: 12px;'>
+        <a href="#top_kpi" style='font-size:13px; color:#1565c0;'>🔝 돌아가기</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+    # 🔁 재구매율 → 재구매율 비율 + top5 상품
+    st.markdown('<div id="reorder_detail"></div>', unsafe_allow_html=True)
+    with st.expander("🔁 평균 재구매율 상세 분석 (재구매 행동 분석)"):
+        reorder_df = compute_reorder_ratio(diamond_orders, pg_orders)
+
+        fig2 = px.bar(
+            reorder_df,
+            x='reordered_status',
+            y='ratio',
+            color='grade',
+            barmode='group',
+            title='재구매 vs 최초구매 비율 비교',
+            labels={'ratio': '비율', 'reordered_status': '구매 유형'}
+        )
+        fig2.update_layout(yaxis_tickformat='.0%')
+        st.plotly_chart(fig2, use_container_width=True)
+
+
+        # 재구매 상품 Top5 비교
+        reorder_melted = compute_top5_reorder_products(diamond_orders, pg_orders)
+
+        fig3 = px.bar(
+            reorder_melted,
+            x='reorder_count',
+            y='product_name',
+            color='grade',
+            orientation='h',
+            barmode='group',
+            title="재구매 Top 5 상품 비교 (횟수 기준)"
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+
+
+        # 🔍 인사이트 카드 (HTML + Markdown)
+        st.markdown("""
+        <div style='padding: 15px; background-color: #fef8e7; border-left: 6px solid #ff9800; border-radius: 5px;'>
+        <h4>🔍 <strong>인사이트 요약</strong></h4>
+        <ul>
+            <li>1등급 고객은 전체 구매 중 <strong>재구매 비중이 77%</strong>로 매우 높음</li>
+            <li>반면 2~3등급 고객은 <strong>최초구매 비중이 높고 재구매 전환율이 낮음</strong></li>
+            <li>재구매 Top 5 상품은 양 고객군 모두 유사하지만, <strong>2~3등급 고객의 반복 구매가 장기적 충성으로 연결되지 않음</strong></li>
+        </ul>
+
+        <h4>🎯 <strong>전환 전략 제안</strong></h4>
+        <ul>
+            <li>🧾 <strong>첫 구매 후 7일 내 재구매 시 할인 쿠폰 지급</strong></li>
+            <li>🔔 <strong>Push 알림 / 이메일 리마인드 마케팅</strong> (예: 'Banana 다시 필요하신가요?')</li>
+            <li>🧺 <strong>재구매 상위 품목 기반 번들 패키지 or 정기배송 상품 구성</strong></li>
+            <li>🏷️ <strong>3회 구매 시 1회 무료 이벤트</strong> 등 충성도 유도 인센티브</li>
+            <li>📊 <strong>1등급 고객의 구매 시간·패턴 기반 맞춤 프로모션 타겟팅</strong></li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align:right; margin-top: 12px;'>
+        <a href="#top_kpi" style='font-size:13px; color:#1565c0;'>🔝 돌아가기</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div id="product_detail"></div>', unsafe_allow_html=True)
+    with st.expander("🛍 평균 상품 수 상세 분석 (고객별 상품 다양성 분포)"):
+
+        # 스타일 설정
+        sns.set(style="whitegrid")
+        plt.rcParams["font.family"] = "AppleGothic"  # Mac용 (Windows는 'Malgun Gothic')
+        plt.rcParams['axes.unicode_minus'] = False
+
+        # 좌우 레이아웃 분할
+        col1, col2 = st.columns([1.2, 1.0])
+
+        with col1:
+            fig, ax = plt.subplots(figsize=(10, 5))
+
+            # KDE Plot
+            sns.kdeplot(
+                data=diamond_df,
+                x='total_products',
+                fill=True,
+                label='1등급',
+                color="#1565c0",
+                linewidth=2
+            )
+            sns.kdeplot(
+                data=tier23_df,
+                x='total_products',
+                fill=True,
+                label='2~3등급',
+                color="#90caf9",
+                linewidth=2
+            )
+
+            # 제목/축/범례 스타일
+            ax.set_title("📈 고객별 총 구매 상품 수 분포", fontsize=14, weight='bold')
+            ax.set_xlabel("총 구매 상품 수", fontsize=12)
+            ax.set_ylabel("밀도", fontsize=12)
+            ax.legend(title="고객 등급", title_fontsize=12, fontsize=11)
+            ax.grid(True, linestyle='--', alpha=0.5)
+
+            st.pyplot(fig)
+
+        with col2:
+            # 🔍 인사이트 카드
+            st.markdown("""
+            <div style='padding: 15px; background-color: #fef8e7; border-left: 6px solid #ff9800; border-radius: 5px;'>
+            <h4>🔍 <strong>인사이트 요약</strong></h4>
+            <ul>
+                <li>1등급 고객은 <strong>더 다양한 상품군을 구매</strong>하며 상품 탐색 범위가 넓음</li>
+                <li>반면 2~3등급 고객은 <strong>구매 상품 수가 적고 반복성이 낮음</strong></li>
+                <li>다양한 상품을 구매한 고객일수록 <strong>충성도와 LTV가 높을 가능성</strong>이 큼</li>
+            </ul>
+
+            <h4>🎯 <strong>전환 전략 제안</strong></h4>
+            <ul>
+                <li>🧃 <strong>5개 이상 다른 상품 구매 시 할인 쿠폰 제공</strong> (상품 다양성 미션)</li>
+                <li>🎁 <strong>다양성 높은 1등급 고객 기반 번들 추천</strong> (타 고객의 인기 조합)</li>
+                <li>📦 <strong>신규 카테고리 체험 쿠폰</strong> (예: 유제품, 음료군 첫 구매 할인)</li>
+                <li>📮 <strong>개인화 추천 기반 큐레이션</strong>으로 고객 취향 확장 유도</li>
+                <li>📊 <strong>"다양한 상품 추천" 섹션</strong>을 통해 탐색 유도 및 장바구니 유입 확대</li>
+            </ul>
+            </div>
+            """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align:right; margin-top: 12px;'>
+        <a href="#top_kpi" style='font-size:13px; color:#1565c0;'>🔝 돌아가기</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+
+
+
