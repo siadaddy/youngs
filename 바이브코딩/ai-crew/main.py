@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+"""
+🤖 시아아빠님의 AI 크리에이터
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+흐름:
+  뉴스레터 읽기 (.md 파일)
+    → 🎯 기획자 : 콘텐츠 브리프
+    → ✍️  작가   : 카드뉴스 5개 + 블로그 아티클
+    → 🎨 디자이너: 이미지 5장 → freeimage.host 업로드
+    → 📤 노션   : AI 콘텐츠 상단 + 수집 뉴스 하단
+    → 📅 금요일 : 주간 브리핑 자동 추가
+    → 🔔 완료 알림 (ntfy.sh)
+
+매일 06:30 자동 실행 (crontab)
+각 단계 실패 시 최대 3회 자동 재시도
+"""
+
+import sys, os, json, time, requests
+sys.path.insert(0, os.path.dirname(__file__))
+
+from datetime import date
+from utils.notion_reader import get_today_newsletter, NEWSLETTER_DIR
+from agents import planner, writer, designer, notion_publisher, weekly_briefer
+from dotenv import load_dotenv
+
+load_dotenv()
+
+NTFY_TOPIC  = os.getenv("NTFY_TOPIC", "siadad-aicrew")
+MAX_RETRIES = 3          # 각 단계 최대 재시도 횟수
+RETRY_DELAY = 10         # 재시도 대기 시간 (초)
+
+
+def notify(title: str, message: str, priority: str = "default"):
+    """ntfy.sh 푸시 알림 — JSON 방식 (한글 헤더 인코딩 오류 방지)"""
+    priority_map = {"default": 3, "high": 4, "urgent": 5, "low": 2, "min": 1}
+    try:
+        requests.post(
+            "https://ntfy.sh/",
+            json={
+                "topic":    NTFY_TOPIC,
+                "title":    title,
+                "message":  message,
+                "priority": priority_map.get(priority, 3),
+                "tags":     ["robot"],
+            },
+            timeout=5,
+        )
+    except Exception:
+        pass
+
+
+def retry(label: str, fn, *args, **kwargs):
+    """fn(*args, **kwargs)을 최대 MAX_RETRIES번 재시도.
+    성공하면 결과 반환, 모두 실패하면 마지막 예외를 다시 던진다.
+    """
+    last_err = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as e:
+            last_err = e
+            if attempt < MAX_RETRIES:
+                print(f"  ⚠️  [{label}] 실패 (시도 {attempt}/{MAX_RETRIES}): {e}")
+                print(f"      {RETRY_DELAY}초 후 재시도...")
+                time.sleep(RETRY_DELAY)
+            else:
+                print(f"  ❌ [{label}] {MAX_RETRIES}회 모두 실패: {e}")
+    raise last_err
+
+
+def main():
+    today     = date.today().strftime("%Y-%m-%d")
+    is_friday = date.today().weekday() == 4
+
+    print(f"\n🤖 시아아빠님의 AI 크리에이터 시작 — {today}")
+    print("━" * 50)
+
+    # ── Step 1: 뉴스레터 읽기 ────────────────────────────────
+    print("\n[1/5] 오늘 뉴스레터 읽는 중...")
+    try:
+        newsletter = retry("뉴스레터 로드", get_today_newsletter)
+        print(f"  ✅ 뉴스레터 로드 완료 ({len(newsletter)}자)")
+    except Exception as e:
+        notify("❌ AI 크리에이터 실패", f"뉴스레터 로드 실패: {e}", priority="high")
+        sys.exit(1)
+
+    newsletter_data = None
+    data_path = os.path.join(NEWSLETTER_DIR, f"{today}_data.json")
+    if os.path.exists(data_path):
+        with open(data_path, "r", encoding="utf-8") as f:
+            newsletter_data = json.load(f)
+        print(f"  ✅ 뉴스 데이터 로드 완료 ({len(newsletter_data.get('categorized', {}))}개 카테고리)")
+    else:
+        print(f"  ⚠️  뉴스 데이터 파일 없음: {data_path}")
+
+    # ── Step 2: 기획자 ───────────────────────────────────────
+    print("\n[2/5] 기획자 에이전트...")
+    try:
+        brief = retry("기획자", planner.run, newsletter)
+    except Exception as e:
+        notify("❌ AI 크리에이터 실패", f"기획자 실패: {e}", priority="high")
+        sys.exit(1)
+
+    # ── Step 3: 작가 ─────────────────────────────────────────
+    print("\n[3/5] 작가 에이전트...")
+    try:
+        written = retry("작가", writer.run, brief)
+    except Exception as e:
+        notify("❌ AI 크리에이터 실패", f"작가 실패: {e}", priority="high")
+        sys.exit(1)
+
+    # ── Step 4: 디자이너 (이미지 단계별 재시도는 designer.py 내부) ──
+    print("\n[4/5] 디자이너 에이전트...")
+    try:
+        images = retry("디자이너", designer.run, brief, written)
+    except Exception as e:
+        print(f"  ⚠️  이미지 생성 실패, 빈 이미지로 계속 진행: {e}")
+        images = [{"headline": item["headline"], "prompt": "", "path": None,
+                   "url": None, "success": False} for item in brief["instagram"]]
+
+    # ── Step 5: 노션 저장 ────────────────────────────────────
+    print("\n[5/5] 노션 퍼블리셔...")
+    try:
+        page_url = retry("노션 저장", notion_publisher.run, brief, written, images, newsletter_data)
+    except Exception as e:
+        notify("❌ AI 크리에이터 실패", f"노션 저장 실패: {e}", priority="high")
+        sys.exit(1)
+
+    # ── 금요일: 주간 브리핑 ──────────────────────────────────
+    weekly_url = None
+    if is_friday:
+        print("\n[+] 금요일 — 주간 브리핑 생성 중...")
+        try:
+            weekly_url = retry("주간 브리핑", weekly_briefer.run)
+        except Exception as e:
+            print(f"  ⚠️  주간 브리핑 실패 (무시하고 계속): {e}")
+
+    # ── 결과 요약 ────────────────────────────────────────────
+    img_ok  = sum(1 for img in images if img["success"])
+    img_url = sum(1 for img in images if img.get("url"))
+
+    summary = f"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ 시아아빠님의 AI 크리에이터 완료!
+   📰 카드뉴스    : {len(written['captions'])}개
+   📝 블로그 아티클: 1개
+   🖼  이미지       : {img_ok}/{len(images)}장 (노션 임베드: {img_url}장)
+   📤 노션 페이지  : {page_url}
+{f'   📅 주간 브리핑  : {weekly_url}' if weekly_url else ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+    print(summary)
+
+    notify(
+        "✅ AI 크리에이터 완료",
+        f"오늘 콘텐츠 준비됐어요!\n카드뉴스 {len(written['captions'])}개 · 이미지 {img_ok}장 · 노션 업로드 완료",
+    )
+
+
+if __name__ == "__main__":
+    main()
