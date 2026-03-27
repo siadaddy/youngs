@@ -687,11 +687,11 @@
       <div class="w-sub">USD → KRW</div>
     </div>
 
-    <!-- 유가 WTI -->
+    <!-- 공포탐욕지수 -->
     <div class="widget">
-      <div class="w-label"><span class="w-icon">🛢</span> WTI 유가</div>
-      <div class="w-val" id="w-oil"><span class="w-loading">로딩중...</span></div>
-      <div class="w-sub" id="w-oil-sub">배럴당 USD</div>
+      <div class="w-label"><span class="w-icon">🧭</span> 공포탐욕지수</div>
+      <div class="w-val" id="w-fng"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub" id="w-fng-sub">Crypto Fear &amp; Greed</div>
     </div>
 
     <!-- 비트코인 -->
@@ -1037,29 +1037,34 @@
     }
   }
 
-  // 유가 WTI (Yahoo Finance)
-  async function fetchOilPrice() {
+  // 공포탐욕지수 (alternative.me, 무료·무키·CORS 허용)
+  async function fetchFearGreed() {
+    const LABELS = {
+      'Extreme Fear':  '극도의 공포',
+      'Fear':          '공포',
+      'Neutral':       '중립',
+      'Greed':         '탐욕',
+      'Extreme Greed': '극도의 탐욕',
+    };
+    function fngColor(v) {
+      if (v <= 24) return '#f87171';   // 극도의 공포
+      if (v <= 44) return '#fb923c';   // 공포
+      if (v <= 55) return '#facc15';   // 중립
+      if (v <= 74) return '#34d399';   // 탐욕
+      return '#2dd4bf';                // 극도의 탐욕
+    }
     try {
-      const r = await fetch(
-        'https://query2.finance.yahoo.com/v8/finance/chart/CL=F?interval=1d&range=5d',
-        { mode: 'cors' }
-      );
+      const r = await fetch('https://api.alternative.me/fng/?limit=1');
       const d = await r.json();
-      const result = d.chart.result[0];
-      const closes = result.indicators.quote[0].close.filter(v => v != null);
-      const price  = closes[closes.length - 1];
-      const prev   = closes[closes.length - 2];
-      const chg    = price - prev;
-      const pct    = (chg / prev * 100);
-      const cls    = chg >= 0 ? 'up' : 'down';
-      const arrow  = chg >= 0 ? '▲' : '▼';
-      document.getElementById('w-oil').innerHTML =
-        `$${price.toFixed(2)} <span class="w-change ${cls}" style="font-size:.78rem">${arrow}${Math.abs(pct).toFixed(1)}%</span>`;
-      document.getElementById('w-oil-sub').textContent = '배럴 · WTI 원유';
+      const val  = parseInt(d.data[0].value);
+      const cls  = d.data[0].value_classification;
+      const kr   = LABELS[cls] || cls;
+      const col  = fngColor(val);
+      document.getElementById('w-fng').innerHTML =
+        `<span style="color:${col}">${val}</span> <span style="font-size:.72rem;color:${col};font-weight:700;">${kr}</span>`;
+      document.getElementById('w-fng-sub').textContent = '0 공포 · 100 탐욕';
     } catch {
-      // CORS 실패 시 대체 메시지
-      document.getElementById('w-oil').innerHTML = '<span style="color:var(--muted);font-size:.8rem">시세 API 제한</span>';
-      document.getElementById('w-oil-sub').textContent = 'Yahoo Finance CORS 제한';
+      document.getElementById('w-fng').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
     }
   }
 
@@ -1278,14 +1283,14 @@
   fetchWeather();
   fetchAirQuality();
   fetchExchangeRate();
-  fetchOilPrice();
+  fetchFearGreed();
   fetchBitcoin();
   // 5분마다 갱신
   setInterval(() => {
     fetchWeather();
     fetchAirQuality();
     fetchExchangeRate();
-    fetchOilPrice();
+    fetchFearGreed();
     fetchBitcoin();
   }, 5 * 60 * 1000);
 
