@@ -30,26 +30,39 @@ def _sanitize(text: str) -> str:
 
 
 def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096) -> str:
-    """Groq API 호출 (함수명은 하위 호환 유지)"""
+    """Groq API 호출 — 429 Rate Limit 자동 대기 포함 (함수명은 하위 호환 유지)"""
+    import time
+
     messages = []
     if system:
         messages.append({"role": "system", "content": system + _LANG_RULE})
     messages.append({"role": "user", "content": prompt})
 
-    r = requests.post(
-        GROQ_URL,
-        headers={
-            "Authorization": f"Bearer {GROQ_API_KEY}",
-            "Content-Type": "application/json",
-        },
-        json={
-            "model": MODEL,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-        },
-        timeout=60,
-    )
+    payload = {
+        "model": MODEL,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    for attempt in range(1, 5):          # 최대 4회 시도
+        r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
+
+        if r.status_code == 429:
+            # Retry-After 헤더 있으면 그 값 사용, 없으면 60초 대기
+            retry_after = int(r.headers.get("retry-after", 60))
+            wait = max(retry_after, 60)
+            print(f"  ⏳ Groq 속도 제한 — {wait}초 대기 후 재시도 ({attempt}/4)...")
+            time.sleep(wait)
+            continue
+
+        r.raise_for_status()
+        result = r.json()["choices"][0]["message"]["content"].strip()
+        return _sanitize(result)
+
+    # 4회 모두 429이면 마지막 응답으로 예외 발생
     r.raise_for_status()
-    result = r.json()["choices"][0]["message"]["content"].strip()
-    return _sanitize(result)

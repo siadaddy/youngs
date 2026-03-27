@@ -60,6 +60,8 @@ def run(brief: dict) -> dict:
         caption = ask_gemini(prompt, system=SYSTEM, temperature=0.85, max_tokens=2048)
         captions.append({"headline": item["headline"], "caption": caption})
         print(f"  ✅ 카드뉴스 {i+1}/5 완성 ({len(caption)}자)")
+        if i < len(brief["instagram"]) - 1:
+            import time; time.sleep(10)   # 연속 호출 방지 (Rate Limit 대비)
 
     # 블로그 아티클
     b = brief["blog"]
