@@ -527,10 +527,65 @@
     .footer-divider { width: 40px; height: 1px; background: var(--border); }
 
     /* ─── 반응형 ─────────────────────────────── */
+    /* ─── 라이브 대시보드 ───────────────────────── */
+    .dashboard {
+      padding: 0 24px 0;
+      position: relative; z-index: 1;
+      margin-top: -1px;
+    }
+    .dashboard-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      padding: 20px 0 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .widget {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-md);
+      padding: 16px 18px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; gap: 4px;
+      transition: border-color .2s, transform .2s;
+      min-height: 88px;
+    }
+    .widget:hover {
+      border-color: rgba(28,105,212,.3);
+      transform: translateY(-2px);
+    }
+    .w-label {
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .w-icon { font-size: .9rem; }
+    .w-val {
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em;
+      color: var(--text); line-height: 1.2;
+    }
+    .w-val.clock { font-size: 1.45rem; font-variant-numeric: tabular-nums; }
+    .w-sub { font-size: .69rem; color: var(--muted2); }
+    .w-change { font-size: .69rem; font-weight: 700; }
+    .w-change.up   { color: #f87171; }
+    .w-change.down { color: var(--green); }
+    .w-change.flat { color: var(--muted); }
+    .w-loading { color: var(--muted); font-size: .78rem; animation: blink 1.5s ease-in-out infinite; }
+
+    /* 미세먼지 색상 */
+    .pm-good   { color: var(--green); }
+    .pm-normal { color: #facc15; }
+    .pm-bad    { color: #fb923c; }
+    .pm-worst  { color: #f87171; }
+
+    @media (max-width: 1024px) {
+      .dashboard-inner { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 768px) {
-      .featured-card {
-        grid-template-columns: 1fr;
-      }
+      .dashboard-inner { grid-template-columns: repeat(2, 1fr); }
+      .featured-card { grid-template-columns: 1fr; }
       .featured-card .fc-image { min-height: 220px; }
       .fc-body { padding: 24px 22px; }
       .news-grid { grid-template-columns: 1fr; }
@@ -539,6 +594,10 @@
       .pipe-arrow { display: none; }
       .hero h1 { font-size: 2rem; }
       .hero-stats { gap: 20px; }
+    }
+    @media (max-width: 480px) {
+      .dashboard-inner { grid-template-columns: repeat(2, 1fr); }
+      .w-val.clock { font-size: 1.1rem; }
     }
 
     /* ─── 페이드인 애니메이션 ───────────────────── */
@@ -593,6 +652,55 @@
       <div class="stat-val">60일</div>
       <div class="stat-label">아카이브</div>
     </div>
+  </div>
+</div>
+
+<!-- ─── 라이브 대시보드 ──────────────────────────────────── -->
+<div class="dashboard">
+  <div class="dashboard-inner">
+
+    <!-- 시계 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">⏰</span> KST 현재시각</div>
+      <div class="w-val clock" id="w-clock">--:--:--</div>
+      <div class="w-sub" id="w-date">----년 --월 --일</div>
+    </div>
+
+    <!-- 날씨 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">🌤</span> 서울 날씨</div>
+      <div class="w-val" id="w-weather"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub" id="w-weather-desc"></div>
+    </div>
+
+    <!-- 미세먼지 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">🌫</span> 미세먼지 PM2.5</div>
+      <div class="w-val" id="w-pm"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub" id="w-pm-sub"></div>
+    </div>
+
+    <!-- 환율 USD/KRW -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">💵</span> 달러 환율</div>
+      <div class="w-val" id="w-usd"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub">USD → KRW</div>
+    </div>
+
+    <!-- 유가 WTI -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">🛢</span> WTI 유가</div>
+      <div class="w-val" id="w-oil"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub" id="w-oil-sub">배럴당 USD</div>
+    </div>
+
+    <!-- 비트코인 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">₿</span> 비트코인</div>
+      <div class="w-val" id="w-btc"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub" id="w-btc-sub">USD</div>
+    </div>
+
   </div>
 </div>
 
@@ -828,6 +936,153 @@
 </footer>
 
 <script>
+  /* ─── 라이브 위젯 ──────────────────────────────────── */
+
+  // 시계
+  function startClock() {
+    function tick() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      const ss = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById('w-clock').textContent = `${hh}:${mm}:${ss}`;
+      const days = ['일','월','화','수','목','금','토'];
+      document.getElementById('w-date').textContent =
+        `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // 날씨 + 미세먼지 (Open-Meteo, 서울)
+  async function fetchWeather() {
+    const WMO_ICON = {
+      0:'☀️',1:'🌤',2:'⛅',3:'☁️',
+      45:'🌫',48:'🌫',
+      51:'🌦',53:'🌦',55:'🌧',
+      61:'🌧',63:'🌧',65:'🌧',
+      71:'🌨',73:'🌨',75:'❄️',
+      80:'🌦',81:'🌦',82:'🌧',
+      95:'⛈',96:'⛈',99:'⛈'
+    };
+    const WMO_KR = {
+      0:'맑음',1:'대체로맑음',2:'구름조금',3:'흐림',
+      45:'안개',48:'안개',
+      51:'가는비',53:'가는비',55:'비',
+      61:'비',63:'비',65:'강한비',
+      71:'눈',73:'눈',75:'강한눈',
+      80:'소나기',81:'소나기',82:'강한소나기',
+      95:'뇌우',96:'뇌우',99:'뇌우'
+    };
+    try {
+      const r = await fetch(
+        'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780' +
+        '&current=temperature_2m,weathercode,apparent_temperature&timezone=Asia%2FSeoul'
+      );
+      const d = await r.json();
+      const cur = d.current;
+      const code = cur.weathercode;
+      const icon = WMO_ICON[code] || '🌡';
+      const desc = WMO_KR[code]  || '날씨정보';
+      document.getElementById('w-weather').textContent = `${icon} ${Math.round(cur.temperature_2m)}°C`;
+      document.getElementById('w-weather-desc').textContent =
+        `${desc} · 체감 ${Math.round(cur.apparent_temperature)}°C`;
+    } catch {
+      document.getElementById('w-weather').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+    }
+  }
+
+  async function fetchAirQuality() {
+    function pmClass(v) {
+      if (v <= 15) return 'pm-good';
+      if (v <= 35) return 'pm-normal';
+      if (v <= 75) return 'pm-bad';
+      return 'pm-worst';
+    }
+    function pmLabel(v) {
+      if (v <= 15) return '좋음';
+      if (v <= 35) return '보통';
+      if (v <= 75) return '나쁨';
+      return '매우나쁨';
+    }
+    try {
+      const r = await fetch(
+        'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=37.5665&longitude=126.9780' +
+        '&current=pm10,pm2_5&timezone=Asia%2FSeoul'
+      );
+      const d = await r.json();
+      const pm25 = Math.round(d.current.pm2_5);
+      const pm10 = Math.round(d.current.pm10);
+      const cls  = pmClass(pm25);
+      const lbl  = pmLabel(pm25);
+      document.getElementById('w-pm').innerHTML =
+        `<span class="${cls}">${pm25} ㎍/m³</span>`;
+      document.getElementById('w-pm-sub').innerHTML =
+        `<span class="${cls}">${lbl}</span> · PM10 ${pm10}`;
+    } catch {
+      document.getElementById('w-pm').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+    }
+  }
+
+  // 환율 (frankfurter.app, 무료 무키)
+  async function fetchExchangeRate() {
+    try {
+      const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=KRW');
+      const d = await r.json();
+      const rate = d.rates.KRW;
+      document.getElementById('w-usd').textContent =
+        `₩${Math.round(rate).toLocaleString()}`;
+    } catch {
+      document.getElementById('w-usd').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+    }
+  }
+
+  // 유가 WTI (Yahoo Finance)
+  async function fetchOilPrice() {
+    try {
+      const r = await fetch(
+        'https://query2.finance.yahoo.com/v8/finance/chart/CL=F?interval=1d&range=5d',
+        { mode: 'cors' }
+      );
+      const d = await r.json();
+      const result = d.chart.result[0];
+      const closes = result.indicators.quote[0].close.filter(v => v != null);
+      const price  = closes[closes.length - 1];
+      const prev   = closes[closes.length - 2];
+      const chg    = price - prev;
+      const pct    = (chg / prev * 100);
+      const cls    = chg >= 0 ? 'up' : 'down';
+      const arrow  = chg >= 0 ? '▲' : '▼';
+      document.getElementById('w-oil').innerHTML =
+        `$${price.toFixed(2)} <span class="w-change ${cls}" style="font-size:.78rem">${arrow}${Math.abs(pct).toFixed(1)}%</span>`;
+      document.getElementById('w-oil-sub').textContent = '배럴 · WTI 원유';
+    } catch {
+      // CORS 실패 시 대체 메시지
+      document.getElementById('w-oil').innerHTML = '<span style="color:var(--muted);font-size:.8rem">시세 API 제한</span>';
+      document.getElementById('w-oil-sub').textContent = 'Yahoo Finance CORS 제한';
+    }
+  }
+
+  // 비트코인 (CoinGecko, 무료 무키)
+  async function fetchBitcoin() {
+    try {
+      const r = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true'
+      );
+      const d = await r.json();
+      const price = d.bitcoin.usd;
+      const chg   = d.bitcoin.usd_24h_change;
+      const cls   = chg >= 0 ? 'up' : 'down';
+      const arrow = chg >= 0 ? '▲' : '▼';
+      document.getElementById('w-btc').innerHTML =
+        `$${Math.round(price).toLocaleString()} <span class="w-change ${cls}" style="font-size:.75rem">${arrow}${Math.abs(chg).toFixed(1)}%</span>`;
+      document.getElementById('w-btc-sub').textContent = `24h 변동 · USD`;
+    } catch {
+      document.getElementById('w-btc').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+    }
+  }
+
+  /* ─── 기존 JS ──────────────────────────────────────── */
   const _d = new Date();
   const today = `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,'0')}-${String(_d.getDate()).padStart(2,'0')}`;
   let currentDate = today;
@@ -1017,6 +1272,22 @@
     }
     loadDate(today);
   }
+
+  // 라이브 위젯 시작
+  startClock();
+  fetchWeather();
+  fetchAirQuality();
+  fetchExchangeRate();
+  fetchOilPrice();
+  fetchBitcoin();
+  // 5분마다 갱신
+  setInterval(() => {
+    fetchWeather();
+    fetchAirQuality();
+    fetchExchangeRate();
+    fetchOilPrice();
+    fetchBitcoin();
+  }, 5 * 60 * 1000);
 
   init();
 </script>
