@@ -296,7 +296,9 @@
 </footer>
 
 <script>
-  const today = new Date().toISOString().slice(0, 10);
+  // 로컬 시간 기준 날짜 (UTC 사용 시 한국 새벽에 날짜 불일치 버그 발생)
+  const _d = new Date();
+  const today = `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,'0')}-${String(_d.getDate()).padStart(2,'0')}`;
   let currentDate = today;
 
   function highlight(text) {
