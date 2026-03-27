@@ -53,3 +53,11 @@ jobs:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         working-directory: 바이브코딩/ai-crew
         run: python main.py
+
+      - name: 📤 GitHub Pages 배포 (docs/ 변경사항 push)
+        run: |
+          git add docs/
+          git diff --staged --quiet && echo "변경 없음" || (
+            git commit -m "content: $(date -u +'%Y-%m-%d') 자동 업데이트" &&
+            git push origin main
+          )
