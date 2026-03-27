@@ -1,4 +1,5 @@
 import os, requests, time, urllib.parse
+# requests는 URL 구성에만 사용 (검증 요청 없음)
 from datetime import date
 from utils.gemini_client import ask_gemini
 
@@ -65,39 +66,21 @@ Example style: "A dramatic wide-angle shot of an empty trading floor at dawn, go
 
 
 def _generate_image(prompt: str, today: str, idx: int) -> str | None:
-    """Pollinations.ai — 완전 무료, API 키 불필요, Flux 모델
-    URL 자체가 이미지이므로 접근 가능 여부만 확인 후 URL 반환.
+    """Pollinations.ai — URL을 구성해 반환.
+    리다이렉트 추적 없이 원본 URL 그대로 반환 (Notion/사이트가 직접 로드).
     """
-    seed = abs(hash(f"{today}-{idx}")) % 99999
-    full_prompt = (
-        prompt
-        + ", ultra high quality, sharp focus, professional photography, award winning"
-    )
-    encoded = urllib.parse.quote(full_prompt)
-    url = (
-        f"https://image.pollinations.ai/prompt/{encoded}"
-        f"?width=768&height=768&nologo=true&model=flux&seed={seed}"
-    )
-
-    # 최대 3회 시도 (타임아웃 120초)
-    for attempt in range(1, 4):
-        try:
-            # HEAD 요청으로 가볍게 확인 (이미지 다운로드 없음)
-            r = requests.head(url, timeout=120, allow_redirects=True)
-            if r.status_code == 200:
-                return url
-            # HEAD 미지원 시 GET으로 재시도 (스트림, 헤더만 확인)
-            r = requests.get(url, timeout=120, stream=True)
-            r.raise_for_status()
-            if "image" in r.headers.get("content-type", ""):
-                return url
-        except requests.exceptions.Timeout:
-            print(f"    ⏳ 이미지 {idx} 타임아웃 (시도 {attempt}/3), 재시도...")
-            time.sleep(5)
-        except Exception as e:
-            print(f"    ❌ 이미지 생성 오류 (시도 {attempt}/3): {e}")
-            time.sleep(5)
-
-    # 3회 모두 실패해도 URL은 반환 — Notion/사이트에서 직접 로드 시도
-    print(f"    ⚠️  검증 실패, URL은 반환 (Notion이 직접 로드)")
-    return url
+    try:
+        seed = abs(hash(f"{today}-{idx}")) % 99999
+        full_prompt = (
+            prompt
+            + ", ultra high quality, sharp focus, professional photography, award winning"
+        )
+        encoded = urllib.parse.quote(full_prompt)
+        url = (
+            f"https://image.pollinations.ai/prompt/{encoded}"
+            f"?width=768&height=768&nologo=true&model=flux&seed={seed}"
+        )
+        return url
+    except Exception as e:
+        print(f"    ❌ URL 생성 오류: {e}")
+        return None
