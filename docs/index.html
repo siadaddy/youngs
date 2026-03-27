@@ -733,8 +733,8 @@
 <!-- ─── 블로그 아티클 ──────────────────────────────────── -->
 <section class="section" id="article-section" style="display:none">
   <div class="container">
-    <div class="section-eyebrow">📝 Blog Article</div>
-    <div class="section-title">블로그 아티클</div>
+    <div class="section-eyebrow">🧠 AI Editor's Pick</div>
+    <div class="section-title">🧠 AI 에디터 PICK</div>
     <p class="section-sub" id="article-sub"></p>
     <div class="article-card">
       <div class="article-header">
@@ -1262,7 +1262,7 @@
     if (data.article) {
       document.getElementById('article-section').style.display = '';
       document.getElementById('article-sub').textContent = data.blog_title || '';
-      document.getElementById('article-title').textContent = data.blog_title || '블로그 아티클';
+      document.getElementById('article-title').textContent = data.blog_title || 'AI 에디터 PICK';
       document.getElementById('article-body').innerHTML = mdToHtml(data.article);
     } else {
       document.getElementById('article-section').style.display = 'none';

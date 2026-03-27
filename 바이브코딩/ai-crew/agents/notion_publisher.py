@@ -149,7 +149,7 @@ def _build_blocks(brief, writer, images, newsletter_data):
     # ══ 섹션 2: 블로그 아티클 ════════════════════════════════════
     blocks.append({
         "object": "block", "type": "heading_2",
-        "heading_2": {"rich_text": [_t("📝 블로그 아티클")]},
+        "heading_2": {"rich_text": [_t("🧠 AI 에디터 PICK")]},
     })
 
     article = writer["article"]
