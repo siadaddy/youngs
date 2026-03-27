@@ -694,11 +694,15 @@
       <div class="w-sub" id="w-fng-sub">Crypto Fear &amp; Greed</div>
     </div>
 
-    <!-- 비트코인 -->
-    <div class="widget">
-      <div class="w-label"><span class="w-icon">₿</span> 비트코인</div>
-      <div class="w-val" id="w-btc"><span class="w-loading">로딩중...</span></div>
-      <div class="w-sub" id="w-btc-sub">USD</div>
+    <!-- 주식/ETF 자동 전환 -->
+    <div class="widget" style="cursor:pointer;" onclick="nextTicker()" title="클릭해서 다음 종목">
+      <div class="w-label">
+        <span class="w-icon">📈</span>
+        <span id="w-stock-name">로딩중...</span>
+        <span id="w-stock-idx" style="margin-left:auto;font-size:.63rem;color:var(--muted);"></span>
+      </div>
+      <div class="w-val" id="w-stock-val"><span class="w-loading">로딩중...</span></div>
+      <div class="w-sub" id="w-stock-sub">클릭 또는 5초 자동 전환</div>
     </div>
 
   </div>
@@ -1068,23 +1072,87 @@
     }
   }
 
-  // 비트코인 (CoinGecko, 무료 무키)
-  async function fetchBitcoin() {
+  // 주식 / ETF 자동 전환 (Yahoo Finance)
+  const TICKERS = [
+    { symbol: 'SPY',       name: 'S&P 500',    cur: '$',  flag: '🇺🇸' },
+    { symbol: 'QQQ',       name: 'NASDAQ 100', cur: '$',  flag: '🇺🇸' },
+    { symbol: '005930.KS', name: '삼성전자',    cur: '₩',  flag: '🇰🇷' },
+    { symbol: '005380.KS', name: '현대차',      cur: '₩',  flag: '🇰🇷' },
+    { symbol: '069500.KS', name: 'KODEX 200',  cur: '₩',  flag: '🇰🇷' },
+    { symbol: 'BMW.DE',    name: 'BMW AG',     cur: '€',  flag: '🇩🇪' },
+  ];
+  let _tickerIdx   = 0;
+  let _tickerTimer = null;
+  const _tickerCache = {};
+
+  async function _fetchTicker(symbol) {
+    const now = Date.now();
+    if (_tickerCache[symbol] && now - _tickerCache[symbol].ts < 5 * 60 * 1000) {
+      return _tickerCache[symbol].data;
+    }
+    const r = await fetch(
+      `https://query2.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`
+    );
+    const d = await r.json();
+    const result = d.chart.result[0];
+    const closes = result.indicators.quote[0].close.filter(v => v != null);
+    const price  = closes[closes.length - 1];
+    const prev   = closes.length > 1 ? closes[closes.length - 2] : price;
+    const chg    = ((price - prev) / prev * 100);
+    _tickerCache[symbol] = { ts: now, data: { price, chg } };
+    return { price, chg };
+  }
+
+  function _fmtPrice(price, cur) {
+    if (cur === '₩') return `₩${Math.round(price).toLocaleString()}`;
+    if (cur === '$') return `$${price.toFixed(2)}`;
+    return `€${price.toFixed(2)}`;
+  }
+
+  function _showTickerLoading() {
+    document.getElementById('w-stock-val').innerHTML =
+      '<span class="w-loading" style="font-size:.78rem">로딩중...</span>';
+  }
+
+  async function _renderTicker(idx) {
+    const t = TICKERS[idx];
+    document.getElementById('w-stock-name').textContent = `${t.flag} ${t.name}`;
+    document.getElementById('w-stock-idx').textContent  = `${idx + 1}/${TICKERS.length}`;
+    _showTickerLoading();
     try {
-      const r = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true'
-      );
-      const d = await r.json();
-      const price = d.bitcoin.usd;
-      const chg   = d.bitcoin.usd_24h_change;
+      const { price, chg } = await _fetchTicker(t.symbol);
       const cls   = chg >= 0 ? 'up' : 'down';
       const arrow = chg >= 0 ? '▲' : '▼';
-      document.getElementById('w-btc').innerHTML =
-        `$${Math.round(price).toLocaleString()} <span class="w-change ${cls}" style="font-size:.75rem">${arrow}${Math.abs(chg).toFixed(1)}%</span>`;
-      document.getElementById('w-btc-sub').textContent = `24h 변동 · USD`;
+      const el = document.getElementById('w-stock-val');
+      el.style.opacity = '0';
+      el.innerHTML = `${_fmtPrice(price, t.cur)} <span class="w-change ${cls}" style="font-size:.75rem">${arrow}${Math.abs(chg).toFixed(1)}%</span>`;
+      el.style.transition = 'opacity .3s';
+      setTimeout(() => { el.style.opacity = '1'; }, 20);
+      document.getElementById('w-stock-sub').textContent = `${t.symbol} · 클릭 또는 5초 자동 전환`;
     } catch {
-      document.getElementById('w-btc').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+      document.getElementById('w-stock-val').innerHTML =
+        '<span style="color:var(--muted);font-size:.78rem">데이터 오류</span>';
+      document.getElementById('w-stock-sub').textContent = t.symbol;
     }
+  }
+
+  function nextTicker() {
+    _tickerIdx = (_tickerIdx + 1) % TICKERS.length;
+    _renderTicker(_tickerIdx);
+    // 타이머 리셋 (클릭 시 5초 다시 시작)
+    clearInterval(_tickerTimer);
+    _tickerTimer = setInterval(() => {
+      _tickerIdx = (_tickerIdx + 1) % TICKERS.length;
+      _renderTicker(_tickerIdx);
+    }, 5000);
+  }
+
+  function initStockTicker() {
+    _renderTicker(_tickerIdx);
+    _tickerTimer = setInterval(() => {
+      _tickerIdx = (_tickerIdx + 1) % TICKERS.length;
+      _renderTicker(_tickerIdx);
+    }, 5000);
   }
 
   /* ─── 기존 JS ──────────────────────────────────────── */
@@ -1284,14 +1352,14 @@
   fetchAirQuality();
   fetchExchangeRate();
   fetchFearGreed();
-  fetchBitcoin();
+  initStockTicker();
   // 5분마다 갱신
   setInterval(() => {
     fetchWeather();
     fetchAirQuality();
     fetchExchangeRate();
     fetchFearGreed();
-    fetchBitcoin();
+    initStockTicker();
   }, 5 * 60 * 1000);
 
   init();
