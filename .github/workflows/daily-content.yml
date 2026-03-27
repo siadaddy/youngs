@@ -1,0 +1,53 @@
+name: 🤖 시아아빠님의 AI 크리에이터
+
+# 매일 06:00 KST 자동 실행 (KST=UTC+9, 그러므로 UTC 21:00)
+# workflow_dispatch 로 GitHub 웹에서 수동 실행도 가능
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: 📥 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐍 Python 3.11 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 의존성 설치
+        run: pip install requests python-dotenv
+
+      - name: ⚙️ Git 사용자 설정 (자동 커밋용)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 📰 뉴스레터 수집 (06:00 KST)
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          NEWSLETTER_DIR: ${{ github.workspace }}/바이브코딩/뉴스레터
+        run: python 바이브코딩/뉴스레터/newsletter_naver.py
+
+      - name: 🤖 AI 크리에이터 실행 (06:30 KST)
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_NEWSLETTER_PARENT_ID: ${{ secrets.NOTION_NEWSLETTER_PARENT_ID }}
+          NEWSLETTER_DIR: ${{ github.workspace }}/바이브코딩/뉴스레터
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        working-directory: 바이브코딩/ai-crew
+        run: python main.py
