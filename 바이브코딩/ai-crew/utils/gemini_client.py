@@ -6,7 +6,8 @@ load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "llama-3.3-70b-versatile"   # 고품질 (TPM 6,000/분)
+# MODEL = "llama-3.1-8b-instant"   # 쿼터 부족 시 대체 (TPM 20,000/분)
 
 # 항상 모든 프롬프트에 붙이는 언어 규칙
 _LANG_RULE = "\n\n[언어 규칙] 반드시 한국어와 영어, 이모지만 사용하세요. 한자·중국어·일본어·아랍어 등 다른 문자는 절대 사용하지 마세요."
@@ -53,9 +54,8 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
         r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
 
         if r.status_code == 429:
-            # Retry-After 헤더 있으면 그 값 사용, 없으면 60초 대기
-            retry_after = int(r.headers.get("retry-after", 60))
-            wait = max(retry_after, 60)
+            retry_after = int(r.headers.get("retry-after", 30))
+            wait = min(retry_after + 5, 90)   # Groq가 말한 시간 + 5초, 최대 90초
             print(f"  ⏳ Groq 속도 제한 — {wait}초 대기 후 재시도 ({attempt}/4)...")
             time.sleep(wait)
             continue

@@ -1,10 +1,11 @@
 name: 🤖 시아아빠님의 AI 크리에이터
 
-# 매일 06:00 KST 자동 실행 (KST=UTC+9, 그러므로 UTC 21:00)
+# 매일 10:00 KST 자동 실행 (KST=UTC+9, 그러므로 UTC 01:00)
+# Groq 일일 쿼터가 UTC 00:00에 리셋되므로 01:00에 실행해야 안전
 # workflow_dispatch 로 GitHub 웹에서 수동 실행도 가능
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -57,7 +58,5 @@ jobs:
       - name: 📤 GitHub Pages 배포 (docs/ 변경사항 push)
         run: |
           git add docs/
-          git diff --staged --quiet && echo "변경 없음" || (
-            git commit -m "content: $(date -u +'%Y-%m-%d') 자동 업데이트" &&
-            git push origin main
-          )
+          git diff --staged --quiet || git commit -m "content: $(date -u +'%Y-%m-%d') 자동 업데이트"
+          git push origin main

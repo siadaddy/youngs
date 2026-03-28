@@ -123,16 +123,23 @@ def _build_blocks(brief, writer, images, newsletter_data):
             "heading_3": {"rich_text": [_t(f"#{i+1}  {item['headline']}")]},
         })
 
-        # 이미지 (먼저)
+        # 이미지 — 웹사이트에서 확인 링크로 표시
         if i < len(images):
             img = images[i]
             if img.get("url"):
                 blocks.append({
-                    "object": "block", "type": "image",
-                    "image": {"type": "external", "external": {"url": img["url"]}},
+                    "object": "block", "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [
+                            _t("🖼 AI 생성 이미지: ", color="gray"),
+                            {
+                                "type": "text",
+                                "text": {"content": "웹사이트에서 보기", "link": {"url": "https://siadaddy.github.io/youngs/"}},
+                                "annotations": {"color": "blue", "underline": True},
+                            },
+                        ]
+                    },
                 })
-            elif img.get("path"):
-                blocks.append(_para(f"🖼 이미지 로컬 저장: {img['path']}", color="gray"))
 
         # 카드뉴스 글 (이미지 아래)
         caption = item["caption"]

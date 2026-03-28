@@ -15,7 +15,7 @@
 각 단계 실패 시 최대 3회 자동 재시도
 """
 
-import sys, os, json, time, requests
+import sys, os, json, time, subprocess, requests
 sys.path.insert(0, os.path.dirname(__file__))
 
 from datetime import date
@@ -155,6 +155,66 @@ def main():
         "✅ AI 크리에이터 완료",
         f"오늘 콘텐츠 준비됐어요!\n카드뉴스 {len(written['captions'])}개 · 이미지 {img_ok}장 · 노션 업로드 완료",
     )
+
+    # ── GitHub Pages용 content.json 저장 & push ──────────────
+    _publish_to_github(today, brief, written, images, newsletter_data)
+
+
+def _publish_to_github(today, brief, written, images, newsletter_data):
+    """결과물을 날짜별 JSON으로 저장하고 GitHub Pages에 push"""
+    repo_root = subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"], text=True
+    ).strip()
+    docs_dir     = os.path.join(repo_root, "docs")
+    content_dir  = os.path.join(docs_dir, "content")
+    os.makedirs(content_dir, exist_ok=True)
+
+    payload = {
+        "date": today,
+        "blog_title": written.get("blog_title", ""),
+        "captions": [
+            {
+                "headline":  c["headline"],
+                "caption":   c["caption"],
+                "image_url": images[i]["url"] if i < len(images) else None,
+            }
+            for i, c in enumerate(written["captions"])
+        ],
+        "article": written.get("article", ""),
+    }
+
+    # 오늘 날짜 파일 저장 (아카이브용)
+    daily_path = os.path.join(content_dir, f"{today}.json")
+    with open(daily_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    # 최신 콘텐츠 (오늘) — 사이트 기본 표시용
+    latest_path = os.path.join(docs_dir, "content.json")
+    with open(latest_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    # archive.json — 날짜 목록 갱신
+    archive_path = os.path.join(docs_dir, "archive.json")
+    dates = []
+    if os.path.exists(archive_path):
+        with open(archive_path, "r", encoding="utf-8") as f:
+            dates = json.load(f).get("dates", [])
+    if today not in dates:
+        dates.insert(0, today)          # 최신이 앞에
+        dates = dates[:60]              # 최대 60일치 보관
+    with open(archive_path, "w", encoding="utf-8") as f:
+        json.dump({"dates": dates}, f, ensure_ascii=False, indent=2)
+
+    try:
+        subprocess.run(["git", "add", "docs/"], cwd=repo_root, check=True)
+        subprocess.run(
+            ["git", "commit", "-m", f"content: {today} 카드뉴스 자동 업데이트"],
+            cwd=repo_root, check=True,
+        )
+        subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
+        print("  ✅ GitHub Pages 업데이트 완료")
+    except subprocess.CalledProcessError as e:
+        print(f"  ⚠️  GitHub push 실패 (무시): {e}")
 
 
 if __name__ == "__main__":

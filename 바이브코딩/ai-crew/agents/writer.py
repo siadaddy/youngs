@@ -57,11 +57,11 @@ def run(brief: dict) -> dict:
 - [사실] / [분석] / [전망] 은 반드시 줄의 맨 앞에서 시작 (절대 문장 중간에 삽입 금지)
 - 한국어·영어·이모지만 사용 (한자·아랍어 등 절대 금지)
 """
-        caption = ask_gemini(prompt, system=SYSTEM, temperature=0.85, max_tokens=2048)
+        caption = ask_gemini(prompt, system=SYSTEM, temperature=0.85, max_tokens=1200)
         captions.append({"headline": item["headline"], "caption": caption})
         print(f"  ✅ 카드뉴스 {i+1}/5 완성 ({len(caption)}자)")
         if i < len(brief["instagram"]) - 1:
-            import time; time.sleep(10)   # 연속 호출 방지 (Rate Limit 대비)
+            import time; time.sleep(20)   # TPM 한도 초과 방지 (6000 TPM / ~1400 per call)
 
     # 블로그 아티클
     b = brief["blog"]
@@ -85,7 +85,7 @@ def run(brief: dict) -> dict:
 절대로 중간에 끊지 말고 끝까지 완성하세요.
 마지막 문장은 반드시 마침표(.)로 끝내야 합니다.
 """
-    article = ask_gemini(blog_prompt, system=SYSTEM, temperature=0.7, max_tokens=4096)
+    article = ask_gemini(blog_prompt, system=SYSTEM, temperature=0.7, max_tokens=3000)
 
     # 완성 여부 체크 — 마지막 문장이 끊겼으면 이어서 완성
     article = _ensure_complete(article, blog_prompt)

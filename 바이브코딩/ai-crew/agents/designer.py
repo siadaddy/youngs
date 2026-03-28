@@ -1,80 +1,70 @@
-import os, requests, time, urllib.parse
-# requests는 URL 구성에만 사용 (검증 요청 없음)
+import os, json, urllib.parse, subprocess
 from datetime import date
 from utils.gemini_client import ask_gemini
 
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
 
 SYSTEM = """
-You are a world-class visual art director with 30 years of experience at Vogue, National Geographic, and Reuters.
-You have directed photo shoots for global news agencies and created viral editorial images.
-You create cinematic, photorealistic image prompts for AI image generation.
-Every prompt you write results in a stunning, award-worthy image.
-Always write in English. Prompts must be vivid, specific, and visually compelling.
+You are a world-class visual art director. Create cinematic, photorealistic image prompts.
+Always write in English. Output prompts only, no explanations.
 """
 
 
 def run(brief: dict, writer_output: dict) -> list:
-    print("🎨 디자이너 에이전트 실행 중... (Pollinations.ai — 무료·즉시생성)")
+    print("🎨 디자이너 에이전트 실행 중... (Pollinations.ai)")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     today = date.today().strftime("%Y-%m-%d")
+
+    # ── 5개 프롬프트를 API 1번 호출로 생성 ──────────────────────
+    items = brief["instagram"]
+    batch_input = "\n".join(
+        f"{i+1}. headline: {it['headline']} | angle: {it['angle']} | tone: {it['tone']}"
+        for i, it in enumerate(items)
+    )
+    batch_prompt = f"""Create 5 image prompts for news card visuals.
+
+{batch_input}
+
+Rules per prompt:
+- Photorealistic, cinematic (National Geographic / Reuters style)
+- Dramatic lighting, strong visual narrative, no text/logos
+- 60 words max
+
+Return ONLY a JSON array, no markdown:
+[{{"idx":1,"prompt":"..."}},{{"idx":2,"prompt":"..."}},...,{{"idx":5,"prompt":"..."}}]"""
+
+    raw = ask_gemini(batch_prompt, system=SYSTEM, temperature=0.7, max_tokens=1500)
+    raw = raw.strip().replace("```json", "").replace("```", "").strip()
+
+    try:
+        prompt_list = json.loads(raw)
+        prompt_map = {p["idx"]: p["prompt"][:350] for p in prompt_list}
+    except Exception as e:
+        print(f"  ⚠️  프롬프트 JSON 파싱 실패: {e} — 기본값 사용")
+        prompt_map = {i+1: items[i]["headline"] for i in range(len(items))}
+
+    # ── 이미지 생성 ───────────────────────────────────────────
     images = []
-
-    for i, item in enumerate(brief["instagram"]):
-        prompt = f"""
-Create a high-quality image prompt for a news card visual.
-
-News headline: {item['headline']}
-Angle: {item['angle']}
-Tone: {item['tone']}
-
-Requirements:
-- Photorealistic, cinematic quality (like a National Geographic or Reuters editorial photo)
-- Dramatic, purposeful lighting (golden hour, chiaroscuro, or moody atmospheric)
-- Strong visual narrative — the image alone should tell the story
-- Clear focal point, rule of thirds, professional composition
-- Modern, sophisticated aesthetic — absolutely no text, no watermarks, no logos
-- Evoke the emotion and gravity of the news story deeply
-- Include: subject, setting, lighting style, color palette, mood, camera angle
-- 70 words max, output the prompt text only
-
-Example style: "A dramatic wide-angle shot of an empty trading floor at dawn, golden light streaming through floor-to-ceiling windows, casting long shadows across rows of dark monitors, lone security guard reflected in polished marble floor, cinematic color grading with deep teals and amber, photorealistic, 8k, Reuters editorial photography"
-"""
-        image_prompt = ask_gemini(prompt, system=SYSTEM, temperature=0.7)
-        image_prompt = image_prompt.strip().replace('"', '')[:350]
-
-        print(f"  🖼  이미지 {i+1}/5 생성 중: {item['headline'][:30]}...")
-
-        url = _generate_image(image_prompt, today, i + 1)
-
+    for i, item in enumerate(items):
+        img_prompt = prompt_map.get(i + 1, item["headline"])
+        print(f"  🖼  이미지 {i+1}/{len(items)}: {item['headline'][:30]}...")
+        url = _generate_image(img_prompt, today, i + 1)
         images.append({
             "headline": item["headline"],
-            "prompt":   image_prompt,
+            "prompt":   img_prompt,
             "path":     None,
             "url":      url,
             "success":  url is not None,
         })
-
-        if url:
-            print(f"  ✅ 이미지 {i+1} 생성 완료")
-        else:
-            print(f"  ⚠️  이미지 {i+1} 생성 실패")
-
-        time.sleep(2)
+        print(f"  {'✅' if url else '⚠️ '} 이미지 {i+1} {'완료' if url else '실패'}")
 
     return images
 
 
-def _generate_image(prompt: str, today: str, idx: int) -> str | None:
-    """Pollinations.ai — URL을 구성해 반환.
-    리다이렉트 추적 없이 원본 URL 그대로 반환 (Notion/사이트가 직접 로드).
-    """
+def _generate_image(prompt: str, today: str, idx: int, images_dir=None) -> str | None:
     try:
         seed = abs(hash(f"{today}-{idx}")) % 99999
-        full_prompt = (
-            prompt
-            + ", ultra high quality, sharp focus, professional photography, award winning"
-        )
+        full_prompt = prompt + ", ultra high quality, sharp focus, professional photography"
         encoded = urllib.parse.quote(full_prompt)
         url = (
             f"https://image.pollinations.ai/prompt/{encoded}"
