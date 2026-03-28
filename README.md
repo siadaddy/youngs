@@ -72,11 +72,13 @@
 ### 매매 흐름
 
 ```
-00:00 / 04:00 / 08:00 / 12:00 / 16:00 / 20:00 (launchd, 하루 6회)
+00:05 / 04:05 / 08:05 / 12:05 / 16:05 / 20:05 (launchd, 4시간봉 마감 5분 후)
 │
 ├─ Step 0: 공인 IP 변경 감지 (변경 시 ntfy 긴급 알림)
 ├─ Step 1: 보유 상태 로드 (state.json)
-├─ Step 2: 손절 체크 (매수가 대비 -5% → 즉시 매도)
+├─ Step 2: 손절/익절 체크 (보유 중일 때)
+│    ├─ -5% 이하 → 🔴 자동 손절 매도
+│    └─ +10% 이상 → 🟡 자동 익절 매도
 ├─ Step 3: 업비트 KRW 마켓 거래량 상위 20개 선별
 ├─ Step 4: 4시간봉 RSI / MACD / 볼린저밴드 계산
 ├─ Step 5: Groq AI → BUY / SELL / HOLD 판단 + 한국어 이유
@@ -84,6 +86,9 @@
 ├─ Step 7: state.json 저장
 ├─ Step 8: ntfy 결과 알림
 └─ Step 9: docs/trades.json 업데이트 → GitHub Pages push
+
+08:30 KST  📊 일일 리포트 (com.siadad.coinreport)
+           어제 손익 / 누적 손익 / 승률 / 총 거래 횟수 → ntfy 알림
 ```
 
 ### 기술 지표
@@ -96,7 +101,13 @@
 
 ### 안전장치
 
-- 손절 (-5% 자동 매도) / IP 변경 감지 / Groq key2 폴백 / DRY_RUN 시뮬레이션 모드
+| 기능 | 기준 |
+|------|------|
+| 손절 | 매수가 대비 -5% 자동 매도 |
+| 익절 | 매수가 대비 +10% 자동 매도 |
+| IP 변경 감지 | ntfy 긴급 알림 + 업비트 재등록 안내 |
+| Groq 폴백 | key1 소진 시 key2 자동 전환 |
+| DRY_RUN | 실제 주문 없이 전체 흐름 시뮬레이션 |
 
 **상세 문서**: [바이브코딩/coin-trader/README.md](바이브코딩/coin-trader/README.md)
 
@@ -138,19 +149,40 @@ Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
 
 ## ⚙️ launchd 관리
 
+| 에이전트 | 역할 | 실행 시간 |
+|----------|------|-----------|
+| com.siadad.aicrew | 뉴스레터 + AI 크리에이터 | 매일 07:00 |
+| com.siadad.cointrader | AI 코인 자동매매 | 00:05 / 04:05 / 08:05 / 12:05 / 16:05 / 20:05 |
+| com.siadad.coinreport | 일일 수익 리포트 | 매일 08:30 |
+
 ```bash
 # 상태 확인
 launchctl list | grep siadad
 
-# ai-crew (뉴스레터 + AI 크리에이터) 재시작
+# ai-crew 재시작
 launchctl unload ~/Library/LaunchAgents/com.siadad.aicrew.plist
 launchctl load ~/Library/LaunchAgents/com.siadad.aicrew.plist
 
 # 코인 트레이더 재시작
 launchctl unload ~/Library/LaunchAgents/com.siadad.cointrader.plist
 launchctl load ~/Library/LaunchAgents/com.siadad.cointrader.plist
+
+# 일일 리포트 재시작
+launchctl unload ~/Library/LaunchAgents/com.siadad.coinreport.plist
+launchctl load ~/Library/LaunchAgents/com.siadad.coinreport.plist
 ```
 
 ---
 
 *최종 업데이트: 2026-03-28 | Powered by Groq + Stable Horde + pyupbit + Notion API + GitHub Pages*
+
+---
+
+## 📝 변경 이력
+
+### 2026-03-28
+- **코인 트레이더**: 실행 시각 정각 → 4시간봉 마감 5분 후 (`:05`)로 변경
+- **코인 트레이더**: 익절 +10% 자동 매도 추가 (기존 손절 -5%만 있었음)
+- **코인 트레이더**: 일일 수익 리포트 추가 (매일 08:30 ntfy 알림)
+- **GitHub Pages**: 히어로 섹션 코인 트레이더 내용 추가, "AI 자동화 허브"로 타이틀 변경
+- **GitHub Pages**: 매매 히스토리 reason 텍스트 줄바꿈 허용 (CSS 수정)
