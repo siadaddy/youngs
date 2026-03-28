@@ -123,23 +123,32 @@ def _build_blocks(brief, writer, images, newsletter_data):
             "heading_3": {"rich_text": [_t(f"#{i+1}  {item['headline']}")]},
         })
 
-        # 이미지 — 웹사이트에서 확인 링크로 표시
+        # 이미지 — GitHub Pages URL이면 임베드, 아니면 링크
         if i < len(images):
             img = images[i]
             if img.get("url"):
-                blocks.append({
-                    "object": "block", "type": "paragraph",
-                    "paragraph": {
-                        "rich_text": [
-                            _t("🖼 AI 생성 이미지: ", color="gray"),
-                            {
-                                "type": "text",
-                                "text": {"content": "웹사이트에서 보기", "link": {"url": "https://siadaddy.github.io/youngs/"}},
-                                "annotations": {"color": "blue", "underline": True},
-                            },
-                        ]
-                    },
-                })
+                url = img["url"]
+                if "github.io" in url:
+                    # GitHub Pages URL → Notion에서 직접 로드 가능
+                    blocks.append({
+                        "object": "block", "type": "image",
+                        "image": {"type": "external", "external": {"url": url}},
+                    })
+                else:
+                    # Pollinations URL → 링크로 대체
+                    blocks.append({
+                        "object": "block", "type": "paragraph",
+                        "paragraph": {
+                            "rich_text": [
+                                _t("🖼 AI 생성 이미지: ", color="gray"),
+                                {
+                                    "type": "text",
+                                    "text": {"content": "웹사이트에서 보기", "link": {"url": "https://siadaddy.github.io/youngs/"}},
+                                    "annotations": {"color": "blue", "underline": True},
+                                },
+                            ]
+                        },
+                    })
 
         # 카드뉴스 글 (이미지 아래)
         caption = item["caption"]
