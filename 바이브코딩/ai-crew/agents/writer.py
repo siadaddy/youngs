@@ -47,7 +47,7 @@ def run(brief: dict) -> dict:
 
 5. 행동 유도 (1줄)
 
-6. 해시태그 (20개, 줄바꿈 후)
+6. 해시태그 (10개, 줄바꿈 후, 핵심만 — 같은 뜻 한/영 중복 금지, 반복 금지)
 
 ━━━ 핵심 규칙 ━━━
 - 전체 글 최소 500자 이상
@@ -56,7 +56,7 @@ def run(brief: dict) -> dict:
 - 한국어·영어·이모지만 사용 — 일본어·한자·아랍어·러시아어·힌디어·독일어·베트남어 절대 금지
 - 원문에 없는 사실 창작 엄금
 """
-        caption = ask_gemini(prompt, system=SYSTEM, temperature=0.85, max_tokens=1200)
+        caption = ask_gemini(prompt, system=SYSTEM, temperature=0.7, max_tokens=1200)
         captions.append({"headline": item["headline"], "caption": caption})
         print(f"  ✅ 카드뉴스 {i+1}/5 완성 ({len(caption)}자)")
         if i < len(brief["instagram"]) - 1:
@@ -64,6 +64,7 @@ def run(brief: dict) -> dict:
 
     # 블로그 아티클
     b = brief["blog"]
+    blog_source_facts = b.get('source_facts', '')
     blog_prompt = f"""
 아래 브리프로 블로그 아티클을 완성해주세요.
 
@@ -71,6 +72,10 @@ def run(brief: dict) -> dict:
 핵심 포인트: {', '.join(b['main_points'])}
 문체: {b['tone']}
 타겟: {b['target']}
+
+【원문 확인 사실】 ← 본문에서 사실 서술 시 이것만 사용하세요
+{blog_source_facts if blog_source_facts else '(별도 원문 사실 없음 — 핵심 포인트 기반으로 작성, 불확실한 수치·이름 창작 금지)'}
+
 
 ━━━ 작성 규칙 ━━━
 - 마크다운 형식 (# 제목, ## 소제목)
