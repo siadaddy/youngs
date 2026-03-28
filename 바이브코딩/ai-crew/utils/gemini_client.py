@@ -14,15 +14,34 @@ GROQ_KEYS = [
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama-3.3-70b-versatile"
 
-_LANG_RULE = "\n\n[언어 규칙] 반드시 한국어와 영어, 이모지만 사용하세요. 한자·중국어·일본어·아랍어 등 다른 문자는 절대 사용하지 마세요."
+_LANG_RULE = (
+    "\n\n[언어 규칙] 반드시 한국어와 영어, 이모지만 사용하세요. "
+    "한자·일본어·아랍어·힌디어·러시아어·베트남어·태국어 등 "
+    "한국어·영어가 아닌 모든 문자는 절대 사용하지 마세요. "
+    "독일어·프랑스어 등 외국어 단어도 금지입니다. "
+    "모르는 사실은 절대 지어내지 마세요 — 불확실하면 '~로 알려졌다', '~에 따르면' 등 표현을 쓰세요."
+)
 
 
 def _sanitize(text: str) -> str:
-    text = re.sub('[\u4e00-\u9fff]', '', text)
-    text = re.sub('[\u3400-\u4dbf]', '', text)
-    text = re.sub('[\u0600-\u06ff]', '', text)
-    text = re.sub('[\u0e00-\u0e7f]', '', text)
+    # CJK 통합 한자
+    text = re.sub(r'[\u4e00-\u9fff]', '', text)
+    text = re.sub(r'[\u3400-\u4dbf]', '', text)
+    text = re.sub(r'[\u20000-\u2a6df]', '', text)
+    # 일본어 히라가나·가타카나
+    text = re.sub(r'[\u3040-\u309f]', '', text)
+    text = re.sub(r'[\u30a0-\u30ff]', '', text)
+    # 아랍어
+    text = re.sub(r'[\u0600-\u06ff]', '', text)
+    # 태국어
+    text = re.sub(r'[\u0e00-\u0e7f]', '', text)
+    # 키릴 문자 (러시아어 등)
+    text = re.sub(r'[\u0400-\u04ff]', '', text)
+    # 데바나가리 (힌디어)
+    text = re.sub(r'[\u0900-\u097f]', '', text)
+    # 연속 공백 → 단일 공백
     text = re.sub(r'[ \t]{2,}', ' ', text)
+    # 3줄 이상 빈 줄 → 2줄
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
