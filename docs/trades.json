@@ -1,0 +1,17 @@
+{
+  "holding": {
+    "ticker": "KRW-XRP",
+    "buy_price": 2031.0,
+    "qty": 39.389463318562285,
+    "invest_krw": 80000.0
+  },
+  "history": [],
+  "stats": {
+    "total_trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "total_pnl_krw": 0,
+    "start_date": "2026-03-28"
+  },
+  "updated_at": "2026-03-28 21:13"
+}
