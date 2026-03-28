@@ -1,9 +1,15 @@
-import os, json, requests, time, base64, urllib.parse
+import os, json, requests, time, subprocess
 from datetime import date
 from utils.gemini_client import ask_gemini
 
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
-HORDE_API_KEY = "0000000000"  # 익명 키 (무료)
+# 이미지를 docs/images/ 에 저장 → GitHub Pages로 서빙
+def _repo_root():
+    return subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"], text=True
+    ).strip()
+
+DOCS_IMAGES_DIR  = None   # run() 첫 호출 시 초기화
+GITHUB_PAGES_BASE = "https://siadaddy.github.io/youngs/images"
 
 SYSTEM = """
 You are a world-class visual art director with 30 years of experience at Vogue, National Geographic, and Reuters.
@@ -13,10 +19,17 @@ Every prompt you write results in a stunning, award-worthy image.
 Always write in English. Prompts must be vivid, specific, and visually compelling.
 """
 
+HORDE_API_KEY = "0000000000"  # 익명 키 (무료)
+
 
 def run(brief: dict, writer_output: dict) -> list:
-    print("🎨 디자이너 에이전트 실행 중... (Stable Horde — 무료)")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    global DOCS_IMAGES_DIR
+    print("🎨 디자이너 에이전트 실행 중... (Stable Horde → GitHub Pages)")
+
+    # docs/images/ 폴더 초기화
+    DOCS_IMAGES_DIR = os.path.join(_repo_root(), "docs", "images")
+    os.makedirs(DOCS_IMAGES_DIR, exist_ok=True)
+
     today = date.today().strftime("%Y-%m-%d")
 
     # ── 5개 프롬프트를 API 1번 호출로 생성 ──────────────────────
@@ -47,31 +60,27 @@ Return ONLY a JSON array, no markdown:
         print(f"  ⚠️  프롬프트 JSON 파싱 실패: {e} — 기본값 사용")
         prompt_map = {i+1: items[i]["headline"] for i in range(len(items))}
 
-    # ── 이미지 생성 ───────────────────────────────────────────
+    # ── 이미지 생성 & 저장 ────────────────────────────────────
     images = []
     for i, item in enumerate(items):
         img_prompt = prompt_map.get(i + 1, item["headline"])
-        print(f"  🖼  이미지 {i+1}/5 생성 중: {item['headline'][:25]}...")
+        filename   = f"{today}_image_{i+1}.png"
+        save_path  = os.path.join(DOCS_IMAGES_DIR, filename)
+        pages_url  = f"{GITHUB_PAGES_BASE}/{filename}"
 
-        save_path = os.path.join(OUTPUT_DIR, f"{today}_image_{i+1}.png")
+        print(f"  🖼  이미지 {i+1}/5 생성 중: {item['headline'][:30]}...")
         success = _generate_image(img_prompt, save_path)
-
-        url = None
-        if success:
-            url = _upload_to_freeimage(save_path)
 
         images.append({
             "headline": item["headline"],
             "prompt":   img_prompt,
             "path":     save_path if success else None,
-            "url":      url,
+            "url":      pages_url if success else None,
             "success":  success,
         })
 
-        if success and url:
-            print(f"  ✅ 이미지 {i+1} 저장 & 업로드: {url}")
-        elif success:
-            print(f"  ✅ 이미지 {i+1} 로컬 저장 (업로드 실패): {save_path}")
+        if success:
+            print(f"  ✅ 이미지 {i+1} 저장 완료: docs/images/{filename}")
         else:
             print(f"  ⚠️  이미지 {i+1} 생성 실패")
 
@@ -127,25 +136,3 @@ def _generate_image(prompt: str, save_path: str) -> bool:
     except Exception as e:
         print(f"    ❌ 이미지 생성 오류: {e}")
         return False
-
-
-def _upload_to_freeimage(path: str) -> str | None:
-    """freeimage.host → 노션 임베드용 공개 URL 반환"""
-    try:
-        with open(path, "rb") as f:
-            b64 = base64.b64encode(f.read()).decode()
-        r = requests.post(
-            "https://freeimage.host/api/1/upload",
-            data={
-                "key": "6d207e02198a847aa98d0a2a901485a5",
-                "action": "upload",
-                "source": b64,
-                "format": "json",
-            },
-            timeout=60,
-        )
-        if r.status_code == 200:
-            return r.json()["image"]["url"]
-    except Exception as e:
-        print(f"    ⚠️ 이미지 업로드 실패: {e}")
-    return None

@@ -1,10 +1,7 @@
 name: 🤖 시아아빠님의 AI 크리에이터
 
-# 매일 07:00 KST 자동 실행 (KST=UTC+9, 그러므로 UTC 22:00 전날)
-# workflow_dispatch 로 GitHub 웹에서 수동 실행도 가능
+# 맥북 cron에서 자동 실행 — GitHub는 수동 실행(workflow_dispatch)만
 on:
-  schedule:
-    - cron: '0 22 * * *'
   workflow_dispatch:
 
 permissions:
