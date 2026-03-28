@@ -1,10 +1,5 @@
 {
-  "holding": {
-    "ticker": "KRW-NOM",
-    "buy_price": 4.33,
-    "qty": 1154.7344110854503,
-    "invest_krw": 5000.0
-  },
+  "holding": null,
   "history": [
     {
       "time": "2026-03-28 21:54",
@@ -25,5 +20,5 @@
     "total_pnl_krw": 0,
     "start_date": "2026-03-28"
   },
-  "updated_at": "2026-03-28 21:54"
+  "updated_at": "2026-03-28 21:58"
 }
