@@ -1,30 +1,21 @@
-import os, json, urllib.parse, subprocess, requests
+import os, json, requests, time, base64, urllib.parse
 from datetime import date
 from utils.gemini_client import ask_gemini
 
-
-def _get_images_dir():
-    """docs/images/ 경로 (git repo 루트 기준). GitHub Actions에서 실제 저장에 사용."""
-    try:
-        repo_root = subprocess.check_output(
-            ["git", "rev-parse", "--show-toplevel"], text=True
-        ).strip()
-        d = os.path.join(repo_root, "docs", "images")
-        os.makedirs(d, exist_ok=True)
-        return d
-    except Exception:
-        return None
-
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
+HORDE_API_KEY = "0000000000"  # 익명 키 (무료)
 
 SYSTEM = """
-You are a world-class visual art director. Create cinematic, photorealistic image prompts.
-Always write in English. Output prompts only, no explanations.
+You are a world-class visual art director with 30 years of experience at Vogue, National Geographic, and Reuters.
+You have directed photo shoots for global news agencies and created viral editorial images.
+You create cinematic, photorealistic image prompts for AI image generation.
+Every prompt you write results in a stunning, award-worthy image.
+Always write in English. Prompts must be vivid, specific, and visually compelling.
 """
 
 
 def run(brief: dict, writer_output: dict) -> list:
-    print("🎨 디자이너 에이전트 실행 중... (Pollinations.ai)")
+    print("🎨 디자이너 에이전트 실행 중... (Stable Horde — 무료)")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     today = date.today().strftime("%Y-%m-%d")
 
@@ -41,7 +32,7 @@ def run(brief: dict, writer_output: dict) -> list:
 Rules per prompt:
 - Photorealistic, cinematic (National Geographic / Reuters style)
 - Dramatic lighting, strong visual narrative, no text/logos
-- 60 words max
+- 70 words max
 
 Return ONLY a JSON array, no markdown:
 [{{"idx":1,"prompt":"..."}},{{"idx":2,"prompt":"..."}},...,{{"idx":5,"prompt":"..."}}]"""
@@ -56,62 +47,105 @@ Return ONLY a JSON array, no markdown:
         print(f"  ⚠️  프롬프트 JSON 파싱 실패: {e} — 기본값 사용")
         prompt_map = {i+1: items[i]["headline"] for i in range(len(items))}
 
-    images_dir = _get_images_dir()
-
     # ── 이미지 생성 ───────────────────────────────────────────
     images = []
     for i, item in enumerate(items):
         img_prompt = prompt_map.get(i + 1, item["headline"])
-        print(f"  🖼  이미지 {i+1}/{len(items)}: {item['headline'][:30]}...")
-        url = _generate_image(img_prompt, today, i + 1, images_dir)
+        print(f"  🖼  이미지 {i+1}/5 생성 중: {item['headline'][:25]}...")
+
+        save_path = os.path.join(OUTPUT_DIR, f"{today}_image_{i+1}.png")
+        success = _generate_image(img_prompt, save_path)
+
+        url = None
+        if success:
+            url = _upload_to_freeimage(save_path)
+
         images.append({
             "headline": item["headline"],
             "prompt":   img_prompt,
-            "path":     None,
+            "path":     save_path if success else None,
             "url":      url,
-            "success":  url is not None,
+            "success":  success,
         })
-        print(f"  {'✅' if url else '⚠️ '} 이미지 {i+1} {'완료' if url else '실패'}")
+
+        if success and url:
+            print(f"  ✅ 이미지 {i+1} 저장 & 업로드: {url}")
+        elif success:
+            print(f"  ✅ 이미지 {i+1} 로컬 저장 (업로드 실패): {save_path}")
+        else:
+            print(f"  ⚠️  이미지 {i+1} 생성 실패")
+
+        time.sleep(2)
 
     return images
 
 
-def _generate_image(prompt: str, today: str, idx: int, images_dir=None) -> str | None:
+def _generate_image(prompt: str, save_path: str) -> bool:
+    """Stable Horde — 완전 무료, 커뮤니티 GPU 활용"""
     try:
-        seed = abs(hash(f"{today}-{idx}")) % 99999
-        full_prompt = prompt + ", ultra high quality, sharp focus, professional photography"
-        encoded = urllib.parse.quote(full_prompt)
-        pollinations_url = (
-            f"https://image.pollinations.ai/prompt/{encoded}"
-            f"?width=768&height=768&nologo=true&model=flux&seed={seed}"
+        headers = {"apikey": HORDE_API_KEY, "Content-Type": "application/json"}
+        payload = {
+            "prompt": prompt + " | ultra high quality, sharp focus, professional photography, award winning",
+            "params": {
+                "width": 768, "height": 768,
+                "steps": 35,
+                "cfg_scale": 8.0,
+                "sampler_name": "k_euler_a",
+                "n": 1,
+            },
+            "models": ["ICBINP - I Can't Believe It's Not Photography"],
+            "r2": True,
+        }
+        r = requests.post(
+            "https://stablehorde.net/api/v2/generate/async",
+            headers=headers, json=payload, timeout=30
         )
+        r.raise_for_status()
+        job_id = r.json()["id"]
 
-        # GitHub Actions에서 실행 시 이미지 다운로드 → GitHub Pages URL 사용
-        # (Notion에서도 이미지 로드 가능)
-        if images_dir:
-            img_filename = f"{today}_{idx}.png"
-            img_path = os.path.join(images_dir, img_filename)
-            print(f"    ⬇️  이미지 다운로드 시도...")
-            try:
-                r = requests.get(
-                    pollinations_url,
-                    timeout=30,          # 30초 안에 응답 없으면 포기
-                    allow_redirects=False,  # 401 리다이렉트 방지
-                )
-                ct = r.headers.get("content-type", "")
-                if r.status_code == 200 and "image" in ct and len(r.content) > 5000:
-                    with open(img_path, "wb") as f:
-                        f.write(r.content)
-                    gh_url = f"https://siadaddy.github.io/youngs/images/{img_filename}"
-                    print(f"    💾 저장 완료 → {gh_url}")
-                    return gh_url
-                else:
-                    print(f"    ⚠️  다운로드 불가 (status={r.status_code}) → URL 사용")
-            except Exception as e:
-                print(f"    ⚠️  다운로드 실패: {e} → URL 사용")
+        for _ in range(36):
+            time.sleep(5)
+            check = requests.get(
+                f"https://stablehorde.net/api/v2/generate/check/{job_id}",
+                headers=headers, timeout=10
+            )
+            if check.json().get("done"):
+                break
 
-        return pollinations_url
+        result = requests.get(
+            f"https://stablehorde.net/api/v2/generate/status/{job_id}",
+            headers=headers, timeout=30
+        )
+        img_url = result.json()["generations"][0]["img"]
+
+        img_data = requests.get(img_url, timeout=60)
+        img_data.raise_for_status()
+        with open(save_path, "wb") as f:
+            f.write(img_data.content)
+        return os.path.getsize(save_path) > 1000
 
     except Exception as e:
-        print(f"    ❌ URL 생성 오류: {e}")
-        return None
+        print(f"    ❌ 이미지 생성 오류: {e}")
+        return False
+
+
+def _upload_to_freeimage(path: str) -> str | None:
+    """freeimage.host → 노션 임베드용 공개 URL 반환"""
+    try:
+        with open(path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+        r = requests.post(
+            "https://freeimage.host/api/1/upload",
+            data={
+                "key": "6d207e02198a847aa98d0a2a901485a5",
+                "action": "upload",
+                "source": b64,
+                "format": "json",
+            },
+            timeout=60,
+        )
+        if r.status_code == 200:
+            return r.json()["image"]["url"]
+    except Exception as e:
+        print(f"    ⚠️ 이미지 업로드 실패: {e}")
+    return None
