@@ -313,7 +313,10 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ## 📝 업데이트 로그
 
-### 2026-03-28
+### 2026-03-28 (코인 트레이더 별도 프로젝트로 분리)
+- **신규**: AI 코인 자동매매 시스템 (`바이브코딩/coin-trader/`) 구축
+  - 업비트 KRW 마켓, 4시간마다 launchd 자동 실행
+  - GitHub Pages 코인 트레이더 대시보드 탭 추가 (`docs/trades.json`)
 - **콘텐츠 품질 강화**: 전체 파이프라인 안정성 점검 및 수정
   - designer.py: Stable Horde generations 빈 배열 크래시 방지
   - planner.py: JSON 정규식 파싱 — Groq 응답에 앞뒤 텍스트 있어도 안전
