@@ -44,7 +44,11 @@ pio.templates.default = "custom_font"
 # ✅ 캐시 기반 데이터 로딩 함수
 @st.cache_data(show_spinner="📦 데이터 로딩 중... 조금만 기다려주세요!")
 def load_data():
-    DB_PATH = "instacart_min_v2_1000.duckdb"  # ← 변경된 경량 버전 경로
+    import gdown
+    DB_PATH = "/tmp/instacart_min_v2_1000.duckdb"
+    GDRIVE_FILE_ID = "1YTZR0xiuTv9ZK9THkMKRJNaIOjZs7FcU"
+    if not os.path.exists(DB_PATH):
+        gdown.download(f"https://drive.google.com/uc?id={GDRIVE_FILE_ID}", DB_PATH, quiet=False)
     con = duckdb.connect(DB_PATH)
 
     queries = {
