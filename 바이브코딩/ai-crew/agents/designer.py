@@ -125,7 +125,11 @@ def _generate_image(prompt: str, save_path: str) -> bool:
             f"https://stablehorde.net/api/v2/generate/status/{job_id}",
             headers=headers, timeout=30
         )
-        img_url = result.json()["generations"][0]["img"]
+        generations = result.json().get("generations", [])
+        if not generations:
+            print("    ⚠️  Stable Horde generations 없음 (타임아웃 또는 큐 초과)")
+            return False
+        img_url = generations[0]["img"]
 
         img_data = requests.get(img_url, timeout=60)
         img_data.raise_for_status()

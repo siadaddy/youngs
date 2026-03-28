@@ -12,10 +12,14 @@ from dotenv import load_dotenv
 
 def _sanitize(text: str) -> str:
     """한자·외계어 등 불필요한 문자 제거"""
-    text = re.sub('\u4e00-\u9fff'.join(['[', ']']), '', text)
-    text = re.sub('\u3400-\u4dbf'.join(['[', ']']), '', text)
-    text = re.sub('\u0600-\u06ff'.join(['[', ']']), '', text)
-    text = re.sub('\u0e00-\u0e7f'.join(['[', ']']), '', text)
+    text = re.sub(r'[\u4e00-\u9fff]', '', text)   # CJK 통합 한자
+    text = re.sub(r'[\u3400-\u4dbf]', '', text)   # CJK 확장 A
+    text = re.sub(r'[\u3040-\u309f]', '', text)   # 히라가나
+    text = re.sub(r'[\u30a0-\u30ff]', '', text)   # 가타카나
+    text = re.sub(r'[\u0600-\u06ff]', '', text)   # 아랍어
+    text = re.sub(r'[\u0e00-\u0e7f]', '', text)   # 태국어
+    text = re.sub(r'[\u0400-\u04ff]', '', text)   # 키릴 (러시아어)
+    text = re.sub(r'[\u0900-\u097f]', '', text)   # 데바나가리 (힌디어)
     text = re.sub(r'[ \t]{2,}', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
@@ -27,7 +31,7 @@ NAVER_CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET', '')
 NOTION_TOKEN        = os.getenv('NOTION_TOKEN', '')
 NOTION_PARENT_ID    = os.getenv('NOTION_PARENT_PAGE_ID', '329b395f9fc68169b2e8e7d06a621019')
 NEWSLETTER_DIR      = os.getenv('NEWSLETTER_DIR', os.path.dirname(os.path.abspath(__file__)))
-GROQ_API_KEY        = os.getenv('GROQ_API_KEY', '')
+GROQ_KEYS           = [k for k in [os.getenv('GROQ_API_KEY'), os.getenv('GROQ_API_KEY_2')] if k]
 TODAY               = date.today().strftime('%Y-%m-%d')
 MAX_PER_CATEGORY    = 5
 
@@ -36,7 +40,7 @@ CATEGORIES = {
     '🤖 AI / 인공지능':    ['AI 인공지능', 'ChatGPT', '생성형 AI', 'LLM'],
     '💻 기술 / IT':       ['반도체 기술', '빅테크', 'IT 기업', '스타트업 기술'],
     '💰 경제 / 금융':      ['코스피 증시', '경제 금융', '부동산 시장', '환율 금리'],
-    '🚨 사건 / 사고':      ['사건 사고', '화재 사고', '범죄 수사'],
+    '🚨 사건 / 사고':      ['재난 안전', '자연재해', '소방 구조'],
     '🏙️ 사회':           ['사회 이슈', '정치 뉴스', '복지 정책'],
     '🚗 자동차':          ['전기차 자동차', '현대차 기아', '자율주행'],
     '🚘 BMW':            ['BMW 뉴스', 'BMW 신차'],
@@ -44,25 +48,34 @@ CATEGORIES = {
 
 # ── AI 호출 ──────────────────────────────────────────────
 def ask_ai(prompt: str, system: str = "") -> str:
-    if not GROQ_API_KEY:
+    if not GROQ_KEYS:
         return ""
     messages = []
     if system:
         messages.append({"role": "system", "content": system})
     messages.append({"role": "user", "content": prompt})
-    try:
-        r = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
-            json={"model": "llama-3.3-70b-versatile", "messages": messages, "temperature": 0.4},
-            timeout=30,
-        )
-        r.raise_for_status()
-        result = r.json()["choices"][0]["message"]["content"].strip()
-        return _sanitize(result)
-    except Exception as e:
-        print(f"    ⚠️ AI 호출 실패: {e}")
-        return ""
+    for key_idx, api_key in enumerate(GROQ_KEYS):
+        for attempt in range(1, 4):
+            try:
+                r = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                    json={"model": "llama-3.3-70b-versatile", "messages": messages, "temperature": 0.4},
+                    timeout=30,
+                )
+                if r.status_code == 429:
+                    wait = min(int(r.headers.get("retry-after", 30)) + 5, 90)
+                    print(f"    ⏳ Groq 키{key_idx+1} 속도 제한 — {wait}초 대기 ({attempt}/3)...")
+                    time.sleep(wait)
+                    continue
+                r.raise_for_status()
+                return _sanitize(r.json()["choices"][0]["message"]["content"].strip())
+            except Exception as e:
+                if attempt == 3:
+                    print(f"    ⚠️ Groq 키{key_idx+1} 실패: {e}")
+        if key_idx < len(GROQ_KEYS) - 1:
+            print(f"    ⚠️ Groq 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
+    return ""
 
 def build_ai_summary(categorized: dict) -> dict:
     """카테고리 요약 + TOP 3 한 번에 생성"""

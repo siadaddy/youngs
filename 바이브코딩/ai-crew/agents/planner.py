@@ -1,4 +1,4 @@
-import json
+import json, re
 from utils.gemini_client import ask_gemini
 
 SYSTEM = """
@@ -56,9 +56,12 @@ JSON 외 다른 텍스트는 절대 포함하지 마세요.
 """
     raw = ask_gemini(prompt, system=SYSTEM, temperature=0.6)
 
-    # JSON 파싱 (마크다운 코드블록 제거)
+    # JSON 파싱 — 정규식으로 { } 블록만 추출 (앞뒤 설명 텍스트 무시)
     raw = raw.replace("```json", "").replace("```", "").strip()
-    brief = json.loads(raw)
+    match = re.search(r'\{.*\}', raw, re.DOTALL)
+    if not match:
+        raise ValueError(f"JSON 블록을 찾을 수 없음: {raw[:200]}")
+    brief = json.loads(match.group())
 
     total = len(brief['instagram'])
     print(f"  ✅ 인스타 {total}개, 블로그 1개 브리프 완성")
