@@ -604,6 +604,94 @@
       .w-val.clock { font-size: 1.1rem; }
     }
 
+    /* ─── 코인 트레이더 ─────────────────────────── */
+    .coin-status-card {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-xl);
+      padding: 36px 40px;
+      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .coin-status-card.holding {
+      border-color: rgba(16,185,129,.3);
+      box-shadow: 0 0 40px rgba(16,185,129,.08);
+    }
+    .coin-status-card.watching {
+      border-color: rgba(100,116,139,.25);
+    }
+    .coin-ticker {
+      font-size: 1.8rem; font-weight: 900; letter-spacing: -.03em;
+    }
+    .coin-ticker-sub { font-size: .8rem; color: var(--muted2); margin-top: 4px; }
+    .coin-pnl {
+      font-size: 2.2rem; font-weight: 900; letter-spacing: -.03em; text-align: center;
+    }
+    .coin-pnl.positive { color: #f87171; }  /* 코인은 빨강=상승 */
+    .coin-pnl.negative { color: var(--green); }
+    .coin-pnl.neutral  { color: var(--muted2); }
+    .coin-meta { text-align: right; }
+    .coin-meta-row { font-size: .82rem; color: var(--muted2); margin-bottom: 5px; }
+    .coin-meta-row strong { color: var(--text); }
+    .coin-watching-msg {
+      grid-column: 1/-1; text-align: center;
+      padding: 20px 0;
+      color: var(--muted2); font-size: 1rem;
+    }
+
+    .trade-history { display: flex; flex-direction: column; gap: 12px; }
+    .trade-item {
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 16px; align-items: center;
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 16px 20px;
+    }
+    .trade-badge {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 900; flex-shrink: 0;
+    }
+    .trade-badge.buy  { background: rgba(16,185,129,.15); color: var(--green); }
+    .trade-badge.sell { background: rgba(248,113,113,.15); color: #f87171; }
+    .trade-badge.hold { background: rgba(100,116,139,.15); color: var(--muted2); }
+    .trade-info { min-width: 0; }
+    .trade-ticker { font-size: .95rem; font-weight: 700; }
+    .trade-time   { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+    .trade-reason { font-size: .78rem; color: var(--muted2); margin-top: 4px;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .trade-pnl { text-align: right; flex-shrink: 0; }
+    .trade-pnl-val { font-size: .95rem; font-weight: 800; }
+    .trade-pnl-val.pos { color: #f87171; }
+    .trade-pnl-val.neg { color: var(--green); }
+    .trade-pnl-val.none{ color: var(--muted2); }
+    .trade-pnl-krw { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+
+    .coin-stats-row {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
+      margin-bottom: 36px;
+    }
+    .coin-stat-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 18px 20px; text-align: center;
+    }
+    .coin-stat-val { font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; }
+    .coin-stat-lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+    .dry-run-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3);
+      color: var(--gold); border-radius: 99px; padding: 3px 10px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+    }
+
+    @media (max-width: 768px) {
+      .coin-status-card { grid-template-columns: 1fr 1fr; padding: 24px; }
+      .coin-meta { text-align: left; }
+      .coin-stats-row { grid-template-columns: repeat(2,1fr); }
+    }
+
     /* ─── 페이드인 애니메이션 ───────────────────── */
     .fade-in {
       opacity: 0;
@@ -940,6 +1028,55 @@
         <div><div class="stack-name">ntfy.sh</div><div class="stack-free">FREE · 완료 알림</div></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ─── 코인 트레이더 ────────────────────────────────── -->
+<section class="section" id="coin-section">
+  <div class="container">
+    <div class="section-eyebrow">🪙 AI Coin Trader</div>
+    <div class="section-title">AI 코인 자동매매</div>
+    <p class="section-sub">
+      5천원으로 AI가 직접 업비트에서 매매합니다 · 4시간마다 자동 분석 · Groq Llama 3.3 70B 판단
+      <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
+    </p>
+
+    <!-- 누적 통계 -->
+    <div class="coin-stats-row" id="coin-stats-row">
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-trades">-</div>
+        <div class="coin-stat-lbl">총 매매 횟수</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-wins" style="color:var(--green)">-</div>
+        <div class="coin-stat-lbl">수익 거래</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-losses" style="color:#f87171">-</div>
+        <div class="coin-stat-lbl">손실 거래</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-pnl">-</div>
+        <div class="coin-stat-lbl">누적 손익</div>
+      </div>
+    </div>
+
+    <!-- 현재 보유 상태 -->
+    <div id="coin-status"></div>
+
+    <!-- 매매 히스토리 -->
+    <div style="margin-top:32px;">
+      <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;">
+        📋 매매 히스토리
+      </div>
+      <div class="trade-history" id="coin-history">
+        <div style="text-align:center;color:var(--muted);padding:32px 0;">불러오는 중...</div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px;font-size:.75rem;color:var(--muted);text-align:center;">
+      ⚠️ 이 시스템은 학습 목적의 소액 실험입니다. 투자 권유가 아닙니다.
+    </p>
   </div>
 </section>
 
@@ -1312,6 +1449,102 @@
     loadDate(today);
   }
 
+  /* ─── 코인 트레이더 ──────────────────────────────────── */
+  async function loadCoinTrader() {
+    try {
+      const res = await fetch(`trades.json?t=${Date.now()}`);
+      if (!res.ok) return;
+      const d = await res.json();
+
+      // 시뮬레이션 배지
+      const isDry = d.history && d.history.length > 0 && d.history[0].dry_run;
+      if (isDry) {
+        const badge = document.getElementById('coin-dry-badge');
+        badge.innerHTML = '<span class="dry-run-badge">🧪 시뮬레이션 모드</span>';
+        badge.style.display = 'inline';
+      }
+
+      // 누적 통계
+      const s = d.stats || {};
+      document.getElementById('cs-trades').textContent = s.total_trades ?? 0;
+      document.getElementById('cs-wins').textContent   = s.wins ?? 0;
+      document.getElementById('cs-losses').textContent = s.losses ?? 0;
+      const pnl = s.total_pnl_krw ?? 0;
+      const pnlEl = document.getElementById('cs-pnl');
+      pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
+      pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
+
+      // 현재 보유 상태
+      const h = d.holding;
+      const statusEl = document.getElementById('coin-status');
+      if (h && h.ticker) {
+        const pct = ((h.buy_price > 0) ? ((0 / h.buy_price) * 100) : 0); // 현재가는 static이라 표시만
+        statusEl.innerHTML = `
+          <div class="coin-status-card holding">
+            <div>
+              <div class="coin-ticker">🪙 ${h.ticker.replace('KRW-','')}</div>
+              <div class="coin-ticker-sub">현재 보유 중</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">매수가</div>
+              <div style="font-size:1.5rem;font-weight:900;letter-spacing:-.02em;">${Number(h.buy_price).toLocaleString()}원</div>
+            </div>
+            <div class="coin-meta">
+              <div class="coin-meta-row">투자금 <strong>${Number(h.invest_krw||5000).toLocaleString()}원</strong></div>
+              <div class="coin-meta-row">수량 <strong>${Number(h.qty).toFixed(4)}</strong></div>
+              <div class="coin-meta-row" style="margin-top:8px;font-size:.7rem;color:var(--muted);">
+                4시간마다 자동 분석
+              </div>
+            </div>
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="coin-status-card watching">
+            <div class="coin-watching-msg">
+              <div style="font-size:2rem;margin-bottom:8px;">👀</div>
+              <div style="font-weight:700;color:var(--text);margin-bottom:4px;">시장 관망 중</div>
+              <div style="font-size:.82rem;">AI가 매수 기회를 탐색하고 있습니다 · 다음 분석: 4시간 이내</div>
+            </div>
+          </div>`;
+      }
+
+      // 히스토리
+      const histEl = document.getElementById('coin-history');
+      const hist = (d.history || []).slice(0, 10);
+      if (hist.length === 0) {
+        histEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px 0;">아직 매매 기록이 없습니다.</div>';
+      } else {
+        histEl.innerHTML = hist.map(t => {
+          const icon   = t.action === 'BUY' ? '🟢' : t.action === 'SELL' ? '🔴' : '⏸';
+          const cls    = t.action === 'BUY' ? 'buy' : t.action === 'SELL' ? 'sell' : 'hold';
+          const pnlPct = t.pnl_pct != null ? t.pnl_pct : null;
+          const pnlCls = pnlPct == null ? 'none' : pnlPct >= 0 ? 'pos' : 'neg';
+          const pnlStr = pnlPct == null ? (t.action === 'BUY' ? '매수' : '-') :
+                         (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
+          const krwStr = t.pnl_krw != null ? (t.pnl_krw >= 0 ? '+' : '') + Number(t.pnl_krw).toLocaleString() + '원' : '';
+          const ticker = (t.ticker || '').replace('KRW-', '');
+          return `
+            <div class="trade-item fade-in">
+              <div class="trade-badge ${cls}">${icon}</div>
+              <div class="trade-info">
+                <div class="trade-ticker">${t.action} · ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
+                <div class="trade-time">${t.time || ''}</div>
+                <div class="trade-reason">${t.reason || ''}</div>
+              </div>
+              <div class="trade-pnl">
+                <div class="trade-pnl-val ${pnlCls}">${pnlStr}</div>
+                ${krwStr ? `<div class="trade-pnl-krw">${krwStr}</div>` : ''}
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+    } catch(e) {
+      // trades.json 없으면 섹션 숨김
+      document.getElementById('coin-section').style.display = 'none';
+    }
+  }
+
   // 라이브 위젯 시작
   startClock();
   fetchWeather();
@@ -1327,6 +1560,7 @@
     }, 5 * 60 * 1000);
 
   init();
+  loadCoinTrader();
 </script>
 </body>
 </html>
