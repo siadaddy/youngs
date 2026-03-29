@@ -166,18 +166,26 @@ def main():
             exit_type = None
         if exit_type == "stop_loss":
             action = {"action": "SELL", "ticker": holding["ticker"], "reason": f"자동 손절 -{STOP_LOSS}%"}
-            holding = executor.run(action, holding)
-            save_state(holding)
-            notify("🔴 손절 매도", f"{action['ticker']} 손절 매도 완료\n기준: -{STOP_LOSS}%", priority="high")
-            _publish_trades("SELL", action, holding, load_state())
+            try:
+                new_holding = executor.run(action, holding)
+                save_state(new_holding)
+                notify("🔴 손절 매도", f"{action['ticker']} 손절 매도 완료\n기준: -{STOP_LOSS}%", priority="high")
+                _publish_trades("SELL", action, new_holding, load_state())
+            except Exception as e:
+                log(f"  ❌ 손절 매도 실패: {e}")
+                notify("❌ 손절 실패", f"{holding['ticker']} 손절 주문 오류: {e}", priority="urgent")
             log("  손절 처리 완료 — 이번 사이클 종료")
             return
         elif exit_type == "take_profit":
             action = {"action": "SELL", "ticker": holding["ticker"], "reason": f"자동 익절 +{TAKE_PROFIT}%"}
-            new_holding = executor.run(action, holding)
-            save_state(new_holding)
-            notify("🟡 익절 매도", f"{action['ticker']} 익절 매도 완료\n기준: +{TAKE_PROFIT}%", priority="high")
-            _publish_trades("SELL", action, new_holding, holding)
+            try:
+                new_holding = executor.run(action, holding)
+                save_state(new_holding)
+                notify("🟡 익절 매도", f"{action['ticker']} 익절 매도 완료\n기준: +{TAKE_PROFIT}%", priority="high")
+                _publish_trades("SELL", action, new_holding, holding)
+            except Exception as e:
+                log(f"  ❌ 익절 매도 실패: {e}")
+                notify("❌ 익절 실패", f"{holding['ticker']} 익절 주문 오류: {e}", priority="urgent")
             log("  익절 처리 완료 — 이번 사이클 종료")
             return
 
@@ -406,4 +414,11 @@ if __name__ == "__main__":
     elif len(_sys.argv) > 1 and _sys.argv[1] == "ip":
         ip_report()
     else:
-        main()
+        try:
+            main()
+        except TimeoutError as e:
+            log(f"  ❌ 실행 타임아웃: {e}")
+            notify("❌ 자동매매 타임아웃", "10분 초과로 강제 종료됨 — 네트워크 확인 필요", priority="high")
+        except Exception as e:
+            log(f"  ❌ 예상치 못한 오류: {e}")
+            notify("❌ 자동매매 오류", f"예상치 못한 오류: {e}", priority="high")
