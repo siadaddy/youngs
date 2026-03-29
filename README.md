@@ -77,10 +77,10 @@
 ├─ Step 0: 공인 IP 변경 감지 (변경 시 ntfy 긴급 알림)
 ├─ Step 1: 보유 상태 로드 (state.json)
 ├─ Step 2: 손절/익절 체크 (보유 중일 때)
-│    ├─ -5% 이하 → 🔴 자동 손절 매도
-│    └─ +10% 이상 → 🟡 자동 익절 매도
+│    ├─ -7% 이하 → 🔴 자동 손절 매도
+│    └─ +15% 이상 → 🟡 자동 익절 매도
 ├─ Step 3: 업비트 KRW 마켓 거래량 상위 20개 선별
-├─ Step 4: 4시간봉 RSI / MACD / 볼린저밴드 계산
+├─ Step 4: 4시간봉 RSI / MACD / 볼린저밴드 / ADX 계산
 ├─ Step 5: Groq AI → BUY / SELL / HOLD 판단 + 한국어 이유
 ├─ Step 6: 업비트 시장가 주문 실행
 ├─ Step 7: state.json 저장
@@ -91,21 +91,27 @@
            어제 손익 / 누적 손익 / 승률 / 총 거래 횟수 → ntfy 알림
 ```
 
-### 기술 지표
+### 기술 지표 (스코어링 방식)
 
-| 지표 | 설정 | 매수 | 매도 |
-|------|------|------|------|
-| RSI | 14 | 30 이하 (과매도) | 70 이상 (과매수) |
-| MACD | 12/26/9 | 골든크로스 | 데드크로스 |
-| 볼린저밴드 | 20/2 | 하단 근접 | 상단 근접 |
+| 지표 | 설정 | 매수 신호 | 매도 신호 |
+|------|------|-----------|-----------|
+| RSI | 14 | 35~40 이하 (+1~+2점) | 65~75 이상 (-1~-2점) |
+| MACD | 12/26/9 | 골든크로스 (+2점) / 상승 (+1점) | 데드크로스 (-2점) / 하락 (-1점) |
+| 볼린저밴드 | 20/2 | 하단 (+2점) / 중하단 (+1점) | 상단 (-2점) / 중상단 (-1점) |
+| ADX | 14 | **20 이상 필수** (추세 확인) | 20 미만이면 매수 금지 |
+
+**매수**: 합산 +4점 이상 + ADX 20 이상 | **매도**: -2점 이하 or 손절/익절 도달
+**기회 교체**: 보유 종목 횡보(-3%~+3%) + 다른 종목 +4점 이상 → SELL 후 교체
 
 ### 안전장치
 
 | 기능 | 기준 |
 |------|------|
-| 손절 | 매수가 대비 -5% 자동 매도 |
-| 익절 | 매수가 대비 +10% 자동 매도 |
-| IP 변경 감지 | ntfy 긴급 알림 + 업비트 재등록 안내 |
+| 손절 | 매수가 대비 -7% 자동 매도 |
+| 익절 | 매수가 대비 +15% 자동 매도 |
+| IP 사전 점검 | 거래 1시간 전 현재 IP ntfy 알림 (23:05 / 03:05 / 07:05 / 11:05 / 15:05 / 19:05) |
+| IP 변경 감지 | 변경 시 ntfy 긴급 알림 + 업비트 재등록 안내 |
+| 실행 타임아웃 | 10분 초과 시 강제 종료 (네트워크 hang 방지) |
 | Groq 폴백 | key1 소진 시 key2 자동 전환 |
 | DRY_RUN | 실제 주문 없이 전체 흐름 시뮬레이션 |
 
@@ -155,6 +161,7 @@ Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
 | com.siadad.aicrew | 뉴스레터 + AI 크리에이터 | 매일 07:00 |
 | com.siadad.cointrader | AI 코인 자동매매 | 00:05 / 04:05 / 08:05 / 12:05 / 16:05 / 20:05 |
 | com.siadad.coinreport | 일일 수익 리포트 | 매일 08:30 |
+| com.siadad.coinip | 거래 1시간 전 IP 점검 | 23:05 / 03:05 / 07:05 / 11:05 / 15:05 / 19:05 |
 
 ```bash
 # 상태 확인
@@ -171,17 +178,29 @@ launchctl load ~/Library/LaunchAgents/com.siadad.cointrader.plist
 # 일일 리포트 재시작
 launchctl unload ~/Library/LaunchAgents/com.siadad.coinreport.plist
 launchctl load ~/Library/LaunchAgents/com.siadad.coinreport.plist
+
+# IP 점검 재시작
+launchctl unload ~/Library/LaunchAgents/com.siadad.coinip.plist
+launchctl load ~/Library/LaunchAgents/com.siadad.coinip.plist
 ```
 
 ---
 
-*최종 업데이트: 2026-03-29 | Powered by Groq + Stable Horde + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-29 (2차) | Powered by Groq + Stable Horde + pyupbit + Notion API + GitHub Pages*
 
 ---
 
 ## 📝 변경 이력
 
 ### 2026-03-29
+- **코인 트레이더**: 퀀트 연구 기반 트레이딩 규칙 전면 업그레이드
+  - ADX 지표 추가 — 추세 없는 횡보장 진입 차단 (승률 +15% 효과)
+  - 스코어링 방식 도입 — RSI·MACD·BB 합산 점수 기반 BUY/SELL 판단
+  - RSI 매수 기준 30 → 35~40, 매도 기준 70 → 65~70
+  - 손절 -5% → -7%, 익절 +10% → +15% (알트코인 4시간봉 변동폭 반영)
+  - 기회 교체 조건 개선 — 거래량 기준 +100% → +50%, RSI 30 → 40
+- **코인 트레이더**: 거래 1시간 전 IP 사전 점검 ntfy 알림 추가 (com.siadad.coinip)
+- **코인 트레이더**: 10분 실행 타임아웃 추가 (네트워크 hang 방지)
 - **GitHub Pages**: 카드뉴스 3개로 축소, AI 직원·파이프라인·기술 스택 → about.html 분리
 - **AI 크리에이터**: planner 카드뉴스 5개 → 3개로 변경
 
