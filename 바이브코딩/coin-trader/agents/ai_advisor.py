@@ -68,13 +68,35 @@ def run(market_data: list, holding: dict | None) -> dict:
     else:
         holding_text = "현재 보유 종목 없음"
 
-    # 종목 분석 텍스트 (상위 15개만 — 토큰 절약)
+    # 종목 분석 텍스트 + 스코어 계산 (상위 15개만 — 토큰 절약)
+    def _score(d: dict) -> int:
+        s = 0
+        rsi = d.get("rsi", 50)
+        if rsi < 35:    s += 2
+        elif rsi < 45:  s += 1
+        elif rsi > 65:  s -= 1
+        elif rsi > 75:  s -= 2
+        macd = d.get("macd", "")
+        if "골든크로스" in macd:   s += 2
+        elif "상승" in macd:       s += 1
+        elif "데드크로스" in macd:  s -= 2
+        elif "하락" in macd:       s -= 1
+        bb = d.get("bb", "")
+        if "하단" in bb:    s += 2
+        elif "중하단" in bb: s += 1
+        elif "상단" in bb:  s -= 2
+        elif "중상단" in bb: s -= 1
+        return s
+
     rows = []
     for d in market_data[:15]:
+        score = _score(d)
+        adx = d.get("adx", 0)
+        trend = "추세O" if adx >= 20 else "횡보"
         vol_str = f"거래량{d['vol_change_pct']:+.0f}%"
         rows.append(
             f"- {d['ticker']} | 현재가 {d['price']:,.0f}원 | "
-            f"RSI {d['rsi']} | MACD {d['macd']} | BB {d['bb']} | {vol_str}"
+            f"RSI {d['rsi']} | MACD {d['macd']} | BB {d['bb']} | {vol_str} | ADX {adx}({trend}) | 점수:{score:+d}"
         )
     market_text = "\n".join(rows)
 
@@ -86,16 +108,19 @@ def run(market_data: list, holding: dict | None) -> dict:
 【KRW 시장 상위 종목 분석 (4시간봉 기준)】
 {market_text}
 
-【판단 규칙】
+【판단 규칙 — 스코어 기반】
+각 종목의 점수(RSI·MACD·BB 합산)와 ADX 추세 여부를 기준으로 판단하세요.
+
 1. 보유 중이면 HOLD 또는 SELL만 선택 가능
 2. 미보유 중이면 BUY(종목 지정) 또는 HOLD만 선택 가능
-3. 수익률이 -{stop_loss}% 이하면 반드시 SELL
-4. RSI 70 이상 + MACD 하락이면 SELL 고려
-5. RSI 30 이하 + MACD 골든크로스면 BUY 적극 고려
-6. 뚜렷한 신호 없으면 HOLD
-7. 【기회 교체 조건】보유 종목 수익률이 -2% ~ +2% 횡보 중이고,
-   다른 종목에 RSI 30 이하 + MACD 골든크로스 + 거래량 급증(+100% 이상) 신호가 동시에 발생하면
-   현재 종목을 SELL하고 다음 사이클에서 해당 종목 매수를 노릴 것. 이 경우 reason에 "기회 교체" 언급.
+3. 수익률이 -{stop_loss}% 이하면 반드시 SELL (손절)
+4. 【강한 매도】보유 종목 점수 -2 이하 + RSI 65 이상 + MACD 데드크로스 → SELL
+5. 【강한 매수】미보유 시 점수 +4 이상 + ADX 20 이상(추세O) → BUY 적극 고려
+6. 【중간 매수】미보유 시 점수 +3 이상 + ADX 20 이상 + 거래량 +50% 이상 → BUY 고려
+7. ADX 20 미만(횡보) 종목은 점수가 높아도 BUY 금지 — 가짜 신호 가능성 높음
+8. 【기회 교체】보유 종목 수익률 -3%~+3% 횡보 + 보유 종목 점수 0 이하,
+   다른 종목 점수 +4 이상 + ADX 20 이상 + 거래량 +50% 이상 → SELL 후 교체 (reason에 "기회 교체" 명시)
+9. 뚜렷한 신호 없으면 HOLD
 
 반드시 아래 JSON만 출력하세요 (다른 텍스트 없이):
 {{"action": "BUY" | "SELL" | "HOLD", "ticker": "KRW-XXX" 또는 null, "reason": "한국어로 판단 이유 2~3문장"}}"""
