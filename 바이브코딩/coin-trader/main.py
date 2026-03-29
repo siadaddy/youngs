@@ -300,6 +300,17 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
 
 def daily_report():
     """매일 아침 어제 손익 + 누적 통계 ntfy 알림"""
+    # 오늘 이미 발송했으면 스킵 (중복 방지)
+    lock_file = os.path.join(os.path.dirname(__file__), "report_sent.txt")
+    today = datetime.now().strftime("%Y-%m-%d")
+    if os.path.exists(lock_file):
+        with open(lock_file) as f:
+            if f.read().strip() == today:
+                log("  📊 일일 리포트 — 오늘 이미 발송됨, 스킵")
+                return
+    with open(lock_file, "w") as f:
+        f.write(today)
+
     try:
         repo_root = subprocess.check_output(
             ["git", "rev-parse", "--show-toplevel"],
