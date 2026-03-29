@@ -159,7 +159,11 @@ def main():
 
     # Step 2: 손절 / 익절 체크 (보유 중일 때)
     if holding:
-        exit_type = check_exit(holding)
+        try:
+            exit_type = check_exit(holding)
+        except Exception as e:
+            log(f"  ⚠️  손절/익절 체크 실패 (무시하고 계속): {e}")
+            exit_type = None
         if exit_type == "stop_loss":
             action = {"action": "SELL", "ticker": holding["ticker"], "reason": f"자동 손절 -{STOP_LOSS}%"}
             holding = executor.run(action, holding)
