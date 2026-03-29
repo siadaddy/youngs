@@ -6,7 +6,7 @@
 4시간마다 launchd로 자동 실행
 """
 
-import sys, os, json, time, requests, subprocess
+import sys, os, json, time, requests, subprocess, signal
 sys.path.insert(0, os.path.dirname(__file__))
 
 from datetime import datetime
@@ -132,7 +132,15 @@ def check_exit(holding: dict) -> str | None:
 
 # ── 메인 ─────────────────────────────────────────────────
 
+def _timeout_handler(signum, frame):
+    raise TimeoutError("전체 실행 10분 초과 — 강제 종료")
+
+
 def main():
+    # 전체 실행 타임아웃 10분 (네트워크 hang 방지)
+    signal.signal(signal.SIGALRM, _timeout_handler)
+    signal.alarm(600)
+
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     dry_tag = " [DRY RUN]" if DRY_RUN else ""
     log(f"\n{'='*55}")
@@ -218,6 +226,7 @@ def main():
         )
 
     log(f"✅ 완료 — {action} {ticker}")
+    signal.alarm(0)  # 타임아웃 해제
 
     # Step 8: GitHub Pages용 trades.json 업데이트 & push
     _publish_trades(action, advice, new_holding, holding)
