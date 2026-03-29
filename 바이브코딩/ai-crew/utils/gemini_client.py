@@ -27,7 +27,7 @@ def _sanitize(text: str) -> str:
     # CJK 통합 한자
     text = re.sub(r'[\u4e00-\u9fff]', '', text)
     text = re.sub(r'[\u3400-\u4dbf]', '', text)
-    text = re.sub(r'[\u20000-\u2a6df]', '', text)
+    text = re.sub(r'[\U00020000-\U0002A6DF]', '', text)
     # 일본어 히라가나·가타카나
     text = re.sub(r'[\u3040-\u309f]', '', text)
     text = re.sub(r'[\u30a0-\u30ff]', '', text)
@@ -46,7 +46,7 @@ def _sanitize(text: str) -> str:
     return text.strip()
 
 
-def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096) -> str:
+def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096, json_mode: bool = False) -> str:
     """Groq API 호출 — 키 2개 폴백 + 429 자동 대기"""
     import time
 
@@ -61,6 +61,8 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
+    if json_mode:
+        payload["response_format"] = {"type": "json_object"}
 
     for key_idx, api_key in enumerate(GROQ_KEYS):
         headers = {

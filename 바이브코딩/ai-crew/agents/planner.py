@@ -31,7 +31,7 @@ def run(newsletter_text: str) -> dict:
     }}
   ],
   "blog": {{
-    "title": "블로그 아티클 제목",
+    "title": "블로그 아티클 제목 (독자의 관심을 끄는 구체적 제목. '뉴스레터 요약', '오늘의 뉴스' 등 요약성 제목 절대 금지)",
     "main_points": ["핵심 포인트1", "핵심 포인트2", "핵심 포인트3"],
     "tone": "전문적이고 읽기 쉬운 문체",
     "target": "타겟 독자층",
@@ -40,6 +40,9 @@ def run(newsletter_text: str) -> dict:
 }}
 
 instagram은 5개, blog는 1개만 작성하세요.
+📝 블로그 필수 규칙: blog title은 오늘 뉴스 중 가장 임팩트 있는 단일 주제를 깊게 파고드는 심층 분석 아티클 제목이어야 합니다.
+   - ❌ 금지: "뉴스레터 요약", "오늘의 뉴스", "3월 29일 뉴스", 날짜+요약 조합 제목
+   - ✅ 예시: "전기차 시장의 판도 바꿀 3가지 신호", "김정은 탱크 시험이 말해주는 것", "수입차 시장 2026 생존 전략"
 🚗 필수 규칙: instagram 배열의 첫 번째(index 0) 항목은 반드시 자동차, BMW, 전기차, 모빌리티, 자율주행 관련 뉴스여야 합니다.
    - 해당 뉴스가 없으면 자동차 업계 전반 또는 수입차 시장 트렌드라도 첫 번째로 배치하세요.
    - 나머지 4개는 다른 카테고리에서 자유롭게 선정합니다.
@@ -54,14 +57,17 @@ instagram은 5개, blog는 1개만 작성하세요.
    - 검증되지 않은 루머·의혹 성격의 뉴스
 JSON 외 다른 텍스트는 절대 포함하지 마세요.
 """
-    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.6)
+    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.6, json_mode=True, max_tokens=8096)
 
-    # JSON 파싱 — 정규식으로 { } 블록만 추출 (앞뒤 설명 텍스트 무시)
+    # JSON 파싱 — json_mode 보장 → 직접 파싱, 실패 시 regex 폴백
     raw = raw.replace("```json", "").replace("```", "").strip()
-    match = re.search(r'\{.*\}', raw, re.DOTALL)
-    if not match:
-        raise ValueError(f"JSON 블록을 찾을 수 없음: {raw[:200]}")
-    brief = json.loads(match.group())
+    try:
+        brief = json.loads(raw)
+    except json.JSONDecodeError:
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if not match:
+            raise ValueError(f"JSON 블록을 찾을 수 없음: {raw[:200]}")
+        brief = json.loads(match.group())
 
     total = len(brief['instagram'])
     print(f"  ✅ 인스타 {total}개, 블로그 1개 브리프 완성")
