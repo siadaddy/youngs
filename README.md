@@ -186,7 +186,7 @@ launchctl load ~/Library/LaunchAgents/com.siadad.coinip.plist
 
 ---
 
-*최종 업데이트: 2026-03-29 (2차) | Powered by Groq + Stable Horde + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-29 (3차) | Powered by Groq + Stable Horde + pyupbit + Notion API + GitHub Pages*
 
 ---
 
@@ -200,7 +200,10 @@ launchctl load ~/Library/LaunchAgents/com.siadad.coinip.plist
   - 손절 -5% → -7%, 익절 +10% → +15% (알트코인 4시간봉 변동폭 반영)
   - 기회 교체 조건 개선 — 거래량 기준 +100% → +50%, RSI 30 → 40
 - **코인 트레이더**: 거래 1시간 전 IP 사전 점검 ntfy 알림 추가 (com.siadad.coinip)
-- **코인 트레이더**: 10분 실행 타임아웃 추가 (네트워크 hang 방지)
+- **코인 트레이더**: 10분 실행 타임아웃 추가 + TimeoutError ntfy 알림
+- **코인 트레이더**: 손절/익절 주문 실패 시 예외 처리 + ntfy 긴급 알림
+- **코인 트레이더**: check_exit 네트워크 오류 시 프로그램 중단 방지
+- **코인 트레이더**: 예상치 못한 오류 전체 catch → ntfy 알림 (조용히 죽는 케이스 제거)
 - **GitHub Pages**: 카드뉴스 3개로 축소, AI 직원·파이프라인·기술 스택 → about.html 분리
 - **AI 크리에이터**: planner 카드뉴스 5개 → 3개로 변경
 
