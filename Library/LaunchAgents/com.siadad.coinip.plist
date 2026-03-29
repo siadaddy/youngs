@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.siadad.coinip</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/anaconda3/bin/python3</string>
+    <string>/Users/youngchulyu/바이브코딩/coin-trader/main.py</string>
+    <string>ip</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/youngchulyu/바이브코딩/coin-trader</string>
+
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>23</integer><key>Minute</key><integer>5</integer></dict>
+    <dict><key>Hour</key><integer>3</integer><key>Minute</key><integer>5</integer></dict>
+    <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>5</integer></dict>
+    <dict><key>Hour</key><integer>11</integer><key>Minute</key><integer>5</integer></dict>
+    <dict><key>Hour</key><integer>15</integer><key>Minute</key><integer>5</integer></dict>
+    <dict><key>Hour</key><integer>19</integer><key>Minute</key><integer>5</integer></dict>
+  </array>
+
+  <key>StandardOutPath</key>
+  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/anaconda3/bin:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+</dict>
+</plist>

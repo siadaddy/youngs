@@ -366,9 +366,40 @@ def daily_report():
         log(f"  ⚠️  일일 리포트 실패: {e}")
 
 
+def ip_report():
+    """거래 1시간 전 현재 IP 알림 (업비트 API 키 IP 점검용)"""
+    try:
+        current_ip = requests.get("https://api.ipify.org", timeout=5).text.strip()
+    except Exception as e:
+        notify("⚠️ IP 확인 실패", f"IP 조회 오류: {e}", priority="high")
+        return
+
+    prev_ip = None
+    if os.path.exists(IP_FILE):
+        with open(IP_FILE, "r") as f:
+            prev_ip = f.read().strip()
+
+    if prev_ip and prev_ip != current_ip:
+        status = f"🔴 IP 변경됨!\n이전: {prev_ip}\n현재: {current_ip}\n\n업비트 API 키 재등록 필요"
+        priority = "urgent"
+    else:
+        status = f"✅ IP 정상\n현재: {current_ip}"
+        priority = "min"
+
+    next_trade = (datetime.now().hour + 1) % 24
+    notify(
+        f"🕐 1시간 후 코인 트레이딩 예정",
+        f"{status}\n\n다음 거래: {next_trade:02d}:05",
+        priority=priority,
+    )
+    log(f"  📡 IP 사전 점검 알림 발송: {current_ip}")
+
+
 if __name__ == "__main__":
     import sys as _sys
     if len(_sys.argv) > 1 and _sys.argv[1] == "report":
         daily_report()
+    elif len(_sys.argv) > 1 and _sys.argv[1] == "ip":
+        ip_report()
     else:
         main()
