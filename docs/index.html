@@ -701,6 +701,35 @@
     @keyframes fadeIn {
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* ─── 탭 ────────────────────────────────────────── */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      padding: 20px 24px 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .tab-btn {
+      padding: 12px 28px;
+      border-radius: 12px 12px 0 0;
+      border: 1px solid var(--glass-border);
+      border-bottom: none;
+      background: var(--glass);
+      color: var(--muted2);
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, color .2s;
+      letter-spacing: -.01em;
+    }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      border-color: rgba(28,105,212,.4);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
     .fade-in:nth-child(1){ animation-delay:.05s }
     .fade-in:nth-child(2){ animation-delay:.12s }
     .fade-in:nth-child(3){ animation-delay:.19s }
@@ -811,49 +840,14 @@
   </div>
 </div>
 
-<!-- ─── 날짜 네비게이션 ────────────────────────────────── -->
-<div class="date-nav">
-  <div class="date-nav-inner">
-    <span class="date-nav-label">📅 날짜</span>
-    <div class="date-list" id="date-list">
-      <span class="date-chip active">불러오는 중...</span>
-    </div>
-    <a href="https://github.com/siadaddy/youngs" target="_blank"
-       style="margin-left:auto;white-space:nowrap;padding:6px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted2);font-size:.78rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;">
-      ⭐ GitHub에서 보기
-    </a>
-  </div>
+<!-- ─── 탭 바 ──────────────────────────────────────────── -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('coin')">🤖 코인 트레이더</button>
+  <button class="tab-btn" onclick="switchTab('news')">📰 AI 뉴스레터</button>
 </div>
 
-<!-- ─── 카드뉴스 ──────────────────────────────────────── -->
-<section class="section">
-  <div class="container">
-    <div class="section-eyebrow">📰 Today's News Cards</div>
-    <div class="section-title">오늘의 카드뉴스</div>
-    <div id="today-sub" class="section-sub">불러오는 중...</div>
-    <div id="today-content">
-      <div class="loading"><div class="spinner"></div><p>콘텐츠 불러오는 중...</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── 블로그 아티클 ──────────────────────────────────── -->
-<section class="section" id="article-section" style="display:none">
-  <div class="container">
-    <div class="section-eyebrow">🧠 AI Editor's Pick</div>
-    <div class="section-title">🧠 AI 에디터 PICK</div>
-    <p class="section-sub" id="article-sub"></p>
-    <div class="article-card">
-      <div class="article-header">
-        <h3 id="article-title"></h3>
-      </div>
-      <div class="article-body-wrap">
-        <div class="article-body" id="article-body"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
+<!-- ─── 탭1: 코인 트레이더 ───────────────────────────── -->
+<div class="tab-content active" id="tab-coin">
 <!-- ─── 코인 트레이더 ────────────────────────────────── -->
 <section class="section" id="coin-section">
   <div class="container">
@@ -902,6 +896,55 @@
     </p>
   </div>
 </section>
+</div><!-- /tab-coin -->
+
+<!-- ─── 탭2: 뉴스레터 ───────────────────────────────── -->
+<div class="tab-content" id="tab-news">
+
+<!-- 날짜 네비게이션 -->
+<div class="date-nav">
+  <div class="date-nav-inner">
+    <span class="date-nav-label">📅 날짜</span>
+    <div class="date-list" id="date-list">
+      <span class="date-chip active">불러오는 중...</span>
+    </div>
+    <a href="https://github.com/siadaddy/youngs" target="_blank"
+       style="margin-left:auto;white-space:nowrap;padding:6px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted2);font-size:.78rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;">
+      ⭐ GitHub에서 보기
+    </a>
+  </div>
+</div>
+
+<!-- 카드뉴스 -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">📰 Today's News Cards</div>
+    <div class="section-title">오늘의 카드뉴스</div>
+    <div id="today-sub" class="section-sub">불러오는 중...</div>
+    <div id="today-content">
+      <div class="loading"><div class="spinner"></div><p>콘텐츠 불러오는 중...</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 블로그 아티클 -->
+<section class="section" id="article-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">🧠 AI Editor's Pick</div>
+    <div class="section-title">🧠 AI 에디터 PICK</div>
+    <p class="section-sub" id="article-sub"></p>
+    <div class="article-card">
+      <div class="article-header">
+        <h3 id="article-title"></h3>
+      </div>
+      <div class="article-body-wrap">
+        <div class="article-body" id="article-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /tab-news -->
 
 <!-- ─── 푸터 ───────────────────────────────────────────── -->
 <!-- ─── 내 제작물 ─────────────────────────────────────── -->
@@ -1406,6 +1449,15 @@
     fetchExchangeRate();
     fetchFearGreed();
     }, 5 * 60 * 1000);
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0) === (tab === 'coin'));
+    });
+    document.getElementById('tab-coin').classList.toggle('active', tab === 'coin');
+    document.getElementById('tab-news').classList.toggle('active', tab === 'news');
+    if (tab === 'news') init();
+  }
 
   init();
   loadCoinTrader();
