@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.siadad.priceguard</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/opt/anaconda3/bin/python3</string>
+    <string>/Users/youngchulyu/바이브코딩/coin-trader/price_guard.py</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/youngchulyu/바이브코딩/coin-trader</string>
+
+  <!-- 프로세스 종료 시 자동 재시작 -->
+  <key>KeepAlive</key>
+  <true/>
+
+  <!-- 부팅 시 자동 시작 -->
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/anaconda3/bin:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+</dict>
+</plist>
