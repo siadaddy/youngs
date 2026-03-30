@@ -34,7 +34,9 @@
     "wins": 0,
     "losses": 0,
     "total_pnl_krw": 0,
-    "start_date": "2026-03-28"
+    "start_date": "2026-03-28",
+    "stop_loss_pct": 7.0,
+    "take_profit_pct": 15.0
   },
   "updated_at": "2026-03-30 20:05"
 }

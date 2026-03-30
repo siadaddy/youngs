@@ -1290,22 +1290,58 @@
       const h = d.holding;
       const statusEl = document.getElementById('coin-status');
       if (h && h.ticker) {
-        const pct = ((h.buy_price > 0) ? ((0 / h.buy_price) * 100) : 0); // 현재가는 static이라 표시만
+        // 업비트 공개 API로 실시간 현재가 조회
+        let livePrice = null;
+        try {
+          const priceRes = await fetch(`https://api.upbit.com/v1/ticker?markets=${h.ticker}`);
+          const priceData = await priceRes.json();
+          livePrice = priceData[0]?.trade_price ?? null;
+        } catch(e) {}
+
+        const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 7.0;
+        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 15.0;
+
+        const pct = livePrice && h.buy_price ? ((livePrice / h.buy_price - 1) * 100) : null;
+        const pctStr  = pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%' : '-';
+        const pctColor = pct == null ? 'var(--muted2)' : pct >= 0 ? '#f87171' : 'var(--green)';
+
+        const slDist  = pct != null ? (pct - (-STOP_LOSS)).toFixed(2)   : null;
+        const tpDist  = pct != null ? (TAKE_PROFIT - pct).toFixed(2)    : null;
+
         statusEl.innerHTML = `
-          <div class="coin-status-card holding">
-            <div>
-              <div class="coin-ticker">🪙 ${h.ticker.replace('KRW-','')}</div>
-              <div class="coin-ticker-sub">현재 보유 중</div>
+          <div class="coin-status-card holding" style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div class="coin-ticker">🪙 ${h.ticker.replace('KRW-','')}</div>
+                <div class="coin-ticker-sub">보유 중 · 30초마다 갱신</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;">현재 수익률</div>
+                <div style="font-size:1.6rem;font-weight:900;color:${pctColor};">${pctStr}</div>
+              </div>
             </div>
-            <div style="text-align:center;">
-              <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">매수가</div>
-              <div style="font-size:1.5rem;font-weight:900;letter-spacing:-.02em;">${Number(h.buy_price).toLocaleString()}원</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">매수가</div>
+                <div style="font-size:.95rem;font-weight:700;">${Number(h.buy_price).toLocaleString()}원</div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">현재가</div>
+                <div style="font-size:.95rem;font-weight:700;">${livePrice ? Number(livePrice).toLocaleString()+'원' : '-'}</div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">투자금</div>
+                <div style="font-size:.95rem;font-weight:700;">${Number(h.invest_krw||5000).toLocaleString()}원</div>
+              </div>
             </div>
-            <div class="coin-meta">
-              <div class="coin-meta-row">투자금 <strong>${Number(h.invest_krw||5000).toLocaleString()}원</strong></div>
-              <div class="coin-meta-row">수량 <strong>${Number(h.qty).toFixed(4)}</strong></div>
-              <div class="coin-meta-row" style="margin-top:8px;font-size:.7rem;color:var(--muted);">
-                4시간마다 자동 분석
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
+              <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px;">
+                <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;">🔴 손절까지</div>
+                <div style="font-size:.9rem;font-weight:700;color:#10b981;">${slDist != null ? '-'+STOP_LOSS+'% ('+slDist+'% 남음)' : '-'}</div>
+              </div>
+              <div style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:10px;">
+                <div style="font-size:.65rem;color:#f87171;margin-bottom:4px;">🟡 익절까지</div>
+                <div style="font-size:.9rem;font-weight:700;color:#f87171;">${tpDist != null ? '+'+TAKE_PROFIT+'% ('+tpDist+'% 남음)' : '-'}</div>
               </div>
             </div>
           </div>`;
@@ -1373,6 +1409,8 @@
 
   init();
   loadCoinTrader();
+  // 30초마다 코인 현재가 갱신
+  setInterval(loadCoinTrader, 30 * 1000);
 </script>
 </body>
 </html>

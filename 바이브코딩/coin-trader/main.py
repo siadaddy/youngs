@@ -260,7 +260,8 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
         else:
             data = {"holding": None, "history": [], "stats": {
                 "total_trades": 0, "wins": 0, "losses": 0,
-                "total_pnl_krw": 0, "start_date": datetime.now().strftime("%Y-%m-%d")
+                "total_pnl_krw": 0, "start_date": datetime.now().strftime("%Y-%m-%d"),
+                "stop_loss_pct": STOP_LOSS, "take_profit_pct": TAKE_PROFIT
             }}
 
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
