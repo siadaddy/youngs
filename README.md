@@ -135,7 +135,7 @@ Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
 │
 ├── README.md
 ├── docs/                       ← GitHub Pages
-│   ├── index.html              ← 메인 (카드뉴스 3개 + 코인 대시보드)
+│   ├── index.html              ← 메인 (탭 UI: 코인 트레이더 기본 / AI 뉴스레터)
 │   ├── about.html              ← AI 직원 소개 & 파이프라인 & 기술 스택
 │   ├── content.json            ← 오늘 최신 콘텐츠
 │   ├── archive.json            ← 날짜 목록 (최대 60일)
@@ -150,6 +150,8 @@ Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
     ├── 뉴스레터/               ← 뉴스 수집 (newsletter_naver.py)
     ├── ai-crew/                ← AI 크리에이터 파이프라인
     └── coin-trader/            ← AI 코인 자동매매
+         ├── main.py            ← 4시간 AI 분석 (BUY/SELL/HOLD)
+         └── price_guard.py     ← 30초 실시간 손절/익절 감시 데몬
 ```
 
 ---
@@ -162,6 +164,7 @@ Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
 | com.siadad.cointrader | AI 코인 자동매매 | 00:05 / 04:05 / 08:05 / 12:05 / 16:05 / 20:05 |
 | com.siadad.coinreport | 일일 수익 리포트 | 매일 08:30 |
 | com.siadad.coinip | 거래 1시간 전 IP 점검 | 23:05 / 03:05 / 07:05 / 11:05 / 15:05 / 19:05 |
+| com.siadad.priceguard | 30초 실시간 손절/익절 감시 | 상시 실행 (KeepAlive) |
 
 ```bash
 # 상태 확인
@@ -182,17 +185,26 @@ launchctl load ~/Library/LaunchAgents/com.siadad.coinreport.plist
 # IP 점검 재시작
 launchctl unload ~/Library/LaunchAgents/com.siadad.coinip.plist
 launchctl load ~/Library/LaunchAgents/com.siadad.coinip.plist
+
+# 가격 감시 재시작
+launchctl unload ~/Library/LaunchAgents/com.siadad.priceguard.plist
+launchctl load ~/Library/LaunchAgents/com.siadad.priceguard.plist
 ```
 
 ---
 
-*최종 업데이트: 2026-03-30 | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-30 (2차) | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
 
 ---
 
 ## 📝 변경 이력
 
 ### 2026-03-30
+- **코인 트레이더**: 30초 실시간 가격 감시 데몬 추가 (price_guard.py, KeepAlive)
+- **코인 트레이더**: 손절/익절 즉시 실행 — 기존 4시간 대기 → 30초 이내 대응
+- **GitHub Pages**: 탭 UI 추가 — 코인 트레이더(기본) / AI 뉴스레터 탭 분리
+- **GitHub Pages**: 코인 대시보드 실시간 현재가 표시 (업비트 API 직접 호출, 30초 갱신)
+- **GitHub Pages**: 티커테이프 KOSPI/삼성전자(미지원) → WTI원유/이더리움으로 교체
 - **AI 크리에이터**: 이미지 생성 모델 교체 — 구 ICBINP(만료) → Stable Horde Flux.1-Schnell (약 20초, 무료)
 
 ### 2026-03-29
