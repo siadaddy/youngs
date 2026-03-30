@@ -12,7 +12,7 @@
 |----------|------|-----------|
 | [📰 뉴스레터 + AI 크리에이터](#-뉴스레터--ai-크리에이터) | 뉴스 수집 → 카드뉴스 3개 + 블로그 아티클 + 이미지 → 노션 | 매일 07:00 |
 | [🤖 AI 코인 자동매매](#-ai-코인-자동매매) | 업비트 KRW 마켓 AI 자동 트레이딩 + GitHub Pages 대시보드 | 하루 6회 (4시간) |
-| [📊 Instacart 대시보드](#-instacart-대시보드) | Streamlit + DuckDB 데이터 분석 앱 | 상시 배포 |
+| [🎓 내 제작물 (INNER CIRCLE 2기)](#-내-제작물-패스트캠퍼스-inner-circle-2기) | 저가 커피 입점 분석 (2025.05) + Instacart 대시보드 (2025.07) | 상시 배포 |
 
 ---
 
@@ -119,12 +119,25 @@
 
 ---
 
-## 📊 Instacart 대시보드
+## 🎓 내 제작물 (패스트캠퍼스 INNER CIRCLE 2기)
 
-Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
+패스트캠퍼스 이너서클 2기 팀 프로젝트로 제작한 데이터 분석 결과물입니다.
+
+### ☕ 저가 테이크아웃 커피 브랜드 입점 최적지 분석 (2025.05)
+
+서울열린데이터광장 유동인구·상권·임대료 데이터를 기반으로 메가커피·컴포즈 등 저가 커피 브랜드의 서울 내 최적 입점 후보지를 도출하고 Folium으로 지도 시각화한 발표 프로젝트.
+
+- **라이브**: [siadaddy.github.io/youngs/map.html](https://siadaddy.github.io/youngs/map.html)
+- **데이터**: 서울열린데이터광장 (유동인구, 상권, 임대료)
+- **기술**: Python, Folium, 입지 분석
+
+### 🛒 Instacart VIP 분석 대시보드 (2025.07)
+
+인스타카트 구매 데이터를 분석해 VIP 고객을 분류하고 맞춤 상품을 추천하는 인터랙티브 대시보드.
 
 - **배포**: [youngs-9ewwwhdidksu3qeifbh2qb.streamlit.app](https://youngs-9ewwwhdidksu3qeifbh2qb.streamlit.app/)
 - **DB**: Google Drive → gdown으로 `/tmp/`에 자동 다운로드 (DuckDB)
+- **기술**: Python, Streamlit, DuckDB
 
 ---
 
@@ -140,6 +153,7 @@ Streamlit + DuckDB로 만든 Instacart 데이터 분석 대시보드입니다.
 │   ├── content.json            ← 오늘 최신 콘텐츠
 │   ├── archive.json            ← 날짜 목록 (최대 60일)
 │   ├── trades.json             ← 코인 매매 이력 (최근 50건)
+│   ├── map.html                ← 저가 커피 입점 최적지 지도 시각화
 │   ├── content/                ← 날짜별 콘텐츠 아카이브
 │   └── images/                 ← AI 생성 이미지 영구 저장
 │
@@ -193,7 +207,7 @@ launchctl load ~/Library/LaunchAgents/com.siadad.priceguard.plist
 
 ---
 
-*최종 업데이트: 2026-03-30 (2차) | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-30 (3차) | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
 
 ---
 
