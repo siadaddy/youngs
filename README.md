@@ -44,7 +44,7 @@
 |------|------|
 | 🎯 박기획 | 핵심 뉴스 3개 선정, source_facts 기반 콘텐츠 브리프 |
 | ✍️ 이작가 | 카드뉴스 3개 + 블로그 아티클 (temperature 0.7, 원문 사실 기반) |
-| 🎨 최디자 | 768×768 AI 이미지 3장 (Stable Horde 무료) |
+| 🎨 최디자 | 768×768 AI 이미지 3장 (Stable Horde Flux.1-Schnell 무료) |
 | 📤 정퍼블 | 노션 페이지 업로드 (AI 콘텐츠 상단 / 수집 뉴스 하단) |
 | 📅 한주간 | 금요일 주간 브리핑 자동 생성 |
 
@@ -54,7 +54,7 @@
 |------|------|------|
 | Naver News API | 8개 카테고리 뉴스 수집 | 무료 |
 | Groq (Llama 3.3 70B) | 텍스트 생성 전반 (key1→key2 폴백) | 무료 |
-| Stable Horde | AI 이미지 생성 768×768 | 무료 |
+| Stable Horde Flux.1-Schnell | AI 이미지 생성 768×768 (~20초) | 무료 |
 | Notion API | 콘텐츠 저장 | 무료 |
 | GitHub Pages | 이미지 영구 호스팅 + 사이트 | 무료 |
 | ntfy.sh | 완료 알림 | 무료 |
@@ -186,11 +186,14 @@ launchctl load ~/Library/LaunchAgents/com.siadad.coinip.plist
 
 ---
 
-*최종 업데이트: 2026-03-29 (3차) | Powered by Groq + Stable Horde + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-30 | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
 
 ---
 
 ## 📝 변경 이력
+
+### 2026-03-30
+- **AI 크리에이터**: 이미지 생성 모델 교체 — 구 ICBINP(만료) → Stable Horde Flux.1-Schnell (약 20초, 무료)
 
 ### 2026-03-29
 - **코인 트레이더**: 퀀트 연구 기반 트레이딩 규칙 전면 업그레이드
