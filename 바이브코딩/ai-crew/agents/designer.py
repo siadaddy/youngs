@@ -1,5 +1,6 @@
 import os, json, requests, time, subprocess
 from datetime import date
+from urllib.parse import quote
 from utils.gemini_client import ask_gemini
 
 # 이미지를 docs/images/ 에 저장 → GitHub Pages로 서빙
@@ -19,12 +20,10 @@ Every prompt you write results in a stunning, award-worthy image.
 Always write in English. Prompts must be vivid, specific, and visually compelling.
 """
 
-HORDE_API_KEY = "0000000000"  # 익명 키 (무료)
-
 
 def run(brief: dict, writer_output: dict) -> list:
     global DOCS_IMAGES_DIR
-    print("🎨 디자이너 에이전트 실행 중... (Stable Horde → GitHub Pages)")
+    print("🎨 디자이너 에이전트 실행 중... (Stable Horde Flux.1-Schnell → GitHub Pages)")
 
     # docs/images/ 폴더 초기화
     DOCS_IMAGES_DIR = os.path.join(_repo_root(), "docs", "images")
@@ -32,13 +31,13 @@ def run(brief: dict, writer_output: dict) -> list:
 
     today = date.today().strftime("%Y-%m-%d")
 
-    # ── 5개 프롬프트를 API 1번 호출로 생성 ──────────────────────
+    # ── 3개 프롬프트를 API 1번 호출로 생성 ──────────────────────
     items = brief["instagram"]
     batch_input = "\n".join(
         f"{i+1}. headline: {it['headline']} | angle: {it['angle']} | tone: {it['tone']}"
         for i, it in enumerate(items)
     )
-    batch_prompt = f"""Create 5 image prompts for news card visuals.
+    batch_prompt = f"""Create {len(items)} image prompts for news card visuals.
 
 {batch_input}
 
@@ -48,7 +47,7 @@ Rules per prompt:
 - 70 words max
 
 Return ONLY a JSON array, no markdown:
-[{{"idx":1,"prompt":"..."}},{{"idx":2,"prompt":"..."}},...,{{"idx":5,"prompt":"..."}}]"""
+[{{"idx":1,"prompt":"..."}},{{"idx":2,"prompt":"..."}},...,{{"idx":{len(items)},"prompt":"..."}}]"""
 
     raw = ask_gemini(batch_prompt, system=SYSTEM, temperature=0.7, max_tokens=1500)
     raw = raw.strip().replace("```json", "").replace("```", "").strip()
@@ -68,7 +67,7 @@ Return ONLY a JSON array, no markdown:
         save_path  = os.path.join(DOCS_IMAGES_DIR, filename)
         pages_url  = f"{GITHUB_PAGES_BASE}/{filename}"
 
-        print(f"  🖼  이미지 {i+1}/5 생성 중: {item['headline'][:30]}...")
+        print(f"  🖼  이미지 {i+1}/{len(items)} 생성 중: {item['headline'][:30]}...")
         success = _generate_image(img_prompt, save_path)
 
         images.append({
@@ -90,19 +89,13 @@ Return ONLY a JSON array, no markdown:
 
 
 def _generate_image(prompt: str, save_path: str) -> bool:
-    """Stable Horde — 완전 무료, 커뮤니티 GPU 활용"""
+    """Stable Horde Flux.1-Schnell — 완전 무료, 빠른 응답 (~20초)"""
     try:
-        headers = {"apikey": HORDE_API_KEY, "Content-Type": "application/json"}
+        headers = {"apikey": "0000000000", "Content-Type": "application/json"}
         payload = {
-            "prompt": prompt + " | ultra high quality, sharp focus, professional photography, award winning",
-            "params": {
-                "width": 768, "height": 768,
-                "steps": 35,
-                "cfg_scale": 8.0,
-                "sampler_name": "k_euler_a",
-                "n": 1,
-            },
-            "models": ["ICBINP - I Can't Believe It's Not Photography"],
+            "prompt": prompt + ", ultra high quality, sharp focus, professional photography, award winning",
+            "params": {"width": 768, "height": 768, "steps": 4, "n": 1},
+            "models": ["Flux.1-Schnell fp8 (Compact)"],
             "r2": True,
         }
         r = requests.post(
@@ -110,9 +103,12 @@ def _generate_image(prompt: str, save_path: str) -> bool:
             headers=headers, json=payload, timeout=30
         )
         r.raise_for_status()
-        job_id = r.json()["id"]
+        job_id = r.json().get("id")
+        if not job_id:
+            print("    ⚠️  job_id 없음")
+            return False
 
-        for _ in range(36):
+        for _ in range(48):  # 최대 4분 대기
             time.sleep(5)
             check = requests.get(
                 f"https://stablehorde.net/api/v2/generate/check/{job_id}",
@@ -127,10 +123,10 @@ def _generate_image(prompt: str, save_path: str) -> bool:
         )
         generations = result.json().get("generations", [])
         if not generations:
-            print("    ⚠️  Stable Horde generations 없음 (타임아웃 또는 큐 초과)")
+            print("    ⚠️  generations 없음 (타임아웃 또는 큐 초과)")
             return False
-        img_url = generations[0]["img"]
 
+        img_url = generations[0]["img"]
         img_data = requests.get(img_url, timeout=60)
         img_data.raise_for_status()
         with open(save_path, "wb") as f:
