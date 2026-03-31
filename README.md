@@ -45,10 +45,10 @@
 
 | 직원 | 역할 |
 |------|------|
-| 🎯 박기획 | 핵심 뉴스 3개 선정, source_facts 기반 콘텐츠 브리프 |
-| ✍️ 이작가 | 카드뉴스 3개 + 블로그 아티클 (temperature 0.7, 원문 사실 기반) |
-| 🎨 최디자 | 768×768 AI 이미지 3장 (Stable Horde Flux.1-Schnell 무료) |
-| 📤 정퍼블 | 노션 페이지 업로드 (AI 콘텐츠 상단 / 수집 뉴스 하단) |
+| 🎯 박기획 | 핵심 뉴스 5개 선정 (자동차 필수 1개 + 4개), 원문 URL 포함 source_facts 브리프 |
+| ✍️ 이작가 | 카드뉴스 5개 + 블로그 아티클 (Groq 키 라운드로빈 분배, 카드 간 5초 대기) |
+| 🎨 최디자 | 768×768 AI 이미지 5장 (Stable Horde Flux.1-Schnell, 밝고 모던한 스타일) |
+| 📤 정퍼블 | 노션 업로드 (AI 콘텐츠 상단 / 수집 뉴스 카테고리 토글 하단) |
 | 📅 한주간 | 금요일 주간 브리핑 자동 생성 |
 
 ### 기술 스택
@@ -56,10 +56,10 @@
 | 기술 | 용도 | 비용 |
 |------|------|------|
 | Naver News API | 8개 카테고리 뉴스 수집 | 무료 |
-| Groq (Llama 3.3 70B) | 텍스트 생성 전반 (key1→key2 폴백) | 무료 |
-| Stable Horde Flux.1-Schnell | AI 이미지 생성 768×768 (~20초) | 무료 |
-| Notion API | 콘텐츠 저장 | 무료 |
-| GitHub Pages | 이미지 영구 호스팅 + 사이트 | 무료 |
+| Groq (Llama 3.3 70B) | 텍스트 생성 전반 (키2개 라운드로빈 분배) | 무료 |
+| Stable Horde Flux.1-Schnell | AI 이미지 생성 768×768 (계정 키, ~20초) | 무료 |
+| Notion API | 콘텐츠 저장 (수집 뉴스 토글 형태) | 무료 |
+| GitHub Pages | 이미지 호스팅 + 사이트 (수집 뉴스 토글 포함) | 무료 |
 | ntfy.sh | 완료 알림 | 무료 |
 
 **상세 문서**: [바이브코딩/ai-crew/README.md](바이브코딩/ai-crew/README.md)
@@ -115,7 +115,7 @@
 | IP 사전 점검 | 거래 1시간 전 현재 IP ntfy 알림 (23:05 / 03:05 / 07:05 / 11:05 / 15:05 / 19:05) |
 | IP 변경 감지 | 변경 시 ntfy 긴급 알림 + 업비트 재등록 안내 |
 | 실행 타임아웃 | 10분 초과 시 강제 종료 (네트워크 hang 방지) |
-| Groq 폴백 | key1 소진 시 key2 자동 전환 |
+| Groq 라운드로빈 | 키2개 번갈아 사용 → TPM 2배 확보, 429 시 즉시 전환 |
 | DRY_RUN | 실제 주문 없이 전체 흐름 시뮬레이션 |
 
 **상세 문서**: [바이브코딩/coin-trader/README.md](바이브코딩/coin-trader/README.md)
@@ -210,11 +210,24 @@ launchctl load ~/Library/LaunchAgents/com.siadad.priceguard.plist
 
 ---
 
-*최종 업데이트: 2026-03-31 | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-31 (2차) | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
 
 ---
 
 ## 📝 변경 이력
+
+### 2026-03-31
+- **AI 크리에이터**: 카드뉴스 5개 복구 (자동차 필수 1개 + AI 선정 4개)
+- **AI 크리에이터**: 카드뉴스마다 원문 출처 링크 버튼 추가 (노션 + GitHub Pages)
+- **AI 크리에이터**: Stable Horde 계정 API 키 적용 — 익명 키 403 오류 해결
+- **AI 크리에이터**: 이미지 스타일 변경 — 어두운 다큐 → 밝고 모던한 Bloomberg/Wired 스타일
+- **AI 크리에이터**: Groq 키 라운드로빈 분배 — 카드 간 대기 20초 → 5초 단축
+- **AI 크리에이터**: 원문 뉴스 URL planner에 전달 → source_url 브리프에 포함
+- **GitHub Pages**: 뉴스레터 탭 하단 수집 뉴스 카테고리별 토글 추가 (8개 카테고리 × 5건)
+- **노션**: 수집 뉴스 카테고리별 토글 형태로 변경
+- **제작물**: 패스트캠퍼스 INNER CIRCLE 2기 배지 + 제작 날짜 추가
+- **제작물**: 저가 테이크아웃 커피 입점 최적지 분석 (지도 시각화) 추가
+- **코인 트레이더**: 코인 섹션 헤더 개선 — "AI가 5천원으로 코인을 직접 삽니다"
 
 ### 2026-03-30
 - **코인 트레이더**: 30초 실시간 가격 감시 데몬 추가 (price_guard.py, KeepAlive)
