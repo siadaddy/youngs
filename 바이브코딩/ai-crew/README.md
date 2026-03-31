@@ -80,10 +80,11 @@
 > "글보다 먼저 눈을 사로잡는 이미지, 제 전문입니다."
 
 **역할**: 뉴스 헤드라인에 맞는 이미지 프롬프트 생성 → AI 이미지 생성 → GitHub Pages 저장
-**모델**: Groq — Llama 3.3 70B (프롬프트 생성) + Stable Horde (이미지 생성, 무료)
+**모델**: Groq — Llama 3.3 70B (프롬프트 생성) + Stable Horde (이미지 생성, 계정 키)
 **담당**:
 - 5개 헤드라인용 영문 프롬프트 API 1회 호출로 일괄 생성
-- Stable Horde(익명 키, 무료)로 **768×768 이미지 5장** 생성
+- Stable Horde(계정 키, `STABLE_HORDE_KEY`)로 **768×768 이미지 5장** 생성
+- 밝고 모던한 SNS 카드뉴스 스타일 (Bloomberg / Wired 톤, 어둡거나 자극적인 이미지 금지)
 - `docs/images/{날짜}_image_{n}.png` 로컬 저장
 - GitHub Pages URL 반환 → 노션 이미지 블록으로 직접 임베드
 
@@ -186,6 +187,7 @@ NOTION_TOKEN=...
 NOTION_NEWSLETTER_PARENT_ID=...
 NEWSLETTER_DIR=/Users/youngchulyu/바이브코딩/뉴스레터
 NTFY_TOPIC=siadad-aicrew
+STABLE_HORDE_KEY=...      # Stable Horde 계정 키 (stablehorde.net)
 ```
 
 ---
@@ -313,6 +315,13 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ## 📝 업데이트 로그
 
+### 2026-03-31
+- **카드뉴스 5개 복구**: planner/writer 개선 — Groq가 5개 반환하도록 프롬프트 강화
+- **Stable Horde 계정 키 적용**: 익명 키 → 계정 키 전환 (403 차단 해결)
+- **이미지 스타일 개선**: 어두운 다큐 → 밝고 모던한 SNS 카드뉴스 스타일 (Bloomberg/Wired 톤)
+- **원문 출처 링크**: 카드뉴스에 source_url + source_name 추가 (GitHub Pages / 노션 반영)
+- **Groq 라운드로빈**: key1/key2 균등 분배 + 카드 간 대기 20초 → 5초 단축
+
 ### 2026-03-28 (코인 트레이더 별도 프로젝트로 분리)
 - **신규**: AI 코인 자동매매 시스템 (`바이브코딩/coin-trader/`) 구축
   - 업비트 KRW 마켓, 4시간마다 launchd 자동 실행
@@ -357,4 +366,4 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ---
 
-*최종 업데이트: 2026-03-28 | Powered by Groq + Stable Horde + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-31 | Powered by Groq + Stable Horde + Notion API + GitHub Pages*
