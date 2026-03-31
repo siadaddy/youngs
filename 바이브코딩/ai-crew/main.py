@@ -183,6 +183,18 @@ def _publish_to_github(today, brief, written, images, newsletter_data):
             for i, c in enumerate(written["captions"])
         ],
         "article": written.get("article", ""),
+        "news": {
+            cat: [
+                {
+                    "title":   a.get("title", "").replace("&quot;", '"'),
+                    "link":    a.get("link", ""),
+                    "source":  a.get("source", ""),
+                    "summary": a.get("summary", "").replace("&quot;", '"'),
+                }
+                for a in articles
+            ]
+            for cat, articles in (newsletter_data or {}).get("categorized", {}).items()
+        } if newsletter_data else {},
     }
 
     # 오늘 날짜 파일 저장 (아카이브용)

@@ -348,6 +348,45 @@
       white-space: pre-wrap; word-break: break-word;
     }
 
+    /* ─── 수집 뉴스 토글 ──────────────────────────── */
+    .news-toggle {
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card);
+    }
+    .news-toggle-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; cursor: pointer;
+      font-weight: 700; font-size: .92rem; color: var(--text);
+      user-select: none;
+      transition: background .15s;
+    }
+    .news-toggle-header:hover { background: rgba(255,255,255,.04); }
+    .news-toggle-arrow { font-size: .8rem; transition: transform .2s; color: var(--muted); }
+    .news-toggle.open .news-toggle-arrow { transform: rotate(90deg); }
+    .news-toggle-body {
+      display: none; padding: 0 20px 14px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .news-toggle.open .news-toggle-body { display: block; }
+    .news-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-item-title {
+      font-size: .85rem; font-weight: 600; color: var(--text);
+      text-decoration: none; line-height: 1.5;
+    }
+    .news-item-title:hover { color: #60a5fa; }
+    .news-item-source {
+      font-size: .74rem; color: var(--muted); margin-top: 3px;
+    }
+    .news-item-summary {
+      font-size: .78rem; color: var(--muted2); margin-top: 4px; line-height: 1.6;
+    }
+
     /* 출처 버튼 */
     .source-btn {
       display: inline-block; margin-top: 12px;
@@ -957,6 +996,16 @@
   </div>
 </section>
 
+<!-- ─── 수집된 뉴스 토글 ──────────────────────────────── -->
+<section class="section" id="news-raw-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">📰 Today's News Feed</div>
+    <div class="section-title">오늘 수집된 뉴스</div>
+    <p class="section-sub">카테고리를 클릭하면 뉴스 목록이 펼쳐집니다</p>
+    <div id="news-raw-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+  </div>
+</section>
+
 </div><!-- /tab-news -->
 
 <!-- ─── 푸터 ───────────────────────────────────────────── -->
@@ -1270,6 +1319,37 @@
     } else {
       document.getElementById('article-section').style.display = 'none';
     }
+
+    // 수집된 뉴스 토글
+    const news = data.news || {};
+    const cats = Object.keys(news);
+    if (cats.length > 0) {
+      document.getElementById('news-raw-section').style.display = '';
+      const list = document.getElementById('news-raw-list');
+      list.innerHTML = '';
+      cats.forEach(cat => {
+        const articles = news[cat] || [];
+        if (!articles.length) return;
+        const toggle = document.createElement('div');
+        toggle.className = 'news-toggle';
+        toggle.innerHTML = `
+          <div class="news-toggle-header" onclick="this.parentElement.classList.toggle('open')">
+            <span>${cat} <span style="font-size:.78rem;color:var(--muted);font-weight:400;">${articles.length}건</span></span>
+            <span class="news-toggle-arrow">▶</span>
+          </div>
+          <div class="news-toggle-body">
+            ${articles.map(a => `
+              <div class="news-item">
+                <a class="news-item-title" href="${a.link || '#'}" target="_blank" rel="noopener">${a.title}</a>
+                ${a.source ? `<div class="news-item-source">${a.source}</div>` : ''}
+                ${a.summary ? `<div class="news-item-summary">${a.summary}</div>` : ''}
+              </div>`).join('')}
+          </div>`;
+        list.appendChild(toggle);
+      });
+    } else {
+      document.getElementById('news-raw-section').style.display = 'none';
+    }
   }
 
   function buildNewsCard(item, idx) {
@@ -1301,6 +1381,7 @@
       </div>`;
     document.getElementById('today-sub').textContent = '아직 업데이트 전입니다.';
     document.getElementById('article-section').style.display = 'none';
+    document.getElementById('news-raw-section').style.display = 'none';
   }
 
   async function loadDate(date) {
