@@ -65,7 +65,7 @@ def run(brief: dict) -> dict:
         })
         print(f"  ✅ 카드뉴스 {i+1}/{len(brief['instagram'])} 완성 ({len(caption)}자)")
         if i < len(brief["instagram"]) - 1:
-            import time; time.sleep(20)   # TPM 한도 초과 방지 (6000 TPM / ~1400 per call)
+            import time; time.sleep(5)   # 라운드로빈 2키 분배로 TPM 2배 확보 → 5초로 단축
 
     # 블로그 아티클
     b = brief["blog"]

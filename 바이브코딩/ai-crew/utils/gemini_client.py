@@ -1,10 +1,10 @@
-import os, re
+import os, re, itertools
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# 키 1이 일일 쿼터 소진되면 키 2로 자동 전환
+# 두 키를 라운드로빈으로 분배 — 요청마다 번갈아 사용해 TPM 2배 확보
 GROQ_KEYS = [
     k for k in [
         os.getenv("GROQ_API_KEY"),
@@ -13,6 +13,9 @@ GROQ_KEYS = [
 ]
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama-3.3-70b-versatile"
+
+# 라운드로빈 이터레이터 (모듈 로드 시 한 번만 생성)
+_key_cycle = itertools.cycle(range(len(GROQ_KEYS))) if GROQ_KEYS else iter([])
 
 _LANG_RULE = (
     "\n\n[언어 규칙] 반드시 한국어와 영어, 이모지만 사용하세요. "
@@ -47,7 +50,7 @@ def _sanitize(text: str) -> str:
 
 
 def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096, json_mode: bool = False) -> str:
-    """Groq API 호출 — 키 2개 폴백 + 429 자동 대기"""
+    """Groq API 호출 — 라운드로빈 키 분배 + 429 시 다른 키로 즉시 전환"""
     import time
 
     messages = []
@@ -64,20 +67,28 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
     if json_mode:
         payload["response_format"] = {"type": "json_object"}
 
-    for key_idx, api_key in enumerate(GROQ_KEYS):
+    # 라운드로빈 시작 키 결정 → 429 시 나머지 키 순서대로 재시도
+    start_idx = next(_key_cycle) if GROQ_KEYS else 0
+    key_order = [GROQ_KEYS[(start_idx + i) % len(GROQ_KEYS)] for i in range(len(GROQ_KEYS))]
+
+    for key_idx, api_key in enumerate(key_order):
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
-        key_label = f"키{key_idx + 1}"
+        key_label = f"키{(start_idx + key_idx) % len(GROQ_KEYS) + 1}"
 
-        for attempt in range(1, 5):
+        for attempt in range(1, 4):
             r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
 
             if r.status_code == 429:
-                retry_after = int(r.headers.get("retry-after", 30))
-                wait = min(retry_after + 5, 90)
-                print(f"  ⏳ Groq {key_label} 속도 제한 — {wait}초 대기 후 재시도 ({attempt}/4)...")
+                # 다른 키가 남아있으면 바로 전환, 없으면 잠깐 대기
+                if key_idx < len(key_order) - 1:
+                    print(f"  ⚡ Groq {key_label} TPM 초과 → 다른 키로 즉시 전환...")
+                    break
+                retry_after = int(r.headers.get("retry-after", 15))
+                wait = min(retry_after + 3, 30)
+                print(f"  ⏳ Groq {key_label} 속도 제한 — {wait}초 대기 ({attempt}/3)...")
                 time.sleep(wait)
                 continue
 
@@ -87,9 +98,9 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
                 print(f"  ✅ Groq {key_label}로 성공")
             return _sanitize(result)
 
-        # 이 키로 4회 모두 실패 → 다음 키 시도
-        if key_idx < len(GROQ_KEYS) - 1:
-            print(f"  ⚠️  Groq {key_label} 쿼터 소진 → 키{key_idx + 2}로 전환...")
+        # 이 키로 실패 → 다음 키 시도
+        if key_idx < len(key_order) - 1:
+            print(f"  ⚠️  Groq {key_label} 소진 → 다음 키 전환...")
 
     # 모든 키 소진
     r.raise_for_status()
