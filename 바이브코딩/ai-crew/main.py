@@ -96,7 +96,7 @@ def main():
     # ── Step 2: 기획자 ───────────────────────────────────────
     print("\n[2/5] 기획자 에이전트...")
     try:
-        brief = retry("기획자", planner.run, newsletter)
+        brief = retry("기획자", planner.run, newsletter, newsletter_data)
     except Exception as e:
         notify("❌ AI 크리에이터 실패", f"기획자 실패: {e}", priority="high")
         sys.exit(1)
@@ -174,9 +174,11 @@ def _publish_to_github(today, brief, written, images, newsletter_data):
         "blog_title": written.get("blog_title", ""),
         "captions": [
             {
-                "headline":  c["headline"],
-                "caption":   c["caption"],
-                "image_url": images[i]["url"] if i < len(images) else None,
+                "headline":    c["headline"],
+                "caption":     c["caption"],
+                "image_url":   images[i]["url"] if i < len(images) else None,
+                "source_url":  c.get("source_url", ""),
+                "source_name": c.get("source_name", ""),
             }
             for i, c in enumerate(written["captions"])
         ],

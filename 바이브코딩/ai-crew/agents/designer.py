@@ -1,7 +1,10 @@
 import os, json, requests, time, subprocess
 from datetime import date
 from urllib.parse import quote
+from dotenv import load_dotenv
 from utils.gemini_client import ask_gemini
+
+load_dotenv()
 
 # 이미지를 docs/images/ 에 저장 → GitHub Pages로 서빙
 def _repo_root():
@@ -91,7 +94,8 @@ Return ONLY a JSON array, no markdown:
 def _generate_image(prompt: str, save_path: str) -> bool:
     """Stable Horde Flux.1-Schnell — 완전 무료, 빠른 응답 (~20초)"""
     try:
-        headers = {"apikey": "0000000000", "Content-Type": "application/json"}
+        api_key = os.getenv("STABLE_HORDE_KEY", "0000000000")
+        headers = {"apikey": api_key, "Content-Type": "application/json"}
         payload = {
             "prompt": prompt + ", ultra high quality, sharp focus, professional photography, award winning",
             "params": {"width": 768, "height": 768, "steps": 4, "n": 1},

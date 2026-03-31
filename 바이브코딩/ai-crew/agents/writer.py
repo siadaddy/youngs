@@ -57,8 +57,13 @@ def run(brief: dict) -> dict:
 - 원문에 없는 사실 창작 엄금
 """
         caption = ask_gemini(prompt, system=SYSTEM, temperature=0.7, max_tokens=1200)
-        captions.append({"headline": item["headline"], "caption": caption})
-        print(f"  ✅ 카드뉴스 {i+1}/5 완성 ({len(caption)}자)")
+        captions.append({
+            "headline":    item["headline"],
+            "caption":     caption,
+            "source_url":  item.get("source_url", ""),
+            "source_name": item.get("source_name", ""),
+        })
+        print(f"  ✅ 카드뉴스 {i+1}/{len(brief['instagram'])} 완성 ({len(caption)}자)")
         if i < len(brief["instagram"]) - 1:
             import time; time.sleep(20)   # TPM 한도 초과 방지 (6000 TPM / ~1400 per call)
 

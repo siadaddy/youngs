@@ -10,14 +10,28 @@ SNS 바이럴 콘텐츠 기획의 최고 전문가입니다.
 항상 JSON 형식으로만 응답하세요.
 """
 
-def run(newsletter_text: str) -> dict:
+def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
     print("🎯 기획자 에이전트 실행 중...")
+
+    # 카테고리별 원문 뉴스 목록(제목+링크) 구성 — 카테고리당 최대 3개, 요약 제외
+    article_list_text = ""
+    if newsletter_data and newsletter_data.get("categorized"):
+        lines = []
+        for cat, articles in newsletter_data["categorized"].items():
+            for a in articles[:3]:
+                title = a.get("title", "").replace("&quot;", '"')
+                link  = a.get("link", "")
+                lines.append(f"[{cat}] {title} | URL: {link}")
+        article_list_text = "\n".join(lines)
 
     prompt = f"""
 다음 뉴스레터에서 오늘의 핵심 뉴스를 선정하고 콘텐츠 브리프를 작성해주세요.
 
 [뉴스레터]
 {newsletter_text}
+
+[원문 뉴스 목록 — 제목·URL·요약 포함]
+{article_list_text if article_list_text else "(데이터 없음)"}
 
 아래 JSON 형식으로 정확히 응답하세요:
 {{
@@ -27,7 +41,9 @@ def run(newsletter_text: str) -> dict:
       "angle": "인스타 포스트 각도/관점",
       "keywords": ["키워드1", "키워드2", "키워드3"],
       "tone": "정보전달 | 감성적 | 충격적 | 유머",
-      "source_facts": "뉴스레터 원문에서 확인된 핵심 사실만 3~5개 (날짜·수치·주체 포함). 원문에 없는 내용은 절대 추가하지 마세요."
+      "source_facts": "원문 뉴스에서 확인된 핵심 사실 3~5개 (날짜·수치·주체 포함). 원문에 없는 내용은 절대 추가하지 마세요.",
+      "source_url": "위 [원문 뉴스 목록]에서 이 뉴스에 해당하는 URL 그대로 복사. 없으면 빈 문자열.",
+      "source_name": "언론사명 또는 출처 (예: 연합뉴스, 조선일보 등)"
     }}
   ],
   "blog": {{
@@ -35,11 +51,11 @@ def run(newsletter_text: str) -> dict:
     "main_points": ["핵심 포인트1", "핵심 포인트2", "핵심 포인트3"],
     "tone": "전문적이고 읽기 쉬운 문체",
     "target": "타겟 독자층",
-    "source_facts": "뉴스레터 원문에서 확인된 핵심 사실 5~8개 (날짜·수치·주체 포함). 원문에 없는 내용은 절대 추가하지 마세요."
+    "source_facts": "원문 뉴스에서 확인된 핵심 사실 5~8개 (날짜·수치·주체 포함). 원문에 없는 내용은 절대 추가하지 마세요."
   }}
 }}
 
-instagram은 3개, blog는 1개만 작성하세요.
+instagram은 5개, blog는 1개만 작성하세요.
 📝 블로그 필수 규칙: blog title은 오늘 뉴스 중 가장 임팩트 있는 단일 주제를 깊게 파고드는 심층 분석 아티클 제목이어야 합니다.
    - ❌ 금지: "뉴스레터 요약", "오늘의 뉴스", "3월 29일 뉴스", 날짜+요약 조합 제목
    - ✅ 예시: "전기차 시장의 판도 바꿀 3가지 신호", "김정은 탱크 시험이 말해주는 것", "수입차 시장 2026 생존 전략"
@@ -47,7 +63,6 @@ instagram은 3개, blog는 1개만 작성하세요.
    - 해당 뉴스가 없으면 자동차 업계 전반 또는 수입차 시장 트렌드라도 첫 번째로 배치하세요.
    - 나머지 4개는 다른 카테고리에서 자유롭게 선정합니다.
 ⚠️ 중복 금지: 5개 선정 시 같은 주제·인물·회사·사건이 2번 이상 나오면 절대 안 됩니다.
-   예) "기름값 상승" + "유가 급등" → 동일 주제 → 하나만 선정, 나머지는 다른 주제로 교체.
    5개는 반드시 서로 다른 카테고리 또는 전혀 다른 관점의 뉴스여야 합니다.
 🚫 절대 제외 항목 (아래에 해당하면 무조건 다른 뉴스로 교체):
    - 음주운전, 성범죄, 폭행, 마약 등 범죄 전력이 있는 연예인·유명인 관련 뉴스

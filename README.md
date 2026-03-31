@@ -10,7 +10,7 @@
 
 | 프로젝트 | 설명 | 실행 주기 |
 |----------|------|-----------|
-| [📰 뉴스레터 + AI 크리에이터](#-뉴스레터--ai-크리에이터) | 뉴스 수집 → 카드뉴스 3개 + 블로그 아티클 + 이미지 → 노션 | 매일 07:00 |
+| [📰 뉴스레터 + AI 크리에이터](#-뉴스레터--ai-크리에이터) | 뉴스 수집 → 카드뉴스 5개 + 블로그 아티클 + 이미지 → 노션 | 매일 07:00 |
 | [🤖 AI 코인 자동매매](#-ai-코인-자동매매) | 업비트 KRW 마켓 AI 자동 트레이딩 + GitHub Pages 대시보드 | 하루 6회 (4시간) |
 | [🎓 내 제작물 (INNER CIRCLE 2기)](#-내-제작물-패스트캠퍼스-inner-circle-2기) | 저가 커피 입점 분석 (2025.05) + Instacart 대시보드 (2025.07) | 상시 배포 |
 
@@ -18,7 +18,10 @@
 
 ## 📰 뉴스레터 + AI 크리에이터
 
-네이버 뉴스 API로 매일 8개 카테고리 뉴스를 수집하고, 5명의 AI 직원이 협업해 콘텐츠를 자동 생성합니다. (카드뉴스 3개 + 블로그 1개 + AI 이미지 3장)
+네이버 뉴스 API로 매일 8개 카테고리 뉴스를 수집하고, 5명의 AI 직원이 협업해 콘텐츠를 자동 생성합니다. (카드뉴스 5개 + 블로그 1개 + AI 이미지 5장)
+- 자동차 뉴스 1개 필수 포함, 나머지 4개는 AI가 주요 뉴스 선정
+- 카드뉴스마다 원문 출처 링크 포함
+- Stable Horde 계정 API 키로 이미지 생성 안정성 확보
 
 ### 자동화 흐름
 
@@ -207,7 +210,7 @@ launchctl load ~/Library/LaunchAgents/com.siadad.priceguard.plist
 
 ---
 
-*최종 업데이트: 2026-03-30 (3차) | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
+*최종 업데이트: 2026-03-31 | Powered by Groq + Stable Horde Flux.1-Schnell + pyupbit + Notion API + GitHub Pages*
 
 ---
 
