@@ -348,6 +348,18 @@
       white-space: pre-wrap; word-break: break-word;
     }
 
+    /* 출처 버튼 */
+    .source-btn {
+      display: inline-block; margin-top: 12px;
+      font-size: .74rem; font-weight: 700;
+      color: #60a5fa; text-decoration: none;
+      padding: 5px 12px; border-radius: 20px;
+      border: 1px solid rgba(96,165,250,.3);
+      background: rgba(96,165,250,.08);
+      transition: background .2s, border-color .2s;
+    }
+    .source-btn:hover { background: rgba(96,165,250,.18); border-color: rgba(96,165,250,.6); }
+
     /* 라벨 하이라이트 */
     .lbl-fact  { color: var(--green);   font-weight: 700; }
     .lbl-anal  { color: #60a5fa;        font-weight: 700; }
@@ -759,7 +771,7 @@
       <div class="stat-label">AI 직원</div>
     </div>
     <div class="stat">
-      <div class="stat-val">3개</div>
+      <div class="stat-val">5개</div>
       <div class="stat-label">일일 카드뉴스</div>
     </div>
     <div class="stat">
@@ -1203,7 +1215,7 @@
     const wrap = document.createElement('div');
     const items = data.captions || [];
 
-    items.slice(0, 3).forEach((item, i) => {
+    items.forEach((item, i) => {
       if (i === 0) {
         // 피쳐드 카드 (첫 번째 — 자동차/BMW)
         const fc = document.createElement('div');
@@ -1211,6 +1223,9 @@
         const imgHtml = item.image_url
           ? `<img src="${item.image_url}" alt="${item.headline}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
           : `<div class="fc-image-placeholder">🚗</div>`;
+        const srcBtn = item.source_url
+          ? `<a href="${item.source_url}" target="_blank" rel="noopener" class="source-btn">📰 ${item.source_name || '원문 보기'} →</a>`
+          : '';
         fc.innerHTML = `
           <div class="fc-image" style="position:relative;">
             ${imgHtml}
@@ -1220,18 +1235,18 @@
             <div class="fc-num">FEATURED · 오늘의 자동차 뉴스</div>
             <div class="fc-headline">${item.headline}</div>
             <div class="fc-caption">${highlight(item.caption)}</div>
+            ${srcBtn}
           </div>`;
         wrap.appendChild(fc);
       } else if (i === 1) {
-        // 2~3번 카드는 2열 그리드로
+        // 2~5번 카드는 2열 그리드로
         const grid = document.createElement('div');
         grid.className = 'news-grid';
-        grid.appendChild(buildNewsCard(item, i));
-        if (items[2]) {
-          grid.appendChild(buildNewsCard(items[2], 2));
+        for (let j = 1; j < items.length; j++) {
+          grid.appendChild(buildNewsCard(items[j], j));
         }
         wrap.appendChild(grid);
-      } else if (i === 2) {
+      } else {
         // 이미 위에서 처리됨 — 스킵
         return;
       }
@@ -1263,12 +1278,16 @@
     const imgHtml = item.image_url
       ? `<img class="nc-image" src="${item.image_url}" alt="${item.headline}" loading="lazy">`
       : `<div class="nc-image-placeholder">🖼</div>`;
+    const srcBtn = item.source_url
+      ? `<a href="${item.source_url}" target="_blank" rel="noopener" class="source-btn">📰 ${item.source_name || '원문 보기'} →</a>`
+      : '';
     card.innerHTML = `
       ${imgHtml}
       <div class="nc-body">
         <div class="nc-num">CARD ${String(idx+1).padStart(2,'0')}</div>
         <div class="nc-headline">${item.headline}</div>
         <div class="nc-caption">${highlight(item.caption)}</div>
+        ${srcBtn}
       </div>`;
     return card;
   }
