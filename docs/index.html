@@ -1001,7 +1001,7 @@
   <div class="container">
     <div class="section-eyebrow">📰 Today's News Feed</div>
     <div class="section-title">오늘 수집된 뉴스</div>
-    <p class="section-sub">카테고리를 클릭하면 뉴스 목록이 펼쳐집니다</p>
+    <p class="section-sub" id="news-raw-sub">카테고리를 클릭하면 뉴스 목록이 펼쳐집니다</p>
     <div id="news-raw-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
   </div>
 </section>
@@ -1325,6 +1325,9 @@
     const cats = Object.keys(news);
     if (cats.length > 0) {
       document.getElementById('news-raw-section').style.display = '';
+      const collectedAt = data.news_collected_at || '';
+      document.getElementById('news-raw-sub').textContent =
+        collectedAt ? `수집 시각: ${collectedAt} · 카테고리를 클릭하면 뉴스 목록이 펼쳐집니다` : '카테고리를 클릭하면 뉴스 목록이 펼쳐집니다';
       const list = document.getElementById('news-raw-list');
       list.innerHTML = '';
       cats.forEach(cat => {

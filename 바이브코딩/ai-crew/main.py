@@ -195,6 +195,7 @@ def _publish_to_github(today, brief, written, images, newsletter_data):
             ]
             for cat, articles in (newsletter_data or {}).get("categorized", {}).items()
         } if newsletter_data else {},
+        "news_collected_at": (newsletter_data or {}).get("collected_at", ""),
     }
 
     # 오늘 날짜 파일 저장 (아카이브용)
