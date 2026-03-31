@@ -237,38 +237,44 @@ def _build_blocks(brief, writer, images, newsletter_data):
                         continue
                     blocks.extend(_split_text_blocks(para.strip()))
 
-        # 카테고리별 뉴스 목록
+        # 카테고리별 뉴스 목록 — 토글 형태
         categorized = newsletter_data.get("categorized", {})
         for cat, articles in categorized.items():
             if not articles:
                 continue
-            blocks.append({
-                "object": "block", "type": "heading_3",
-                "heading_3": {"rich_text": [_t(f"📌 {cat}")]},
-            })
+
+            # 토글 안에 들어갈 뉴스 아이템들
+            children = []
             for art in articles:
-                title   = art.get("title", "")
+                title   = art.get("title", "").replace("&quot;", '"')
                 source  = art.get("source", "")
                 link    = art.get("link", "")
-                summary = art.get("summary", "")
+                summary = art.get("summary", "").replace("&quot;", '"')
 
                 rich = []
-                # 출처 레이블 (볼드, 회색)
                 if source:
                     rich.append(_t(f"[{source}]  ", bold=True, color="gray"))
-                # 제목 (링크 포함)
-                title_block = {
+                rich.append({
                     "type": "text",
                     "text": {"content": title[:1800], "link": {"url": link} if link else None},
                     "annotations": {"bold": True},
-                }
-                rich.append(title_block)
-
-                blocks.append({
+                })
+                children.append({
                     "object": "block", "type": "bulleted_list_item",
                     "bulleted_list_item": {"rich_text": rich},
                 })
                 if summary:
-                    blocks.extend(_split_text_blocks(f"  └ {summary[:500]}"))
+                    children.append({
+                        "object": "block", "type": "paragraph",
+                        "paragraph": {"rich_text": [_t(f"└ {summary[:400]}", color="gray")]},
+                    })
+
+            blocks.append({
+                "object": "block", "type": "toggle",
+                "toggle": {
+                    "rich_text": [_t(f"{cat}  ({len(articles)}건)", bold=True)],
+                    "children": children,
+                },
+            })
 
     return blocks
