@@ -16,11 +16,17 @@ DOCS_IMAGES_DIR  = None   # run() 첫 호출 시 초기화
 GITHUB_PAGES_BASE = "https://siadaddy.github.io/youngs/images"
 
 SYSTEM = """
-You are a world-class visual art director with 30 years of experience at Vogue, National Geographic, and Reuters.
-You have directed photo shoots for global news agencies and created viral editorial images.
-You create cinematic, photorealistic image prompts for AI image generation.
-Every prompt you write results in a stunning, award-worthy image.
-Always write in English. Prompts must be vivid, specific, and visually compelling.
+You are a creative art director specializing in bright, modern news infographic visuals for Korean SNS and digital media.
+Your style is clean, optimistic, and visually engaging — think Bloomberg, Wired, and The Economist cover art.
+You create image prompts that feel fresh, energetic, and approachable — never dark, gloomy, or heavy.
+Key rules:
+- Always use bright, vivid colors (blues, greens, warm oranges, clean whites)
+- Prefer symbolic or conceptual illustrations over realistic war/disaster imagery
+- For economic news: upward graphs, glowing cityscapes, tech devices
+- For car news: sleek studio shots, open roads, dynamic angles in daylight
+- For AI/tech news: clean futuristic interfaces, glowing circuits, bright labs
+- No dark skies, explosions, suffering, or dramatic shadows
+- Always write in English. Keep prompts under 70 words.
 """
 
 
@@ -40,14 +46,16 @@ def run(brief: dict, writer_output: dict) -> list:
         f"{i+1}. headline: {it['headline']} | angle: {it['angle']} | tone: {it['tone']}"
         for i, it in enumerate(items)
     )
-    batch_prompt = f"""Create {len(items)} image prompts for news card visuals.
+    batch_prompt = f"""Create {len(items)} image prompts for Korean SNS news card visuals.
 
 {batch_input}
 
-Rules per prompt:
-- Photorealistic, cinematic (National Geographic / Reuters style)
-- Dramatic lighting, strong visual narrative, no text/logos
-- 70 words max
+Style rules (MUST follow):
+- Bright, vivid, optimistic colors — NO dark skies, NO explosions, NO suffering
+- Clean modern aesthetic (Bloomberg / Wired magazine style)
+- Use symbolic/conceptual visuals instead of literal war or disaster scenes
+- Cars → sleek studio or open road in daylight. Economy → glowing charts or cityscapes. AI/Tech → clean futuristic interfaces
+- No text, no logos, 70 words max per prompt
 
 Return ONLY a JSON array, no markdown:
 [{{"idx":1,"prompt":"..."}},{{"idx":2,"prompt":"..."}},...,{{"idx":{len(items)},"prompt":"..."}}]"""
@@ -97,7 +105,7 @@ def _generate_image(prompt: str, save_path: str) -> bool:
         api_key = os.getenv("STABLE_HORDE_KEY", "0000000000")
         headers = {"apikey": api_key, "Content-Type": "application/json"}
         payload = {
-            "prompt": prompt + ", ultra high quality, sharp focus, professional photography, award winning",
+            "prompt": prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality, sharp focus",
             "params": {"width": 768, "height": 768, "steps": 4, "n": 1},
             "models": ["Flux.1-Schnell fp8 (Compact)"],
             "r2": True,
