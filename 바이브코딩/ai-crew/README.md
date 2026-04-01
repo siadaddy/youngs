@@ -80,10 +80,10 @@
 > "글보다 먼저 눈을 사로잡는 이미지, 제 전문입니다."
 
 **역할**: 뉴스 헤드라인에 맞는 이미지 프롬프트 생성 → AI 이미지 생성 → GitHub Pages 저장
-**모델**: Groq — Llama 3.3 70B (프롬프트 생성) + Stable Horde (이미지 생성, 계정 키)
+**모델**: Groq — Llama 3.3 70B (프롬프트 생성) + Pollinations.ai Flux (이미지 생성, 무료·키 불필요)
 **담당**:
 - 5개 헤드라인용 영문 프롬프트 API 1회 호출로 일괄 생성
-- Stable Horde(계정 키, `STABLE_HORDE_KEY`)로 **768×768 이미지 5장** 생성
+- Pollinations.ai(`image.pollinations.ai`)로 **768×768 이미지 5장** 생성 (GET 1회, ~20초)
 - 밝고 모던한 SNS 카드뉴스 스타일 (Bloomberg / Wired 톤, 어둡거나 자극적인 이미지 금지)
 - `docs/images/{날짜}_image_{n}.png` 로컬 저장
 - GitHub Pages URL 반환 → 노션 이미지 블록으로 직접 임베드
@@ -187,7 +187,7 @@ NOTION_TOKEN=...
 NOTION_NEWSLETTER_PARENT_ID=...
 NEWSLETTER_DIR=/Users/youngchulyu/바이브코딩/뉴스레터
 NTFY_TOPIC=siadad-aicrew
-STABLE_HORDE_KEY=...      # Stable Horde 계정 키 (stablehorde.net)
+# STABLE_HORDE_KEY 불필요 — Pollinations.ai는 키 없이 동작
 ```
 
 ---
@@ -198,7 +198,7 @@ STABLE_HORDE_KEY=...      # Stable Horde 계정 키 (stablehorde.net)
 |------|------|------|
 | Naver News API | 뉴스 수집 (8개 카테고리) | 무료 |
 | Groq (Llama 3.3 70B) | 텍스트 생성 전반 (키 2개 폴백) | 무료 |
-| Stable Horde | AI 이미지 생성 768×768 | 무료 |
+| Pollinations.ai (Flux) | AI 이미지 생성 768×768 (키 불필요) | 무료 |
 | GitHub Pages | 이미지 영구 호스팅 + 사이트 | 무료 |
 | Notion API | 콘텐츠 저장 | 무료 |
 | ntfy.sh | 완료 알림 | 무료 |
@@ -315,9 +315,16 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ## 📝 업데이트 로그
 
+### 2026-04-01
+- **이미지 생성 Stable Horde → Pollinations.ai 전환**: 큐 대기 타임아웃 문제 완전 해결
+  - API 키 불필요, GET 1회로 ~20초 내 이미지 반환, 5/5장 성공
+- **planner Groq 413 오류 수정**: 입력 페이로드 초과 문제 해결
+  - 뉴스레터 입력 최대 4,000자 제한 (기존 전문 전달로 TPM 한도 초과)
+  - 원문 목록 카테고리당 3개 → 2개 축소
+  - `max_tokens` 8096 → 2500 (planner 출력에 실제 필요한 양)
+
 ### 2026-03-31
 - **카드뉴스 5개 복구**: planner/writer 개선 — Groq가 5개 반환하도록 프롬프트 강화
-- **Stable Horde 계정 키 적용**: 익명 키 → 계정 키 전환 (403 차단 해결)
 - **이미지 스타일 개선**: 어두운 다큐 → 밝고 모던한 SNS 카드뉴스 스타일 (Bloomberg/Wired 톤)
 - **원문 출처 링크**: 카드뉴스에 source_url + source_name 추가 (GitHub Pages / 노션 반영)
 - **Groq 라운드로빈**: key1/key2 균등 분배 + 카드 간 대기 20초 → 5초 단축
@@ -366,4 +373,4 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ---
 
-*최종 업데이트: 2026-03-31 | Powered by Groq + Stable Horde + Notion API + GitHub Pages*
+*최종 업데이트: 2026-04-01 | Powered by Groq + Pollinations.ai + Notion API + GitHub Pages*
