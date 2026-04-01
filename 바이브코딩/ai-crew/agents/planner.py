@@ -10,15 +10,22 @@ SNS 바이럴 콘텐츠 기획의 최고 전문가입니다.
 항상 JSON 형식으로만 응답하세요.
 """
 
+NEWSLETTER_MAX_CHARS = 4000   # Groq 413 방지 — 뉴스레터 입력 최대 길이
+ARTICLE_PER_CAT     = 2       # 카테고리당 원문 뉴스 최대 개수
+
 def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
     print("🎯 기획자 에이전트 실행 중...")
 
-    # 카테고리별 원문 뉴스 목록(제목+링크) 구성 — 카테고리당 최대 3개, 요약 제외
+    # 뉴스레터 텍스트 길이 제한 (상단 핵심 내용 우선 유지)
+    if len(newsletter_text) > NEWSLETTER_MAX_CHARS:
+        newsletter_text = newsletter_text[:NEWSLETTER_MAX_CHARS] + "\n...(이하 생략)"
+
+    # 카테고리별 원문 뉴스 목록(제목+링크) 구성 — 카테고리당 최대 2개, 요약 제외
     article_list_text = ""
     if newsletter_data and newsletter_data.get("categorized"):
         lines = []
         for cat, articles in newsletter_data["categorized"].items():
-            for a in articles[:3]:
+            for a in articles[:ARTICLE_PER_CAT]:
                 title = a.get("title", "").replace("&quot;", '"')
                 link  = a.get("link", "")
                 lines.append(f"[{cat}] {title} | URL: {link}")
@@ -30,7 +37,7 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 [뉴스레터]
 {newsletter_text}
 
-[원문 뉴스 목록 — 제목·URL·요약 포함]
+[원문 뉴스 목록 — 제목·URL 포함]
 {article_list_text if article_list_text else "(데이터 없음)"}
 
 아래 JSON 형식으로 정확히 응답하세요:
@@ -72,7 +79,7 @@ instagram은 5개, blog는 1개만 작성하세요.
    - 검증되지 않은 루머·의혹 성격의 뉴스
 JSON 외 다른 텍스트는 절대 포함하지 마세요.
 """
-    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.6, json_mode=True, max_tokens=8096)
+    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.6, json_mode=True, max_tokens=2500)
 
     # JSON 파싱 — json_mode 보장 → 직접 파싱, 실패 시 regex 폴백
     raw = raw.replace("```json", "").replace("```", "").strip()
