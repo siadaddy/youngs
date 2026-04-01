@@ -47,6 +47,20 @@ def _adx(df: pd.DataFrame, period: int = 14) -> float:
     return round(float(dx.ewm(span=period, adjust=False).mean().iloc[-1]), 1)
 
 
+def _vol_breakout_target(ticker: str, k: float = 0.5) -> float | None:
+    """변동성 돌파 목표가: 오늘 시가 + (전일 고저차 × K). 실패 시 None"""
+    try:
+        df = pyupbit.get_ohlcv(ticker, interval="day", count=3)
+        if df is None or len(df) < 2:
+            return None
+        today_open = float(df["open"].iloc[-1])
+        prev_high  = float(df["high"].iloc[-2])
+        prev_low   = float(df["low"].iloc[-2])
+        return today_open + (prev_high - prev_low) * k
+    except Exception:
+        return None
+
+
 def _bb_position(series: pd.Series, period: int = 20) -> str:
     ma = series.rolling(period).mean()
     std = series.rolling(period).std()
@@ -85,7 +99,7 @@ def get_top_tickers(n: int = 20) -> list:
 
 
 def analyze_ticker(ticker: str) -> dict | None:
-    """한 종목의 1시간봉 기술적 지표 계산. 실패 시 None 반환"""
+    """한 종목의 1시간봉 기술적 지표 + 변동성 돌파 신호 계산. 실패 시 None 반환"""
     try:
         df = pyupbit.get_ohlcv(ticker, interval="minute60", count=100)
         if df is None or len(df) < 30:
@@ -106,6 +120,10 @@ def analyze_ticker(ticker: str) -> dict | None:
 
         price = get_current_price(ticker)
 
+        # 변동성 돌파 신호 (일봉 기준, K=0.5)
+        vb_target = _vol_breakout_target(ticker)
+        vb = bool(vb_target and price > vb_target)
+
         return {
             "ticker": ticker,
             "price": price,
@@ -114,6 +132,7 @@ def analyze_ticker(ticker: str) -> dict | None:
             "bb": bb_pos,
             "vol_change_pct": vol_chg,
             "adx": adx,
+            "vb": vb,
         }
     except Exception as e:
         print(f"  ⚠️  [{ticker}] 분석 실패: {e}")

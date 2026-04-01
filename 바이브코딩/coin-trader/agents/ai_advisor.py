@@ -86,17 +86,19 @@ def run(market_data: list, holding: dict | None) -> dict:
         elif "중하단" in bb: s += 1
         elif "상단" in bb:  s -= 2
         elif "중상단" in bb: s -= 1
+        if d.get("vb"):   s += 2   # 변동성 돌파 보너스
         return s
 
     rows = []
     for d in market_data[:15]:
         score = _score(d)
         adx = d.get("adx", 0)
-        trend = "추세O" if adx >= 20 else "횡보"
+        trend = "추세O" if adx >= 15 else "횡보"
         vol_str = f"거래량{d['vol_change_pct']:+.0f}%"
+        vb_str = "VB✅" if d.get("vb") else "VB❌"
         rows.append(
             f"- {d['ticker']} | 현재가 {d['price']:,.0f}원 | "
-            f"RSI {d['rsi']} | MACD {d['macd']} | BB {d['bb']} | {vol_str} | ADX {adx}({trend}) | 점수:{score:+d}"
+            f"RSI {d['rsi']} | MACD {d['macd']} | BB {d['bb']} | {vol_str} | ADX {adx}({trend}) | {vb_str} | 점수:{score:+d}"
         )
     market_text = "\n".join(rows)
 
@@ -105,23 +107,24 @@ def run(market_data: list, holding: dict | None) -> dict:
     prompt = f"""【현재 포트폴리오】
 {holding_text}
 
-【KRW 시장 상위 종목 분석 (1시간봉 기준)】
+【KRW 시장 상위 종목 분석 (1시간봉 + 변동성돌파 기준)】
 {market_text}
 
-【판단 규칙 — 스코어 기반】
-각 종목의 점수(RSI·MACD·BB 합산)와 ADX 추세 여부를 기준으로 판단하세요.
-적극적으로 매매하세요 — 소액이므로 기회를 놓치지 않는 것이 중요합니다.
+【판단 규칙】
+소액 테스트 봇입니다. 기회가 있으면 적극적으로 매매하세요. 횡보 방치보다 교체가 낫습니다.
 
 1. 보유 중이면 HOLD 또는 SELL만 선택 가능
 2. 미보유 중이면 BUY(종목 지정) 또는 HOLD만 선택 가능
 3. 수익률이 -{stop_loss}% 이하면 반드시 SELL (손절)
-4. 【매도 조건】보유 종목 점수 -2 이하 이거나, RSI 70 이상 + MACD 하락/데드크로스 → SELL
+4. 【VB 매수 — 최우선】미보유 시 VB✅ + 점수 +1 이상 → BUY (변동성 돌파는 가장 검증된 신호)
 5. 【강한 매수】미보유 시 점수 +3 이상 + ADX 15 이상(추세O) → BUY 적극 고려
-6. 【중간 매수】미보유 시 점수 +2 이상 + ADX 15 이상 + 거래량 +30% 이상 → BUY 고려
-7. ADX 10 미만(완전 횡보) 종목은 점수가 높아도 BUY 금지 — 가짜 신호 가능성 높음
-8. 【기회 교체】보유 종목 수익률 -2%~+2% 횡보 + 보유 종목 점수 0 이하,
-   다른 종목 점수 +3 이상 + ADX 15 이상 → SELL 후 교체 (reason에 "기회 교체" 명시)
-9. 뚜렷한 신호 없으면 HOLD
+6. 【중간 매수】미보유 시 점수 +2 이상 + ADX 15 이상 + 거래량 +20% 이상 → BUY 고려
+7. ADX 10 미만 + VB❌ 종목은 BUY 금지 — 방향성 없음
+8. 【매도】보유 종목 점수 -2 이하 이거나, RSI 70 이상 + MACD 하락/데드크로스 → SELL
+9. 【기회 교체 — 적극】보유 종목 수익률 +5% 미만이면서 점수 0 이하일 때,
+   다른 종목이 VB✅ 이거나 점수 +3 이상 + ADX 15 이상이면 → 즉시 SELL 후 교체 (reason에 "기회 교체" 명시)
+10. 보유 종목 수익률 +5% 이상이면 수익 보호 우선, 교체 금지
+11. 뚜렷한 신호 없으면 HOLD
 
 반드시 아래 JSON만 출력하세요 (다른 텍스트 없이):
 {{"action": "BUY" | "SELL" | "HOLD", "ticker": "KRW-XXX" 또는 null, "reason": "한국어로 판단 이유 2~3문장"}}"""
