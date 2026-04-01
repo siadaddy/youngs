@@ -85,9 +85,9 @@ def get_top_tickers(n: int = 20) -> list:
 
 
 def analyze_ticker(ticker: str) -> dict | None:
-    """한 종목의 4시간봉 기술적 지표 계산. 실패 시 None 반환"""
+    """한 종목의 1시간봉 기술적 지표 계산. 실패 시 None 반환"""
     try:
-        df = pyupbit.get_ohlcv(ticker, interval="minute240", count=100)
+        df = pyupbit.get_ohlcv(ticker, interval="minute60", count=100)
         if df is None or len(df) < 30:
             return None
 
@@ -99,9 +99,9 @@ def analyze_ticker(ticker: str) -> dict | None:
         bb_pos = _bb_position(close)
         adx = _adx(df)
 
-        # 24h 거래량 변화율 (마지막 6개 4h봉 vs 그 이전 6개)
-        recent_vol = volume.iloc[-6:].sum()
-        prev_vol = volume.iloc[-12:-6].sum()
+        # 24h 거래량 변화율 (마지막 24개 1h봉 vs 그 이전 24개)
+        recent_vol = volume.iloc[-24:].sum()
+        prev_vol = volume.iloc[-48:-24].sum()
         vol_chg = round((recent_vol / prev_vol - 1) * 100, 1) if prev_vol > 0 else 0.0
 
         price = get_current_price(ticker)
