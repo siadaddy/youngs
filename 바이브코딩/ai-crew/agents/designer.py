@@ -32,7 +32,7 @@ Key rules:
 
 def run(brief: dict, writer_output: dict) -> list:
     global DOCS_IMAGES_DIR
-    print("🎨 디자이너 에이전트 실행 중... (Stable Horde Flux.1-Schnell → GitHub Pages)")
+    print("🎨 디자이너 에이전트 실행 중... (Pollinations.ai Flux → GitHub Pages)")
 
     # docs/images/ 폴더 초기화
     DOCS_IMAGES_DIR = os.path.join(_repo_root(), "docs", "images")
@@ -100,50 +100,23 @@ Return ONLY a JSON array, no markdown:
 
 
 def _generate_image(prompt: str, save_path: str) -> bool:
-    """Stable Horde Flux.1-Schnell — 완전 무료, 빠른 응답 (~20초)"""
+    """Pollinations.ai — API 키 불필요, GET 요청 한 번으로 즉시 이미지 반환"""
     try:
-        api_key = os.getenv("STABLE_HORDE_KEY", "0000000000")
-        headers = {"apikey": api_key, "Content-Type": "application/json"}
-        payload = {
-            "prompt": prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality, sharp focus",
-            "params": {"width": 768, "height": 768, "steps": 4, "n": 1},
-            "models": ["Flux.1-Schnell fp8 (Compact)"],
-            "r2": True,
-        }
-        r = requests.post(
-            "https://stablehorde.net/api/v2/generate/async",
-            headers=headers, json=payload, timeout=30
+        from urllib.parse import quote
+        full_prompt = prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality, sharp focus"
+        encoded = quote(full_prompt)
+        url = (
+            f"https://image.pollinations.ai/prompt/{encoded}"
+            f"?width=768&height=768&model=flux&nologo=true&enhance=true"
         )
+        r = requests.get(url, timeout=120)
         r.raise_for_status()
-        job_id = r.json().get("id")
-        if not job_id:
-            print("    ⚠️  job_id 없음")
+        if len(r.content) < 1000:
+            print("    ⚠️  응답 크기 너무 작음 (이미지 아닌 응답)")
             return False
-
-        for _ in range(48):  # 최대 4분 대기
-            time.sleep(5)
-            check = requests.get(
-                f"https://stablehorde.net/api/v2/generate/check/{job_id}",
-                headers=headers, timeout=10
-            )
-            if check.json().get("done"):
-                break
-
-        result = requests.get(
-            f"https://stablehorde.net/api/v2/generate/status/{job_id}",
-            headers=headers, timeout=30
-        )
-        generations = result.json().get("generations", [])
-        if not generations:
-            print("    ⚠️  generations 없음 (타임아웃 또는 큐 초과)")
-            return False
-
-        img_url = generations[0]["img"]
-        img_data = requests.get(img_url, timeout=60)
-        img_data.raise_for_status()
         with open(save_path, "wb") as f:
-            f.write(img_data.content)
-        return os.path.getsize(save_path) > 1000
+            f.write(r.content)
+        return True
 
     except Exception as e:
         print(f"    ❌ 이미지 생성 오류: {e}")
