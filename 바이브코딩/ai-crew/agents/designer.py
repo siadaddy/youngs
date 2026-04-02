@@ -94,30 +94,43 @@ Return ONLY a JSON array, no markdown:
         else:
             print(f"  ⚠️  이미지 {i+1} 생성 실패")
 
-        time.sleep(2)
+        # 이미지 사이 간격 — 첫 번째 실패 후엔 더 길게 대기
+        time.sleep(15 if not success else 8)
 
     return images
 
 
 def _generate_image(prompt: str, save_path: str) -> bool:
-    """Pollinations.ai — API 키 불필요, GET 요청 한 번으로 즉시 이미지 반환"""
-    try:
-        from urllib.parse import quote
-        full_prompt = prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality, sharp focus"
-        encoded = quote(full_prompt)
-        url = (
-            f"https://image.pollinations.ai/prompt/{encoded}"
-            f"?width=768&height=768&model=flux&nologo=true&enhance=true"
-        )
-        r = requests.get(url, timeout=120)
-        r.raise_for_status()
-        if len(r.content) < 1000:
-            print("    ⚠️  응답 크기 너무 작음 (이미지 아닌 응답)")
-            return False
-        with open(save_path, "wb") as f:
-            f.write(r.content)
-        return True
+    """Pollinations.ai — 최대 3회 재시도, 429/5xx에 대기 후 재시도"""
+    from urllib.parse import quote
+    full_prompt = prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality, sharp focus"
+    encoded = quote(full_prompt)
+    url = (
+        f"https://image.pollinations.ai/prompt/{encoded}"
+        f"?width=768&height=768&model=flux&nologo=true&enhance=true"
+    )
 
-    except Exception as e:
-        print(f"    ❌ 이미지 생성 오류: {e}")
-        return False
+    wait_times = [0, 20, 40]   # 1차 즉시 / 2차 20초 후 / 3차 40초 후
+    for attempt, wait in enumerate(wait_times, 1):
+        if wait:
+            print(f"    ⏳ {wait}초 후 재시도 ({attempt}/3)...")
+            time.sleep(wait)
+        try:
+            r = requests.get(url, timeout=120)
+            if r.status_code == 429:
+                print(f"    ⚠️  429 Too Many Requests")
+                continue
+            if r.status_code >= 500:
+                print(f"    ⚠️  {r.status_code} 서버 오류")
+                continue
+            r.raise_for_status()
+            if len(r.content) < 1000:
+                print("    ⚠️  응답 크기 너무 작음")
+                continue
+            with open(save_path, "wb") as f:
+                f.write(r.content)
+            return True
+        except Exception as e:
+            print(f"    ❌ 이미지 생성 오류: {e}")
+
+    return False
