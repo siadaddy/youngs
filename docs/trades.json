@@ -1,11 +1,17 @@
 {
-  "holding": {
-    "ticker": "KRW-0G",
-    "buy_price": 753,
-    "qty": 6.64010624,
-    "invest_krw": 5000
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-02 11:05",
+      "action": "SELL",
+      "ticker": "KRW-0G",
+      "price": 772.0,
+      "amount_krw": 5000,
+      "reason": "기회 교체: 현재 보유 종목 수익률 +2.79% 미만이고, 다른 종목이 점수 +3 이상 + ADX 15 이상인 경우 교체가 필요함. KRW-SEI 종목이 점수 +3, ADX 34.3로 교체 대상임",
+      "pnl_pct": 2.52,
+      "pnl_krw": 126.0,
+      "dry_run": false
+    },
     {
       "time": "2026-03-29 00:32",
       "action": "BUY",
@@ -30,13 +36,13 @@
     }
   ],
   "stats": {
-    "total_trades": 2,
-    "wins": 0,
+    "total_trades": 3,
+    "wins": 1,
     "losses": 0,
-    "total_pnl_krw": 0.0,
+    "total_pnl_krw": 126.0,
     "start_date": "2026-03-28",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 15.0
   },
-  "updated_at": "2026-04-02 10:05"
+  "updated_at": "2026-04-02 11:05"
 }
