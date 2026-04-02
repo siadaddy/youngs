@@ -297,7 +297,7 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 | source_facts | 원문 확인 사실만 추출 → 작가가 이것만 사용하도록 강제 |
 | 언어 필터 | CJK, 일본어, 아랍어, 태국어, 러시아어, 힌디어 자동 제거 |
 | JSON 파싱 | 정규식으로 JSON 블록만 추출 (앞뒤 설명 텍스트 무시) |
-| 이미지 생성 | Stable Horde generations 빈 배열 체크 → 크래시 없이 실패 처리 |
+| 이미지 생성 | Pollinations.ai 429/5xx → 최대 3회 재시도 (즉시→20초→40초) |
 
 ---
 
@@ -307,13 +307,19 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 |------|---------|
 | 파이프라인 미실행 | `crew.log` 확인, launchd 상태: `launchctl list \| grep aicrew` |
 | Groq 429 계속 | 일일 쿼터 소진 → 내일 자동 리셋, key2 자동 전환 확인 |
-| 이미지 안 보임 | Stable Horde 지연 or GitHub Pages 미push → 수동 `git push origin main` |
+| 이미지 안 보임 | Pollinations.ai 429/502 → 재시도 3회 후 실패 시 해당 장만 스킵, 다음날 재생성 |
 | GitHub Pages 미반영 | `git push origin main` 수동 실행 |
 | 노션 중복 페이지 | newsletter_naver.py Notion 업로드는 비활성화 상태 (ai-crew가 통합 처리) |
 
 ---
 
 ## 📝 업데이트 로그
+
+### 2026-04-02
+- **이미지 재시도 로직 추가**: 429 Too Many Requests / 5xx 서버 오류 대응
+  - 최대 3회 재시도 (즉시 → 20초 → 40초 대기)
+  - 이미지 간 대기: 2초 → 성공 8초 / 실패 후 15초 (rate limit 방지)
+  - 기존: 1회 실패 시 바로 다음 이미지로 → 연속 429 발생
 
 ### 2026-04-01
 - **이미지 생성 Stable Horde → Pollinations.ai 전환**: 큐 대기 타임아웃 문제 완전 해결
@@ -373,4 +379,4 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ---
 
-*최종 업데이트: 2026-04-01 | Powered by Groq + Pollinations.ai + Notion API + GitHub Pages*
+*최종 업데이트: 2026-04-02 | Powered by Groq + Pollinations.ai + Notion API + GitHub Pages*
