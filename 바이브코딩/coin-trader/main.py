@@ -266,8 +266,9 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
 
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        # 히스토리 추가 (BUY 실제 체결된 경우 또는 SELL만)
-        if action == "SELL" or (action == "BUY" and new_holding):
+        # 히스토리 추가 (실제 체결된 경우만)
+        # SELL: new_holding is None = 실제 매도 완료 / BUY: new_holding 존재 = 실제 매수 완료
+        if (action == "SELL" and new_holding is None) or (action == "BUY" and new_holding):
             from utils.upbit_client import get_current_price
             ticker = advice.get("ticker") or (old_holding["ticker"] if old_holding else "-")
             price  = get_current_price(ticker) if ticker != "-" else 0
