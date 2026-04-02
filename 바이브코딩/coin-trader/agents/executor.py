@@ -51,7 +51,7 @@ def run(action: dict, holding: dict | None) -> dict:
         if krw < MIN_ORDER:
             print(f"  ⚠️  KRW 잔고 부족 ({krw:,.0f}원) — BUY 스킵")
             return None
-        invest = min(krw, MAX_INVEST) * 0.9995  # 0.05% 수수료 예약 (잔고 부족 오류 방지)
+        invest = min(krw, MAX_INVEST)  # 업비트가 수수료 내부 처리 — 정확히 5,000원 전달해야 최소주문 충족
 
         result = buy_market_order(ticker, invest)
         price = get_current_price(ticker)
