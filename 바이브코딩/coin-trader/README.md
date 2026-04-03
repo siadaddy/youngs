@@ -29,7 +29,8 @@ Groq AI(Llama 3.3 70B)가 기술적 지표를 바탕으로 BUY / SELL / HOLD를 
 ├─ Step 8: ntfy 결과 알림
 └─ Step 9: docs/trades.json 업데이트 → GitHub Pages push
 
-🛡 가격 감시 (price_guard.py) — 상시 실행 (30초 간격)
+🛡 가격 감시 (price_guard.py) — 상시 실행 (30초 간격, KeepAlive)
+├─ main.py 실행 중(lock 파일)이면 스킵 → 매매 충돌 방지
 ├─ 보유 종목 현재가 실시간 조회
 ├─ 손절 발동: 매수가 대비 -7% 이하 → 즉시 시장가 매도 + ntfy 긴급 알림
 └─ 익절 발동: 매수가 대비 +15% 이상 → 즉시 시장가 매도 + ntfy 알림
@@ -187,6 +188,12 @@ pip install pyupbit pandas numpy python-dotenv requests
 
 ## 📝 업데이트 로그
 
+### 2026-04-03
+- **price_guard.py 충돌 방지 추가**: main.py 실행 중(lock 파일) 감지 시 스킵 → 동시 매도 경쟁 방지
+- **price_guard.py 로그 중복 수정**: print + 파일 직접 쓰기 → print만 (plist가 trader.log로 redirect)
+- **price_monitor.py(5분 launchd) 제거**: price_guard(30초 데몬)와 중복 → coinmonitor unload
+- **main.py/writer.py 개선**: SELL 차단 로그 정밀화, HOLD 시 GitHub push 스킵
+
 ### 2026-04-02
 - **변동성 돌파(VB) 전략 추가**: 한국 자동매매 커뮤니티 검증 1위 전략
   - 일봉 기준 `오늘 시가 + (전일 고저차 × 0.5)` 목표가 계산
@@ -210,4 +217,4 @@ pip install pyupbit pandas numpy python-dotenv requests
 
 ---
 
-*최종 업데이트: 2026-04-02 | Powered by Groq + pyupbit + Pollinations.ai + GitHub Pages*
+*최종 업데이트: 2026-04-03 | Powered by Groq + pyupbit + GitHub Pages*

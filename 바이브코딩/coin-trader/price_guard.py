@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 STATE_FILE  = os.path.join(os.path.dirname(__file__), "state.json")
+LOCK_FILE   = os.path.join(os.path.dirname(__file__), "main.lock")
 LOG_FILE    = os.path.join(os.path.dirname(__file__), "trader.log")
 NTFY_TOPIC  = os.getenv("NTFY_TOPIC", "siadad-aicrew")
 STOP_LOSS   = float(os.getenv("STOP_LOSS_PCT", "7.0"))
@@ -25,10 +26,7 @@ INTERVAL    = 30  # 체크 간격 (초)
 
 def log(msg: str):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = f"[{ts}] [GUARD] {msg}"
-    print(line, flush=True)
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
+    print(f"[{ts}] [GUARD] {msg}", flush=True)  # plist StandardOutPath → trader.log
 
 
 def notify(title: str, message: str, priority: str = "default"):
@@ -145,6 +143,11 @@ def main():
 
     while True:
         try:
+            # main.py 실행 중이면 스킵 (매매 충돌 방지)
+            if os.path.exists(LOCK_FILE):
+                time.sleep(INTERVAL)
+                continue
+
             holding = load_state()
 
             if not holding:

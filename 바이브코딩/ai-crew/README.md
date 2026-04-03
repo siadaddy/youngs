@@ -206,8 +206,7 @@ NTFY_TOPIC=siadad-aicrew
 | Naver News API | 뉴스 수집 (8개 카테고리) | 무료 |
 | Groq (Llama 3.3 70B) | 텍스트 생성 전반 (키 2개 폴백) | 무료 |
 | Pollinations.ai (Flux) | AI 이미지 생성 768×768 (키 불필요) | 무료 |
-| GitHub Pages | 이미지 영구 호스팅 + 사이트 | 무료 |
-| Notion API | 콘텐츠 저장 | 무료 |
+| GitHub Pages | 콘텐츠 호스팅 + 사이트 (노션 대체) | 무료 |
 | ntfy.sh | 완료 알림 | 무료 |
 | Streamlit Community Cloud | Instacart 대시보드 배포 | 무료 |
 | Google Drive | DuckDB 파일 호스팅 | 무료 |
@@ -316,7 +315,7 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 | Groq 429 계속 | 일일 쿼터 소진 → 내일 자동 리셋, key2 자동 전환 확인 |
 | 이미지 안 보임 | Pollinations.ai 429/502 → 재시도 3회 후 실패 시 해당 장만 스킵, 다음날 재생성 |
 | GitHub Pages 미반영 | `git push origin main` 수동 실행 |
-| 노션 중복 페이지 | newsletter_naver.py Notion 업로드는 비활성화 상태 (ai-crew가 통합 처리) |
+| 콘텐츠 미반영 | `git push origin main` 수동 실행 후 GitHub Pages 1~2분 내 반영 |
 
 ---
 
