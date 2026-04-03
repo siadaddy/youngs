@@ -15,9 +15,10 @@ from agents import analyzer, ai_advisor, executor
 
 load_dotenv()
 
-STATE_FILE  = os.path.join(os.path.dirname(__file__), "state.json")
-LOG_FILE    = os.path.join(os.path.dirname(__file__), "trader.log")
-IP_FILE     = os.path.join(os.path.dirname(__file__), "ip.txt")
+STATE_FILE    = os.path.join(os.path.dirname(__file__), "state.json")
+LOG_FILE      = os.path.join(os.path.dirname(__file__), "trader.log")
+IP_FILE       = os.path.join(os.path.dirname(__file__), "ip.txt")
+FAILURE_FILE  = os.path.join(os.path.dirname(__file__), "failure_state.json")
 NTFY_TOPIC   = os.getenv("NTFY_TOPIC", "siadad-aicrew")
 STOP_LOSS    = float(os.getenv("STOP_LOSS_PCT", "5.0"))
 TAKE_PROFIT  = float(os.getenv("TAKE_PROFIT_PCT", "10.0"))
@@ -29,9 +30,7 @@ DRY_RUN      = os.getenv("DRY_RUN", "true").lower() == "true"
 def log(msg: str):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     line = f"[{ts}] {msg}"
-    print(line)
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
+    print(line)  # plist StandardOutPath가 trader.log로 redirect — 파일 중복 쓰기 방지
 
 
 def notify(title: str, message: str, priority: str = "default"):
@@ -84,6 +83,40 @@ def retry(label: str, fn, *args, **kwargs):
 
 
 # ── IP 변경 감지 ──────────────────────────────────────────
+
+def record_failure(reason: str):
+    """실패 사이클 기록 — 다음 성공 사이클에서 ntfy 알림"""
+    try:
+        data = {"failed_cycles": 1, "last_failure": datetime.now().strftime("%Y-%m-%d %H:%M"), "reason": reason}
+        if os.path.exists(FAILURE_FILE):
+            with open(FAILURE_FILE, "r") as f:
+                prev = json.load(f)
+            data["failed_cycles"] = prev.get("failed_cycles", 0) + 1
+        with open(FAILURE_FILE, "w") as f:
+            json.dump(data, f)
+    except Exception:
+        pass
+
+
+def check_and_notify_failures():
+    """이전 실패 사이클이 있으면 ntfy 발송 후 초기화"""
+    if not os.path.exists(FAILURE_FILE):
+        return
+    try:
+        with open(FAILURE_FILE, "r") as f:
+            data = json.load(f)
+        n = data.get("failed_cycles", 0)
+        if n > 0:
+            notify(
+                f"⚠️ 자동매매 복구 ({n}회 실패 후)",
+                f"이전 {n}개 사이클 실패\n마지막 실패: {data.get('last_failure','?')}\n원인: {data.get('reason','?')}\n\n현재 정상 재개됨",
+                priority="high",
+            )
+            log(f"  ⚠️  이전 {n}회 실패 감지 — ntfy 복구 알림 발송")
+        os.remove(FAILURE_FILE)
+    except Exception:
+        pass
+
 
 def check_ip_change():
     """현재 공인 IP 확인 → 이전과 다르면 ntfy 알림"""
@@ -147,7 +180,8 @@ def main():
     log(f"🤖 AI 코인 자동매매 시작 — {now_str}{dry_tag}")
     log(f"{'='*55}")
 
-    # Step 0: IP 변경 감지
+    # Step 0: 이전 실패 체크 + IP 변경 감지
+    check_and_notify_failures()
     check_ip_change()
 
     # Step 1: 보유 상태 로드
@@ -193,6 +227,8 @@ def main():
     try:
         market_data = retry("시장 분석", analyzer.run)
     except Exception as e:
+        is_network = "NameResolution" in str(e) or "Failed to resolve" in str(e) or "timed out" in str(e).lower()
+        record_failure("네트워크 실패" if is_network else f"시장분석 실패: {e}")
         notify("❌ 자동매매 오류", f"시장 분석 실패: {e}", priority="high")
         return
 
@@ -200,6 +236,7 @@ def main():
     try:
         advice = retry("AI 판단", ai_advisor.run, market_data, holding)
     except Exception as e:
+        record_failure(f"AI판단 실패: {e}")
         notify("❌ 자동매매 오류", f"AI 판단 실패: {e}", priority="high")
         return
 
@@ -225,17 +262,13 @@ def main():
             f"🟢 매수 완료 {dry_tag}",
             f"{ticker} 매수\n단가: {price:,.0f}원\n이유: {reason}",
         )
-    elif action == "SELL":
+    elif action == "SELL" and new_holding is None:
+        # executor가 실제로 매도한 경우만 알림
         notify(
             f"🔴 매도 완료 {dry_tag}",
             f"{ticker} 매도\n이유: {reason}",
         )
-    else:
-        notify(
-            f"⏸  HOLD {dry_tag}",
-            f"{ticker if holding else '미보유'} 유지\n이유: {reason}",
-            priority="min",
-        )
+    # HOLD는 매시간 알림 불필요 — 알림 없음
 
     log(f"✅ 완료 — {action} {ticker}")
     signal.alarm(0)  # 타임아웃 해제
@@ -309,14 +342,21 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
         with open(trades_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        # git push
+        # git push (BUY/SELL만 — HOLD는 updated_at 갱신만하고 push 스킵)
+        ticker_str = advice.get("ticker") or (new_holding["ticker"] if new_holding else "")
+        dry_str = " [DRY]" if DRY_RUN else ""
         subprocess.run(["git", "add", "docs/trades.json"], cwd=repo_root, check=True)
-        subprocess.run(
-            ["git", "commit", "-m", f"trade: {now_str} {action} {advice.get('ticker','')}{' [DRY]' if DRY_RUN else ''}"],
-            cwd=repo_root, check=True
-        )
-        subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
-        log("  ✅ trades.json GitHub 업데이트 완료")
+        if action in ("BUY", "SELL"):
+            subprocess.run(
+                ["git", "commit", "-m", f"trade: {now_str} {action} {ticker_str}{dry_str}"],
+                cwd=repo_root, check=True
+            )
+            subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
+            log("  ✅ trades.json GitHub 업데이트 완료")
+        else:
+            # HOLD: local 파일만 업데이트, git push 스킵 (불필요한 commit 방지)
+            subprocess.run(["git", "restore", "--staged", "docs/trades.json"], cwd=repo_root, check=False)
+            log("  ℹ️  HOLD — trades.json 로컬 갱신 (GitHub push 스킵)")
     except Exception as e:
         log(f"  ⚠️  trades.json 업데이트 실패 (무시): {e}")
 
