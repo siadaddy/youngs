@@ -270,7 +270,13 @@ def main():
         )
     # HOLD는 매시간 알림 불필요 — 알림 없음
 
-    log(f"✅ 완료 — {action} {ticker}")
+    # executor가 실제로 실행했는지 여부로 로그 구분
+    if action == "SELL" and new_holding is not None:
+        log(f"⏸  SELL 차단 — 최소금액 미달, HOLD 유지 ({ticker})")
+    elif action == "BUY" and new_holding is None:
+        log(f"⚠️  BUY 지시 but 매수 미체결 (잔고 부족?)")
+    else:
+        log(f"✅ 완료 — {action} {ticker}")
     signal.alarm(0)  # 타임아웃 해제
 
     # Step 8: GitHub Pages용 trades.json 업데이트 & push
@@ -342,11 +348,12 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
         with open(trades_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-        # git push (BUY/SELL만 — HOLD는 updated_at 갱신만하고 push 스킵)
+        # git push: 실제 체결된 경우(BUY 성공 or SELL 성공)만 커밋/푸시
+        actually_executed = (action == "BUY" and new_holding) or (action == "SELL" and new_holding is None)
         ticker_str = advice.get("ticker") or (new_holding["ticker"] if new_holding else "")
         dry_str = " [DRY]" if DRY_RUN else ""
         subprocess.run(["git", "add", "docs/trades.json"], cwd=repo_root, check=True)
-        if action in ("BUY", "SELL"):
+        if actually_executed:
             subprocess.run(
                 ["git", "commit", "-m", f"trade: {now_str} {action} {ticker_str}{dry_str}"],
                 cwd=repo_root, check=True
@@ -354,9 +361,9 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
             subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
             log("  ✅ trades.json GitHub 업데이트 완료")
         else:
-            # HOLD: local 파일만 업데이트, git push 스킵 (불필요한 commit 방지)
+            # 미체결(HOLD, SELL 차단 등): 로컬 파일만, git push 스킵
             subprocess.run(["git", "restore", "--staged", "docs/trades.json"], cwd=repo_root, check=False)
-            log("  ℹ️  HOLD — trades.json 로컬 갱신 (GitHub push 스킵)")
+            log("  ℹ️  미체결/HOLD — trades.json 로컬 갱신 (GitHub push 스킵)")
     except Exception as e:
         log(f"  ⚠️  trades.json 업데이트 실패 (무시): {e}")
 
