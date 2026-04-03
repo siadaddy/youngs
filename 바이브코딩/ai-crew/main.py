@@ -6,9 +6,8 @@
   뉴스레터 읽기 (.md 파일)
     → 🎯 기획자 : 콘텐츠 브리프
     → ✍️  작가   : 카드뉴스 5개 + 블로그 아티클
-    → 🎨 디자이너: 이미지 5장 → docs/images/ 저장 → GitHub Pages
-    → 📤 노션   : AI 콘텐츠 상단 + 수집 뉴스 하단
-    → 📅 금요일 : 주간 브리핑 자동 추가
+    → 🎨 디자이너: 이미지 5장 → docs/images/ 저장
+    → 🌐 GitHub Pages: content.json push → 사이트 자동 반영
     → 🔔 완료 알림 (ntfy.sh)
 
 매일 07:00 KST 자동 실행 (launchd)
