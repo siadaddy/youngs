@@ -135,9 +135,14 @@ def run(market_data: list, holding: dict | None) -> dict:
     raw = raw.replace("```json", "").replace("```", "").strip()
     match = re.search(r'\{.*\}', raw, re.DOTALL)
     if not match:
-        raise ValueError(f"AI 응답에서 JSON 추출 실패: {raw[:200]}")
+        print(f"  ⚠️  AI 응답에서 JSON 추출 실패 → HOLD 폴백: {raw[:100]}")
+        return {"action": "HOLD", "ticker": None, "reason": "AI 응답 파싱 실패 — HOLD 유지"}
 
-    result = json.loads(match.group())
+    try:
+        result = json.loads(match.group())
+    except json.JSONDecodeError as e:
+        print(f"  ⚠️  JSON 파싱 오류 → HOLD 폴백: {e}")
+        return {"action": "HOLD", "ticker": None, "reason": f"AI JSON 파싱 오류 — HOLD 유지"}
 
     # 필드 검증
     action = result.get("action", "HOLD").upper()

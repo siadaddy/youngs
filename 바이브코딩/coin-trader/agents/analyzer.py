@@ -10,7 +10,8 @@ def _rsi(series: pd.Series, period: int = 14) -> float:
     loss = (-delta.clip(upper=0)).rolling(period).mean()
     rs = gain / loss.replace(0, np.nan)
     rsi = 100 - (100 / (1 + rs))
-    return round(float(rsi.iloc[-1]), 1)
+    val = float(rsi.iloc[-1])
+    return round(val if np.isfinite(val) else 50.0, 1)  # NaN/Inf → 중립값 50
 
 
 def _macd_signal(series: pd.Series) -> str:
@@ -44,7 +45,8 @@ def _adx(df: pd.DataFrame, period: int = 14) -> float:
     plus_di = 100 * (plus_dm.ewm(span=period, adjust=False).mean() / atr)
     minus_di = 100 * (minus_dm.ewm(span=period, adjust=False).mean() / atr)
     dx = (100 * (plus_di - minus_di).abs() / (plus_di + minus_di)).fillna(0)
-    return round(float(dx.ewm(span=period, adjust=False).mean().iloc[-1]), 1)
+    val = float(dx.ewm(span=period, adjust=False).mean().iloc[-1])
+    return round(val if np.isfinite(val) else 0.0, 1)  # NaN/Inf → 0 (추세 없음)
 
 
 def _vol_breakout_target(ticker: str, k: float = 0.5) -> float | None:

@@ -212,7 +212,7 @@ def main():
                 new_holding = executor.run(action, holding)
                 save_state(new_holding)
                 notify("🔴 손절 매도", f"{action['ticker']} 손절 매도 완료\n기준: -{STOP_LOSS}%", priority="high")
-                _publish_trades("SELL", action, new_holding, load_state())
+                _publish_trades("SELL", action, new_holding, holding)  # holding: 매도 전 원본 전달
             except Exception as e:
                 log(f"  ❌ 손절 매도 실패: {e}")
                 notify("❌ 손절 실패", f"{holding['ticker']} 손절 주문 오류: {e}", priority="urgent")
