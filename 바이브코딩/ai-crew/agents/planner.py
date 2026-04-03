@@ -1,85 +1,71 @@
-import json, re
+import json, re, html
 from utils.gemini_client import ask_gemini
 
-SYSTEM = """
-당신은 30년 경력의 시니어 디지털 콘텐츠 기획자입니다.
-조선일보, 중앙일보, 네이버 등 국내 주요 미디어사에서 편집장을 역임했으며,
-SNS 바이럴 콘텐츠 기획의 최고 전문가입니다.
-독자 심리와 알고리즘을 동시에 꿰뚫는 전략적 안목으로
-어떤 뉴스가 사람들의 마음을 움직이는지 본능적으로 압니다.
-항상 JSON 형식으로만 응답하세요.
-"""
+SYSTEM = """당신은 콘텐츠 브리프를 작성하는 편집자입니다. JSON만 출력합니다."""
 
-NEWSLETTER_MAX_CHARS = 4000   # Groq 413 방지 — 뉴스레터 입력 최대 길이
-ARTICLE_PER_CAT     = 2       # 카테고리당 원문 뉴스 최대 개수
+NEWSLETTER_MAX_CHARS = 3000   # 토큰 절약 — 기사 원문 블록에 더 집중
+ARTICLE_PER_CAT     = 3       # 카테고리당 원문 뉴스 최대 개수 (2→3)
 
 def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
     print("🎯 기획자 에이전트 실행 중...")
 
-    # 뉴스레터 텍스트 길이 제한 (상단 핵심 내용 우선 유지)
+    # 뉴스레터 텍스트 길이 제한
     if len(newsletter_text) > NEWSLETTER_MAX_CHARS:
         newsletter_text = newsletter_text[:NEWSLETTER_MAX_CHARS] + "\n...(이하 생략)"
 
-    # 카테고리별 원문 뉴스 목록(제목+링크) 구성 — 카테고리당 최대 2개, 요약 제외
+    # 카테고리별 원문 뉴스 — 제목 + summary(실제 본문) + URL 포함
     article_list_text = ""
     if newsletter_data and newsletter_data.get("categorized"):
         lines = []
         for cat, articles in newsletter_data["categorized"].items():
             for a in articles[:ARTICLE_PER_CAT]:
-                title = a.get("title", "").replace("&quot;", '"')
-                link  = a.get("link", "")
-                lines.append(f"[{cat}] {title} | URL: {link}")
-        article_list_text = "\n".join(lines)
+                title   = html.unescape(a.get("title", ""))
+                link    = a.get("link", "")
+                # summary 또는 body 키 모두 시도 (수집 방식에 따라 키 이름 다름)
+                summary = html.unescape(
+                    a.get("summary", "") or a.get("body", "")
+                ).strip()[:400]
+                if summary:
+                    lines.append(f"[{cat}] {title}\n  내용: {summary}\n  URL: {link}")
+                else:
+                    lines.append(f"[{cat}] {title}\n  URL: {link}")
+        article_list_text = "\n\n".join(lines)
 
-    prompt = f"""
-다음 뉴스레터에서 오늘의 핵심 뉴스를 선정하고 콘텐츠 브리프를 작성해주세요.
+    prompt = f"""아래 뉴스 데이터에서 오늘의 핵심 뉴스 5개를 골라 콘텐츠 브리프를 JSON으로 작성하세요.
 
-[뉴스레터]
-{newsletter_text}
+=== 원문 뉴스 (제목 + 실제 내용 요약 + URL) ===
+{article_list_text if article_list_text else newsletter_text}
 
-[원문 뉴스 목록 — 제목·URL 포함]
-{article_list_text if article_list_text else "(데이터 없음)"}
-
-아래 JSON 형식으로 정확히 응답하세요:
+=== 출력 JSON 형식 ===
 {{
   "instagram": [
     {{
-      "headline": "핵심 제목 (30자 이내)",
-      "angle": "인스타 포스트 각도/관점",
+      "headline": "핵심 제목 (25자 이내, 클릭하고 싶어지는 제목)",
+      "angle": "이 뉴스를 어떤 시각으로 볼 것인가 (한 줄)",
       "keywords": ["키워드1", "키워드2", "키워드3"],
-      "tone": "정보전달 | 감성적 | 충격적 | 유머",
-      "source_facts": "원문 뉴스에서 확인된 핵심 사실 3~5개 (날짜·수치·주체 포함). 원문에 없는 내용은 절대 추가하지 마세요.",
-      "source_url": "위 [원문 뉴스 목록]에서 이 뉴스에 해당하는 URL 그대로 복사. 없으면 빈 문자열.",
-      "source_name": "언론사명 또는 출처 (예: 연합뉴스, 조선일보 등)"
+      "tone": "정보전달 | 공감 | 놀라움 | 실용",
+      "source_facts": "위 [내용]에서 직접 뽑은 구체적 사실들. 형식: '주체+행동+수치/결과' 로 2~4문장. 위 내용에 없는 건 절대 쓰지 마세요.",
+      "source_url": "URL 그대로 복사",
+      "source_name": "언론사명"
     }}
   ],
   "blog": {{
-    "title": "블로그 아티클 제목 (독자의 관심을 끄는 구체적 제목. '뉴스레터 요약', '오늘의 뉴스' 등 요약성 제목 절대 금지)",
-    "main_points": ["핵심 포인트1", "핵심 포인트2", "핵심 포인트3"],
-    "tone": "전문적이고 읽기 쉬운 문체",
-    "target": "타겟 독자층",
-    "source_facts": "원문 뉴스에서 확인된 핵심 사실 5~8개 (날짜·수치·주체 포함). 원문에 없는 내용은 절대 추가하지 마세요."
+    "title": "오늘 뉴스 중 가장 임팩트 있는 단일 주제의 블로그 제목",
+    "main_points": ["포인트1", "포인트2", "포인트3"],
+    "tone": "친근하고 읽기 쉬운",
+    "target": "뉴스에 관심 있는 30~40대",
+    "source_facts": "위 [내용]에서 직접 뽑은 핵심 사실 4~6개. 수치·이름·날짜 포함. 없는 내용 창작 금지."
   }}
 }}
 
-instagram은 5개, blog는 1개만 작성하세요.
-📝 블로그 필수 규칙: blog title은 오늘 뉴스 중 가장 임팩트 있는 단일 주제를 깊게 파고드는 심층 분석 아티클 제목이어야 합니다.
-   - ❌ 금지: "뉴스레터 요약", "오늘의 뉴스", "3월 29일 뉴스", 날짜+요약 조합 제목
-   - ✅ 예시: "전기차 시장의 판도 바꿀 3가지 신호", "김정은 탱크 시험이 말해주는 것", "수입차 시장 2026 생존 전략"
-🚗 필수 규칙: instagram 배열의 첫 번째(index 0) 항목은 반드시 자동차, BMW, 전기차, 모빌리티, 자율주행 관련 뉴스여야 합니다.
-   - 해당 뉴스가 없으면 자동차 업계 전반 또는 수입차 시장 트렌드라도 첫 번째로 배치하세요.
-   - 나머지 4개는 다른 카테고리에서 자유롭게 선정합니다.
-⚠️ 중복 금지: 5개 선정 시 같은 주제·인물·회사·사건이 2번 이상 나오면 절대 안 됩니다.
-   5개는 반드시 서로 다른 카테고리 또는 전혀 다른 관점의 뉴스여야 합니다.
-🚫 절대 제외 항목 (아래에 해당하면 무조건 다른 뉴스로 교체):
-   - 음주운전, 성범죄, 폭행, 마약 등 범죄 전력이 있는 연예인·유명인 관련 뉴스
-   - 연예인 개인사 (은퇴, 열애, 이혼, 사망 등 사생활)
-   - 자극적인 사건·사고·범죄 뉴스 (살인, 폭력, 성범죄 등)
-   - 정치적으로 편향되거나 논란을 유발할 수 있는 뉴스
-   - 검증되지 않은 루머·의혹 성격의 뉴스
-JSON 외 다른 텍스트는 절대 포함하지 마세요.
+규칙:
+- instagram[0]: 반드시 자동차/BMW/전기차 관련. 없으면 자동차 업계 트렌드로 대체
+- 5개 모두 서로 다른 주제 (같은 인물·사건 중복 금지)
+- 제외: 범죄, 연예인 사생활, 정치 편향, 미검증 루머
+- blog title: "뉴스레터 요약", "오늘의 뉴스" 같은 요약성 제목 금지
+- JSON만 출력, 다른 텍스트 없이
 """
-    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.6, json_mode=True, max_tokens=2500)
+    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2500)
 
     # JSON 파싱 — json_mode 보장 → 직접 파싱, 실패 시 regex 폴백
     raw = raw.replace("```json", "").replace("```", "").strip()
