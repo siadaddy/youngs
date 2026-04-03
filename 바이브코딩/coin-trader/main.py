@@ -19,6 +19,7 @@ STATE_FILE    = os.path.join(os.path.dirname(__file__), "state.json")
 LOG_FILE      = os.path.join(os.path.dirname(__file__), "trader.log")
 IP_FILE       = os.path.join(os.path.dirname(__file__), "ip.txt")
 FAILURE_FILE  = os.path.join(os.path.dirname(__file__), "failure_state.json")
+LOCK_FILE     = os.path.join(os.path.dirname(__file__), "main.lock")
 NTFY_TOPIC   = os.getenv("NTFY_TOPIC", "siadad-aicrew")
 STOP_LOSS    = float(os.getenv("STOP_LOSS_PCT", "5.0"))
 TAKE_PROFIT  = float(os.getenv("TAKE_PROFIT_PCT", "10.0"))
@@ -173,6 +174,13 @@ def main():
     # 전체 실행 타임아웃 10분 (네트워크 hang 방지)
     signal.signal(signal.SIGALRM, _timeout_handler)
     signal.alarm(600)
+
+    # price_monitor.py 와의 충돌 방지용 lock 파일 생성
+    try:
+        with open(LOCK_FILE, "w") as f:
+            f.write(str(os.getpid()))
+    except Exception:
+        pass
 
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     dry_tag = " [DRY RUN]" if DRY_RUN else ""
@@ -471,3 +479,9 @@ if __name__ == "__main__":
         except Exception as e:
             log(f"  ❌ 예상치 못한 오류: {e}")
             notify("❌ 자동매매 오류", f"예상치 못한 오류: {e}", priority="high")
+        finally:
+            # lock 파일 반드시 삭제 (어떤 경우에도)
+            try:
+                os.remove(LOCK_FILE)
+            except Exception:
+                pass
