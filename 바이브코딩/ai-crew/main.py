@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from datetime import date
 from utils.notion_reader import get_today_newsletter, NEWSLETTER_DIR
-from agents import planner, writer, designer, notion_publisher, weekly_briefer
+from agents import planner, writer, designer
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -68,15 +68,17 @@ def retry(label: str, fn, *args, **kwargs):
     raise last_err
 
 
+GITHUB_PAGES_URL = "https://siadaddy.github.io/youngs/"
+
+
 def main():
-    today     = date.today().strftime("%Y-%m-%d")
-    is_friday = date.today().weekday() == 4
+    today = date.today().strftime("%Y-%m-%d")
 
     print(f"\n🤖 시아아빠님의 AI 크리에이터 시작 — {today}")
     print("━" * 50)
 
     # ── Step 1: 뉴스레터 읽기 ────────────────────────────────
-    print("\n[1/5] 오늘 뉴스레터 읽는 중...")
+    print("\n[1/4] 오늘 뉴스레터 읽는 중...")
     try:
         newsletter = retry("뉴스레터 로드", get_today_newsletter)
         print(f"  ✅ 뉴스레터 로드 완료 ({len(newsletter)}자)")
@@ -94,7 +96,7 @@ def main():
         print(f"  ⚠️  뉴스 데이터 파일 없음: {data_path}")
 
     # ── Step 2: 기획자 ───────────────────────────────────────
-    print("\n[2/5] 기획자 에이전트...")
+    print("\n[2/4] 기획자 에이전트...")
     try:
         brief = retry("기획자", planner.run, newsletter, newsletter_data)
     except Exception as e:
@@ -102,15 +104,15 @@ def main():
         sys.exit(1)
 
     # ── Step 3: 작가 ─────────────────────────────────────────
-    print("\n[3/5] 작가 에이전트...")
+    print("\n[3/4] 작가 에이전트...")
     try:
         written = retry("작가", writer.run, brief)
     except Exception as e:
         notify("❌ AI 크리에이터 실패", f"작가 실패: {e}", priority="high")
         sys.exit(1)
 
-    # ── Step 4: 디자이너 (이미지 단계별 재시도는 designer.py 내부) ──
-    print("\n[4/5] 디자이너 에이전트...")
+    # ── Step 4: 디자이너 ─────────────────────────────────────
+    print("\n[4/4] 디자이너 에이전트...")
     try:
         images = retry("디자이너", designer.run, brief, written)
     except Exception as e:
@@ -118,42 +120,23 @@ def main():
         images = [{"headline": item["headline"], "prompt": "", "path": None,
                    "url": None, "success": False} for item in brief["instagram"]]
 
-    # ── Step 5: 노션 저장 ────────────────────────────────────
-    print("\n[5/5] 노션 퍼블리셔...")
-    try:
-        page_url = retry("노션 저장", notion_publisher.run, brief, written, images, newsletter_data)
-    except Exception as e:
-        notify("❌ AI 크리에이터 실패", f"노션 저장 실패: {e}", priority="high")
-        sys.exit(1)
-
-    # ── 금요일: 주간 브리핑 ──────────────────────────────────
-    weekly_url = None
-    if is_friday:
-        print("\n[+] 금요일 — 주간 브리핑 생성 중...")
-        try:
-            weekly_url = retry("주간 브리핑", weekly_briefer.run)
-        except Exception as e:
-            print(f"  ⚠️  주간 브리핑 실패 (무시하고 계속): {e}")
-
     # ── 결과 요약 ────────────────────────────────────────────
-    img_ok  = sum(1 for img in images if img["success"])
-    img_url = sum(1 for img in images if img.get("url"))
+    img_ok = sum(1 for img in images if img["success"])
 
     summary = f"""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ 시아아빠님의 AI 크리에이터 완료!
    📰 카드뉴스    : {len(written['captions'])}개
    📝 블로그 아티클: 1개
-   🖼  이미지       : {img_ok}/{len(images)}장 (노션 임베드: {img_url}장)
-   📤 노션 페이지  : {page_url}
-{f'   📅 주간 브리핑  : {weekly_url}' if weekly_url else ''}
+   🖼  이미지       : {img_ok}/{len(images)}장
+   🌐 GitHub Pages : {GITHUB_PAGES_URL}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
     print(summary)
 
     notify(
         "✅ AI 크리에이터 완료",
-        f"오늘 콘텐츠 준비됐어요!\n카드뉴스 {len(written['captions'])}개 · 이미지 {img_ok}장 · 노션 업로드 완료",
+        f"오늘 콘텐츠 준비됐어요!\n카드뉴스 {len(written['captions'])}개 · 이미지 {img_ok}장\n{GITHUB_PAGES_URL}",
     )
 
     # ── GitHub Pages용 content.json 저장 & push ──────────────
@@ -162,6 +145,7 @@ def main():
 
 def _publish_to_github(today, brief, written, images, newsletter_data):
     """결과물을 날짜별 JSON으로 저장하고 GitHub Pages에 push"""
+    import html as html_lib
     repo_root = subprocess.check_output(
         ["git", "rev-parse", "--show-toplevel"], text=True
     ).strip()
@@ -186,10 +170,10 @@ def _publish_to_github(today, brief, written, images, newsletter_data):
         "news": {
             cat: [
                 {
-                    "title":   a.get("title", "").replace("&quot;", '"'),
+                    "title":   html_lib.unescape(a.get("title", "")),
                     "link":    a.get("link", ""),
                     "source":  a.get("source", ""),
-                    "summary": a.get("summary", "").replace("&quot;", '"'),
+                    "summary": html_lib.unescape(a.get("summary", "")),
                 }
                 for a in articles
             ]
