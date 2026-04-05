@@ -50,7 +50,6 @@ def run(brief: dict) -> dict:
     b = brief["blog"]
     blog_source_facts = b.get('source_facts', '').strip()
 
-    # 원문 사실이 있을 때만 별도 블록으로 전달 (레이블이 본문에 노출되지 않게)
     facts_block = f"\n참고할 실제 사실 (이것만 사실로 써, 없는 건 창작 금지):\n{blog_source_facts}\n" if blog_source_facts else ""
 
     blog_prompt = f"""오늘 뉴스 중에 "{b['title']}" 이야기가 있었어.
@@ -69,12 +68,14 @@ def run(brief: dict) -> dict:
 - 같은 표현 반복 절대 금지
 - 마지막 문장은 마침표로 끝낼 것
 """
-    article = ask_gemini(blog_prompt, system=SYSTEM, temperature=0.88, max_tokens=2000)
-
-    # 완성 여부 체크 — 마지막 문장이 끊겼으면 이어서 완성
-    article = _ensure_complete(article, blog_prompt)
-
-    print(f"  ✅ 블로그 아티클 완성 ({len(article)}자)")
+    # 블로그 실패해도 카드뉴스는 보존 — 부분 성공 허용
+    article = ""
+    try:
+        article = ask_gemini(blog_prompt, system=SYSTEM, temperature=0.88, max_tokens=2000)
+        article = _ensure_complete(article, blog_prompt)
+        print(f"  ✅ 블로그 아티클 완성 ({len(article)}자)")
+    except Exception as e:
+        print(f"  ⚠️  블로그 아티클 실패 (카드뉴스는 유지): {e}")
 
     return {"captions": captions, "article": article, "blog_title": b["title"]}
 

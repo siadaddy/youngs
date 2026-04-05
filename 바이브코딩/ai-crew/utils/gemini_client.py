@@ -79,7 +79,18 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
         key_label = f"키{(start_idx + key_idx) % len(GROQ_KEYS) + 1}"
 
         for attempt in range(1, 4):
-            r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
+            try:
+                r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
+            except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as conn_err:
+                # 네트워크 끊김 (Connection aborted / RemoteDisconnected / ReadTimeout)
+                if attempt < 3:
+                    wait = 15 * attempt  # 15초, 30초 대기
+                    print(f"  ⚠️  Groq {key_label} 연결 오류 — {wait}초 후 재시도 ({attempt}/3): {conn_err}")
+                    time.sleep(wait)
+                    continue
+                # 3회 모두 연결 실패 → 다음 키 시도
+                print(f"  ⚠️  Groq {key_label} 연결 3회 실패 → 다음 키 전환...")
+                break
 
             if r.status_code == 429:
                 # 다른 키가 남아있으면 바로 전환, 없으면 잠깐 대기

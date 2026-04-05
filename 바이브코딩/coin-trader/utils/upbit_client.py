@@ -40,14 +40,28 @@ def get_coin_balance(ticker: str) -> float:
 
 
 def get_current_price(ticker: str) -> float:
-    """현재가 조회 (인증 불필요)"""
-    price = pyupbit.get_current_price(ticker)
-    return float(price) if price else 0.0
+    """현재가 조회 (인증 불필요) — 연결 오류 시 2회 재시도"""
+    import time
+    for attempt in range(3):
+        try:
+            price = pyupbit.get_current_price(ticker)
+            return float(price) if price else 0.0
+        except Exception:
+            if attempt < 2:
+                time.sleep(5)
+    return 0.0
 
 
 def get_krw_tickers() -> list:
-    """KRW 마켓 전체 티커 목록"""
-    return pyupbit.get_tickers(fiat="KRW")
+    """KRW 마켓 전체 티커 목록 — 연결 오류 시 2회 재시도"""
+    import time
+    for attempt in range(3):
+        try:
+            return pyupbit.get_tickers(fiat="KRW")
+        except Exception:
+            if attempt < 2:
+                time.sleep(5)
+    return []
 
 
 def buy_market_order(ticker: str, amount_krw: float) -> dict:
