@@ -189,10 +189,14 @@ pip install pyupbit pandas numpy python-dotenv requests
 ## 📝 업데이트 로그
 
 ### 2026-04-03
+- **analyzer.py 병렬화**: 순차 분석 → ThreadPoolExecutor(max_workers=5) 병렬 처리 → 37분 → ~40초로 단축
+- **main.py 하드 타임아웃 수정**: `TimeoutError`(Exception 계열) → `_TraderTimeout(BaseException)` 서브클래스로 변경 → `analyze_ticker`의 `except Exception`에 잡히지 않는 진짜 킬 스위치로 작동
 - **price_guard.py 충돌 방지 추가**: main.py 실행 중(lock 파일) 감지 시 스킵 → 동시 매도 경쟁 방지
 - **price_guard.py 로그 중복 수정**: print + 파일 직접 쓰기 → print만 (plist가 trader.log로 redirect)
 - **price_monitor.py(5분 launchd) 제거**: price_guard(30초 데몬)와 중복 → coinmonitor unload
-- **main.py/writer.py 개선**: SELL 차단 로그 정밀화, HOLD 시 GitHub push 스킵
+- **main.py 손절 pnl 버그 수정**: `_publish_trades` 호출 시 `load_state()` → `holding` 원본 전달 (save_state(None) 이후에 로드하면 pnl null)
+- **ai_advisor.py JSON 파싱 폴백**: JSON 추출 실패 / 파싱 오류 시 HOLD 반환 (크래시 방지)
+- **upbit_client.py 재시도 추가**: `get_current_price` / `get_krw_tickers` 연결 오류 시 5초 간격 3회 재시도
 
 ### 2026-04-02
 - **변동성 돌파(VB) 전략 추가**: 한국 자동매매 커뮤니티 검증 1위 전략

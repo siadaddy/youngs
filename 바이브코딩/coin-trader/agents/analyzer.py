@@ -142,16 +142,28 @@ def analyze_ticker(ticker: str) -> dict | None:
 
 
 def run(top_n: int = 20) -> list:
-    """상위 종목 분석 결과 리스트 반환"""
+    """상위 종목 분석 결과 리스트 반환 — 병렬 처리(max_workers=5)로 속도 개선"""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
     print("📊 분석 에이전트 실행 중...")
     tickers = get_top_tickers(top_n)
-    print(f"  대상 종목: {len(tickers)}개")
+    print(f"  대상 종목: {len(tickers)}개 (병렬 분석)")
 
     results = []
-    for ticker in tickers:
-        info = analyze_ticker(ticker)
-        if info:
-            results.append(info)
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_ticker = {executor.submit(analyze_ticker, t): t for t in tickers}
+        try:
+            for future in as_completed(future_to_ticker, timeout=120):
+                try:
+                    info = future.result(timeout=30)
+                    if info:
+                        results.append(info)
+                except Exception as e:
+                    ticker = future_to_ticker[future]
+                    print(f"  ⚠️  [{ticker}] 분석 오류: {e}")
+        except Exception:
+            # 120초 전체 타임아웃 — 지금까지 완료된 결과만 사용
+            print("  ⚠️  병렬 분석 120초 초과 — 완료된 종목만 사용")
 
     print(f"  ✅ {len(results)}개 종목 분석 완료")
     return results

@@ -166,8 +166,13 @@ def check_exit(holding: dict) -> str | None:
 
 # ── 메인 ─────────────────────────────────────────────────
 
+class _TraderTimeout(BaseException):
+    """SIGALRM 하드 타임아웃 — except Exception 에 잡히지 않음"""
+    pass
+
+
 def _timeout_handler(signum, frame):
-    raise TimeoutError("전체 실행 10분 초과 — 강제 종료")
+    raise _TraderTimeout("전체 실행 10분 초과 — 강제 종료")
 
 
 def main():
@@ -473,7 +478,7 @@ if __name__ == "__main__":
     else:
         try:
             main()
-        except TimeoutError as e:
+        except _TraderTimeout as e:
             log(f"  ❌ 실행 타임아웃: {e}")
             notify("❌ 자동매매 타임아웃", "10분 초과로 강제 종료됨 — 네트워크 확인 필요", priority="high")
         except Exception as e:
