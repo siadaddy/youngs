@@ -1196,12 +1196,13 @@
     }
   }
 
-  // 환율 (frankfurter.app, 무료 무키)
+  // 환율 (open.er-api.com, 무료 무키, KRW 지원)
   async function fetchExchangeRate() {
     try {
-      const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=KRW');
+      const r = await fetch('https://open.er-api.com/v6/latest/USD');
       const d = await r.json();
       const rate = d.rates.KRW;
+      if (!rate) throw new Error('KRW rate missing');
       document.getElementById('w-usd').textContent =
         `₩${Math.round(rate).toLocaleString()}`;
     } catch {
