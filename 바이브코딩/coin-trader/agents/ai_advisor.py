@@ -56,7 +56,7 @@ def run(market_data: list, holding: dict | None) -> dict:
 
     # 보유 현황 텍스트
     if holding:
-        from utils.upbit_client import get_current_price
+        from utils.bithumb_client import get_current_price
         now_price = get_current_price(holding["ticker"])
         pct = round((now_price / holding["buy_price"] - 1) * 100, 2) if holding["buy_price"] else 0
         holding_text = (
@@ -127,7 +127,7 @@ def run(market_data: list, holding: dict | None) -> dict:
 11. 뚜렷한 신호 없으면 HOLD
 
 반드시 아래 JSON만 출력하세요 (다른 텍스트 없이):
-{{"action": "BUY" | "SELL" | "HOLD", "ticker": "KRW-XXX" 또는 null, "reason": "한국어로 판단 이유 2~3문장"}}"""
+{{"action": "BUY" | "SELL" | "HOLD", "ticker": "BTC" 또는 "XRP" 등 코인심볼만 (KRW- 접두어 없이), "reason": "한국어로 판단 이유 2~3문장"}}"""
 
     raw = _ask_groq(prompt)
 

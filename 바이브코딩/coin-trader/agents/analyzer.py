@@ -1,7 +1,7 @@
-import pyupbit
+import pybithumb
 import pandas as pd
 import numpy as np
-from utils.upbit_client import get_krw_tickers, get_current_price
+from utils.bithumb_client import get_krw_tickers, get_current_price
 
 
 def _rsi(series: pd.Series, period: int = 14) -> float:
@@ -52,7 +52,8 @@ def _adx(df: pd.DataFrame, period: int = 14) -> float:
 def _vol_breakout_target(ticker: str, k: float = 0.5) -> float | None:
     """변동성 돌파 목표가: 오늘 시가 + (전일 고저차 × K). 실패 시 None"""
     try:
-        df = pyupbit.get_ohlcv(ticker, interval="day", count=3)
+        coin = ticker.replace("KRW-", "")
+        df = pybithumb.get_ohlcv(coin, interval="day")
         if df is None or len(df) < 2:
             return None
         today_open = float(df["open"].iloc[-1])
@@ -80,21 +81,20 @@ def _bb_position(series: pd.Series, period: int = 20) -> str:
 
 
 def get_top_tickers(n: int = 20) -> list:
-    """24h 거래대금 기준 상위 n개 KRW 티커 반환"""
+    """24h 거래대금 기준 상위 n개 빗썸 티커 반환 (BTC 형식)"""
     tickers = get_krw_tickers()
     try:
-        prices = pyupbit.get_current_price(tickers)
-        if not isinstance(prices, dict):
-            return tickers[:n]
-        # 거래대금 = 현재가 × 거래량 (pyupbit은 거래대금을 직접 제공하지 않으므로
-        # acc_trade_price_24h 포함된 ticker 정보 활용)
         import requests
-        url = "https://api.upbit.com/v1/ticker"
-        markets = ",".join(tickers[:200])  # 최대 200개
-        r = requests.get(url, params={"markets": markets}, timeout=10)
-        data = r.json()
-        sorted_data = sorted(data, key=lambda x: x.get("acc_trade_price_24h", 0), reverse=True)
-        return [d["market"] for d in sorted_data[:n]]
+        # 빗썸 공개 API — 전체 종목 시세 (거래대금 포함)
+        r = requests.get("https://api.bithumb.com/public/ticker/ALL_KRW", timeout=10)
+        data = r.json().get("data", {})
+        # acc_trade_value: 24h 거래대금
+        ranked = sorted(
+            [(coin, float(info.get("acc_trade_value", 0)))
+             for coin, info in data.items() if coin != "date" and coin in tickers],
+            key=lambda x: x[1], reverse=True
+        )
+        return [coin for coin, _ in ranked[:n]]
     except Exception as e:
         print(f"  ⚠️  상위 종목 조회 실패, 기본 목록 사용: {e}")
         return tickers[:n]
@@ -103,7 +103,8 @@ def get_top_tickers(n: int = 20) -> list:
 def analyze_ticker(ticker: str) -> dict | None:
     """한 종목의 1시간봉 기술적 지표 + 변동성 돌파 신호 계산. 실패 시 None 반환"""
     try:
-        df = pyupbit.get_ohlcv(ticker, interval="minute60", count=100)
+        coin = ticker.replace("KRW-", "")
+        df = pybithumb.get_ohlcv(coin, interval="hour")
         if df is None or len(df) < 30:
             return None
 
@@ -120,14 +121,14 @@ def analyze_ticker(ticker: str) -> dict | None:
         prev_vol = volume.iloc[-48:-24].sum()
         vol_chg = round((recent_vol / prev_vol - 1) * 100, 1) if prev_vol > 0 else 0.0
 
-        price = get_current_price(ticker)
+        price = get_current_price(coin)
 
         # 변동성 돌파 신호 (일봉 기준, K=0.5)
-        vb_target = _vol_breakout_target(ticker)
+        vb_target = _vol_breakout_target(coin)
         vb = bool(vb_target and price > vb_target)
 
         return {
-            "ticker": ticker,
+            "ticker": coin,
             "price": price,
             "rsi": rsi,
             "macd": macd_sig,
@@ -137,7 +138,7 @@ def analyze_ticker(ticker: str) -> dict | None:
             "vb": vb,
         }
     except Exception as e:
-        print(f"  ⚠️  [{ticker}] 분석 실패: {e}")
+        print(f"  ⚠️  [{coin}] 분석 실패: {e}")
         return None
 
 

@@ -65,7 +65,7 @@ def save_state(holding: dict | None):
 
 def get_price(ticker: str) -> float | None:
     try:
-        from utils.upbit_client import get_current_price
+        from utils.bithumb_client import get_current_price
         price = get_current_price(ticker)
         return price if price else None
     except Exception:
