@@ -19,6 +19,9 @@ def run(brief: dict) -> dict:
     captions = []
     for i, item in enumerate(brief["instagram"]):
         source_facts = item.get('source_facts', '')
+        if isinstance(source_facts, list):
+            source_facts = ' '.join(str(s) for s in source_facts)
+        source_facts = str(source_facts)
         facts_note = f"\n실제 사실 (이것만 써, 없는 건 창작 금지):\n{source_facts}\n" if source_facts.strip() else ""
         prompt = f"""인스타그램 카드뉴스 글 써줘. 주제는 "{item['headline']}"야.
 {facts_note}
@@ -48,7 +51,10 @@ def run(brief: dict) -> dict:
 
     # 블로그 아티클
     b = brief["blog"]
-    blog_source_facts = b.get('source_facts', '').strip()
+    blog_source_facts = b.get('source_facts', '')
+    if isinstance(blog_source_facts, list):
+        blog_source_facts = ' '.join(str(s) for s in blog_source_facts)
+    blog_source_facts = str(blog_source_facts).strip()
 
     facts_block = f"\n참고할 실제 사실 (이것만 사실로 써, 없는 건 창작 금지):\n{blog_source_facts}\n" if blog_source_facts else ""
 

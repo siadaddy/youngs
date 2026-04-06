@@ -101,22 +101,22 @@ def get_top_tickers(n: int = 20) -> list:
 
 
 def analyze_ticker(ticker: str) -> dict | None:
-    """한 종목의 1시간봉 기술적 지표 + 변동성 돌파 신호 계산. 실패 시 None 반환"""
+    """한 종목의 15분봉 기술적 지표 + 변동성 돌파 신호 계산. 실패 시 None 반환"""
     try:
         coin = ticker.replace("KRW-", "")
-        df = pybithumb.get_ohlcv(coin, interval="hour")
+        df = pybithumb.get_ohlcv(coin, interval="minute10")
         if df is None or len(df) < 30:
             return None
 
         close = df["close"]
         volume = df["volume"]
 
-        rsi = _rsi(close)
+        rsi = _rsi(close, period=9)        # 10분봉 — 9봉(90분) 빠른 RSI
         macd_sig = _macd_signal(close)
-        bb_pos = _bb_position(close)
-        adx = _adx(df)
+        bb_pos = _bb_position(close, period=20)
+        adx = _adx(df, period=9)           # 10분봉 — 9봉 빠른 ADX
 
-        # 24h 거래량 변화율 (마지막 24개 1h봉 vs 그 이전 24개)
+        # 4h 거래량 변화율 (최근 24개 10분봉 vs 그 이전 24개)
         recent_vol = volume.iloc[-24:].sum()
         prev_vol = volume.iloc[-48:-24].sum()
         vol_chg = round((recent_vol / prev_vol - 1) * 100, 1) if prev_vol > 0 else 0.0
