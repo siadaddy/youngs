@@ -138,12 +138,12 @@ def check_ip_change():
     if prev_ip and prev_ip != current_ip:
         log(f"  🔴 IP 변경 감지: {prev_ip} → {current_ip}")
         notify(
-            "🔴 IP 변경 감지",
-            f"공인 IP가 변경됐습니다!\n이전: {prev_ip}\n현재: {current_ip}\n\n업비트 API 키 IP 재등록 필요:\nhttps://upbit.com/mypage/open_api_management",
+            "🔴 IP 변경 감지 — API 키 재등록 필요",
+            f"공인 IP가 변경됐습니다!\n이전: {prev_ip}\n현재: {current_ip}\n\n빗썸 API 키 IP 허용 목록을 업데이트하세요.",
             priority="urgent",
         )
     else:
-        log(f"  🌐 현재 IP: {current_ip}")
+        log(f"  🌐 IP 정상: {current_ip} (변경 없음 — 알림 스킵)")
 
 
 # ── 손절 / 익절 체크 ──────────────────────────────────────
@@ -470,11 +470,11 @@ def daily_report():
 
 
 def ip_report():
-    """거래 1시간 전 현재 IP 알림 (업비트 API 키 IP 점검용)"""
+    """IP 변경 감지 시에만 ntfy 알림 — 정상이면 스킵"""
     try:
         current_ip = requests.get("https://api.ipify.org", timeout=5).text.strip()
     except Exception as e:
-        notify("⚠️ IP 확인 실패", f"IP 조회 오류: {e}", priority="high")
+        log(f"  ⚠️  IP 확인 실패: {e}")
         return
 
     prev_ip = None
@@ -482,20 +482,18 @@ def ip_report():
         with open(IP_FILE, "r") as f:
             prev_ip = f.read().strip()
 
-    if prev_ip and prev_ip != current_ip:
-        status = f"🔴 IP 변경됨!\n이전: {prev_ip}\n현재: {current_ip}\n\n업비트 API 키 재등록 필요"
-        priority = "urgent"
-    else:
-        status = f"✅ IP 정상\n현재: {current_ip}"
-        priority = "min"
+    with open(IP_FILE, "w") as f:
+        f.write(current_ip)
 
-    next_trade = (datetime.now().hour + 1) % 24
-    notify(
-        f"🕐 1시간 후 코인 트레이딩 예정",
-        f"{status}\n\n다음 거래: {next_trade:02d}:05",
-        priority=priority,
-    )
-    log(f"  📡 IP 사전 점검 알림 발송: {current_ip}")
+    if prev_ip and prev_ip != current_ip:
+        log(f"  🔴 IP 변경: {prev_ip} → {current_ip}")
+        notify(
+            "🔴 IP 변경 감지 — API 키 재등록 필요",
+            f"공인 IP가 변경됐습니다!\n이전: {prev_ip}\n현재: {current_ip}\n\n빗썸 API 키 IP 허용 목록을 업데이트하세요.",
+            priority="urgent",
+        )
+    else:
+        log(f"  🌐 IP 정상: {current_ip} (알림 스킵)")
 
 
 if __name__ == "__main__":
