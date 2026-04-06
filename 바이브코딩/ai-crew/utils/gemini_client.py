@@ -42,6 +42,8 @@ def _sanitize(text: str) -> str:
     text = re.sub(r'[\u0400-\u04ff]', '', text)
     # 데바나가리 (힌디어)
     text = re.sub(r'[\u0900-\u097f]', '', text)
+    # 베트남어 전용 Latin 확장 문자 (ắ, ặ, ồ, ư, ớ, quốc 등)
+    text = re.sub(r'[\u1e00-\u1eff]', '', text)
     # 연속 공백 → 단일 공백
     text = re.sub(r'[ \t]{2,}', ' ', text)
     # 3줄 이상 빈 줄 → 2줄

@@ -50,8 +50,12 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
     }}
   ],
   "blog": {{
-    "title": "오늘 뉴스 중 가장 임팩트 있는 단일 주제의 블로그 제목",
-    "main_points": ["포인트1", "포인트2", "포인트3"],
+    "title": "오늘 뉴스 중 가장 임팩트 있는 단일 주제의 블로그 제목 (구체적 사건/기업/인물명 포함)",
+    "main_points": [
+      "이 사건의 배경 — 왜 생겼는가",
+      "핵심 내용 — 구체적으로 무슨 일인가",
+      "의미와 영향 — 앞으로 어떻게 될까"
+    ],
     "tone": "친근하고 읽기 쉬운",
     "target": "뉴스에 관심 있는 30~40대",
     "source_facts": "위 [내용]에서 직접 뽑은 핵심 사실 4~6개. 수치·이름·날짜 포함. 없는 내용 창작 금지."
@@ -62,7 +66,9 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 - instagram[0]: 반드시 자동차/BMW/전기차 관련. 없으면 자동차 업계 트렌드로 대체
 - 5개 모두 서로 다른 주제 (같은 인물·사건 중복 금지)
 - 제외: 범죄, 연예인 사생활, 정치 편향, 미검증 루머
-- blog title: "뉴스레터 요약", "오늘의 뉴스" 같은 요약성 제목 금지
+- blog title: "뉴스레터 요약", "오늘의 뉴스", "뉴스 브리프", "4월 X일" 같은 날짜·요약성 제목 금지
+- blog는 반드시 단일 뉴스 하나에만 집중 — main_points 3개 모두 같은 사건에 대한 것
+- blog main_points는 "배경 → 내용 → 의미/영향" 구조로 작성
 - JSON만 출력, 다른 텍스트 없이
 """
     raw = ask_gemini(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2500)
