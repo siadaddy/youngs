@@ -1,11 +1,17 @@
 {
-  "holding": {
-    "ticker": "XVS",
-    "buy_price": 6047.9,
-    "qty": 3.8271,
-    "invest_krw": 23146.0
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-06 21:02",
+      "action": "SELL",
+      "ticker": "XVS",
+      "price": 5870.0,
+      "amount_krw": 23146.0,
+      "reason": "기존 보유 종목 XVS의 수익률이 -2.94%로 낮으며, 다른 종목이 더 좋은 신호를 보이고 있어 기회 교체를 결정했습니다. 특히, BTC, XRP, ETH, SOL 등이 VB✅와 높은 점수를 보이고 있어 교체를 결정했습니다.",
+      "pnl_pct": -2.94,
+      "pnl_krw": -681.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-06 20:48",
       "action": "BUY",
@@ -41,13 +47,13 @@
     }
   ],
   "stats": {
-    "total_trades": 2,
+    "total_trades": 3,
     "wins": 1,
-    "losses": 0,
-    "total_pnl_krw": 126.0,
+    "losses": 1,
+    "total_pnl_krw": -555.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 15.0
   },
-  "updated_at": "2026-04-06 20:48"
+  "updated_at": "2026-04-06 21:02"
 }
