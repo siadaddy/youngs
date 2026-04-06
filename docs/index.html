@@ -1498,12 +1498,13 @@
       const h = d.holding;
       const statusEl = document.getElementById('coin-status');
       if (h && h.ticker) {
-        // 업비트 공개 API로 실시간 현재가 조회
+        // 빗썸 공개 API로 실시간 현재가 조회
         let livePrice = null;
         try {
-          const priceRes = await fetch(`https://api.upbit.com/v1/ticker?markets=${h.ticker}`);
+          const coin = h.ticker.replace('KRW-', '');
+          const priceRes = await fetch(`https://api.bithumb.com/public/ticker/${coin}_KRW`);
           const priceData = await priceRes.json();
-          livePrice = priceData[0]?.trade_price ?? null;
+          livePrice = priceData?.data?.closing_price ? parseFloat(priceData.data.closing_price) : null;
         } catch(e) {}
 
         const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 7.0;

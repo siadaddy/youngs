@@ -1,18 +1,29 @@
 {
   "holding": {
-    "ticker": "KRW-XRP",
-    "buy_price": 1995.0,
-    "qty": 2.506265664160401,
-    "invest_krw": 5000.0
+    "ticker": "XVS",
+    "buy_price": 6047.9,
+    "qty": 3.8271,
+    "invest_krw": 23146.0
   },
   "history": [
     {
+      "time": "2026-04-06 20:48",
+      "action": "BUY",
+      "ticker": "XVS",
+      "price": 6047.9,
+      "amount_krw": 23146.0,
+      "reason": "빗썸 전환 첫 매수 — VB✅ + MACD 골든크로스 + ADX 49.5 강한 추세",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
       "time": "2026-04-02 18:15",
       "action": "BUY",
-      "ticker": "KRW-XRP",
+      "ticker": "XRP",
       "price": 1995.0,
       "amount_krw": 5000.0,
-      "reason": "VB 매수 신호가 없지만, 점수 +3 이상이고 ADX 15 이상이므로 강한 매수 신호로 판단됩니다. 또한 RSI 28.7로 과매도 상태이므로 매수 기회로 판단됩니다.",
+      "reason": "업비트 운영 종료 — 빗썸으로 이전",
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
@@ -20,45 +31,23 @@
     {
       "time": "2026-04-02 11:05",
       "action": "SELL",
-      "ticker": "KRW-0G",
+      "ticker": "0G",
       "price": 772.0,
       "amount_krw": 5000,
-      "reason": "기회 교체: 현재 보유 종목 수익률 +2.79% 미만이고, 다른 종목이 점수 +3 이상 + ADX 15 이상인 경우 교체가 필요함. KRW-SEI 종목이 점수 +3, ADX 34.3로 교체 대상임",
+      "reason": "기회 교체",
       "pnl_pct": 2.52,
       "pnl_krw": 126.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-03-29 00:32",
-      "action": "BUY",
-      "ticker": "KRW-0G",
-      "price": 753.0,
-      "amount_krw": 5000.0,
-      "reason": "KRW-0G의 RSI는 51.6으로 중립적인 수준이며, MACD는 골든크로스를 형성하여 강한 매수 신호를 보이고 있습니다. 또한, 거래량이 304% 증가하여 상승 모멘텀을 보이고 있습니다. 이러한 신호들은 BUY에 대한 적극적인 고려를 의미합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
-    },
-    {
-      "time": "2026-03-28 21:54",
-      "action": "BUY",
-      "ticker": "KRW-NOM",
-      "price": 4.33,
-      "amount_krw": 5000.0,
-      "reason": "RSI 33.3으로 과매도 상태이며, MACD 골든크로스 신호가 발생하여 강한 매수 신호를 보이고 있습니다. 또한 거래량이 감소하고 있지만, 다른 기술적 지표들이 매수에 유리한 상황입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 4,
+    "total_trades": 2,
     "wins": 1,
     "losses": 0,
     "total_pnl_krw": 126.0,
-    "start_date": "2026-03-28",
+    "start_date": "2026-04-06",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 15.0
   },
-  "updated_at": "2026-04-06 07:05"
+  "updated_at": "2026-04-06 20:48"
 }
