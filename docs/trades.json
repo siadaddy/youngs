@@ -1,6 +1,22 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BTC",
+    "buy_price": 104450000.0,
+    "qty": 0.00027764480612733363,
+    "invest_krw": 29000.0
+  },
   "history": [
+    {
+      "time": "2026-04-06 21:17",
+      "action": "BUY",
+      "ticker": "BTC",
+      "price": 104450000.0,
+      "amount_krw": 29000.0,
+      "reason": "VB✅이고 점수 +5이면서 ADX 33.9로 추세가 확인되며, 변동성 돌파 신호가 발생하여 매수 신호가 강한 것으로 판단됩니다. 또한, 현재 RSI 13.2로 과매도 상태이므로 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-06 21:02",
       "action": "SELL",
@@ -47,7 +63,7 @@
     }
   ],
   "stats": {
-    "total_trades": 3,
+    "total_trades": 4,
     "wins": 1,
     "losses": 1,
     "total_pnl_krw": -555.0,
@@ -55,5 +71,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 15.0
   },
-  "updated_at": "2026-04-06 21:02"
+  "updated_at": "2026-04-06 21:17"
 }
