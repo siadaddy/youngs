@@ -150,7 +150,7 @@ def check_ip_change():
 
 def check_exit(holding: dict) -> str | None:
     """손절 또는 익절 조건 확인 → 'stop_loss' | 'take_profit' | None"""
-    from utils.upbit_client import get_current_price
+    from utils.bithumb_client import get_current_price
     now = get_current_price(holding["ticker"])
     if not now or not holding.get("buy_price"):
         return None
