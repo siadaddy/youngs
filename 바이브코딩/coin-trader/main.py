@@ -217,12 +217,13 @@ def main():
                 new_holding = executor.run(action, holding)
                 save_state(new_holding)
                 notify("🔴 손절 매도", f"{action['ticker']} 손절 매도 완료\n기준: -{STOP_LOSS}%", priority="high")
-                _publish_trades("SELL", action, new_holding, holding)  # holding: 매도 전 원본 전달
+                _publish_trades("SELL", action, new_holding, holding)
+                holding = None  # 매도 완료 → BUY 탐색 계속
+                log("  손절 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:
                 log(f"  ❌ 손절 매도 실패: {e}")
                 notify("❌ 손절 실패", f"{holding['ticker']} 손절 주문 오류: {e}", priority="urgent")
-            log("  손절 처리 완료 — 이번 사이클 종료")
-            return
+                return
         elif exit_type == "take_profit":
             action = {"action": "SELL", "ticker": holding["ticker"], "reason": f"자동 익절 +{TAKE_PROFIT}%"}
             try:
@@ -230,11 +231,12 @@ def main():
                 save_state(new_holding)
                 notify("🟡 익절 매도", f"{action['ticker']} 익절 매도 완료\n기준: +{TAKE_PROFIT}%", priority="high")
                 _publish_trades("SELL", action, new_holding, holding)
+                holding = None  # 매도 완료 → BUY 탐색 계속
+                log("  익절 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:
                 log(f"  ❌ 익절 매도 실패: {e}")
                 notify("❌ 익절 실패", f"{holding['ticker']} 익절 주문 오류: {e}", priority="urgent")
-            log("  익절 처리 완료 — 이번 사이클 종료")
-            return
+                return
 
     # Step 3: 시장 분석
     try:
@@ -260,6 +262,33 @@ def main():
         log(f"  ❌ 주문 실행 실패: {e}")
         notify("❌ 자동매매 오류", f"주문 실행 실패: {e}", priority="high")
         return
+
+    # Step 5-1: SELL 완료 직후 즉시 매수 기회 재탐색
+    if advice["action"] == "SELL" and new_holding is None:
+        save_state(None)
+        _publish_trades("SELL", advice, None, holding)
+        notify("🔴 매도 완료", f"{advice.get('ticker')} 매도\n이유: {advice.get('reason','')}")
+        log("  🔄 매도 완료 → 즉시 매수 기회 재판단...")
+        old_holding = holding
+        holding = None
+        try:
+            buy_advice = retry("AI 매수 재판단", ai_advisor.run, market_data, None)
+        except Exception as e:
+            log(f"  ⚠️  매수 재판단 실패: {e}")
+            return
+        if buy_advice["action"] == "BUY":
+            try:
+                new_holding = executor.run(buy_advice, None)
+                save_state(new_holding)
+                price = new_holding["buy_price"] if new_holding else 0
+                notify("🟢 즉시 매수 완료", f"{buy_advice.get('ticker')} 매수\n단가: {price:,.0f}원\n이유: {buy_advice.get('reason','')}")
+                _publish_trades("BUY", buy_advice, new_holding, None)
+                log(f"  ✅ 즉시 매수 완료: {buy_advice.get('ticker')}")
+            except Exception as e:
+                log(f"  ❌ 즉시 매수 실패: {e}")
+        else:
+            log("  ℹ️  즉시 매수 신호 없음 — HOLD 유지")
+        return  # SELL+재판단 완료, 이하 중복 처리 스킵
 
     # Step 6: 상태 저장
     save_state(new_holding)
