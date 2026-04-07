@@ -69,6 +69,8 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 - blog title: "뉴스레터 요약", "오늘의 뉴스", "뉴스 브리프", "4월 X일" 같은 날짜·요약성 제목 금지
 - blog는 반드시 단일 뉴스 하나에만 집중 — main_points 3개 모두 같은 사건에 대한 것
 - blog main_points는 "배경 → 내용 → 의미/영향" 구조로 작성
+- blog 주제 선정 우선순위: 국제 정치/경제 이슈 > 국내 산업/기술 > 일반 사회. 소규모 기업의 해외 진출, 지역 소식 등 임팩트 작은 뉴스는 blog 주제로 금지
+- blog source_facts: 해당 주제 하나에 대한 구체적 사실만. 다른 뉴스 내용 혼합 금지
 - JSON만 출력, 다른 텍스트 없이
 """
     raw = ask_gemini(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2500)
