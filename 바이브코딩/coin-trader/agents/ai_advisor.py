@@ -13,7 +13,7 @@ load_dotenv()
 
 GROQ_KEYS = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2")] if k]
 GROQ_URL  = "https://api.groq.com/openai/v1/chat/completions"
-MODEL     = "llama-3.3-70b-versatile"
+MODEL     = "llama-3.1-8b-instant"
 
 SYSTEM = """당신은 10년 경력의 암호화폐 퀀트 트레이더입니다.
 기술적 지표(RSI, MACD, 볼린저밴드)를 기반으로 냉정하게 매매 판단을 내립니다.
