@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎵 Music Universe</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      overflow: hidden;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      cursor: none;
+    }
+
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0; left: 0;
+    }
+
+    /* 커스텀 커서 */
+    #cursor {
+      position: fixed;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(150,200,255,0.3) 60%, transparent 100%);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      box-shadow: 0 0 15px rgba(150,200,255,0.8), 0 0 30px rgba(100,150,255,0.4);
+    }
+    #cursor.hover {
+      width: 36px; height: 36px;
+    }
+
+    /* UI 오버레이 */
+    #ui {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* 헤더 */
+    #header {
+      position: absolute;
+      top: 28px; left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      pointer-events: none;
+    }
+    #header h1 {
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: 6px;
+      color: rgba(200,220,255,0.8);
+      text-transform: uppercase;
+    }
+    #header p {
+      font-size: 11px;
+      color: rgba(150,180,255,0.4);
+      letter-spacing: 3px;
+      margin-top: 4px;
+    }
+
+    /* 뒤로가기 */
+    #back-btn {
+      position: absolute;
+      top: 24px; left: 28px;
+      pointer-events: all;
+      color: rgba(150,180,255,0.5);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-decoration: none;
+      cursor: none;
+      transition: color 0.3s;
+    }
+    #back-btn:hover { color: rgba(200,220,255,0.9); }
+
+    /* 무드 선택 */
+    #mood-bar {
+      position: absolute;
+      bottom: 36px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      pointer-events: all;
+    }
+    .mood-btn {
+      padding: 9px 18px;
+      border-radius: 30px;
+      border: 1px solid rgba(150,180,255,0.25);
+      background: rgba(10,15,40,0.6);
+      color: rgba(180,200,255,0.7);
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: none;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+    }
+    .mood-btn:hover, .mood-btn.active {
+      background: rgba(80,120,255,0.25);
+      border-color: rgba(150,180,255,0.6);
+      color: rgba(220,235,255,1);
+      box-shadow: 0 0 20px rgba(100,140,255,0.3);
+    }
+
+    /* 툴팁 */
+    #tooltip {
+      position: fixed;
+      padding: 10px 16px;
+      background: rgba(5,10,30,0.85);
+      border: 1px solid rgba(150,180,255,0.2);
+      border-radius: 12px;
+      backdrop-filter: blur(15px);
+      color: rgba(220,235,255,0.95);
+      font-size: 13px;
+      pointer-events: none;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.2s;
+      max-width: 220px;
+      line-height: 1.5;
+    }
+    #tooltip .artist {
+      font-size: 11px;
+      color: rgba(150,180,255,0.6);
+      margin-top: 2px;
+    }
+
+    /* 클릭 파동 */
+    .ripple {
+      position: fixed;
+      border-radius: 50%;
+      border: 2px solid rgba(150,200,255,0.8);
+      pointer-events: none;
+      z-index: 150;
+      animation: ripple-out 0.8s ease-out forwards;
+    }
+    @keyframes ripple-out {
+      from { width: 10px; height: 10px; opacity: 1; transform: translate(-50%, -50%); }
+      to   { width: 100px; height: 100px; opacity: 0; transform: translate(-50%, -50%); }
+    }
+
+    /* 안내 */
+    #hint {
+      position: absolute;
+      bottom: 90px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: rgba(150,180,255,0.3);
+      letter-spacing: 2px;
+      pointer-events: none;
+      animation: fadePulse 4s ease-in-out infinite;
+    }
+    @keyframes fadePulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <a id="back-btn" href="index.html">← HOME</a>
+
+  <div id="header">
+    <h1>Music Universe</h1>
+    <p>당신의 음악 우주를 탐험하세요</p>
+  </div>
+
+  <div id="hint">마우스를 움직여 우주를 탐험하고 · 별을 클릭하면 YouTube Music이 열립니다</div>
+
+  <div id="mood-bar">
+    <button class="mood-btn active" data-mood="all">🌌 전체</button>
+    <button class="mood-btn" data-mood="drive">🚗 드라이브</button>
+    <button class="mood-btn" data-mood="focus">💻 집중</button>
+    <button class="mood-btn" data-mood="party">🎉 파티</button>
+    <button class="mood-btn" data-mood="chill">🌙 휴식</button>
+    <button class="mood-btn" data-mood="emotion">💙 감성</button>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div id="tt-title"></div>
+  <div id="tt-artist" class="artist"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// 노래 데이터
+// ─────────────────────────────────────────
+const SONGS = [
+  // 드라이브
+  { title: "Drama", artist: "aespa", mood: "drive", color: [255,120,200] },
+  { title: "Attention", artist: "NewJeans", mood: "drive", color: [120,200,255] },
+  { title: "Ditto", artist: "NewJeans", mood: "drive", color: [100,220,200] },
+  { title: "After LIKE", artist: "IVE", mood: "drive", color: [255,160,80] },
+  { title: "Love Dive", artist: "IVE", mood: "drive", color: [200,120,255] },
+  { title: "Nxde", artist: "(G)I-DLE", mood: "drive", color: [255,100,100] },
+  { title: "Queencard", artist: "(G)I-DLE", mood: "drive", color: [255,180,60] },
+  { title: "Magnetic", artist: "ILLIT", mood: "drive", color: [180,255,180] },
+  { title: "Supernova", artist: "aespa", mood: "drive", color: [150,100,255] },
+  { title: "Snap", artist: "Rosa Linn", mood: "drive", color: [255,200,100] },
+  { title: "Smooth Operator", artist: "Sade", mood: "drive", color: [180,140,255] },
+  { title: "Blinding Lights", artist: "The Weeknd", mood: "drive", color: [255,80,120] },
+  { title: "Starboy", artist: "The Weeknd", mood: "drive", color: [220,160,255] },
+  { title: "MONEY", artist: "LISA", mood: "drive", color: [255,200,50] },
+  { title: "Pink Venom", artist: "BLACKPINK", mood: "drive", color: [255,100,150] },
+
+  // 집중
+  { title: "아름다운 밤이야", artist: "오혁", mood: "focus", color: [100,200,255] },
+  { title: "Lofi Hip Hop Study", artist: "ChilledCow", mood: "focus", color: [120,180,220] },
+  { title: "Experience", artist: "Ludovico Einaudi", mood: "focus", color: [180,220,255] },
+  { title: "Comptine d'un autre été", artist: "Yann Tiersen", mood: "focus", color: [160,200,240] },
+  { title: "River Flows in You", artist: "Yiruma", mood: "focus", color: [140,180,255] },
+  { title: "Gymnopédie No.1", artist: "Erik Satie", mood: "focus", color: [200,220,255] },
+  { title: "Nuvole Bianche", artist: "Ludovico Einaudi", mood: "focus", color: [180,200,240] },
+  { title: "Clair de Lune", artist: "Debussy", mood: "focus", color: [150,190,255] },
+  { title: "Interstellar", artist: "Hans Zimmer", mood: "focus", color: [100,160,240] },
+  { title: "Time", artist: "Hans Zimmer", mood: "focus", color: [120,170,250] },
+  { title: "Weightless", artist: "Marconi Union", mood: "focus", color: [160,210,255] },
+  { title: "lo-fi beats", artist: "Lofi Girl", mood: "focus", color: [140,190,220] },
+
+  // 파티
+  { title: "GODS", artist: "NewJeans", mood: "party", color: [255,80,80] },
+  { title: "Dynamite", artist: "BTS", mood: "party", color: [255,200,0] },
+  { title: "Permission to Dance", artist: "BTS", mood: "party", color: [0,200,255] },
+  { title: "How You Like That", artist: "BLACKPINK", mood: "party", color: [255,60,120] },
+  { title: "Savage", artist: "aespa", mood: "party", color: [180,0,255] },
+  { title: "Firework", artist: "Katy Perry", mood: "party", color: [255,150,0] },
+  { title: "Levitating", artist: "Dua Lipa", mood: "party", color: [200,100,255] },
+  { title: "Don't Start Now", artist: "Dua Lipa", mood: "party", color: [255,80,200] },
+  { title: "Physical", artist: "Dua Lipa", mood: "party", color: [255,120,60] },
+  { title: "Uptown Funk", artist: "Bruno Mars", mood: "party", color: [255,200,0] },
+  { title: "24K Magic", artist: "Bruno Mars", mood: "party", color: [255,160,0] },
+  { title: "APT.", artist: "ROSE & Bruno Mars", mood: "party", color: [255,100,150] },
+  { title: "Shark", artist: "Omega X", mood: "party", color: [0,220,180] },
+  { title: "Mirrorball", artist: "Taylor Swift", mood: "party", color: [200,220,255] },
+
+  // 휴식
+  { title: "밤편지", artist: "IU", mood: "chill", color: [180,160,255] },
+  { title: "좋은 날", artist: "IU", mood: "chill", color: [255,200,150] },
+  { title: "가을 아침", artist: "IU", mood: "chill", color: [255,180,120] },
+  { title: "Celebrity", artist: "IU", mood: "chill", color: [255,220,160] },
+  { title: "Palette", artist: "IU", mood: "chill", color: [200,220,255] },
+  { title: "잔소리", artist: "혁오", mood: "chill", color: [160,255,200] },
+  { title: "Tomboy", artist: "혁오", mood: "chill", color: [180,240,180] },
+  { title: "와이파이", artist: "혁오", mood: "chill", color: [150,230,200] },
+  { title: "봄날", artist: "BTS", mood: "chill", color: [200,230,255] },
+  { title: "곧 고백하려 했어", artist: "투빛나리", mood: "chill", color: [255,200,200] },
+  { title: "새벽 세 시", artist: "하이라이트", mood: "chill", color: [150,180,255] },
+  { title: "비가 오는 날엔", artist: "이소라", mood: "chill", color: [120,160,255] },
+  { title: "To the Moon", artist: "Jnr Choi", mood: "chill", color: [180,200,255] },
+  { title: "Stay", artist: "The Kid LAROI", mood: "chill", color: [200,180,255] },
+  { title: "Beautiful Boy", artist: "John Lennon", mood: "chill", color: [220,200,255] },
+
+  // 감성
+  { title: "주저하는 연인들을 위해", artist: "잔나비", mood: "emotion", color: [255,160,160] },
+  { title: "사랑하긴 했었나요", artist: "잔나비", mood: "emotion", color: [255,180,180] },
+  { title: "전설", artist: "잔나비", mood: "emotion", color: [220,150,255] },
+  { title: "꿈을 꾸던 시절", artist: "잔나비", mood: "emotion", color: [200,160,255] },
+  { title: "나의 사랑 나의 신부", artist: "잔나비", mood: "emotion", color: [255,200,200] },
+  { title: "Lonely Night", artist: "CHEN", mood: "emotion", color: [150,180,255] },
+  { title: "11:11", artist: "태연", mood: "emotion", color: [200,200,255] },
+  { title: "만약에", artist: "태연", mood: "emotion", color: [220,190,255] },
+  { title: "Rain and You", artist: "크러쉬", mood: "emotion", color: [120,180,255] },
+  { title: "Beautiful", artist: "크러쉬", mood: "emotion", color: [160,200,255] },
+  { title: "사랑이 잘", artist: "IU & 오혁", mood: "emotion", color: [255,180,200] },
+  { title: "너의 의미", artist: "IU", mood: "emotion", color: [255,200,220] },
+  { title: "Epiphany", artist: "진 (BTS)", mood: "emotion", color: [200,220,255] },
+  { title: "Hallelujah", artist: "Pentatonix", mood: "emotion", color: [220,200,255] },
+  { title: "Someone Like You", artist: "Adele", mood: "emotion", color: [180,200,255] },
+  { title: "The Night We Met", artist: "Lord Huron", mood: "emotion", color: [140,160,255] },
+];
+
+// ─────────────────────────────────────────
+// Canvas 초기화
+// ─────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W = canvas.width  = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+let mouseX = W / 2, mouseY = H / 2;
+let targetMX = W / 2, targetMY = H / 2;
+let cursorEl = document.getElementById('cursor');
+
+window.addEventListener('resize', () => {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  initStars();
+  placeNodes();
+});
+
+// ─────────────────────────────────────────
+// 별 배경 파티클
+// ─────────────────────────────────────────
+let stars = [];
+function initStars() {
+  stars = [];
+  const N = Math.floor(W * H / 3500);
+  for (let i = 0; i < N; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random() * 0.7 + 0.2,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2,
+      depth: Math.random() * 0.6 + 0.1,  // parallax depth
+    });
+  }
+}
+initStars();
+
+// ─────────────────────────────────────────
+// 네뷸라 클라우드 (정적 레이어)
+// ─────────────────────────────────────────
+const nebulae = [
+  { x: 0.15, y: 0.25, r: 0.35, color: [60, 20, 120], alpha: 0.18 },
+  { x: 0.75, y: 0.60, r: 0.40, color: [20, 60, 130], alpha: 0.15 },
+  { x: 0.50, y: 0.80, r: 0.30, color: [80, 20, 100], alpha: 0.12 },
+  { x: 0.85, y: 0.15, r: 0.25, color: [20, 80, 80], alpha: 0.10 },
+  { x: 0.30, y: 0.65, r: 0.28, color: [60, 40, 100], alpha: 0.13 },
+];
+
+// ─────────────────────────────────────────
+// 노래 노드
+// ─────────────────────────────────────────
+let activeMood = 'all';
+let nodes = [];
+let visibleNodes = [];
+
+function buildNodes() {
+  nodes = SONGS.map((s, i) => {
+    const angle = Math.random() * Math.PI * 2;
+    const dist  = Math.random() * Math.min(W, H) * 0.42 + 60;
+    return {
+      ...s,
+      id: i,
+      // 배치는 placeNodes()에서
+      x: 0, y: 0,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      baseR: Math.random() * 6 + 8,  // 8~14px
+      glowPhase: Math.random() * Math.PI * 2,
+      glowSpeed: Math.random() * 0.02 + 0.01,
+      depth: Math.random() * 0.4 + 0.3,
+      visible: true,
+      alpha: 1,
+      targetAlpha: 1,
+    };
+  });
+  placeNodes();
+}
+
+function placeNodes() {
+  const cx = W / 2, cy = H / 2;
+  nodes.forEach((n, i) => {
+    const angle = (i / nodes.length) * Math.PI * 2 + Math.random() * 0.8;
+    const dist  = Math.random() * Math.min(W, H) * 0.4 + 60;
+    n.x = cx + Math.cos(angle) * dist + (Math.random() - 0.5) * 100;
+    n.y = cy + Math.sin(angle) * dist + (Math.random() - 0.5) * 100;
+    n.x = Math.max(40, Math.min(W - 40, n.x));
+    n.y = Math.max(60, Math.min(H - 80, n.y));
+  });
+}
+
+buildNodes();
+
+// 무드 필터 적용
+function applyMood(mood) {
+  activeMood = mood;
+  nodes.forEach(n => {
+    n.targetAlpha = (mood === 'all' || n.mood === mood) ? 1 : 0.08;
+  });
+}
+
+// 무드 버튼 이벤트
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyMood(btn.dataset.mood);
+  });
+});
+
+// ─────────────────────────────────────────
+// 마우스 / 툴팁
+// ─────────────────────────────────────────
+let rawMX = W / 2, rawMY = H / 2;
+const tooltip = document.getElementById('tooltip');
+let hoveredNode = null;
+
+window.addEventListener('mousemove', e => {
+  rawMX = e.clientX;
+  rawMY = e.clientY;
+  cursorEl.style.left = e.clientX + 'px';
+  cursorEl.style.top  = e.clientY + 'px';
+
+  // 노드 호버 체크
+  const hit = findHoveredNode(e.clientX, e.clientY);
+  if (hit) {
+    hoveredNode = hit;
+    cursorEl.classList.add('hover');
+    document.getElementById('tt-title').textContent = hit.title;
+    document.getElementById('tt-artist').textContent = hit.artist;
+    let tx = e.clientX + 18, ty = e.clientY - 10;
+    if (tx + 230 > W) tx = e.clientX - 240;
+    if (ty + 70  > H) ty = H - 75;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top  = ty + 'px';
+    tooltip.style.opacity = '1';
+  } else {
+    hoveredNode = null;
+    cursorEl.classList.remove('hover');
+    tooltip.style.opacity = '0';
+  }
+});
+
+window.addEventListener('click', e => {
+  // 파동 효과
+  const rip = document.createElement('div');
+  rip.className = 'ripple';
+  rip.style.left = e.clientX + 'px';
+  rip.style.top  = e.clientY + 'px';
+  document.body.appendChild(rip);
+  setTimeout(() => rip.remove(), 800);
+
+  // 노드 클릭 → YouTube Music
+  const hit = findHoveredNode(e.clientX, e.clientY);
+  if (hit) {
+    const q = encodeURIComponent(`${hit.title} ${hit.artist}`);
+    window.open(`https://music.youtube.com/search?q=${q}`, '_blank');
+  }
+});
+
+function findHoveredNode(mx, my) {
+  // 패럴랙스 오프셋 적용한 좌표로 체크
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    if (n.targetAlpha < 0.5) continue;
+    const px = offsetX(n);
+    const py = offsetY(n);
+    const dx = mx - px, dy = my - py;
+    if (dx * dx + dy * dy < (n.baseR + 10) * (n.baseR + 10)) return n;
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────
+// 패럴랙스 오프셋 계산
+// ─────────────────────────────────────────
+function offsetX(obj) {
+  const shift = (mouseX - W / 2) * obj.depth * 0.08;
+  return obj.x + shift;
+}
+function offsetY(obj) {
+  const shift = (mouseY - H / 2) * obj.depth * 0.08;
+  return obj.y + shift;
+}
+
+// ─────────────────────────────────────────
+// 배경 그리기
+// ─────────────────────────────────────────
+function drawBackground() {
+  // 깊은 우주 그라디언트
+  const bg = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.4, Math.max(W, H) * 0.8);
+  bg.addColorStop(0, '#050a1e');
+  bg.addColorStop(0.5, '#020710');
+  bg.addColorStop(1, '#000005');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 네뷸라
+  nebulae.forEach(nb => {
+    const ox = (mouseX - W / 2) * 0.02;
+    const oy = (mouseY - H / 2) * 0.02;
+    const grd = ctx.createRadialGradient(
+      nb.x * W + ox, nb.y * H + oy, 0,
+      nb.x * W + ox, nb.y * H + oy, nb.r * Math.max(W, H)
+    );
+    grd.addColorStop(0, `rgba(${nb.color},${nb.alpha})`);
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+  });
+}
+
+// ─────────────────────────────────────────
+// 별 그리기
+// ─────────────────────────────────────────
+function drawStars(t) {
+  stars.forEach(s => {
+    const ox = (mouseX - W / 2) * s.depth * 0.05;
+    const oy = (mouseY - H / 2) * s.depth * 0.05;
+    const twinkle = Math.sin(t * s.twinkleSpeed + s.twinkleOffset) * 0.3 + 0.7;
+    ctx.beginPath();
+    ctx.arc(s.x + ox, s.y + oy, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(200,220,255,${s.alpha * twinkle})`;
+    ctx.fill();
+  });
+}
+
+// ─────────────────────────────────────────
+// 콘스텔레이션 라인
+// ─────────────────────────────────────────
+function drawConstellations() {
+  const active = nodes.filter(n => n.targetAlpha > 0.5);
+  const MAX_DIST = 140;
+  for (let i = 0; i < active.length; i++) {
+    for (let j = i + 1; j < active.length; j++) {
+      if (active[i].mood !== active[j].mood && activeMood !== 'all') continue;
+      const ax = offsetX(active[i]), ay = offsetY(active[i]);
+      const bx = offsetX(active[j]), by = offsetY(active[j]);
+      const dx = ax - bx, dy = ay - by;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MAX_DIST) {
+        const alpha = (1 - dist / MAX_DIST) * 0.15 * active[i].alpha * active[j].alpha;
+        const c1 = active[i].color, c2 = active[j].color;
+        const grd = ctx.createLinearGradient(ax, ay, bx, by);
+        grd.addColorStop(0, `rgba(${c1},${alpha})`);
+        grd.addColorStop(1, `rgba(${c2},${alpha})`);
+        ctx.strokeStyle = grd;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+// ─────────────────────────────────────────
+// 노드 그리기
+// ─────────────────────────────────────────
+function drawNodes(t) {
+  nodes.forEach(n => {
+    // alpha 보간
+    n.alpha += (n.targetAlpha - n.alpha) * 0.05;
+
+    const px = offsetX(n), py = offsetY(n);
+    const glow = Math.sin(t * n.glowSpeed + n.glowPhase) * 0.3 + 0.7;
+    const r = n.baseR;
+    const [cr, cg, cb] = n.color;
+    const a = n.alpha;
+
+    // 마우스 반발 효과
+    const mdx = px - mouseX, mdy = py - mouseY;
+    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+    const repulse = mdist < 90 ? (1 - mdist / 90) * 20 : 0;
+    const rpx = px + (mdist > 0 ? (mdx / mdist) * repulse : 0);
+    const rpy = py + (mdist > 0 ? (mdy / mdist) * repulse : 0);
+
+    if (a < 0.02) return;
+
+    // 외부 글로우
+    const outer = ctx.createRadialGradient(rpx, rpy, 0, rpx, rpy, r * 4 * glow);
+    outer.addColorStop(0, `rgba(${cr},${cg},${cb},${0.18 * a})`);
+    outer.addColorStop(0.5, `rgba(${cr},${cg},${cb},${0.06 * a})`);
+    outer.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = outer;
+    ctx.beginPath();
+    ctx.arc(rpx, rpy, r * 4 * glow, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 코어 글로우
+    const inner = ctx.createRadialGradient(rpx, rpy, 0, rpx, rpy, r * 1.8);
+    inner.addColorStop(0, `rgba(255,255,255,${0.9 * a})`);
+    inner.addColorStop(0.3, `rgba(${cr},${cg},${cb},${0.8 * a * glow})`);
+    inner.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+    ctx.fillStyle = inner;
+    ctx.beginPath();
+    ctx.arc(rpx, rpy, r * 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 텍스트 (호버 시 또는 기본 표시)
+    const isHovered = hoveredNode && hoveredNode.id === n.id;
+    if (isHovered || (a > 0.8 && r > 11)) {
+      ctx.save();
+      ctx.font = isHovered ? 'bold 11px Apple SD Gothic Neo, sans-serif' : '10px Apple SD Gothic Neo, sans-serif';
+      ctx.fillStyle = `rgba(220,235,255,${a * (isHovered ? 1 : 0.7)})`;
+      ctx.textAlign = 'center';
+      ctx.shadowColor = `rgba(${cr},${cg},${cb},0.8)`;
+      ctx.shadowBlur = isHovered ? 12 : 6;
+      ctx.fillText(n.title, rpx, rpy + r + 14);
+      if (isHovered) {
+        ctx.font = '9px Apple SD Gothic Neo, sans-serif';
+        ctx.fillStyle = `rgba(150,180,255,${a * 0.8})`;
+        ctx.fillText(n.artist, rpx, rpy + r + 26);
+      }
+      ctx.restore();
+    }
+
+    // 노드 드리프트 (느리게 움직임)
+    n.x += n.vx;
+    n.y += n.vy;
+    // 경계 튕기기
+    if (n.x < 40 || n.x > W - 40)  n.vx *= -1;
+    if (n.y < 60 || n.y > H - 80)  n.vy *= -1;
+    n.x = Math.max(40, Math.min(W - 40, n.x));
+    n.y = Math.max(60, Math.min(H - 80, n.y));
+  });
+}
+
+// ─────────────────────────────────────────
+// 커서 코로나 효과
+// ─────────────────────────────────────────
+function drawCursorGlow() {
+  const grd = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 80);
+  grd.addColorStop(0, 'rgba(150,200,255,0.06)');
+  grd.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.arc(mouseX, mouseY, 80, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ─────────────────────────────────────────
+// 메인 애니메이션 루프
+// ─────────────────────────────────────────
+let t = 0;
+function loop() {
+  t++;
+
+  // 마우스 부드럽게 추적
+  mouseX += (rawMX - mouseX) * 0.08;
+  mouseY += (rawMY - mouseY) * 0.08;
+
+  ctx.clearRect(0, 0, W, H);
+
+  drawBackground();
+  drawStars(t);
+  drawCursorGlow();
+  drawConstellations();
+  drawNodes(t);
+
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>
