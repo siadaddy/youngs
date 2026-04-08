@@ -387,7 +387,7 @@ const tip  = document.getElementById('tip');
 // Scene / Camera / Renderer
 // ═══════════════════════════════════════════════════
 const scene    = new THREE.Scene();
-scene.fog      = new THREE.FogExp2(0x000008, 0.0018);
+scene.fog      = new THREE.FogExp2(0x000008, 0.0011);
 scene.background = new THREE.Color(0x000008);
 
 // 은하 전체를 담는 그룹 (다축 회전 구현용)
@@ -445,29 +445,208 @@ controls.addEventListener('end', () => {
 });
 
 // ═══════════════════════════════════════════════════
-// 별 배경
+// 별 배경 (다층 + 색상 다양 + 은하수 띠)
 // ═══════════════════════════════════════════════════
 (function buildStars() {
-  const geo = new THREE.BufferGeometry();
-  const pos = new Float32Array(5000 * 3);
-  const col = new Float32Array(5000 * 3);
-  for (let i = 0; i < 5000; i++) {
-    pos[i*3]   = (Math.random()-.5)*2400;
-    pos[i*3+1] = (Math.random()-.5)*2400;
-    pos[i*3+2] = (Math.random()-.5)*2400;
-    const t = Math.random();
-    col[i*3]   = 0.7 + t*0.3;
-    col[i*3+1] = 0.75 + t*0.25;
-    col[i*3+2] = 1;
+  // ── 1. 미세한 별 12,000개 (색상 다양) ──
+  {
+    const N = 12000;
+    const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    // 별 색: 청백(O형), 하얀(A형), 노랑(태양), 주황(K형), 붉은(적색거성)
+    const palette = [
+      [0.7,0.82,1.0],[0.95,0.95,1.0],[1.0,1.0,0.82],[1.0,0.78,0.55],[1.0,0.52,0.38]
+    ];
+    for (let i = 0; i < N; i++) {
+      pos[i*3]=(Math.random()-.5)*3000; pos[i*3+1]=(Math.random()-.5)*3000; pos[i*3+2]=(Math.random()-.5)*3000;
+      const c = palette[Math.floor(Math.random()*palette.length)];
+      const b = 0.35 + Math.random()*0.65;
+      col[i*3]=c[0]*b; col[i*3+1]=c[1]*b; col[i*3+2]=c[2]*b;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('color',    new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:0.5, vertexColors:true, transparent:true, opacity:0.85,
+      blending:THREE.AdditiveBlending, depthWrite:false,
+    })));
   }
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
-  scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
-    size: 0.55, vertexColors: true,
-    transparent: true, opacity: 0.7,
-    blending: THREE.AdditiveBlending, depthWrite: false,
-  })));
+  // ── 2. 밝은 별 700개 (bloom 반응) ──
+  {
+    const N = 700;
+    const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    for (let i = 0; i < N; i++) {
+      pos[i*3]=(Math.random()-.5)*2800; pos[i*3+1]=(Math.random()-.5)*2800; pos[i*3+2]=(Math.random()-.5)*2800;
+      const t = Math.random();
+      col[i*3]=0.88+t*0.12; col[i*3+1]=0.9+t*0.1; col[i*3+2]=1.0;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('color',    new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:1.6, vertexColors:true, transparent:true, opacity:0.9,
+      blending:THREE.AdditiveBlending, depthWrite:false,
+    })));
+  }
+  // ── 3. 은하수 띠 (기울어진 원반 형태) ──
+  {
+    const N = 7000;
+    const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    const TILT = Math.PI / 5.5;
+    for (let i = 0; i < N; i++) {
+      const angle  = Math.random() * Math.PI * 2;
+      const r      = 350 + Math.random() * 1000;
+      const spread = (Math.random() - .5) * 140;
+      pos[i*3]   = Math.cos(angle) * r;
+      pos[i*3+1] = spread * Math.cos(TILT) + Math.sin(angle) * r * Math.sin(TILT) * 0.18;
+      pos[i*3+2] = Math.sin(angle) * r      + spread * Math.sin(TILT) * 0.28;
+      const b = 0.15 + Math.random() * 0.45;
+      col[i*3]=b*0.88; col[i*3+1]=b*0.84; col[i*3+2]=b;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('color',    new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:0.42, vertexColors:true, transparent:true, opacity:0.5,
+      blending:THREE.AdditiveBlending, depthWrite:false,
+    })));
+  }
 })();
+
+// ═══════════════════════════════════════════════════
+// 성운 (Nebulae) — 배경 컬러 클라우드
+// ═══════════════════════════════════════════════════
+const nebulae = [];
+function buildNebulae() {
+  const configs = [
+    { hue:210, x:-850, y: 280, z:-550, size:820 },
+    { hue:275, x: 650, y:-320, z:-780, size:700 },
+    { hue:330, x:-420, y:-480, z: 720, size:650 },
+    { hue:185, x: 880, y: 380, z: 320, size:760 },
+    { hue: 35, x: 180, y: 680, z:-680, size:580 },
+    { hue:250, x:-720, y: 560, z: 520, size:700 },
+    { hue:160, x: 300, y:-650, z:-400, size:540 },
+  ];
+  configs.forEach(cfg => {
+    const cvs = document.createElement('canvas');
+    cvs.width = cvs.height = 256;
+    const ctx = cvs.getContext('2d');
+    const g = ctx.createRadialGradient(128,128,0,128,128,128);
+    g.addColorStop(0,    `hsla(${cfg.hue},80%,65%,0.45)`);
+    g.addColorStop(0.38, `hsla(${cfg.hue},70%,50%,0.2)`);
+    g.addColorStop(0.72, `hsla(${cfg.hue},60%,40%,0.06)`);
+    g.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,256,256);
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: new THREE.CanvasTexture(cvs),
+      transparent:true, blending:THREE.AdditiveBlending, depthWrite:false,
+    }));
+    spr.position.set(cfg.x, cfg.y, cfg.z);
+    spr.scale.setScalar(cfg.size);
+    spr.userData.baseOp = 0.1 + Math.random()*0.08;
+    spr.userData.phase  = Math.random() * Math.PI * 2;
+    spr.material.opacity = spr.userData.baseOp;
+    scene.add(spr);
+    nebulae.push(spr);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// 지구 (Earth)
+// ═══════════════════════════════════════════════════
+let earthGroup = null;
+
+function makeEarthTex() {
+  const S = 1024;
+  const cvs = document.createElement('canvas');
+  cvs.width = cvs.height = S;
+  const ctx = cvs.getContext('2d');
+  // 해양
+  ctx.fillStyle = '#0f2d58'; ctx.fillRect(0,0,S,S);
+  const og = ctx.createLinearGradient(0,0,S,S);
+  og.addColorStop(0,'rgba(8,22,55,0.5)'); og.addColorStop(0.5,'rgba(18,52,105,0.25)'); og.addColorStop(1,'rgba(4,15,40,0.5)');
+  ctx.fillStyle=og; ctx.fillRect(0,0,S,S);
+  // 대륙 helper
+  function land(cx,cy,rx,ry,rot,base,hi){
+    ctx.save(); ctx.translate(cx*S,cy*S); ctx.rotate(rot);
+    ctx.fillStyle=base; ctx.beginPath(); ctx.ellipse(0,0,rx*S,ry*S,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=hi;   ctx.beginPath(); ctx.ellipse(-rx*S*.08,-ry*S*.1,rx*S*.58,ry*S*.52,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  land(0.18,0.30, 0.08,0.13, 0.35, '#26531f','#337a2a');  // 북미
+  land(0.23,0.62, 0.055,0.12,-0.15,'#265020','#317528');  // 남미
+  land(0.47,0.28, 0.038,0.07, 0.1, '#284f22','#35732c');  // 유럽
+  land(0.50,0.58, 0.065,0.13, 0.05,'#2b5421','#387030');  // 아프리카
+  land(0.64,0.34, 0.13,0.11, -0.2,'#274e21','#33692c');   // 아시아
+  land(0.73,0.65, 0.052,0.052, 0.3,'#285022','#34702e');  // 호주
+  land(0.25,0.13, 0.032,0.046, 0.0,'#bcd4c8','#d2eae2');  // 그린란드
+  // 북극
+  const np=ctx.createRadialGradient(S/2,0,0,S/2,0,S*0.14);
+  np.addColorStop(0,'rgba(218,232,255,1)'); np.addColorStop(0.65,'rgba(200,218,252,0.65)'); np.addColorStop(1,'rgba(180,200,248,0)');
+  ctx.fillStyle=np; ctx.fillRect(0,0,S,S*0.16);
+  // 남극
+  const sp=ctx.createRadialGradient(S/2,S,0,S/2,S,S*0.12);
+  sp.addColorStop(0,'rgba(228,238,255,1)'); sp.addColorStop(0.65,'rgba(208,222,255,0.55)'); sp.addColorStop(1,'rgba(190,208,255,0)');
+  ctx.fillStyle=sp; ctx.fillRect(0,S*0.86,S,S*0.14);
+  return new THREE.CanvasTexture(cvs);
+}
+
+function buildEarth() {
+  earthGroup = new THREE.Group();
+  // 지구 구체
+  const earth = new THREE.Mesh(
+    new THREE.SphereGeometry(62, 64, 32),
+    new THREE.MeshPhongMaterial({ map:makeEarthTex(), shininess:18, specular:new THREE.Color(0x1a3a66) })
+  );
+  earthGroup.add(earth);
+  // 구름 레이어
+  const cloudCvs = document.createElement('canvas');
+  cloudCvs.width = cloudCvs.height = 512;
+  const cctx = cloudCvs.getContext('2d');
+  cctx.fillStyle='rgba(0,0,0,0)'; cctx.fillRect(0,0,512,512);
+  for (let i=0;i<60;i++){
+    const cx=Math.random()*512,cy=Math.random()*512,rx=20+Math.random()*55,ry=8+Math.random()*22;
+    const g=cctx.createRadialGradient(cx,cy,0,cx,cy,rx);
+    g.addColorStop(0,'rgba(255,255,255,0.55)'); g.addColorStop(1,'rgba(255,255,255,0)');
+    cctx.fillStyle=g; cctx.beginPath(); cctx.ellipse(cx,cy,rx,ry,Math.random()*Math.PI,0,Math.PI*2); cctx.fill();
+  }
+  const cloud = new THREE.Mesh(
+    new THREE.SphereGeometry(63.5, 64, 32),
+    new THREE.MeshPhongMaterial({ map:new THREE.CanvasTexture(cloudCvs), transparent:true, opacity:0.38, depthWrite:false })
+  );
+  earthGroup.add(cloud);
+  // 대기권 글로우
+  const atm = new THREE.Mesh(
+    new THREE.SphereGeometry(67, 32, 16),
+    new THREE.MeshPhongMaterial({ color:new THREE.Color(0x3366bb), transparent:true, opacity:0.1, side:THREE.BackSide, blending:THREE.AdditiveBlending, depthWrite:false })
+  );
+  earthGroup.add(atm);
+
+  earthGroup.position.set(-380, -100, -260);
+  earthGroup.rotation.z = 0.41;  // 지축 기울기
+  scene.add(earthGroup);
+
+  // 지구용 조명
+  const sun = new THREE.DirectionalLight(0xfff8ee, 1.1);
+  sun.position.set(2, 0.6, 1.5);
+  scene.add(sun);
+  scene.add(new THREE.AmbientLight(0x0d1a33, 0.8));
+}
+
+// ═══════════════════════════════════════════════════
+// 별똥별 (Shooting Star)
+// ═══════════════════════════════════════════════════
+let shootMesh, shootTimer = 420;
+let shootProgress = -1, shootStart = new THREE.Vector3(), shootDir = new THREE.Vector3();
+
+function initShootStar() {
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+  shootMesh = new THREE.Line(geo, new THREE.LineBasicMaterial({
+    color:0xffffff, transparent:true, opacity:0,
+    blending:THREE.AdditiveBlending, linewidth:2,
+  }));
+  scene.add(shootMesh);
+}
 
 // ═══════════════════════════════════════════════════
 // 노드 텍스처 캐시
@@ -610,6 +789,33 @@ function animate() {
   // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
   bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
 
+  // ── 지구 자전 ──
+  if (earthGroup) earthGroup.rotation.y += 0.0008;
+
+  // ── 성운 숨쉬기 ──
+  nebulae.forEach(n => {
+    n.userData.phase += 0.004;
+    n.material.opacity = n.userData.baseOp + Math.sin(n.userData.phase) * 0.035;
+  });
+
+  // ── 별똥별 ──
+  if (--shootTimer <= 0) {
+    shootTimer = 480 + Math.random() * 660;
+    shootStart.set((Math.random()-.5)*1600, 280+Math.random()*380, (Math.random()-.5)*900);
+    shootDir.set((Math.random()-.5)*1.2, -1-Math.random()*.8, (Math.random()-.5)*.6).normalize();
+    shootProgress = 0;
+  }
+  if (shootProgress >= 0) {
+    shootProgress += 2.8;
+    const head = shootStart.clone().addScaledVector(shootDir, shootProgress);
+    const tail = shootStart.clone().addScaledVector(shootDir, Math.max(0, shootProgress - 90));
+    const arr = shootMesh.geometry.attributes.position.array;
+    head.toArray(arr, 0); tail.toArray(arr, 3);
+    shootMesh.geometry.attributes.position.needsUpdate = true;
+    shootMesh.material.opacity = Math.sin(Math.min(shootProgress/180, 1) * Math.PI) * 0.85;
+    if (shootProgress > 200) { shootProgress = -1; shootMesh.material.opacity = 0; }
+  }
+
   controls.update();
 
   // 호버 감지
@@ -674,6 +880,9 @@ async function init() {
     }
   } catch {}
 
+  buildNebulae();
+  buildEarth();
+  initShootStar();
   buildGalaxy(songs);
 
   // 로딩 화면 제거
