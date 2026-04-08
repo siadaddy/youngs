@@ -771,29 +771,35 @@ window.addEventListener('click', () => {
 });
 
 // ── 모바일 터치 ──
+// 레이캐스터 대신 화면 좌표 직접 비교 (그룹 회전 오차 없음)
 let _tx = 0, _ty = 0;
+const _wpos = new THREE.Vector3();
+
 window.addEventListener('touchstart', e => {
   const t = e.touches[0];
   _tx = t.clientX; _ty = t.clientY;
-  mouse.x =  (t.clientX / W) * 2 - 1;
-  mouse.y = -(t.clientY / H) * 2 + 1;
-  mouseX = t.clientX; mouseY = t.clientY;
 }, { passive: true });
 
 window.addEventListener('touchend', e => {
   const t = e.changedTouches[0];
   const dx = t.clientX - _tx, dy = t.clientY - _ty;
-  if (dx*dx + dy*dy > 144) return;   // 12px 이상 드래그면 무시
+  if (dx*dx + dy*dy > 200) return;   // ~14px 이상 드래그면 무시
 
-  mouse.x =  (t.clientX / W) * 2 - 1;
-  mouse.y = -(t.clientY / H) * 2 + 1;
+  // 각 별의 월드 좌표 → 화면 좌표로 투영 → 탭 위치와 거리 계산
+  let closest = null, minDist = Infinity;
+  sprites.forEach(s => {
+    s.getWorldPosition(_wpos);
+    _wpos.project(camera);
+    if (_wpos.z > 1) return;   // 카메라 뒤에 있는 별 제외
+    const sx = (_wpos.x + 1) / 2 * W;
+    const sy = (1 - _wpos.y) / 2 * H;
+    const dist = Math.hypot(sx - t.clientX, sy - t.clientY);
+    if (dist < minDist) { minDist = dist; closest = s; }
+  });
 
-  ray.setFromCamera(mouse, camera);
-  const hits = ray.intersectObjects(sprites);
-  if (!hits.length) return;
+  if (!closest || minDist > 70) return;   // 70px 이내 별만 반응
 
-  const s = hits[0].object;
-  const idx = sprites.indexOf(s);
+  const idx = sprites.indexOf(closest);
   playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
     .map(sp => ({ t: sp.userData.t, a: sp.userData.a }));
   playIdx = 0;
