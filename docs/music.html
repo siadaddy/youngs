@@ -205,6 +205,10 @@ let playlist   = [];   // 현재 재생 큐 (song 배열)
 let playIdx    = 0;
 let isPlaying  = false;
 
+// ── 뮤직 리액티브 ──
+let musicEnergy = 0;   // 0(정지) → 1(재생), 부드럽게 lerp
+let beatPhase   = 0;   // 비트 시뮬레이션 위상 (~120 BPM)
+
 // YouTube API를 콜백 등록 후에 동적으로 로드 (타이밍 보장)
 window.onYouTubeIframeAPIReady = function () {
   ytPlayer = new YT.Player('yt-frame', {
@@ -537,6 +541,20 @@ function animate() {
   requestAnimationFrame(animate);
   tick++;
 
+  // ── 뮤직 에너지 lerp ──
+  musicEnergy += ((isPlaying ? 1 : 0) - musicEnergy) * 0.035;
+
+  // 비트 시뮬레이션 ~120 BPM (60fps 기준 0.0333 * 2π rad/frame)
+  beatPhase += 0.0333 * Math.PI * 2;
+  // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
+  const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
+
+  // ── 회전 속도: 정지 0.2 → 재생 최대 1.8 ──
+  controls.autoRotateSpeed = 0.2 + musicEnergy * 1.6;
+
+  // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
+  bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
+
   controls.update();
 
   // 호버 감지
@@ -571,11 +589,14 @@ function animate() {
     tip.style.opacity = '1';
   }
 
-  // 모든 노드 숨쉬기
+  // ── 모든 노드 숨쉬기 (음악 에너지 반영) ──
   sprites.forEach((s, i) => {
     if (s === hovered) return;
-    const p = Math.sin(tick * .022 + i * .45) * 1.5;
-    s.scale.setScalar(s.userData.base + p);
+    // 정지: 느린 잔잔한 숨쉬기 / 재생: 빠르고 큰 맥동 + 비트 리액션
+    const calmPulse     = Math.sin(tick * .022 + i * .45) * 1.5;
+    const energyPulse   = Math.sin(tick * .075 + i * .45) * (2.5 + beat * 6);
+    const combinedPulse = calmPulse * (1 - musicEnergy) + energyPulse * musicEnergy;
+    s.scale.setScalar(s.userData.base + combinedPulse);
   });
 
   composer.render();
