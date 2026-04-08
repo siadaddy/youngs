@@ -1,12 +1,8 @@
 {
-  "updated": "2026-04-08",
+  "updated": "2026-04-09",
   "songs": [
     {
       "t": "Butter",
-      "a": "BTS"
-    },
-    {
-      "t": "Permission to Dance",
       "a": "BTS"
     },
     {
@@ -14,104 +10,184 @@
       "a": "BTS"
     },
     {
-      "t": "Hot Sauce",
-      "a": "NCT DREAM"
+      "t": "Permission to Dance",
+      "a": "BTS"
     },
     {
-      "t": "Sticker",
-      "a": "NCT 127"
+      "t": "Lalisa",
+      "a": "LISA"
     },
     {
-      "t": "Superhuman",
-      "a": "NCT 127"
+      "t": "Money",
+      "a": "LISA"
     },
     {
-      "t": "Lilac",
-      "a": "IU"
+      "t": "How You Like That",
+      "a": "BLACKPINK"
     },
     {
-      "t": "Celebrity",
-      "a": "IU"
+      "t": "DDU-DU DDU-DU",
+      "a": "BLACKPINK"
     },
     {
-      "t": "Eight",
-      "a": "IU feat. Suga"
+      "t": "Kill This Love",
+      "a": "BLACKPINK"
     },
     {
-      "t": "Antifragile",
-      "a": "LE SSERAFIM"
+      "t": "Boy With Luv",
+      "a": "BTS, Halsey"
     },
     {
-      "t": "Eyes On You",
-      "a": "LE SSERAFIM"
+      "t": "Fancy",
+      "a": "TWICE"
+    },
+    {
+      "t": "Yes or Yes",
+      "a": "TWICE"
+    },
+    {
+      "t": "Cheer Up",
+      "a": "TWICE"
+    },
+    {
+      "t": "Eyes, Nose, Lips",
+      "a": "TAEYANG"
+    },
+    {
+      "t": "Solo",
+      "a": "JENNIE"
+    },
+    {
+      "t": "Gashina",
+      "a": "SUNMI"
+    },
+    {
+      "t": "Hero",
+      "a": "MONSTA X"
+    },
+    {
+      "t": "Shoot Out",
+      "a": "MONSTA X"
+    },
+    {
+      "t": "Hip",
+      "a": "MAMAMOO"
+    },
+    {
+      "t": "Egotistic",
+      "a": "MAMAMOO"
+    },
+    {
+      "t": "Love Scenario",
+      "a": "iKON"
+    },
+    {
+      "t": "Killing Me",
+      "a": "iKON"
+    },
+    {
+      "t": "Breathe",
+      "a": "Lee Hyori"
+    },
+    {
+      "t": "Paradise",
+      "a": "Chung Ha"
+    },
+    {
+      "t": "Roller Coaster",
+      "a": "Chung Ha"
+    },
+    {
+      "t": "Gotta Go",
+      "a": "TAEYEON"
+    },
+    {
+      "t": "Four Seasons",
+      "a": "TAEYEON"
+    },
+    {
+      "t": "Stay",
+      "a": "ZICO"
+    },
+    {
+      "t": "Any Song",
+      "a": "ZICO"
+    },
+    {
+      "t": "Holo",
+      "a": "Lee Hyori"
+    },
+    {
+      "t": "Dun Dun Dance",
+      "a": "OH MY GIRL"
+    },
+    {
+      "t": "Nonstop",
+      "a": "OH MY GIRL"
+    },
+    {
+      "t": "As If It's Your Last",
+      "a": "BLACKPINK"
+    },
+    {
+      "t": "Whistle",
+      "a": "BLACKPINK"
     },
     {
       "t": "Shut Down",
       "a": "BLACKPINK"
     },
     {
-      "t": "Pink Venom",
-      "a": "BLACKPINK"
-    },
-    {
-      "t": "Typa Girl",
-      "a": "BLACKPINK"
-    },
-    {
-      "t": "Case 143",
-      "a": "Stray Kids"
-    },
-    {
-      "t": "Can't Stop the Feeling!",
-      "a": "Justin Timberlake"
-    },
-    {
-      "t": "Stay with Me",
-      "a": "Sam Smith"
-    },
-    {
-      "t": "As It Was",
-      "a": "Harry Styles"
-    },
-    {
       "t": "About Damn Time",
       "a": "Lizzo"
-    },
-    {
-      "t": "Sunroof",
-      "a": "Nicky Youre & dazy"
-    },
-    {
-      "t": "First Class",
-      "a": "Jack Harlow"
-    },
-    {
-      "t": "Super Freaky Girl",
-      "a": "Nicki Minaj"
-    },
-    {
-      "t": "Major Distribution",
-      "a": "Drake & 21 Savage"
-    },
-    {
-      "t": "Cruel Summer",
-      "a": "Taylor Swift"
-    },
-    {
-      "t": "Bad Habits",
-      "a": "Ed Sheeran"
     },
     {
       "t": "Levitating",
       "a": "Dua Lipa"
     },
     {
-      "t": "Love Again",
+      "t": "Don't Start Now",
       "a": "Dua Lipa"
     },
     {
-      "t": "Pepas",
-      "a": "Farruko"
+      "t": "Peaches",
+      "a": "Justin Bieber, Daniel Caesar, Giveon"
+    },
+    {
+      "t": "Stay",
+      "a": "The Kid LAROI, Justin Bieber"
+    },
+    {
+      "t": "Heat Waves",
+      "a": "Glass Animals"
+    },
+    {
+      "t": "Bad Habits",
+      "a": "Ed Sheeran"
+    },
+    {
+      "t": "Shivers",
+      "a": "Ed Sheeran"
+    },
+    {
+      "t": "Good 4 U",
+      "a": "Olivia Rodrigo"
+    },
+    {
+      "t": "Drivers License",
+      "a": "Olivia Rodrigo"
+    },
+    {
+      "t": "Kiss Me More",
+      "a": "Doja Cat, SZA"
+    },
+    {
+      "t": "Woman",
+      "a": "Doja Cat"
+    },
+    {
+      "t": "Astronaut In The Ocean",
+      "a": "Masked Wolf"
     },
     {
       "t": "Montero (Call Me By Your Name)",
@@ -119,63 +195,7 @@
     },
     {
       "t": "Industry Baby",
-      "a": "Lil Nas X feat. Jack Harlow"
-    },
-    {
-      "t": "Drivers License",
-      "a": "Olivia Rodrigo"
-    },
-    {
-      "t": "Good 4 U",
-      "a": "Olivia Rodrigo"
-    },
-    {
-      "t": "Shivers",
-      "a": "Ed Sheeran"
-    },
-    {
-      "t": "Ghost",
-      "a": "Justin Bieber"
-    },
-    {
-      "t": "Stay",
-      "a": "The Kid LAROI & Justin Bieber"
-    },
-    {
-      "t": "Kiss Me More",
-      "a": "Doja Cat feat. SZA"
-    },
-    {
-      "t": "Woman",
-      "a": "Doja Cat"
-    },
-    {
-      "t": "NDA",
-      "a": "Billie Eilish"
-    },
-    {
-      "t": "Happier Than Ever",
-      "a": "Billie Eilish"
-    },
-    {
-      "t": "Easy On Me",
-      "a": "Adele"
-    },
-    {
-      "t": "Oh My God",
-      "a": "Adele"
-    },
-    {
-      "t": "Love Nwantiti (Ah Ah Ah)",
-      "a": "CKay"
-    },
-    {
-      "t": "Astronaut in the Ocean",
-      "a": "Masked Wolf"
-    },
-    {
-      "t": "Heat Waves",
-      "a": "Glass Animals"
+      "a": "Lil Nas X, Jack Harlow"
     },
     {
       "t": "Save Your Tears",
@@ -186,56 +206,12 @@
       "a": "The Weeknd"
     },
     {
-      "t": "Peaches",
-      "a": "The Weeknd feat. Daniel Caesar & Giveon"
+      "t": "Get You",
+      "a": "Daniel Caesar"
     },
     {
-      "t": "Good Days",
-      "a": "SZA"
-    },
-    {
-      "t": "Kiss You This Way",
-      "a": "Heize"
-    },
-    {
-      "t": "Hype Boy",
-      "a": "NewJeans"
-    },
-    {
-      "t": "OMG",
-      "a": "NewJeans"
-    },
-    {
-      "t": "Cookie",
-      "a": "NewJeans"
-    },
-    {
-      "t": "Love Me Like You Do",
-      "a": "Zion.T"
-    },
-    {
-      "t": "Girls",
-      "a": "Code Kunst feat. Lee Hyori & Yoon Mirae"
-    },
-    {
-      "t": "Merry-Go-Round",
-      "a": "Sik-K feat. pH-1 & Jay Park"
-    },
-    {
-      "t": "Any Song",
-      "a": "Zico"
-    },
-    {
-      "t": "Eyes, Nose, Lips",
-      "a": "TAEYANG"
-    },
-    {
-      "t": "Ditto",
-      "a": "NewJeans"
-    },
-    {
-      "t": "Boy With Luv",
-      "a": "BTS feat. Halsey"
+      "t": "Eastside",
+      "a": "Benny Blanco, Halsey, Khalid"
     }
   ]
 }
