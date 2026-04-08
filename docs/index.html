@@ -1636,6 +1636,12 @@
       } else {
         try { fr.contentWindow.dispatchEvent(new Event('resize')); } catch(e) {}
       }
+      // iframe 로드 후 전체화면으로 전환
+      const goFull = () => {
+        const rfs = fr.requestFullscreen || fr.webkitRequestFullscreen || fr.mozRequestFullScreen;
+        if (rfs) rfs.call(fr).catch(() => {});
+      };
+      fr.getAttribute('src') ? goFull() : fr.addEventListener('load', goFull, { once: true });
     }
   }
 
