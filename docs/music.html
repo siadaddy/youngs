@@ -6,101 +6,55 @@
   <title>Music Universe</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-
     body {
-      background: #04040c;
-      overflow: hidden;
-      font-family: 'Apple SD Gothic Neo', -apple-system, 'Noto Sans KR', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      cursor: none;
+      background:#04040e;
+      overflow:hidden;
+      font-family:'Apple SD Gothic Neo',-apple-system,'Noto Sans KR',sans-serif;
+      -webkit-font-smoothing:antialiased;
+      cursor:none;
     }
-
     canvas { display:block; position:fixed; top:0; left:0; }
 
-    /* 커서 */
     #cur {
-      position: fixed;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.9);
-      pointer-events: none;
-      z-index: 999;
-      transform: translate(-50%,-50%);
-      transition: width .15s, height .15s, background .3s;
-      box-shadow: 0 0 12px 4px rgba(255,255,255,0.25);
+      position:fixed; width:10px; height:10px; border-radius:50%;
+      background:rgba(255,255,255,0.85); pointer-events:none; z-index:999;
+      transform:translate(-50%,-50%);
+      box-shadow:0 0 10px 3px rgba(255,255,255,0.2);
+      transition:width .15s,height .15s;
     }
-    #cur.hover { width:20px; height:20px; background:rgba(255,255,255,0.4); }
+    #cur.hover { width:22px; height:22px; background:rgba(255,255,255,0.3); }
 
-    /* UI */
     #ui { position:fixed; inset:0; pointer-events:none; z-index:10; }
 
-    /* 상단 바 */
     #top {
       position:absolute; top:0; left:0; right:0;
       display:flex; align-items:center; justify-content:space-between;
       padding:28px 36px;
     }
-    .logo {
-      font-size:11px; letter-spacing:4px;
-      color:rgba(255,255,255,0.2); text-transform:uppercase;
-    }
+    .logo { font-size:11px; letter-spacing:4px; color:rgba(255,255,255,0.18); text-transform:uppercase; }
     .back {
-      font-size:11px; letter-spacing:2px;
-      color:rgba(255,255,255,0.2); text-decoration:none;
-      pointer-events:all; transition:color .3s;
+      font-size:11px; letter-spacing:2px; color:rgba(255,255,255,0.18);
+      text-decoration:none; pointer-events:all; transition:color .3s;
     }
     .back:hover { color:rgba(255,255,255,0.7); }
 
-    /* 무드 */
-    #mood-bar {
-      position:absolute; bottom:32px; left:50%;
-      transform:translateX(-50%);
-      display:flex; gap:8px; flex-wrap:wrap;
-      justify-content:center;
-      pointer-events:all;
-    }
-    .mp {
-      padding:8px 18px;
-      border-radius:100px;
-      border:1px solid rgba(255,255,255,0.08);
-      background:rgba(0,0,0,0.55);
-      backdrop-filter:blur(24px);
-      color:rgba(255,255,255,0.35);
-      font-size:12px; letter-spacing:.5px;
-      cursor:none; transition:all .4s cubic-bezier(.4,0,.2,1);
-      white-space:nowrap;
-    }
-    .mp.active, .mp:hover {
-      color:rgba(255,255,255,0.92);
-      border-color:rgba(255,255,255,0.25);
-      background:rgba(255,255,255,0.07);
+    #date-badge {
+      position:absolute; top:28px; left:50%; transform:translateX(-50%);
+      font-size:10px; letter-spacing:3px; color:rgba(255,255,255,0.15);
+      text-transform:uppercase;
     }
 
-    /* 툴팁 */
     #tip {
       position:fixed; z-index:50;
-      padding:12px 18px;
-      background:rgba(4,4,20,0.88);
-      border:1px solid rgba(255,255,255,0.1);
-      border-radius:16px;
-      backdrop-filter:blur(24px);
-      pointer-events:none;
-      opacity:0; transition:opacity .2s;
+      padding:11px 16px;
+      background:rgba(4,4,20,0.9);
+      border:1px solid rgba(255,255,255,0.09);
+      border-radius:14px; backdrop-filter:blur(20px);
+      pointer-events:none; opacity:0; transition:opacity .2s;
     }
-    #tip-t { font-size:14px; font-weight:600; color:rgba(255,255,255,.95); }
+    #tip-t { font-size:13px; font-weight:600; color:rgba(255,255,255,.92); }
     #tip-a { font-size:11px; color:rgba(255,255,255,.35); margin-top:3px; }
-    #tip-h { font-size:10px; color:rgba(255,255,255,.2); margin-top:7px; letter-spacing:1.5px; }
-
-    /* 힌트 */
-    #hint {
-      position:absolute; top:50%; left:50%;
-      transform:translate(-50%,-50%);
-      font-size:11px; letter-spacing:3px; text-align:center;
-      color:rgba(255,255,255,0.15); line-height:2.2;
-      pointer-events:none;
-      animation:hFade 10s ease-in-out forwards;
-    }
-    @keyframes hFade { 0%,50%{opacity:1} 100%{opacity:0} }
+    #tip-h { font-size:9px; color:rgba(255,255,255,.18); margin-top:7px; letter-spacing:2px; }
   </style>
 </head>
 <body>
@@ -113,17 +67,7 @@
     <span class="logo">Music Universe</span>
     <a class="back" href="index.html">← Home</a>
   </div>
-
-  <div id="hint">마우스를 움직여보세요<br>별을 클릭하면 재생됩니다</div>
-
-  <div id="mood-bar">
-    <button class="mp active" data-mood="night">🌙 밤에 혼자</button>
-    <button class="mp" data-mood="drive">🚗 드라이브</button>
-    <button class="mp" data-mood="focus">💻 집중</button>
-    <button class="mp" data-mood="happy">🎉 기분 좋은 날</button>
-    <button class="mp" data-mood="emotion">💙 감성 충전</button>
-    <button class="mp" data-mood="energy">⚡ 에너지</button>
-  </div>
+  <div id="date-badge" id="date-badge"></div>
 </div>
 
 <div id="tip">
@@ -133,61 +77,48 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════
-// 데이터
-// ═══════════════════════════════════════
-const SONGS = {
-  night:   [
-    {t:'밤편지',a:'IU'},{t:'The Night We Met',a:'Lord Huron'},
-    {t:'Holocene',a:'Bon Iver'},{t:'주저하는 연인들을 위해',a:'잔나비'},
-    {t:'Slow Dancing in the Dark',a:'Joji'},{t:'봄날',a:'BTS'},
-    {t:'야간비행',a:'이적'},{t:'Beautiful Boy',a:'John Lennon'},
-  ],
-  drive:   [
-    {t:'Blinding Lights',a:'The Weeknd'},{t:'Starboy',a:'The Weeknd'},
-    {t:'Attention',a:'NewJeans'},{t:'Drama',a:'aespa'},
-    {t:'Levitating',a:'Dua Lipa'},{t:'APT.',a:'ROSÉ & Bruno Mars'},
-    {t:'Smooth Operator',a:'Sade'},{t:'드라이브',a:'크러쉬'},
-  ],
-  focus:   [
-    {t:'Experience',a:'Ludovico Einaudi'},{t:'Nuvole Bianche',a:'Ludovico Einaudi'},
-    {t:'Gymnopédie No.1',a:'Erik Satie'},{t:'Weightless',a:'Marconi Union'},
-    {t:'Clair de Lune',a:'Debussy'},{t:'Time',a:'Hans Zimmer'},
-    {t:'River Flows in You',a:'Yiruma'},{t:'시',a:'혁오'},
-  ],
-  happy:   [
-    {t:'Dynamite',a:'BTS'},{t:'24K Magic',a:'Bruno Mars'},
-    {t:'APT.',a:'ROSÉ & Bruno Mars'},{t:'Queencard',a:'(G)I-DLE'},
-    {t:'Physical',a:'Dua Lipa'},{t:'How You Like That',a:'BLACKPINK'},
-    {t:'Magnetic',a:'ILLIT'},{t:'Permission to Dance',a:'BTS'},
-  ],
-  emotion: [
-    {t:'사랑하긴 했었나요',a:'잔나비'},{t:'11:11',a:'태연'},
-    {t:'Someone Like You',a:'Adele'},{t:'Rain and You',a:'크러쉬'},
-    {t:'사랑이 잘',a:'IU & 오혁'},{t:'Epiphany',a:'Jin (BTS)'},
-    {t:'만약에',a:'태연'},{t:'Hallelujah',a:'Pentatonix'},
-  ],
-  energy:  [
-    {t:'Savage',a:'aespa'},{t:'GODS',a:'NewJeans'},
-    {t:'Pink Venom',a:'BLACKPINK'},{t:'MONEY',a:'LISA'},
-    {t:'Nxde',a:'(G)I-DLE'},{t:'Supernova',a:'aespa'},
-    {t:"Don't Start Now",a:'Dua Lipa'},{t:'How You Like That',a:'BLACKPINK'},
-  ],
-};
+// ─── 폴백 데이터 (music.json 로드 실패 시) ───────────────────
+const FALLBACK = [
+  {t:'Supernova',a:'aespa'},{t:'Drama',a:'aespa'},
+  {t:'APT.',a:'ROSÉ & Bruno Mars'},{t:'Attention',a:'NewJeans'},
+  {t:'Ditto',a:'NewJeans'},{t:'Hype Boy',a:'NewJeans'},
+  {t:'Magnetic',a:'ILLIT'},{t:'Lucky Girl Syndrome',a:'ILLIT'},
+  {t:'Love Dive',a:'IVE'},{t:'After LIKE',a:'IVE'},
+  {t:'Queencard',a:'(G)I-DLE'},{t:'Nxde',a:'(G)I-DLE'},
+  {t:'Pink Venom',a:'BLACKPINK'},{t:'How You Like That',a:'BLACKPINK'},
+  {t:'Dynamite',a:'BTS'},{t:'Butter',a:'BTS'},
+  {t:'봄날',a:'BTS'},{t:'Permission to Dance',a:'BTS'},
+  {t:'Celebrity',a:'IU'},{t:'밤편지',a:'IU'},
+  {t:'좋은 날',a:'IU'},{t:'사랑이 잘',a:'IU & 오혁'},
+  {t:'주저하는 연인들을 위해',a:'잔나비'},{t:'전설',a:'잔나비'},
+  {t:'나의 사랑 나의 신부',a:'잔나비'},{t:'11:11',a:'태연'},
+  {t:'Rain and You',a:'크러쉬'},{t:'Beautiful',a:'크러쉬'},
+  {t:'Blinding Lights',a:'The Weeknd'},{t:'Starboy',a:'The Weeknd'},
+  {t:'Levitating',a:'Dua Lipa'},{t:"Don't Start Now",a:'Dua Lipa'},
+  {t:'Physical',a:'Dua Lipa'},{t:'24K Magic',a:'Bruno Mars'},
+  {t:'Uptown Funk',a:'Bruno Mars'},{t:'Finesse',a:'Bruno Mars'},
+  {t:'Golden Hour',a:'JVKE'},{t:'Dandelions',a:'Ruth B.'},
+  {t:'Die For You',a:'The Weeknd'},{t:'Save Your Tears',a:'The Weeknd'},
+  {t:'Someone Like You',a:'Adele'},{t:'Easy On Me',a:'Adele'},
+  {t:'Flowers',a:'Miley Cyrus'},{t:'Wrecking Ball',a:'Miley Cyrus'},
+  {t:'Espresso',a:'Sabrina Carpenter'},{t:'Please Please Please',a:'Sabrina Carpenter'},
+  {t:'Taste',a:'Sabrina Carpenter'},{t:'Birds of a Feather',a:'Billie Eilish'},
+  {t:'What Was I Made For',a:'Billie Eilish'},{t:'lovely',a:'Billie Eilish & Khalid'},
+  {t:'Slow Dancing in the Dark',a:'Joji'},{t:'Glimpse of Us',a:'Joji'},
+  {t:'The Night We Met',a:'Lord Huron'},{t:'Holocene',a:'Bon Iver'},
+  {t:'GODS',a:'NewJeans'},{t:'Savage',a:'aespa'},
+  {t:'Spicy',a:'aespa'},{t:'Karma',a:'aespa'},
+  {t:'Money',a:'LISA'},{t:'Rockstar',a:'LISA'},
+  {t:'Seven',a:'정국'},{t:'3D',a:'정국'},
+  {t:'Dreamers',a:'정국'},{t:'On the Street',a:'j-hope'},
+  {t:'Latch',a:'Disclosure'},{t:'Oceans',a:'Hillsong'},
+  {t:'Peaches',a:'Justin Bieber'},{t:'Ghost',a:'Justin Bieber'},
+  {t:'Watermelon Sugar',a:'Harry Styles'},{t:'As It Was',a:'Harry Styles'},
+  {t:'Stay',a:'The Kid LAROI'},{t:'Demons',a:'Imagine Dragons'},
+  {t:'Natural',a:'Imagine Dragons'},{t:'Believer',a:'Imagine Dragons'},
+];
 
-// 무드 파라미터: 컬러 팔레트(RGB), 속도, 난류강도, 잔상속도, 파티클 수
-const MCFG = {
-  night:   { c:[[130,100,255],[80,55,200],[190,150,255]], spd:.38, turb:.65, fade:.07, nb:'rgba(20,10,60,0.18)' },
-  drive:   { c:[[255,130,40],[255,195,55],[255,70,30]],   spd:1.2,  turb:.40, fade:.14, nb:'rgba(60,20,5,0.18)'  },
-  focus:   { c:[[52,211,153],[6,182,212],[100,160,255]],  spd:.50,  turb:.22, fade:.08, nb:'rgba(5,30,40,0.18)'  },
-  happy:   { c:[[244,114,182],[252,100,100],[255,180,80]], spd:.95, turb:.55, fade:.13, nb:'rgba(50,5,35,0.18)'  },
-  emotion: { c:[[96,165,250],[130,140,255],[180,140,255]], spd:.42, turb:.60, fade:.08, nb:'rgba(5,15,45,0.18)'  },
-  energy:  { c:[[239,68,68],[249,115,22],[250,200,0]],    spd:1.5,  turb:.85, fade:.18, nb:'rgba(40,5,5,0.18)'   },
-};
-
-// ═══════════════════════════════════════
-// 캔버스
-// ═══════════════════════════════════════
+// ─── 캔버스 ───────────────────────────────────────────────────
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 let W = canvas.width  = innerWidth;
@@ -196,293 +127,213 @@ let H = canvas.height = innerHeight;
 window.addEventListener('resize', () => {
   W = canvas.width  = innerWidth;
   H = canvas.height = innerHeight;
-  placeNodes();
+  buildStars();
+  buildNodes(songs);
 });
 
-// ═══════════════════════════════════════
-// 마우스
-// ═══════════════════════════════════════
-let mx = W/2, my = H/2;
-let tx = W/2, ty = H/2;
-let pvx = 0, pvy = 0; // prev velocity
+// ─── 마우스 ───────────────────────────────────────────────────
+let mx = W/2, my = H/2, tx = W/2, ty = H/2;
 const cur = document.getElementById('cur');
-
 window.addEventListener('mousemove', e => {
-  pvx = e.clientX - tx;
-  pvy = e.clientY - ty;
   tx = e.clientX; ty = e.clientY;
   cur.style.left = e.clientX + 'px';
   cur.style.top  = e.clientY + 'px';
 });
-
 window.addEventListener('click', e => {
-  const hit = hitNode(e.clientX, e.clientY);
-  if (hit) {
-    const q = encodeURIComponent(`${hit.t} ${hit.a}`);
-    window.open(`https://music.youtube.com/search?q=${q}`, '_blank');
-  }
+  const n = hitNode(e.clientX, e.clientY);
+  if (n) window.open(`https://music.youtube.com/search?q=${encodeURIComponent(n.t+' '+n.a)}`, '_blank');
 });
 
-// ═══════════════════════════════════════
-// 노이즈 기반 플로우 필드
-// ═══════════════════════════════════════
-function hash(x, y) {
-  const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-  return n - Math.floor(n);
-}
-function fade(t) { return t*t*t*(t*(t*6-15)+10); }
-function lerp(a, b, t) { return a + (b-a)*t; }
-function vnoise(x, y) {
-  const ix = Math.floor(x), iy = Math.floor(y);
-  const fx = x-ix, fy = y-iy;
-  const ux = fade(fx), uy = fade(fy);
-  return lerp(
-    lerp(hash(ix,iy),   hash(ix+1,iy),   ux),
-    lerp(hash(ix,iy+1), hash(ix+1,iy+1), ux),
-    uy
-  );
-}
-function flowAngle(x, y, t, turb) {
-  const sc = 0.0025;
-  const n1 = vnoise(x*sc + t*.18, y*sc);
-  const n2 = vnoise(x*sc - t*.12, y*sc + t*.09 + 4.3);
-  return (n1*2-1 + (n2*2-1)*0.6) * Math.PI * 3 * turb;
-}
-
-// ═══════════════════════════════════════
-// 현재 무드 보간 상태
-// ═══════════════════════════════════════
-let mood = 'night';
-let cur_c  = MCFG.night.c.map(v=>[...v]);
-let cur_spd = MCFG.night.spd;
-let cur_turb = MCFG.night.turb;
-let cur_fade = MCFG.night.fade;
-let tgt_c  = MCFG.night.c.map(v=>[...v]);
-let tgt_spd = MCFG.night.spd;
-let tgt_turb = MCFG.night.turb;
-let tgt_fade = MCFG.night.fade;
-let lerpP = 1;
-
-function setMood(m) {
-  if (m === mood) return;
-  mood = m;
-  const cfg = MCFG[m];
-  tgt_c    = cfg.c.map(v=>[...v]);
-  tgt_spd  = cfg.spd;
-  tgt_turb = cfg.turb;
-  tgt_fade = cfg.fade;
-  lerpP    = 0;
-  placeNodes();
-}
-
-function tickLerp() {
-  if (lerpP >= 1) return;
-  lerpP = Math.min(1, lerpP + 0.016);
-  const t = lerpP < 0.5 ? 2*lerpP*lerpP : 1-Math.pow(-2*lerpP+2,2)/2;
-  for (let i=0;i<3;i++)
-    for (let j=0;j<3;j++)
-      cur_c[i][j] = lerp(cur_c[i][j], tgt_c[i][j], t * 0.06);
-  cur_spd  = lerp(cur_spd,  tgt_spd,  t * 0.04);
-  cur_turb = lerp(cur_turb, tgt_turb, t * 0.04);
-  cur_fade = lerp(cur_fade, tgt_fade, t * 0.04);
-}
-
-// ═══════════════════════════════════════
-// 파티클
-// ═══════════════════════════════════════
-const NMAX = Math.min(1800, Math.floor(W*H/1200));
-
-class Particle {
-  constructor() { this.init(true); }
-  init(rand) {
-    this.x  = rand ? Math.random()*W : (Math.random()<.5 ? -5 : W+5);
-    this.y  = rand ? Math.random()*H : Math.random()*H;
-    this.vx = 0; this.vy = 0;
-    this.life = 0;
-    this.maxLife = 90 + Math.random()*200;
-    this.sz  = Math.random()*1.4+0.3;
-    this.ci  = Math.floor(Math.random()*3);
-    this.al  = 0;
-  }
-  step(t) {
-    this.life++;
-    if (this.life > this.maxLife) { this.init(false); return; }
-
-    const lr = this.life / this.maxLife;
-    this.al = (lr < .12 ? lr/.12 : lr > .8 ? (1-lr)/.2 : 1) * .8;
-
-    // 플로우 필드
-    const ang = flowAngle(this.x, this.y, t, cur_turb);
-    this.vx += Math.cos(ang) * .07 * cur_spd;
-    this.vy += Math.sin(ang) * .07 * cur_spd;
-
-    // 마우스 소용돌이 (보텍스)
-    const dx = this.x - mx, dy = this.y - my;
-    const d  = Math.sqrt(dx*dx + dy*dy) || 1;
-    const vortexR = 180;
-    if (d < vortexR) {
-      const str = (1 - d/vortexR) * 1.6;
-      // 접선 방향 → 소용돌이
-      this.vx += (-dy/d) * str * .15;
-      this.vy += ( dx/d) * str * .15;
-      // 흡인
-      this.vx -= (dx/d) * str * .04;
-      this.vy -= (dy/d) * str * .04;
-    }
-
-    // 마우스 속도 → 파동 밀기
-    const pushR = 70;
-    if (d < pushR) {
-      const f = (1-d/pushR) * .5;
-      this.vx += pvx * f * .08;
-      this.vy += pvy * f * .08;
-    }
-
-    this.vx *= .93; this.vy *= .93;
-
-    const spd = Math.hypot(this.vx, this.vy);
-    if (spd > 4) { this.vx = this.vx/spd*4; this.vy = this.vy/spd*4; }
-
-    this.x += this.vx; this.y += this.vy;
-    if (this.x<-30||this.x>W+30||this.y<-30||this.y>H+30) this.init(false);
-  }
-  draw() {
-    const [r,g,b] = cur_c[this.ci];
-    ctx.save();
-    ctx.shadowColor = `rgba(${r},${g},${b},0.6)`;
-    ctx.shadowBlur  = 8;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.sz, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(${r},${g},${b},${this.al})`;
-    ctx.fill();
-    ctx.restore();
+// ─── 별 배경 (한 번만 그려서 캐시) ─────────────────────────────
+let starCvs = null;
+function buildStars() {
+  starCvs = document.createElement('canvas');
+  starCvs.width = W; starCvs.height = H;
+  const sc = starCvs.getContext('2d');
+  const count = Math.floor(W * H / 5000);
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    const r = Math.random() * 1 + 0.2;
+    const a = Math.random() * 0.5 + 0.1;
+    sc.beginPath();
+    sc.arc(x, y, r, 0, Math.PI * 2);
+    sc.fillStyle = `rgba(200,215,255,${a})`;
+    sc.fill();
   }
 }
+buildStars();
 
-const particles = Array.from({length:NMAX}, ()=>new Particle());
+// 별 반짝임 데이터 (위치 없이 alpha 값만 애니메이션)
+const twinkles = Array.from({length:80}, () => ({
+  x: Math.random() * W, y: Math.random() * H,
+  r: Math.random() * 1.2 + 0.3,
+  phase: Math.random() * Math.PI * 2,
+  speed: Math.random() * 0.03 + 0.01,
+}));
 
-// ═══════════════════════════════════════
-// 노래 노드
-// ═══════════════════════════════════════
+// ─── 노래 노드 ────────────────────────────────────────────────
+let songs = [];
 let nodes = [];
 let hovered = null;
-const tip   = document.getElementById('tip');
 
-function placeNodes() {
-  const list = SONGS[mood];
-  const n    = list.length;
-  nodes = list.map((s,i) => {
-    const a  = (i/n)*Math.PI*2 + Math.random()*.5 - .25;
-    const rr = Math.min(W,H) * (.25 + Math.random()*.2);
+function hslToRgb(h, s, l) {
+  h /= 360; s /= 100; l /= 100;
+  let r, g, b;
+  if (s === 0) { r = g = b = l; }
+  else {
+    const q = l < .5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+    const hue2rgb = (p,q,t) => {
+      if (t<0) t+=1; if (t>1) t-=1;
+      if (t<1/6) return p+(q-p)*6*t;
+      if (t<1/2) return q;
+      if (t<2/3) return p+(q-p)*(2/3-t)*6;
+      return p;
+    };
+    r = hue2rgb(p,q,h+1/3); g = hue2rgb(p,q,h); b = hue2rgb(p,q,h-1/3);
+  }
+  return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+}
+
+function buildNodes(list) {
+  const n = list.length;
+  // 나선 배치 (은하수 느낌)
+  nodes = list.map((s, i) => {
+    const angle  = i * 2.399963; // 황금각
+    const radius = Math.sqrt(i / n) * Math.min(W, H) * 0.42 + 30;
+    const spread = (Math.random() - .5) * 80;
+    const [R,G,B] = hslToRgb((i/n)*320 + 180, 75, 70);
     return {
       t: s.t, a: s.a,
-      x: W/2 + Math.cos(a)*rr*(1 + (Math.random()-.5)*.6),
-      y: H/2 + Math.sin(a)*rr*(.75+(Math.random()-.5)*.5),
-      br: 6 + Math.random()*5,
-      ph: Math.random()*Math.PI*2,
-      ci: i%3,
-      al: 0,
-      vx: (Math.random()-.5)*.12,
-      vy: (Math.random()-.5)*.12,
+      bx: W/2 + Math.cos(angle) * radius + spread,
+      by: H/2 + Math.sin(angle) * radius * .65 + spread,
+      x: 0, y: 0,
+      br: Math.random() * 4 + 5,
+      phase: Math.random() * Math.PI * 2,
+      driftX: (Math.random()-.5) * .18,
+      driftY: (Math.random()-.5) * .12,
+      R, G, B,
+      scale: 1,
     };
   });
-  // 화면 안으로 클램프
+  // 화면 경계 클램프
   nodes.forEach(n => {
-    n.x = Math.max(60, Math.min(W-60, n.x));
-    n.y = Math.max(80, Math.min(H-90, n.y));
+    n.bx = Math.max(55, Math.min(W-55, n.bx));
+    n.by = Math.max(75, Math.min(H-80, n.by));
+    n.x  = n.bx; n.y = n.by;
   });
 }
-placeNodes();
 
 function hitNode(cx, cy) {
   for (const n of nodes) {
-    const dx = cx-n.x, dy = cy-n.y;
-    if (dx*dx+dy*dy < (n.br+16)*(n.br+16)) return n;
+    if (Math.hypot(cx-n.x, cy-n.y) < n.br * n.scale + 14) return n;
   }
   return null;
 }
 
-function drawNodes(t) {
-  hovered = null;
-  let nearNode = null, nearDist = Infinity;
+// ─── 렌더 ────────────────────────────────────────────────────
+const tip = document.getElementById('tip');
+let frame = 0;
 
-  nodes.forEach(n => {
-    // 페이드인
-    n.al = Math.min(n.al + .018, 1);
-    // 유동
-    n.x += n.vx; n.y += n.vy;
-    if (n.x<60||n.x>W-60) n.vx*=-1;
-    if (n.y<80||n.y>H-90) n.vy*=-1;
+function render() {
+  frame++;
+  // 마우스 스무딩
+  mx += (tx - mx) * .1;
+  my += (ty - my) * .1;
 
-    // 마우스 밀기
-    const dx = n.x-mx, dy = n.y-my;
-    const d  = Math.hypot(dx,dy)||1;
-    if (d < 110) {
-      n.x += (dx/d)*(1-d/110)*1.5;
-      n.y += (dy/d)*(1-d/110)*1.5;
-      if (d < nearDist) { nearDist = d; nearNode = n; }
-    }
+  // 배경 지우기
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#04040e';
+  ctx.fillRect(0, 0, W, H);
+
+  // 별 배경 (캐시된 이미지)
+  ctx.drawImage(starCvs, 0, 0);
+
+  // 반짝이는 별
+  twinkles.forEach(s => {
+    const a = Math.sin(frame * s.speed + s.phase) * .3 + .35;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(220,230,255,${a})`;
+    ctx.fill();
   });
-  if (nearDist < 60) hovered = nearNode;
 
-  // 콘스텔레이션 라인
-  for (let i=0;i<nodes.length;i++) {
-    for (let j=i+1;j<nodes.length;j++) {
+  // 콘스텔레이션 라인 (가까운 노드만)
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i+1; j < nodes.length; j++) {
       const a = nodes[i], b = nodes[j];
       const d = Math.hypot(a.x-b.x, a.y-b.y);
-      if (d < 160) {
-        const al = (1-d/160) * .18 * Math.min(a.al,b.al);
-        const ca = cur_c[a.ci], cb = cur_c[b.ci];
-        const g  = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-        g.addColorStop(0, `rgba(${ca},${al})`);
-        g.addColorStop(1, `rgba(${cb},${al})`);
+      if (d < 100) {
+        const alpha = (1-d/100) * .12;
         ctx.beginPath();
-        ctx.strokeStyle = g;
-        ctx.lineWidth   = .5;
+        ctx.strokeStyle = `rgba(${(a.R+b.R)/2},${(a.G+b.G)/2},${(a.B+b.B)/2},${alpha})`;
+        ctx.lineWidth = .5;
         ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
         ctx.stroke();
       }
     }
   }
 
+  // 노드
+  hovered = null;
   nodes.forEach(n => {
-    const pulse  = Math.sin(t*.04+n.ph)*.3+.7;
-    const isHov  = n === hovered;
-    const r      = n.br*(isHov?2.2:1)*pulse;
-    const [R,G,B]= cur_c[n.ci];
+    // 부드러운 유영
+    const t = frame * .008;
+    const ox = Math.sin(t + n.phase) * 12;
+    const oy = Math.cos(t * .7 + n.phase) * 8;
 
-    // 헤일로
-    const halo = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*6);
-    halo.addColorStop(0,   `rgba(${R},${G},${B},${.18*n.al*pulse*(isHov?1.8:1)})`);
-    halo.addColorStop(.5,  `rgba(${R},${G},${B},${.06*n.al})`);
-    halo.addColorStop(1,   'rgba(0,0,0,0)');
-    ctx.fillStyle = halo;
-    ctx.beginPath(); ctx.arc(n.x,n.y,r*6,0,Math.PI*2); ctx.fill();
+    // 마우스 당김
+    const dx = n.bx + ox - mx, dy = n.by + oy - my;
+    const d  = Math.hypot(dx, dy) || 1;
+    let nx = n.bx + ox, ny = n.by + oy;
+    if (d < 120) {
+      const pull = (1 - d/120) * 18;
+      nx -= (dx/d) * pull;
+      ny -= (dy/d) * pull;
+    }
+    n.x = nx; n.y = ny;
+
+    const isHov = Math.hypot(mx-n.x, my-n.y) < n.br + 16;
+    if (isHov) hovered = n;
+
+    n.scale += (isHov ? 1.8 : 1 - n.scale) * .08;
+
+    const pulse = Math.sin(frame * .05 + n.phase) * .15 + .85;
+    const r = n.br * n.scale * pulse;
+    const {R,G,B} = n;
+
+    // 외부 글로우 (radialGradient — shadowBlur 대신)
+    const glowR = r * (isHov ? 7 : 5);
+    const grd = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,glowR);
+    grd.addColorStop(0,   `rgba(${R},${G},${B},${.2 * pulse * (isHov?1.5:1)})`);
+    grd.addColorStop(.5,  `rgba(${R},${G},${B},${.06})`);
+    grd.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(n.x,n.y,glowR,0,Math.PI*2); ctx.fill();
 
     // 코어
-    const core = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*2);
-    core.addColorStop(0,   `rgba(255,255,255,${.95*n.al})`);
-    core.addColorStop(.35, `rgba(${R},${G},${B},${.85*n.al})`);
-    core.addColorStop(1,   `rgba(${R},${G},${B},0)`);
-    ctx.fillStyle = core;
-    ctx.beginPath(); ctx.arc(n.x,n.y,r*2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(${R},${G},${B},0.9)`;
+    ctx.fill();
 
-    // 텍스트
-    if (n.al > .4) {
+    // 하이라이트 (흰 점)
+    ctx.beginPath(); ctx.arc(n.x-r*.25,n.y-r*.25,r*.3,0,Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fill();
+
+    // 텍스트 (가까울 때만)
+    const distToMouse = Math.hypot(mx-n.x, my-n.y);
+    if (isHov || distToMouse < 70) {
+      const textAlpha = isHov ? 1 : Math.max(0,(70-distToMouse)/70);
       ctx.save();
-      ctx.textAlign   = 'center';
-      ctx.font        = isHov
-        ? `bold 12px 'Apple SD Gothic Neo',sans-serif`
-        : `11px 'Apple SD Gothic Neo',sans-serif`;
-      ctx.fillStyle   = `rgba(255,255,255,${n.al*(isHov?.95:.5)})`;
-      ctx.shadowColor = `rgba(${R},${G},${B},.9)`;
-      ctx.shadowBlur  = isHov ? 18 : 8;
-      ctx.fillText(n.t, n.x, n.y + r*2 + 15);
+      ctx.textAlign = 'center';
+      ctx.font = `${isHov?'bold ':''} 11px 'Apple SD Gothic Neo',sans-serif`;
+      ctx.fillStyle = `rgba(255,255,255,${textAlpha * (isHov?.95:.5)})`;
+      ctx.fillText(n.t, n.x, n.y + r + 14);
       if (isHov) {
-        ctx.font      = `10px 'Apple SD Gothic Neo',sans-serif`;
-        ctx.fillStyle = `rgba(255,255,255,.4)`;
-        ctx.shadowBlur= 0;
-        ctx.fillText(n.a, n.x, n.y + r*2 + 29);
+        ctx.font = `10px 'Apple SD Gothic Neo',sans-serif`;
+        ctx.fillStyle = `rgba(255,255,255,0.4)`;
+        ctx.fillText(n.a, n.x, n.y + r + 27);
       }
       ctx.restore();
     }
@@ -493,86 +344,36 @@ function drawNodes(t) {
   if (hovered) {
     document.getElementById('tip-t').textContent = hovered.t;
     document.getElementById('tip-a').textContent = hovered.a;
-    let tx2 = mx+20, ty2 = my-16;
-    if (tx2+220>W) tx2 = mx-240;
-    if (ty2+80 >H) ty2 = H-90;
-    tip.style.left    = tx2+'px';
-    tip.style.top     = ty2+'px';
-    tip.style.opacity = '1';
+    let ttx = tx + 18, tty = ty - 10;
+    if (ttx + 200 > W) ttx = tx - 215;
+    if (tty + 80  > H) tty = H - 85;
+    tip.style.cssText += `left:${ttx}px;top:${tty}px;opacity:1;`;
   } else {
     tip.style.opacity = '0';
   }
+
+  requestAnimationFrame(render);
 }
 
-// ═══════════════════════════════════════
-// 네뷸라 배경
-// ═══════════════════════════════════════
-const NEBS = [
-  {rx:.2, ry:.3, rr:.45}, {rx:.75,ry:.6,rr:.40},
-  {rx:.5, ry:.8, rr:.30}, {rx:.85,ry:.2,rr:.28},
-];
-function drawNebula() {
-  const [R,G,B] = cur_c[0];
-  NEBS.forEach(nb => {
-    const px = (nb.rx*W) + (mx-W/2)*0.018;
-    const py = (nb.ry*H) + (my-H/2)*0.018;
-    const rr = nb.rr * Math.max(W,H);
-    const g  = ctx.createRadialGradient(px,py,0,px,py,rr);
-    g.addColorStop(0,  `rgba(${R},${G},${B},0.07)`);
-    g.addColorStop(.6, `rgba(${R},${G},${B},0.02)`);
-    g.addColorStop(1,  'rgba(0,0,0,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,W,H);
-  });
+// ─── 데이터 로드 ─────────────────────────────────────────────
+async function loadSongs() {
+  try {
+    const r = await fetch('music.json?t=' + Date.now());
+    if (!r.ok) throw new Error();
+    const data = await r.json();
+    songs = data.songs || FALLBACK;
+    const updated = data.updated || '';
+    if (updated) {
+      document.getElementById('date-badge').textContent = `AI PICKS · ${updated}`;
+    }
+  } catch {
+    songs = FALLBACK;
+  }
+  buildNodes(songs);
+  render();
 }
 
-// ═══════════════════════════════════════
-// 메인 루프
-// ═══════════════════════════════════════
-let tick = 0;
-function loop() {
-  tick++;
-
-  // 마우스 스무딩
-  mx += (tx-mx)*.09;
-  my += (ty-my)*.09;
-  pvx *= .85; pvy *= .85;
-
-  // 무드 보간
-  tickLerp();
-
-  // 잔상 페이드 (트레일 효과)
-  ctx.fillStyle = `rgba(4,4,12,${cur_fade})`;
-  ctx.fillRect(0,0,W,H);
-
-  // 네뷸라
-  drawNebula();
-
-  // 파티클
-  ctx.save();
-  particles.forEach(p => { p.step(tick); p.draw(); });
-  ctx.restore();
-
-  // 노드
-  ctx.save();
-  ctx.shadowBlur = 0;
-  drawNodes(tick);
-  ctx.restore();
-
-  requestAnimationFrame(loop);
-}
-loop();
-
-// ═══════════════════════════════════════
-// 이벤트
-// ═══════════════════════════════════════
-document.querySelectorAll('.mp').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.mp').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    setMood(btn.dataset.mood);
-  });
-});
+loadSongs();
 </script>
 </body>
 </html>
