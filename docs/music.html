@@ -24,7 +24,9 @@
       display:flex; align-items:center; justify-content:space-between;
       padding:28px 36px;
     }
-    .logo { font-size:11px; letter-spacing:4px; color:rgba(255,255,255,.18); text-transform:uppercase; }
+    .logo-wrap { display:flex; flex-direction:column; gap:5px; }
+    .logo { font-size:11px; letter-spacing:4px; color:rgba(255,255,255,.22); text-transform:uppercase; }
+    .logo-sub { font-size:9px; letter-spacing:2.5px; color:rgba(255,255,255,.1); text-transform:uppercase; font-style:italic; }
     .back { font-size:11px; letter-spacing:2px; color:rgba(255,255,255,.18); text-decoration:none; pointer-events:all; transition:color .3s; }
     .back:hover { color:rgba(255,255,255,.7); }
 
@@ -133,6 +135,29 @@
       flex-shrink:0;
     }
     #player-close:hover { color:rgba(255,255,255,.8); }
+
+    /* ── NOW PLAYING 토스트 ── */
+    #now-toast {
+      position:fixed; top:82px; left:50%; transform:translateX(-50%) translateY(-12px);
+      display:flex; align-items:center; gap:12px;
+      background:rgba(5,5,22,0.93); border:1px solid rgba(255,255,255,.08);
+      border-radius:50px; padding:10px 22px 10px 16px;
+      backdrop-filter:blur(28px);
+      opacity:0; transition:opacity .45s, transform .45s;
+      pointer-events:none; z-index:200; white-space:nowrap;
+    }
+    #now-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    #now-dot {
+      width:7px; height:7px; border-radius:50%;
+      background:rgba(140,190,255,.95);
+      box-shadow:0 0 10px 3px rgba(140,190,255,.35);
+      animation:nowPulse 1.1s ease-in-out infinite;
+      flex-shrink:0;
+    }
+    @keyframes nowPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.6)} }
+    #now-label { font-size:9px; letter-spacing:2.5px; color:rgba(255,255,255,.25); text-transform:uppercase; margin-bottom:2px; }
+    #now-title { font-size:13px; font-weight:600; color:rgba(255,255,255,.92); }
+    #now-artist { font-size:10px; color:rgba(255,255,255,.35); margin-top:1px; }
   </style>
 </head>
 <body>
@@ -165,12 +190,24 @@
 
 <div id="ui">
   <div id="top">
-    <span class="logo">Music Universe</span>
+    <div class="logo-wrap">
+      <span class="logo">Music Universe</span>
+      <span class="logo-sub">AI가 오늘의 은하를 채웠습니다</span>
+    </div>
     <a class="back" href="index.html">← Home</a>
   </div>
   <div id="date-badge"></div>
-  <div id="hint">드래그로 회전 · 스크롤로 줌 · 별을 클릭하면 YouTube Music</div>
+  <div id="hint">별 하나가 한 곡입니다 · 클릭하면 우주가 들립니다</div>
   <div id="count"></div>
+</div>
+
+<div id="now-toast">
+  <div id="now-dot"></div>
+  <div>
+    <div id="now-label">Now Playing</div>
+    <div id="now-title"></div>
+    <div id="now-artist"></div>
+  </div>
 </div>
 
 <div id="tip">
@@ -236,6 +273,15 @@ async function searchVideo(song) {
   return d.items?.[0]?.id?.videoId ?? null;
 }
 
+function showNowPlaying(song) {
+  document.getElementById('now-title').textContent  = song.t;
+  document.getElementById('now-artist').textContent = song.a;
+  const t = document.getElementById('now-toast');
+  t.classList.add('show');
+  clearTimeout(window._nowTimer);
+  window._nowTimer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
 async function playSong(song) {
   const bar  = document.getElementById('player-bar');
   const srch = document.getElementById('player-searching');
@@ -243,6 +289,7 @@ async function playSong(song) {
   document.getElementById('player-artist').textContent = song.a;
   srch.classList.add('on');
   bar.classList.add('open');
+  showNowPlaying(song);
 
   try {
     const vid = await searchVideo(song);
@@ -342,6 +389,10 @@ const tip  = document.getElementById('tip');
 const scene    = new THREE.Scene();
 scene.fog      = new THREE.FogExp2(0x000008, 0.0018);
 scene.background = new THREE.Color(0x000008);
+
+// 은하 전체를 담는 그룹 (다축 회전 구현용)
+const galaxyGroup = new THREE.Group();
+scene.add(galaxyGroup);
 
 const camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 3000);
 camera.position.set(0, 50, 300);
@@ -445,9 +496,9 @@ const sprites   = [];
 let linesMesh   = null;
 
 function buildGalaxy(songs) {
-  sprites.forEach(s => scene.remove(s));
+  sprites.forEach(s => galaxyGroup.remove(s));
   sprites.length = 0;
-  if (linesMesh) scene.remove(linesMesh);
+  if (linesMesh) galaxyGroup.remove(linesMesh);
 
   const n = songs.length;
   songs.forEach((song, i) => {
@@ -475,7 +526,7 @@ function buildGalaxy(songs) {
     spr.scale.setScalar(13);
     spr.userData = { t: song.t, a: song.a, hue, base: 13 };
 
-    scene.add(spr);
+    galaxyGroup.add(spr);
     sprites.push(spr);
   });
 
@@ -500,7 +551,7 @@ function buildGalaxy(songs) {
     vertexColors: true, transparent: true, opacity: 1,
     blending: THREE.AdditiveBlending, depthWrite: false,
   }));
-  scene.add(linesMesh);
+  galaxyGroup.add(linesMesh);
 
   document.getElementById('count').textContent = `${n} SONGS`;
 }
@@ -549,8 +600,13 @@ function animate() {
   // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
   const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
 
-  // ── 회전 속도: 정지 0.2 → 재생 최대 1.8 ──
-  controls.autoRotateSpeed = 0.2 + musicEnergy * 1.6;
+  // ── 회전 방향·속도: 사인파로 자연스럽게 방향 전환 (~3분 주기) ──
+  const rotDir = Math.sin(tick * 0.00055);  // -1 ~ +1, 약 190초 주기
+  controls.autoRotateSpeed = rotDir * (0.45 + musicEnergy * 1.8);
+
+  // ── 은하 그룹 다축 틸트: 천천히 앞뒤·좌우로 기울어짐 ──
+  galaxyGroup.rotation.x = Math.sin(tick * 0.00038) * 0.28;
+  galaxyGroup.rotation.z = Math.sin(tick * 0.00027) * 0.14;
 
   // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
   bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
