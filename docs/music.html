@@ -66,11 +66,97 @@
     .ld-dots span:nth-child(2){ animation-delay:.2s; }
     .ld-dots span:nth-child(3){ animation-delay:.4s; }
     @keyframes dp { 0%,80%,100%{transform:scale(.5);opacity:.3} 40%{transform:scale(1);opacity:1} }
+
+    /* ── 플레이어 바 ── */
+    #player-bar {
+      position:fixed; bottom:0; left:0; right:0; z-index:100;
+      height:90px;
+      background:rgba(4,4,18,0.95);
+      border-top:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(30px);
+      display:flex; align-items:center; gap:16px;
+      padding:0 24px;
+      transform:translateY(100%);
+      transition:transform .4s cubic-bezier(.4,0,.2,1);
+      pointer-events:all;
+    }
+    #player-bar.open { transform:translateY(0); }
+
+    #player-video {
+      width:142px; height:80px; border-radius:8px;
+      overflow:hidden; flex-shrink:0; position:relative;
+      background:#000; cursor:pointer;
+    }
+    #player-video iframe { width:100%; height:100%; border:0; }
+    #player-video .veil {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.35);
+      font-size:22px; opacity:0; transition:opacity .2s;
+    }
+    #player-video:hover .veil { opacity:1; }
+
+    #player-info { flex:1; min-width:0; }
+    #player-title {
+      font-size:15px; font-weight:600;
+      color:rgba(255,255,255,.95);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    #player-artist {
+      font-size:12px; color:rgba(255,255,255,.4); margin-top:4px;
+    }
+    #player-searching {
+      font-size:11px; color:rgba(255,255,255,.25);
+      letter-spacing:2px; margin-top:5px;
+      display:none;
+    }
+    #player-searching.on { display:block; }
+
+    #player-controls { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+    .pc-btn {
+      width:40px; height:40px; border-radius:50%;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.7); font-size:15px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all .2s;
+    }
+    .pc-btn:hover { background:rgba(255,255,255,.15); color:#fff; }
+    .pc-btn.play-btn { width:48px; height:48px; font-size:18px; background:rgba(255,255,255,.12); }
+
+    #player-close {
+      width:32px; height:32px; border-radius:50%;
+      background:transparent; border:none;
+      color:rgba(255,255,255,.3); font-size:18px;
+      cursor:pointer; transition:color .2s;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    #player-close:hover { color:rgba(255,255,255,.8); }
   </style>
 </head>
 <body>
 
 <div id="cur"></div>
+
+<!-- ── 플레이어 바 ── -->
+<div id="player-bar">
+  <div id="player-video">
+    <div id="yt-frame"></div>
+    <div class="veil">▶</div>
+  </div>
+  <div id="player-info">
+    <div id="player-title">—</div>
+    <div id="player-artist"></div>
+    <div id="player-searching">검색 중...</div>
+  </div>
+  <div id="player-controls">
+    <button class="pc-btn" id="btn-prev" title="이전">⏮</button>
+    <button class="pc-btn play-btn" id="btn-play" title="재생/일시정지">⏸</button>
+    <button class="pc-btn" id="btn-next" title="다음">⏭</button>
+  </div>
+  <button id="player-close" title="닫기">✕</button>
+</div>
 
 <div id="loading">
   <span class="ld-label">Universe Loading</span>
@@ -93,6 +179,7 @@
   <div id="tip-h">CLICK → YOUTUBE MUSIC</div>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script type="importmap">
 {
   "imports": {
@@ -108,6 +195,91 @@ import { OrbitControls }   from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer }  from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass }      from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+// ═══════════════════════════════════════════════════
+// YouTube 플레이어
+// ═══════════════════════════════════════════════════
+const YT_KEY = 'AIzaSyBGVbnH0iL_1unWWfktA6nrZMT29uSkOK0';
+let ytPlayer   = null;
+let ytReady    = false;
+let playlist   = [];   // 현재 재생 큐 (song 배열)
+let playIdx    = 0;
+let isPlaying  = false;
+
+window.onYouTubeIframeAPIReady = function () {
+  ytPlayer = new YT.Player('yt-frame', {
+    height: '80', width: '142',
+    playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1 },
+    events: {
+      onReady: () => { ytReady = true; },
+      onStateChange: e => {
+        isPlaying = e.data === YT.PlayerState.PLAYING;
+        document.getElementById('btn-play').textContent = isPlaying ? '⏸' : '▶';
+        if (e.data === YT.PlayerState.ENDED) playNext();
+      },
+    },
+  });
+};
+
+async function searchVideo(song) {
+  const q = encodeURIComponent(`${song.t} ${song.a}`);
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${YT_KEY}`;
+  const r   = await fetch(url);
+  const d   = await r.json();
+  return d.items?.[0]?.id?.videoId ?? null;
+}
+
+async function playSong(song) {
+  const bar  = document.getElementById('player-bar');
+  const srch = document.getElementById('player-searching');
+  document.getElementById('player-title').textContent  = song.t;
+  document.getElementById('player-artist').textContent = song.a;
+  srch.classList.add('on');
+  bar.classList.add('open');
+
+  try {
+    const vid = await searchVideo(song);
+    srch.classList.remove('on');
+    if (vid && ytReady) {
+      ytPlayer.loadVideoById(vid);
+    } else if (!vid) {
+      // 검색 결과 없으면 YouTube Music으로
+      window.open(`https://music.youtube.com/search?q=${encodeURIComponent(song.t+' '+song.a)}`, '_blank');
+    }
+  } catch {
+    srch.classList.remove('on');
+  }
+}
+
+function playNext() {
+  if (!playlist.length) return;
+  playIdx = (playIdx + 1) % playlist.length;
+  playSong(playlist[playIdx]);
+}
+function playPrev() {
+  if (!playlist.length) return;
+  playIdx = (playIdx - 1 + playlist.length) % playlist.length;
+  playSong(playlist[playIdx]);
+}
+
+// 컨트롤 버튼
+document.getElementById('btn-play').addEventListener('click', () => {
+  if (!ytReady) return;
+  isPlaying ? ytPlayer.pauseVideo() : ytPlayer.playVideo();
+});
+document.getElementById('btn-next').addEventListener('click', playNext);
+document.getElementById('btn-prev').addEventListener('click', playPrev);
+document.getElementById('player-close').addEventListener('click', () => {
+  if (ytReady) ytPlayer.stopVideo();
+  document.getElementById('player-bar').classList.remove('open');
+});
+// 비디오 클릭 → YouTube에서 열기
+document.getElementById('player-video').addEventListener('click', e => {
+  if (e.target.closest('.veil') && playlist[playIdx]) {
+    const q = encodeURIComponent(`${playlist[playIdx].t} ${playlist[playIdx].a}`);
+    window.open(`https://music.youtube.com/search?q=${q}`, '_blank');
+  }
+});
 
 // ═══════════════════════════════════════════════════
 // 폴백 데이터
@@ -335,8 +507,15 @@ window.addEventListener('mousemove', e => {
 
 window.addEventListener('click', () => {
   if (!hovered) return;
-  const q = encodeURIComponent(`${hovered.userData.t} ${hovered.userData.a}`);
-  window.open(`https://music.youtube.com/search?q=${q}`, '_blank');
+  const song = { t: hovered.userData.t, a: hovered.userData.a };
+  // 클릭한 곡 기준으로 플레이리스트 구성 (클릭 곡 → 이후 순서 → 앞 순서)
+  const idx = sprites.indexOf(hovered);
+  playlist = [
+    ...sprites.slice(idx),
+    ...sprites.slice(0, idx),
+  ].map(s => ({ t: s.userData.t, a: s.userData.a }));
+  playIdx = 0;
+  playSong(playlist[0]);
 });
 
 // ═══════════════════════════════════════════════════
