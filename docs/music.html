@@ -179,7 +179,6 @@
   <div id="tip-h">CLICK → YOUTUBE MUSIC</div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
 <script type="importmap">
 {
   "imports": {
@@ -206,6 +205,7 @@ let playlist   = [];   // 현재 재생 큐 (song 배열)
 let playIdx    = 0;
 let isPlaying  = false;
 
+// YouTube API를 콜백 등록 후에 동적으로 로드 (타이밍 보장)
 window.onYouTubeIframeAPIReady = function () {
   ytPlayer = new YT.Player('yt-frame', {
     height: '80', width: '142',
@@ -220,6 +220,9 @@ window.onYouTubeIframeAPIReady = function () {
     },
   });
 };
+const _yt = document.createElement('script');
+_yt.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(_yt);
 
 async function searchVideo(song) {
   const q = encodeURIComponent(`${song.t} ${song.a}`);
@@ -240,12 +243,20 @@ async function playSong(song) {
   try {
     const vid = await searchVideo(song);
     srch.classList.remove('on');
-    if (vid && ytReady) {
-      ytPlayer.loadVideoById(vid);
-    } else if (!vid) {
-      // 검색 결과 없으면 YouTube Music으로
+    if (!vid) {
       window.open(`https://music.youtube.com/search?q=${encodeURIComponent(song.t+' '+song.a)}`, '_blank');
+      return;
     }
+    // 플레이어 준비 대기 (최대 5초)
+    const waitReady = () => new Promise(res => {
+      if (ytReady) { res(); return; }
+      let n = 0;
+      const iv = setInterval(() => {
+        if (ytReady || ++n > 50) { clearInterval(iv); res(); }
+      }, 100);
+    });
+    await waitReady();
+    if (ytReady) ytPlayer.loadVideoById(vid);
   } catch {
     srch.classList.remove('on');
   }
