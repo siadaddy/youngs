@@ -894,12 +894,12 @@
 
 <!-- ─── 탭 바 ──────────────────────────────────────────── -->
 <div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('coin')">🤖 코인 트레이더</button>
-  <button class="tab-btn" onclick="switchTab('news')">📰 AI 뉴스레터</button>
+  <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
+  <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
 </div>
 
 <!-- ─── 탭1: 코인 트레이더 ───────────────────────────── -->
-<div class="tab-content active" id="tab-coin">
+<div class="tab-content" id="tab-coin">
 <!-- ─── 코인 트레이더 ────────────────────────────────── -->
 <section class="section" id="coin-section">
   <div class="container">
@@ -952,7 +952,7 @@
 </div><!-- /tab-coin -->
 
 <!-- ─── 탭2: 뉴스레터 ───────────────────────────────── -->
-<div class="tab-content" id="tab-news">
+<div class="tab-content active" id="tab-news">
 
 <!-- 날짜 네비게이션 -->
 <div class="date-nav">
@@ -1642,7 +1642,7 @@
 
   function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach((b, i) => {
-      b.classList.toggle('active', (i === 0) === (tab === 'coin'));
+      b.classList.toggle('active', (i === 0) === (tab === 'news'));
     });
     document.getElementById('tab-coin').classList.toggle('active', tab === 'coin');
     document.getElementById('tab-news').classList.toggle('active', tab === 'news');
