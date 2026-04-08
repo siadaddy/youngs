@@ -502,16 +502,15 @@ function buildGalaxy(songs) {
 
   const n = songs.length;
   songs.forEach((song, i) => {
-    const t      = i / n;
-    // 4팔 나선 배치
-    const arm    = i % 4;
-    const angle  = arm * (Math.PI/2) + t * Math.PI * 6;
-    const radius = 22 + t * 180;
-    const scatter = 22;
+    // 완전 3D 구형 랜덤 배치 (매 접속마다 다름)
+    // pow(random, 0.55) → 중심부 조금 더 밀집, 외곽으로 퍼짐
+    const r     = 25 + Math.pow(Math.random(), 0.55) * 155;
+    const theta = Math.random() * Math.PI * 2;          // 수평각 0~360°
+    const phi   = Math.acos(2 * Math.random() - 1);     // 수직각 균등 분포
 
-    const x = Math.cos(angle)*radius + (Math.random()-.5)*scatter;
-    const y = (Math.random()-.5)*45;
-    const z = Math.sin(angle)*radius + (Math.random()-.5)*scatter;
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
 
     // hue: 보라→파→시안→초록→노랑→주황→분홍 순환 (트롯 느낌의 붉은 계열 최소화)
     const hue = Math.round(200 + (i/n)*300) % 360;
@@ -535,8 +534,8 @@ function buildGalaxy(songs) {
   for (let i = 0; i < sprites.length; i++) {
     for (let j = i+1; j < sprites.length; j++) {
       const d = sprites[i].position.distanceTo(sprites[j].position);
-      if (d < 58) {
-        const a = (1 - d/58) * 0.6;
+      if (d < 88) {
+        const a = (1 - d/88) * 0.55;
         const c1 = new THREE.Color().setHSL(sprites[i].userData.hue/360, .8, .6);
         const c2 = new THREE.Color().setHSL(sprites[j].userData.hue/360, .8, .6);
         pts.push(...sprites[i].position.toArray(), ...sprites[j].position.toArray());
