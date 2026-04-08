@@ -17,6 +17,16 @@
     }
     #cur.hover { width:22px; height:22px; background:rgba(255,255,255,.25); }
 
+    /* ── 모바일 ── */
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      #cur { display: none; }
+      #player-bar { height: 80px; padding: 0 16px; }
+      .pc-btn { width: 44px; height: 44px; }
+      .pc-btn.play-btn { width: 52px; height: 52px; font-size: 20px; }
+      #player-title { font-size: 13px; }
+    }
+
     #ui { position:fixed; inset:0; pointer-events:none; z-index:10; }
 
     #top {
@@ -739,7 +749,8 @@ function buildGalaxy(songs) {
 // ═══════════════════════════════════════════════════
 const ray   = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-ray.params.Sprite = { threshold: 10 };
+const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+ray.params.Sprite = { threshold: isMobile ? 18 : 10 };
 
 window.addEventListener('mousemove', e => {
   mouseX = e.clientX; mouseY = e.clientY;
@@ -749,18 +760,45 @@ window.addEventListener('mousemove', e => {
   mouse.y = -(e.clientY / H) * 2 + 1;
 });
 
+// ── 데스크탑 클릭 ──
 window.addEventListener('click', () => {
   if (!hovered) return;
-  const song = { t: hovered.userData.t, a: hovered.userData.a };
-  // 클릭한 곡 기준으로 플레이리스트 구성 (클릭 곡 → 이후 순서 → 앞 순서)
   const idx = sprites.indexOf(hovered);
-  playlist = [
-    ...sprites.slice(idx),
-    ...sprites.slice(0, idx),
-  ].map(s => ({ t: s.userData.t, a: s.userData.a }));
+  playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
+    .map(s => ({ t: s.userData.t, a: s.userData.a }));
   playIdx = 0;
   playSong(playlist[0]);
 });
+
+// ── 모바일 터치 ──
+let _tx = 0, _ty = 0;
+window.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  _tx = t.clientX; _ty = t.clientY;
+  mouse.x =  (t.clientX / W) * 2 - 1;
+  mouse.y = -(t.clientY / H) * 2 + 1;
+  mouseX = t.clientX; mouseY = t.clientY;
+}, { passive: true });
+
+window.addEventListener('touchend', e => {
+  const t = e.changedTouches[0];
+  const dx = t.clientX - _tx, dy = t.clientY - _ty;
+  if (dx*dx + dy*dy > 144) return;   // 12px 이상 드래그면 무시
+
+  mouse.x =  (t.clientX / W) * 2 - 1;
+  mouse.y = -(t.clientY / H) * 2 + 1;
+
+  ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(sprites);
+  if (!hits.length) return;
+
+  const s = hits[0].object;
+  const idx = sprites.indexOf(s);
+  playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
+    .map(sp => ({ t: sp.userData.t, a: sp.userData.a }));
+  playIdx = 0;
+  playSong(playlist[0]);
+}, { passive: true });
 
 // ═══════════════════════════════════════════════════
 // 애니메이션 루프
