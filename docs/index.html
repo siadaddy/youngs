@@ -781,6 +781,8 @@
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+    #tab-music { padding: 0; line-height: 0; }
+    #music-iframe { width:100%; height:calc(100vh - 110px); border:none; display:block; }
     .fade-in:nth-child(1){ animation-delay:.05s }
     .fade-in:nth-child(2){ animation-delay:.12s }
     .fade-in:nth-child(3){ animation-delay:.19s }
@@ -896,6 +898,7 @@
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
   <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
+  <button class="tab-btn" onclick="switchTab('music')">🎵 Music Universe</button>
 </div>
 
 <!-- ─── 탭1: 코인 트레이더 ───────────────────────────── -->
@@ -1009,6 +1012,11 @@
 
 </div><!-- /tab-news -->
 
+<!-- ─── 탭3: Music Universe ──────────────────────────── -->
+<div class="tab-content" id="tab-music">
+  <iframe id="music-iframe" allow="autoplay"></iframe>
+</div>
+
 <!-- ─── 푸터 ───────────────────────────────────────────── -->
 <!-- ─── 내 제작물 ─────────────────────────────────────── -->
 <section class="section">
@@ -1065,28 +1073,6 @@
       </a>
 
       <!-- 3번째 제작물 -->
-      <a href="music.html"
-         style="text-decoration:none;background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
-         onmouseover="this.style.borderColor='rgba(139,92,246,.5)';this.style.transform='translateY(-3px)'"
-         onmouseout="this.style.borderColor='var(--glass-border)';this.style.transform='none'">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="font-size:2rem">🎵</div>
-          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(139,92,246,.18);color:#a78bfa;font-weight:700;">인터랙티브</span>
-          <span style="font-size:.72rem;color:var(--muted2);">2026.04</span>
-        </div>
-        <div style="font-size:1rem;font-weight:800;color:var(--text)">Music Universe · 우주 음악 탐색기</div>
-        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          마우스를 따라 움직이는 우주 공간 속 음악 별들. 드라이브 · 집중 · 파티 · 휴식 · 감성 무드별로
-          노래를 탐험하고, 별을 클릭하면 YouTube Music이 열립니다
-        </div>
-        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(139,92,246,.18);color:#a78bfa;font-weight:600;">Canvas 2D</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(139,92,246,.18);color:#a78bfa;font-weight:600;">Parallax</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(139,92,246,.18);color:#a78bfa;font-weight:600;">YouTube Music</span>
-        </div>
-      </a>
-
-      <!-- 4번째 제작물 -->
       <a href="SA대시보드_demo.html" target="_blank"
          style="text-decoration:none;background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
          onmouseover="this.style.borderColor='rgba(28,105,212,.4)';this.style.transform='translateY(-3px)'"
@@ -1120,8 +1106,6 @@
       <div class="footer-divider"></div>
       <div>
         <a href="about.html">👥 AI 직원 소개 &amp; 파이프라인</a>
-        &nbsp;·&nbsp;
-        <a href="music.html">🎵 Music Universe</a>
         &nbsp;·&nbsp;
         <a href="https://github.com/siadaddy/youngs" target="_blank">GitHub</a>
         &nbsp;·&nbsp; Powered by Groq + Stable Horde + Notion API
@@ -1641,12 +1625,18 @@
     }, 5 * 60 * 1000);
 
   function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach((b, i) => {
-      b.classList.toggle('active', (i === 0) === (tab === 'news'));
-    });
-    document.getElementById('tab-coin').classList.toggle('active', tab === 'coin');
-    document.getElementById('tab-news').classList.toggle('active', tab === 'news');
+    const tabs = ['news', 'coin', 'music'];
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
+    tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
     if (tab === 'news') init();
+    if (tab === 'music') {
+      const fr = document.getElementById('music-iframe');
+      if (!fr.getAttribute('src')) {
+        fr.setAttribute('src', 'music.html');
+      } else {
+        try { fr.contentWindow.dispatchEvent(new Event('resize')); } catch(e) {}
+      }
+    }
   }
 
   init();
