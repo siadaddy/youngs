@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-09",
+  "updated": "2026-04-10",
   "songs": [
     {
       "t": "Butter",
@@ -14,15 +14,11 @@
       "a": "BTS"
     },
     {
-      "t": "Lalisa",
-      "a": "LISA"
+      "t": "Boy With Luv",
+      "a": "BTS, Halsey"
     },
     {
-      "t": "Money",
-      "a": "LISA"
-    },
-    {
-      "t": "How You Like That",
+      "t": "Kill This Love",
       "a": "BLACKPINK"
     },
     {
@@ -30,12 +26,8 @@
       "a": "BLACKPINK"
     },
     {
-      "t": "Kill This Love",
+      "t": "Lovesick Girls",
       "a": "BLACKPINK"
-    },
-    {
-      "t": "Boy With Luv",
-      "a": "BTS, Halsey"
     },
     {
       "t": "Fancy",
@@ -46,172 +38,180 @@
       "a": "TWICE"
     },
     {
-      "t": "Cheer Up",
+      "t": "Alcohol-Free",
       "a": "TWICE"
+    },
+    {
+      "t": "Wannabe",
+      "a": "ITZY"
+    },
+    {
+      "t": "ICY",
+      "a": "ITZY"
+    },
+    {
+      "t": "In the Morning",
+      "a": "ITZY"
+    },
+    {
+      "t": "On the Ground",
+      "a": "ROSE"
+    },
+    {
+      "t": "Gone",
+      "a": "ROSE"
+    },
+    {
+      "t": "Lilac",
+      "a": "IU"
+    },
+    {
+      "t": "Celebrity",
+      "a": "IU"
+    },
+    {
+      "t": "Eight",
+      "a": "IU, SUGA"
     },
     {
       "t": "Eyes, Nose, Lips",
       "a": "TAEYANG"
     },
     {
-      "t": "Solo",
-      "a": "JENNIE"
+      "t": "Ringa Linga",
+      "a": "TAEYANG"
     },
     {
-      "t": "Gashina",
-      "a": "SUNMI"
+      "t": "Crooked",
+      "a": "G-DRAGON"
     },
     {
-      "t": "Hero",
-      "a": "MONSTA X"
+      "t": "Who You?",
+      "a": "G-DRAGON"
     },
     {
-      "t": "Shoot Out",
-      "a": "MONSTA X"
-    },
-    {
-      "t": "Hip",
-      "a": "MAMAMOO"
-    },
-    {
-      "t": "Egotistic",
-      "a": "MAMAMOO"
-    },
-    {
-      "t": "Love Scenario",
-      "a": "iKON"
-    },
-    {
-      "t": "Killing Me",
-      "a": "iKON"
-    },
-    {
-      "t": "Breathe",
-      "a": "Lee Hyori"
-    },
-    {
-      "t": "Paradise",
-      "a": "Chung Ha"
-    },
-    {
-      "t": "Roller Coaster",
-      "a": "Chung Ha"
-    },
-    {
-      "t": "Gotta Go",
-      "a": "TAEYEON"
-    },
-    {
-      "t": "Four Seasons",
-      "a": "TAEYEON"
+      "t": "Without You",
+      "a": "NELL"
     },
     {
       "t": "Stay",
-      "a": "ZICO"
+      "a": "NELL"
     },
     {
-      "t": "Any Song",
-      "a": "ZICO"
+      "t": "River Flows in You",
+      "a": "YIRUMA"
     },
     {
-      "t": "Holo",
-      "a": "Lee Hyori"
+      "t": "Memories",
+      "a": "Maroon 5"
     },
     {
-      "t": "Dun Dun Dance",
-      "a": "OH MY GIRL"
+      "t": "Maps",
+      "a": "Maroon 5"
     },
     {
-      "t": "Nonstop",
-      "a": "OH MY GIRL"
+      "t": "Girls Like You",
+      "a": "Maroon 5, Cardi B"
     },
     {
-      "t": "As If It's Your Last",
-      "a": "BLACKPINK"
+      "t": "Can't Stop the Feeling!",
+      "a": "Justin Timberlake"
     },
     {
-      "t": "Whistle",
-      "a": "BLACKPINK"
+      "t": "Suit & Tie",
+      "a": "Justin Timberlake, Jay-Z"
     },
     {
-      "t": "Shut Down",
-      "a": "BLACKPINK"
+      "t": "Mirrors",
+      "a": "Justin Timberlake"
     },
     {
-      "t": "About Damn Time",
-      "a": "Lizzo"
+      "t": "Happy",
+      "a": "Pharrell Williams"
     },
     {
-      "t": "Levitating",
-      "a": "Dua Lipa"
+      "t": "Get Lucky",
+      "a": "Daft Punk, Pharrell Williams"
     },
     {
-      "t": "Don't Start Now",
-      "a": "Dua Lipa"
+      "t": "Uptown Funk",
+      "a": "Mark Ronson, Bruno Mars"
     },
     {
-      "t": "Peaches",
-      "a": "Justin Bieber, Daniel Caesar, Giveon"
+      "t": "24K Magic",
+      "a": "Bruno Mars"
     },
     {
-      "t": "Stay",
-      "a": "The Kid LAROI, Justin Bieber"
+      "t": "Finesse (Remix)",
+      "a": "Bruno Mars, Cardi B"
     },
     {
-      "t": "Heat Waves",
-      "a": "Glass Animals"
+      "t": "Thank U, Next",
+      "a": "Ariana Grande"
     },
     {
-      "t": "Bad Habits",
-      "a": "Ed Sheeran"
+      "t": "7 Rings",
+      "a": "Ariana Grande"
     },
     {
-      "t": "Shivers",
-      "a": "Ed Sheeran"
+      "t": "Positions",
+      "a": "Ariana Grande"
     },
     {
-      "t": "Good 4 U",
-      "a": "Olivia Rodrigo"
+      "t": "Bad Guy",
+      "a": "Billie Eilish"
     },
     {
-      "t": "Drivers License",
-      "a": "Olivia Rodrigo"
+      "t": "When the Party's Over",
+      "a": "Billie Eilish"
     },
     {
-      "t": "Kiss Me More",
-      "a": "Doja Cat, SZA"
+      "t": "Everything I Wanted",
+      "a": "Billie Eilish"
     },
     {
-      "t": "Woman",
-      "a": "Doja Cat"
+      "t": "Old Town Road",
+      "a": "Lil Nas X, Billy Ray Cyrus"
     },
     {
-      "t": "Astronaut In The Ocean",
-      "a": "Masked Wolf"
+      "t": "Senorita",
+      "a": "Shawn Mendes, Camila Cabello"
     },
     {
-      "t": "Montero (Call Me By Your Name)",
-      "a": "Lil Nas X"
-    },
-    {
-      "t": "Industry Baby",
-      "a": "Lil Nas X, Jack Harlow"
-    },
-    {
-      "t": "Save Your Tears",
-      "a": "The Weeknd"
-    },
-    {
-      "t": "Blinding Lights",
-      "a": "The Weeknd"
-    },
-    {
-      "t": "Get You",
-      "a": "Daniel Caesar"
+      "t": "Señorita",
+      "a": "Shawn Mendes, Camila Cabello"
     },
     {
       "t": "Eastside",
       "a": "Benny Blanco, Halsey, Khalid"
+    },
+    {
+      "t": "Without Me",
+      "a": "Halsey"
+    },
+    {
+      "t": "Sucker",
+      "a": "Jonas Brothers"
+    },
+    {
+      "t": "Dancing With a Stranger",
+      "a": "Sam Smith, Normani"
+    },
+    {
+      "t": "Truth Hurts",
+      "a": "Lizzo"
+    },
+    {
+      "t": "Good as Hell",
+      "a": "Lizzo"
+    },
+    {
+      "t": "High Hopes",
+      "a": "Panic! At The Disco"
+    },
+    {
+      "t": "Circles",
+      "a": "Post Malone"
     }
   ]
 }
