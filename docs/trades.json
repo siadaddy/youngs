@@ -1,6 +1,22 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 1983.0,
+    "qty": 13.689294163792233,
+    "invest_krw": 27145.8703268
+  },
   "history": [
+    {
+      "time": "2026-04-09 21:20",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 1983.0,
+      "amount_krw": 27145.8703268,
+      "reason": "XRP의 변동성 돌파 신호와 점수 +3, ADX 44.7(추세O)로 강한 매수 신호가 발생했습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-09 18:47",
       "action": "SELL",
@@ -69,7 +85,7 @@
     }
   ],
   "stats": {
-    "total_trades": 5,
+    "total_trades": 6,
     "wins": 2,
     "losses": 1,
     "total_pnl_krw": -57.0,
@@ -77,5 +93,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 15.0
   },
-  "updated_at": "2026-04-09 18:47"
+  "updated_at": "2026-04-09 21:20"
 }
