@@ -2,7 +2,7 @@
 
 > 빗썸 KRW 마켓에서 AI가 종목 선정·매수·매도를 완전 자동화하는 트레이딩 시스템
 
-**실행 환경**: MacBook (launchd) — 15분마다 자동 실행 (96회/일)
+**실행 환경**: MacBook (launchd) — 5분마다 자동 실행 (288회/일)
 
 ---
 
@@ -16,26 +16,21 @@ Groq AI(Llama 3.3 70B)가 기술적 지표를 바탕으로 BUY / SELL / HOLD를 
 ## 🕐 자동화 흐름
 
 ```
-매 시 :02 / :17 / :32 / :47 (하루 96회)
+매 시 :00 / :05 / :10 / ... / :55 (하루 288회)
 │
-├─ Step 0: 공인 IP 변경 감지 → 변경 시 ntfy 긴급 알림
-├─ Step 1: state.json 로드 → 현재 보유 종목 확인
-├─ Step 2: 손절/익절 체크 → 발동 시 즉시 매도 후 BUY 재탐색
-├─ Step 3: 빗썸 KRW 마켓 거래대금 상위 20개 종목 선별
-├─ Step 4: 각 종목 10분봉 OHLCV → RSI / MACD / 볼린저밴드 / ADX / 변동성돌파 계산
-│           (ThreadPoolExecutor max_workers=5 병렬 처리 — ~40초)
-├─ Step 5: Groq AI 판단 → BUY(종목명) / SELL / HOLD + 한국어 이유
-├─ Step 6: 주문 실행 (빗썸 시장가, 최소금액 5,000원 체크)
+├─ Step 0: Daily Drawdown 체크 → 일일 손실 한도 도달 시 당일 봇 정지
+├─ Step 1: 공인 IP 변경 감지 → 변경 시 ntfy 긴급 알림
+├─ Step 2: state.json 로드 → 현재 보유 종목 확인
+├─ Step 3: 손절/익절 체크 → 발동 시 즉시 매도 후 BUY 재탐색
+├─ Step 4: 빗썸 KRW 마켓 거래대금 상위 20개 종목 선별
+├─ Step 5: 각 종목 30분봉 OHLCV → RSI / MACD / 볼린저밴드 / ADX / 변동성돌파 계산
+│           (ThreadPoolExecutor max_workers=5 병렬 처리)
+├─ Step 6: Groq AI 판단 → BUY(종목명) / SELL / HOLD + 한국어 이유
+├─ Step 7: 주문 실행 (빗썸 시장가, 최소금액 5,000원 체크)
 │   └─ SELL 직후 → holding=None으로 즉시 BUY 재판단 → 신호 있으면 바로 매수
-├─ Step 7: state.json 업데이트
-├─ Step 8: ntfy 결과 알림
-└─ Step 9: docs/trades.json 업데이트 → GitHub Pages push
-
-🛡 가격 감시 (price_guard.py) — 상시 실행 (30초 간격, KeepAlive)
-├─ main.py 실행 중(lock 파일)이면 스킵 → 매매 충돌 방지
-├─ 보유 종목 현재가 실시간 조회
-├─ 손절 발동: 매수가 대비 -7% 이하 → 즉시 시장가 매도 + ntfy 긴급 알림
-└─ 익절 발동: 매수가 대비 +15% 이상 → 즉시 시장가 매도 + ntfy 알림
+├─ Step 8: state.json 업데이트
+├─ Step 9: ntfy 결과 알림
+└─ Step 10: docs/trades.json 업데이트 → GitHub Pages push
 ```
 
 ---
@@ -44,14 +39,15 @@ Groq AI(Llama 3.3 70B)가 기술적 지표를 바탕으로 BUY / SELL / HOLD를 
 
 ```
 coin-trader/
-├── main.py                 ← 오케스트레이터 (15분 간격)
-├── price_guard.py          ← 실시간 가격 감시 (30초 간격, 손절/익절)
+├── main.py                 ← 오케스트레이터 (5분 간격)
+├── price_guard.py          ← 실시간 가격 감시 (30초 간격, 손절/익절 백업)
 ├── run_trader.sh           ← launchd 실행 스크립트
 ├── state.json              ← 보유 종목·매수가·수량 (재시작 시 복원)
+├── drawdown.json           ← 일일 손실 누적 추적 (자정 자동 초기화)
 ├── ip.txt                  ← 마지막 확인 공인 IP (변경 감지용)
 ├── trader.log              ← 실행 로그
 ├── agents/
-│   ├── analyzer.py         ← 거래량 상위 20개 + 기술적 지표 계산 (병렬)
+│   ├── analyzer.py         ← 거래량 상위 20개 + 30분봉 기술적 지표 계산 (병렬)
 │   ├── ai_advisor.py       ← Groq AI 판단 (key1→key2 폴백, 외국어 필터)
 │   └── executor.py         ← 빗썸 시장가 주문 실행 + 최소금액 체크
 └── utils/
@@ -70,9 +66,10 @@ BITHUMB_ACCESS_KEY_V2=...   # API 2.0 (IP 관리 가능 — 추후 전환용, �
 BITHUMB_SECRET_KEY_V2=...
 GROQ_API_KEY=...            # key1 소진 시 key2 자동 전환
 GROQ_API_KEY_2=...
-MAX_INVEST_KRW=29000        # 최대 투자금액 (원)
-STOP_LOSS_PCT=7.0           # 자동 손절 기준 (%)
-TAKE_PROFIT_PCT=15.0        # 자동 익절 기준 (%)
+MAX_INVEST_KRW=100000       # 최대 투자금액 (원)
+STOP_LOSS_PCT=4.0           # 자동 손절 기준 (%)
+TAKE_PROFIT_PCT=6.0         # 자동 익절 기준 (%)
+DAILY_LOSS_LIMIT_KRW=-15000 # 일일 손실 한도 (원, 초과 시 당일 봇 정지)
 DRY_RUN=false               # true=시뮬레이션, false=실제 주문
 NTFY_TOPIC=siadad-aicrew
 ```
@@ -83,13 +80,13 @@ NTFY_TOPIC=siadad-aicrew
 
 | 지표 | 설정 | 매수 점수 | 매도 점수 |
 |------|------|----------|----------|
-| RSI | **9봉** (10분봉 기준 빠른 반응) | <35: +2 / <45: +1 | >65: -1 / >75: -2 |
+| RSI | **14봉** (30분봉 기준 표준) | <35: +2 / <45: +1 | >65: -1 / >75: -2 |
 | MACD | 12/26/9 | 골든크로스: +2 / 상승: +1 | 데드크로스: -2 / 하락: -1 |
 | 볼린저밴드 | 20/2 | 하단: +2 / 중하단: +1 | 상단: -2 / 중상단: -1 |
-| ADX | **9봉** | ≥15: 추세O (매수 허용) | <10: 횡보 (매수 금지) |
-| **변동성 돌파(VB)** | K=0.5 | **+2 보너스** (최우선 매수 신호) | — |
+| ADX | **14봉** | ≥15: 추세O (매수 허용) | <10: 횡보 (매수 금지) |
+| **변동성 돌파(VB)** | K=0.5 (일봉) | **+2 보너스** (최우선 매수 신호) | — |
 
-분석 기준: **10분봉** (빗썸 지원 최소 단위, 15분 실행에 최적화)
+분석 기준: **30분봉** (minute30)
 
 **변동성 돌파 공식**: `오늘 시가 + (전일 고가 - 전일 저가) × 0.5`
 현재가가 이 목표가를 돌파하면 VB✅ 신호 발생
@@ -113,8 +110,9 @@ NTFY_TOPIC=siadad-aicrew
 
 | 기능 | 내용 |
 |------|------|
-| 손절 | 매수가 대비 -7% 자동 매도 (price_guard 실시간 감시) |
-| 익절 | 매수가 대비 +15% 자동 매도 (price_guard 실시간 감시) |
+| 손절 | 매수가 대비 -4% 자동 매도 |
+| 익절 | 매수가 대비 +6% 자동 매도 |
+| Daily Drawdown | 일일 누적 손실 -15,000원 초과 시 당일 봇 정지 (자정 초기화) |
 | 매도 최소금액 체크 | qty × 현재가 < 5,000원이면 매도 보류 |
 | IP 변경 감지 | 공인 IP 변경 시 ntfy 긴급 알림 (빗썸 API 재등록 안내) |
 | Groq 폴백 | key1 소진 시 key2 자동 전환, 429 rate limit 대기 처리 |
@@ -146,9 +144,12 @@ pmset -g | grep "^[ ]*sleep"
 
 **라이브**: `https://siadaddy.github.io/youngs/` → 코인 트레이더 탭
 
-- 매매 통계 (총 거래 / 승 / 패 / 손익)
-- 현재 보유 종목 실시간 표시 (30초 갱신, 빗썸 API)
+- 매매 통계 (총 거래 / 승 / 패 / 승률 / 누적 손익)
+- 누적 손익 차트 (Chart.js, 수익=초록 / 손실=빨강)
+- 봇 상태 표시 (마지막 실행 시각 기준 🟢≤5분/🟡≤30분/🔴>30분)
+- 현재 보유 종목 실시간 표시
 - 최근 50건 매매 이력 + AI 판단 이유
+- 티커별 매매 성과 집계 테이블
 
 ---
 
@@ -161,6 +162,7 @@ pmset -g | grep "^[ ]*sleep"
 | 매도 완료 | 🔴 종목·이유 |
 | 손절 매도 | 🔴 긴급 |
 | 익절 매도 | 🟡 |
+| Daily Drawdown 한도 도달 | 🛑 긴급 — 당일 봇 정지 |
 | IP 변경 | 🔴 긴급 — 빗썸 재등록 필요 |
 | 오류 복구 | ⚠️ N회 실패 후 정상 재개 |
 
@@ -209,30 +211,33 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ## 📝 업데이트 로그
 
+### 2026-04-11
+- **5분 간격 전환**: 15분 → 5분 (96회/일 → 288회/일)
+- **30분봉 전환**: 10분봉 → 30분봉 (minute30, RSI/ADX period 9→14)
+- **익절 기준 조정**: +15% → +6% (빠른 수익 실현)
+- **손절 기준 조정**: -7% → -4%
+- **Daily Drawdown 보호 추가**: 일일 손실 -15,000원 초과 시 당일 봇 정지
+
 ### 2026-04-06
 - **빗썸 전환 완료**: 업비트 → 빗썸 (pybithumb API 1.0)
-- **15분 간격 실행**: 매 시 :02/:17/:32/:47 (96회/일)
-- **10분봉 분석**: minute60 → minute10, RSI/ADX period 14→9 (빠른 신호)
 - **SELL 직후 즉시 BUY 재탐색**: 매도 완료 후 같은 사이클 내 매수 기회 탐색
 - **IP 알림 정리**: IP 정상이면 ntfy 스킵, 변경 시에만 빗썸 재등록 안내
 - **맥북 절전 설정 가이드 추가**: `pmset -c sleep 0` 필수 설정
 
 ### 2026-04-03
-- **analyzer.py 병렬화**: ThreadPoolExecutor(max_workers=5) → 37분 → ~40초
+- **analyzer.py 병렬화**: ThreadPoolExecutor(max_workers=5)
 - **하드 타임아웃**: BaseException 서브클래스로 진짜 킬 스위치
 - **price_guard.py 충돌 방지**: lock 파일 감지로 동시 매도 경쟁 방지
 
 ### 2026-04-02
 - **변동성 돌파(VB) 전략 추가**: K=0.5, 최우선 매수 신호
-- **1시간봉 전환 → 이후 10분봉으로 재전환**
-- **매 시간 실행 → 이후 15분으로 재전환**
 
 ### 2026-03-31
-- **price_guard.py 추가**: 30초 간격 손절/익절 실시간 감시
+- **price_guard.py 추가**: 손절/익절 실시간 감시
 
 ### 2026-03-28
 - 시스템 최초 구축
 
 ---
 
-*최종 업데이트: 2026-04-06 | Powered by Groq + pybithumb + GitHub Pages*
+*최종 업데이트: 2026-04-11 | Powered by Groq + pybithumb + GitHub Pages*
