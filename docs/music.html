@@ -865,7 +865,7 @@ function animate() {
 
   // ── 별 개별 공전 (각자 다른 속도로 360° 회전 + 상하 표류) ──
   sprites.forEach(s => {
-    if (s === hovered || s === playingSprite) return;
+    if (s === hovered) return;
     s.userData.angleXZ += s.userData.speed;
     const a = s.userData.angleXZ;
     const r = s.userData.radiusXZ;
@@ -969,7 +969,7 @@ function animate() {
     const rPulse = Math.sin(tick * 0.07) * 0.5 + 0.5;
     playRingSpr.scale.setScalar(playingSprite.userData.base * (3 + rPulse * 3));
     playRingSpr.material.opacity = 0.08 + rPulse * 0.15 + beat * 0.15;
-    // 재생 중 별 강조 (살짝만)
+    // 재생 중 별 크기 강조 (공전은 위 루프에서 이미 처리)
     if (playingSprite !== hovered) {
       playingSprite.scale.setScalar(
         playingSprite.userData.base * (1.8 + Math.sin(tick * 0.1) * 0.3 + beat * 1.2)
