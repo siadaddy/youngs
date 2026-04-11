@@ -3,7 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🤖 시아아빠님의 AI 크리에이터</title>
+  <title>🤖 시아아빠님의 AI 자동화 허브</title>
+
+  <!-- OG / SNS 공유 메타태그 -->
+  <meta name="description" content="AI가 매일 뉴스를 분석해 카드뉴스·블로그를 자동 생성하고, 코인봇이 24시간 자동매매하는 AI 자동화 허브입니다." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://siadaddy.github.io/youngs/" />
+  <meta property="og:title"       content="🤖 시아아빠님의 AI 자동화 허브" />
+  <meta property="og:description" content="AI 뉴스레터 자동 생성 · AI 코인 자동매매 · Music Universe — 매일 아침 5명의 AI 직원이 일합니다." />
+  <meta property="og:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
+  <meta property="og:locale"      content="ko_KR" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="🤖 시아아빠님의 AI 자동화 허브" />
+  <meta name="twitter:description" content="AI 뉴스레터 자동 생성 · AI 코인 자동매매 · Music Universe" />
+  <meta name="twitter:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -753,7 +767,7 @@
     .trade-pnl-krw { font-size: .72rem; color: var(--muted); margin-top: 2px; }
 
     .coin-stats-row {
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 16px;
       margin-bottom: 48px;
     }
     .coin-stat-card {
@@ -772,7 +786,7 @@
     @media (max-width: 768px) {
       .coin-status-card { grid-template-columns: 1fr 1fr; padding: 24px; }
       .coin-meta { text-align: left; }
-      .coin-stats-row { grid-template-columns: repeat(2,1fr); }
+      .coin-stats-row { grid-template-columns: repeat(3,1fr); }
       .trade-history { overflow-x: auto; }
       .section { padding: 52px 0; }
     }
@@ -1055,6 +1069,14 @@
       <span class="tech-badge purple">🛡 Daily Drawdown 보호</span>
     </div>
 
+    <!-- 봇 상태 -->
+    <div id="bot-status-row" style="display:flex;align-items:center;gap:10px;margin-top:16px;margin-bottom:4px;">
+      <span id="bot-status-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:var(--muted2);background:var(--glass);">
+        ⏳ 상태 확인 중...
+      </span>
+      <span id="bot-status-time" style="font-size:.72rem;color:var(--muted);"></span>
+    </div>
+
     <!-- 누적손익 배너 -->
     <div id="coin-pnl-banner" style="display:none;margin-top:32px;margin-bottom:24px;padding:16px 24px;border-radius:14px;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;"></div>
 
@@ -1075,6 +1097,10 @@
       <div class="coin-stat-card">
         <div class="coin-stat-val" id="cs-pnl">-</div>
         <div class="coin-stat-lbl">누적 손익</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-winrate">-</div>
+        <div class="coin-stat-lbl">승률</div>
       </div>
     </div>
 
@@ -1902,12 +1928,18 @@
     const pnlEl = document.getElementById('cs-pnl');
     pnlEl.textContent = '+0원';
     pnlEl.style.color = 'var(--muted2)';
+    const wrEl = document.getElementById('cs-winrate');
+    wrEl.textContent = '-';
+    wrEl.style.color = 'var(--muted2)';
   }
   async function loadCoinTrader() {
     try {
       const res = await fetch(`trades.json?t=${Date.now()}`);
       if (!res.ok) { setStatsDefault(); return; }
       const d = await res.json();
+
+      // 봇 상태
+      updateBotStatus(d.updated_at);
 
       // 시뮬레이션 배지
       const isDry = d.history && d.history.length > 0 && d.history[0].dry_run;
@@ -1926,6 +1958,20 @@
       const pnlEl = document.getElementById('cs-pnl');
       pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
       pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
+
+      // 승률 계산
+      const wins = s.wins ?? 0, total = s.total_trades ?? 0;
+      const sellCount = d.history ? d.history.filter(t => t.action === 'SELL').length : total;
+      const base = sellCount || total;
+      const winrateEl = document.getElementById('cs-winrate');
+      if (base > 0) {
+        const wr = (wins / base * 100);
+        winrateEl.textContent = wr.toFixed(1) + '%';
+        winrateEl.style.color = wr >= 60 ? 'var(--green)' : wr >= 50 ? 'var(--gold)' : '#f87171';
+      } else {
+        winrateEl.textContent = '-';
+        winrateEl.style.color = 'var(--muted2)';
+      }
 
       // 코인 섹션 누적손익 배너
       const banner = document.getElementById('coin-pnl-banner');
@@ -2069,9 +2115,29 @@
     }
   }
 
+  // 봇 상태 — trades.json updated_at 기준
+  function updateBotStatus(updatedAt) {
+    const badge = document.getElementById('bot-status-badge');
+    const timeEl = document.getElementById('bot-status-time');
+    if (!badge || !updatedAt) return;
+    const diff = (Date.now() - new Date(updatedAt.replace(' ', 'T'))) / 60000; // 분
+    if (diff <= 5) {
+      badge.innerHTML = '🟢 실행 중';
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(16,185,129,.35);color:#34d399;background:rgba(16,185,129,.1);';
+    } else if (diff <= 30) {
+      badge.innerHTML = '🟡 지연';
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(245,158,11,.35);color:var(--gold);background:rgba(245,158,11,.1);';
+    } else {
+      badge.innerHTML = '🔴 중단 의심';
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(248,113,113,.35);color:#f87171;background:rgba(248,113,113,.1);';
+    }
+    const d = new Date(updatedAt.replace(' ', 'T'));
+    timeEl.textContent = `마지막 실행 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
   init();
   loadCoinTrader();
-  // 30초마다 코인 현재가 갱신
+  // 30초마다 코인 현재가·봇 상태 갱신
   setInterval(loadCoinTrader, 30 * 1000);
 
   // ─── 히어로 별 canvas ─────────────────────────────────
