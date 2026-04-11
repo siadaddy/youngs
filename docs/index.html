@@ -732,7 +732,7 @@
     .trade-reason { font-size: .78rem; color: var(--muted2); margin-top: 4px;
                     white-space: normal; overflow: visible; line-height: 1.5; }
     .trade-pnl { text-align: right; flex-shrink: 0; }
-    .trade-pnl-val { font-size: .95rem; font-weight: 800; }
+    .trade-pnl-val { font-size: 1.1rem; font-weight: 800; }
     .trade-pnl-val.pos { color: #f87171; }
     .trade-pnl-val.neg { color: var(--green); }
     .trade-pnl-val.none{ color: var(--muted2); }
@@ -827,6 +827,26 @@
     .fade-in:nth-child(3){ animation-delay:.19s }
     .fade-in:nth-child(4){ animation-delay:.26s }
     .fade-in:nth-child(5){ animation-delay:.33s }
+
+    /* ─── 히스토리 필터 탭 ──────────────────────── */
+    .hist-filter-bar {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .hist-filter-btn {
+      padding: 6px 14px; border-radius: 99px;
+      border: 1px solid var(--glass-border);
+      background: transparent;
+      color: var(--muted2); font-size: .78rem; font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .hist-filter-btn:hover { border-color: rgba(28,105,212,.4); color: var(--bmw-lt); }
+    .hist-filter-btn.active {
+      background: rgba(28,105,212,.18);
+      border-color: rgba(28,105,212,.5);
+      color: var(--bmw-lt);
+    }
 
     /* ─── 테크 스택 배지 ─────────────────────────── */
     .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -1055,8 +1075,15 @@
 
     <!-- 매매 히스토리 -->
     <div style="margin-top:24px;">
-      <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;">
-        📋 매매 히스토리
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;">📋 매매 히스토리</div>
+      </div>
+      <div class="hist-filter-bar">
+        <button class="hist-filter-btn active" onclick="filterTrades('all',this)">전체</button>
+        <button class="hist-filter-btn" onclick="filterTrades('profit',this)">🟢 수익</button>
+        <button class="hist-filter-btn" onclick="filterTrades('loss',this)">🔴 손실</button>
+        <button class="hist-filter-btn" onclick="filterTrades('BUY',this)">매수</button>
+        <button class="hist-filter-btn" onclick="filterTrades('SELL',this)">매도</button>
       </div>
       <div class="trade-history" id="coin-history">
         <div style="text-align:center;color:var(--muted);padding:32px 0;">불러오는 중...</div>
@@ -1669,6 +1696,76 @@
   /* ─── 코인 트레이더 ──────────────────────────────────── */
   let pnlChart = null;
 
+  let _allTradeHistory = [];   // 필터용 전체 보관
+
+  function filterTrades(type, btn) {
+    document.querySelectorAll('.hist-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const hist = _allTradeHistory.slice(0, 20);
+    let filtered;
+    if      (type === 'all')    filtered = hist;
+    else if (type === 'profit') filtered = hist.filter(t => t.pnl_krw != null && t.pnl_krw > 0);
+    else if (type === 'loss')   filtered = hist.filter(t => t.pnl_krw != null && t.pnl_krw < 0);
+    else                        filtered = hist.filter(t => t.action === type);
+    renderTradeHistory(filtered, hist);
+  }
+
+  function fmtHoldTime(buyTime, sellTime) {
+    try {
+      const diff = new Date(sellTime.replace(' ', 'T')) - new Date(buyTime.replace(' ', 'T'));
+      const mins = Math.round(diff / 60000);
+      if (mins < 60)  return `${mins}분 보유`;
+      const h = Math.floor(mins/60), m = mins % 60;
+      return m ? `${h}시간 ${m}분 보유` : `${h}시간 보유`;
+    } catch { return ''; }
+  }
+
+  function renderTradeHistory(filtered, allHist) {
+    const histEl = document.getElementById('coin-history');
+    if (!filtered.length) {
+      histEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px 0;">해당 거래가 없습니다.</div>';
+      return;
+    }
+    histEl.innerHTML = filtered.map((t) => {
+      const origIdx = allHist.indexOf(t);
+      const icon   = t.action === 'BUY' ? '🟢' : t.action === 'SELL' ? '🔴' : '⏸';
+      const cls    = t.action === 'BUY' ? 'buy' : t.action === 'SELL' ? 'sell' : 'hold';
+      const pnlPct = t.pnl_pct != null ? t.pnl_pct : null;
+      const pnlCls = pnlPct == null ? 'none' : pnlPct >= 0 ? 'pos' : 'neg';
+      const pnlStr = pnlPct == null ? (t.action === 'BUY' ? '매수' : '-') :
+                     (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
+      const krwStr = t.pnl_krw != null ? (t.pnl_krw >= 0 ? '+' : '') + Number(t.pnl_krw).toLocaleString() + '원' : '';
+      const ticker = (t.ticker || '').replace('KRW-', '');
+
+      // 매수가 / 매도가 표시
+      let priceInfo = '';
+      if (t.action === 'BUY' && t.price) {
+        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">매수가 ${fmtPrice(t.price)}</div>`;
+      } else if (t.action === 'SELL' && t.price) {
+        // 같은 ticker의 직전 BUY 찾기
+        const buyTrade = allHist.slice(origIdx + 1).find(h => h.action === 'BUY' && h.ticker === t.ticker);
+        const holdStr = buyTrade ? fmtHoldTime(buyTrade.time, t.time) : '';
+        const buyPriceStr = buyTrade ? `${fmtPrice(buyTrade.price)} → ` : '';
+        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">${buyPriceStr}${fmtPrice(t.price)}${holdStr ? ` · ⏱ ${holdStr}` : ''}</div>`;
+      }
+
+      return `
+        <div class="trade-item fade-in" id="trade-item-${origIdx}">
+          <div class="trade-badge ${cls}">${icon}</div>
+          <div class="trade-info">
+            <div class="trade-ticker">${t.action} · ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
+            <div class="trade-time">${t.time || ''}</div>
+            ${priceInfo}
+            <div class="trade-reason">${t.reason || ''}</div>
+          </div>
+          <div class="trade-pnl">
+            <div class="trade-pnl-val ${pnlCls}">${pnlStr}</div>
+            ${krwStr ? `<div class="trade-pnl-krw">${krwStr}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
   function buildPnlChart(allHistory, hist) {
     // SELL 거래만 필터 → 오래된 순으로 정렬
     const sells = [...allHistory]
@@ -1910,39 +2007,11 @@
           </div>`;
       }
 
-      // 누적손익 차트
-      buildPnlChart(d.history || [], (d.history || []).slice(0, 10));
-
-      // 히스토리
-      const histEl = document.getElementById('coin-history');
-      const hist = (d.history || []).slice(0, 10);
-      if (hist.length === 0) {
-        histEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px 0;">아직 매매 기록이 없습니다.</div>';
-      } else {
-        histEl.innerHTML = hist.map((t, idx) => {
-          const icon   = t.action === 'BUY' ? '🟢' : t.action === 'SELL' ? '🔴' : '⏸';
-          const cls    = t.action === 'BUY' ? 'buy' : t.action === 'SELL' ? 'sell' : 'hold';
-          const pnlPct = t.pnl_pct != null ? t.pnl_pct : null;
-          const pnlCls = pnlPct == null ? 'none' : pnlPct >= 0 ? 'pos' : 'neg';
-          const pnlStr = pnlPct == null ? (t.action === 'BUY' ? '매수' : '-') :
-                         (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
-          const krwStr = t.pnl_krw != null ? (t.pnl_krw >= 0 ? '+' : '') + Number(t.pnl_krw).toLocaleString() + '원' : '';
-          const ticker = (t.ticker || '').replace('KRW-', '');
-          return `
-            <div class="trade-item fade-in" id="trade-item-${idx}">
-              <div class="trade-badge ${cls}">${icon}</div>
-              <div class="trade-info">
-                <div class="trade-ticker">${t.action} · ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
-                <div class="trade-time">${t.time || ''}</div>
-                <div class="trade-reason">${t.reason || ''}</div>
-              </div>
-              <div class="trade-pnl">
-                <div class="trade-pnl-val ${pnlCls}">${pnlStr}</div>
-                ${krwStr ? `<div class="trade-pnl-krw">${krwStr}</div>` : ''}
-              </div>
-            </div>`;
-        }).join('');
-      }
+      // 누적손익 차트 + 히스토리
+      _allTradeHistory = d.history || [];
+      const hist = _allTradeHistory.slice(0, 20);
+      buildPnlChart(_allTradeHistory, hist);
+      renderTradeHistory(hist, hist);
 
     } catch(e) {
       setStatsDefault();
