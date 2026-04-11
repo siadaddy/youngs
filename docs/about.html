@@ -64,6 +64,29 @@
     .tag.green { border-color: rgba(16,185,129,.4);  color: var(--green);   background: rgba(16,185,129,.08); }
     .tag.gold  { border-color: rgba(245,158,11,.4);  color: var(--gold);    background: rgba(245,158,11,.08); }
 
+    /* ─── 나는 누구인가 ─── */
+    .bio-section { padding: 72px 0; }
+    .bio-card {
+      max-width: 660px; margin: 0 auto;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 52px 56px;
+      position: relative; overflow: hidden;
+    }
+    .bio-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--bmw) 0%, var(--accent2) 100%);
+    }
+    .bio-greeting { font-size: 1.15rem; font-weight: 800; margin-bottom: 36px; color: var(--text); }
+    .bio-para { font-size: .95rem; color: var(--muted2); line-height: 2; margin-bottom: 20px; }
+    .bio-para.highlight { color: var(--text); font-weight: 600; }
+    .bio-para.accent { color: var(--bmw-lt); }
+    .bio-sign {
+      margin-top: 40px; padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: .82rem; color: var(--muted); font-style: italic; text-align: right;
+    }
+    @media (max-width: 600px) { .bio-card { padding: 36px 28px; } }
+
     /* ─── 헤더 ─── */
     .page-header {
       padding: 56px 0 48px;
@@ -241,6 +264,34 @@
   </div>
 </div>
 
+<!-- ─── 나는 누구인가 ─── -->
+<section class="bio-section">
+  <div class="container">
+    <div class="bio-card">
+      <div class="bio-greeting">안녕하세요, 시아아빠입니다.</div>
+
+      <p class="bio-para">저는 개발자가 아니에요.<br>
+      자동차 업계에서 기획관리 일을 하는 평범한 직장인입니다.</p>
+
+      <p class="bio-para">작년 이맘때 GPT를 처음 써봤어요.<br>
+      "신기하다" 정도였어요.</p>
+
+      <p class="bio-para highlight">그러다 올해 3월, Claude Code를 만났어요.<br>
+      그리고 한 달 만에<br>
+      매일 뉴스를 분석해 카드뉴스를 만들고,<br>
+      코인을 자동으로 매매하고,<br>
+      AI가 추천한 음악으로 우주를 채우는 시스템을 만들었습니다.</p>
+
+      <p class="bio-para accent">코드 한 줄 못 짜도 괜찮았어요.<br>
+      뭘 만들고 싶은지만 알면 됐어요.</p>
+
+      <p class="bio-para">이 사이트는 그 한 달의 기록입니다.</p>
+
+      <div class="bio-sign">— 시아아빠 · 2026년 3월~</div>
+    </div>
+  </div>
+</section>
+
 <!-- ─── 자동화 파이프라인 ─── -->
 <section class="section">
   <div class="container">
@@ -254,7 +305,7 @@
           <div class="pipe-icon-wrap">📰</div>
           <div class="pipe-time">07:00</div>
           <div class="pipe-label">뉴스 수집</div>
-          <div class="pipe-desc">네이버 API 8개 카테고리</div>
+          <div class="pipe-desc">RSS 피드 8개 카테고리</div>
         </div>
         <div class="pipe-arrow">→</div>
         <div class="pipe-step">
@@ -276,6 +327,13 @@
           <div class="pipe-time"></div>
           <div class="pipe-label">최디자</div>
           <div class="pipe-desc">이미지 5장 생성</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">🎵</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">한뮤직</div>
+          <div class="pipe-desc">70곡+ 추천·우주 업데이트</div>
         </div>
         <div class="pipe-arrow">→</div>
         <div class="pipe-step">
@@ -353,7 +411,7 @@
           </div>
         </div>
         <div class="crew-quote">"글보다 먼저 눈을 사로잡는 이미지, 제 전문입니다."</div>
-        <div class="crew-model">🧠 Groq (프롬프트 생성) + Pollinations.ai Flux (이미지 생성)</div>
+        <div class="crew-model">🧠 Groq (프롬프트 생성) + Stable Horde (이미지 생성)</div>
         <div class="crew-tags">
           <span class="tag blue">768×768 이미지 5장</span>
           <span class="tag purple">Bloomberg/Wired 스타일</span>
@@ -395,6 +453,24 @@
         </div>
       </div>
 
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">🎵</div>
+          <div>
+            <div class="crew-name">한뮤직</div>
+            <div class="crew-title">AI 음악 큐레이터</div>
+          </div>
+        </div>
+        <div class="crew-quote">"오늘 하루 어울리는 음악, 제가 골라드릴게요."</div>
+        <div class="crew-model">🧠 Groq — Llama 3.3 70B · 장르/분위기 기반 큐레이션</div>
+        <div class="crew-tags">
+          <span class="tag blue">70곡+ 일일 추천</span>
+          <span class="tag purple">인기도 점수 산출</span>
+          <span class="tag gold">분위기 태그 생성</span>
+          <span class="tag">날짜별 히스토리 저장</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -404,7 +480,7 @@
   <div class="container">
     <div class="section-eyebrow">🤖 AI Crew · 트레이딩 팀</div>
     <div class="section-title">AI 코인 트레이더</div>
-    <p class="section-sub">24시간 시장 감시 · 매 시간 AI 판단 · 실시간 손절/익절</p>
+    <p class="section-sub">24시간 시장 감시 · 5분마다 AI 판단 · 빗썸 API 연동 · Daily Drawdown 보호</p>
     <div class="crew-grid">
 
       <div class="crew-card">
@@ -416,9 +492,9 @@
           </div>
         </div>
         <div class="crew-quote">"RSI, MACD, 볼린저밴드, 변동성 돌파 신호가 말할 때 움직입니다."</div>
-        <div class="crew-model">🔌 업비트 API + pyupbit · 1시간봉 OHLCV + 일봉 변동성돌파</div>
+        <div class="crew-model">🔌 빗썸 API + pybithumb · 30분봉 OHLCV + 변동성 돌파 스코어링</div>
         <div class="crew-tags">
-          <span class="tag blue">거래량 상위 20개 종목</span>
+          <span class="tag blue">빗썸 원화마켓 종목</span>
           <span class="tag">RSI · MACD · BB</span>
           <span class="tag gold">ADX 추세 필터</span>
         </div>
@@ -449,11 +525,12 @@
             <div class="crew-title">실시간 리스크 관리자</div>
           </div>
         </div>
-        <div class="crew-quote">"30초마다 확인합니다. 손실은 제가 먼저 막습니다."</div>
-        <div class="crew-model">🔌 price_guard.py · 30초 간격 상시 실행</div>
+        <div class="crew-quote">"5분마다 확인합니다. 손실은 제가 먼저 막습니다."</div>
+        <div class="crew-model">🔌 빗썸 API · 5분마다 실시간 감시 · Daily Drawdown 한도 관리</div>
         <div class="crew-tags">
           <span class="tag green">손절 -7%</span>
-          <span class="tag gold">익절 +15%</span>
+          <span class="tag gold">익절 +6%</span>
+          <span class="tag blue">Daily Drawdown 보호</span>
           <span class="tag">즉시 시장가 매도</span>
         </div>
       </div>
@@ -505,16 +582,16 @@
     <p class="section-sub">모든 서비스 무료</p>
     <div class="stack-grid">
       <div class="stack-card">
-        <div class="stack-icon">🔍</div>
-        <div><div class="stack-name">Naver News API</div><div class="stack-free">FREE · 뉴스 수집</div></div>
+        <div class="stack-icon">📡</div>
+        <div><div class="stack-name">RSS 피드</div><div class="stack-free">FREE · 언론사 뉴스 자동 수집</div></div>
       </div>
       <div class="stack-card">
         <div class="stack-icon">🧠</div>
-        <div><div class="stack-name">Groq Llama 3.3 70B</div><div class="stack-free">FREE · 텍스트 생성</div></div>
+        <div><div class="stack-name">Groq Llama 3.3 70B</div><div class="stack-free">FREE · 텍스트 생성 AI</div></div>
       </div>
       <div class="stack-card">
         <div class="stack-icon">🎨</div>
-        <div><div class="stack-name">Pollinations.ai Flux</div><div class="stack-free">FREE · 이미지 생성 (키 불필요)</div></div>
+        <div><div class="stack-name">Stable Horde</div><div class="stack-free">FREE · 이미지 생성 (키 불필요)</div></div>
       </div>
       <div class="stack-card">
         <div class="stack-icon">📓</div>
@@ -530,11 +607,19 @@
       </div>
       <div class="stack-card">
         <div class="stack-icon">📊</div>
-        <div><div class="stack-name">pyupbit</div><div class="stack-free">FREE · 코인 자동매매</div></div>
+        <div><div class="stack-name">pybithumb</div><div class="stack-free">FREE · 빗썸 코인 자동매매</div></div>
       </div>
       <div class="stack-card">
         <div class="stack-icon">🌐</div>
         <div><div class="stack-name">GitHub Pages</div><div class="stack-free">FREE · 사이트 호스팅</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">▶️</div>
+        <div><div class="stack-name">YouTube API</div><div class="stack-free">FREE · 뮤직 유니버스 재생</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🎵</div>
+        <div><div class="stack-name">iTunes API</div><div class="stack-free">FREE · 앨범아트 연동</div></div>
       </div>
     </div>
   </div>
