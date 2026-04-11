@@ -110,11 +110,19 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
     .hero h1 {
-      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-size: clamp(2.4rem, 6vw, 4rem);
       font-weight: 900;
       letter-spacing: -.03em;
-      line-height: 1.15;
+      line-height: 1.1;
       margin-bottom: 18px;
+    }
+    .hero h1 .sub {
+      display: block;
+      font-size: clamp(1rem, 2.2vw, 1.5rem);
+      font-weight: 500;
+      letter-spacing: -.01em;
+      color: var(--muted2);
+      margin-bottom: 4px;
     }
     .hero h1 .line2 {
       background: linear-gradient(135deg, var(--bmw-lt) 0%, var(--accent2) 100%);
@@ -607,7 +615,7 @@
     }
     .widget {
       background: var(--glass);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255,255,255,.14);
       border-radius: var(--r-md);
       padding: 16px 18px;
       backdrop-filter: blur(12px);
@@ -890,7 +898,7 @@
     &nbsp;매일 07:00 뉴스 · AI 음악 큐레이션 · 30초마다 코인 실시간 감시
   </div>
   <h1>
-    🤖 시아아빠님의<br>
+    <span class="sub">🤖 시아아빠님의</span>
     <span class="line2">AI 자동화 허브</span>
   </h1>
   <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">AI Automation Hub · Personal Portfolio</div>
@@ -916,8 +924,6 @@
       <div class="stat-label">코인 실시간 감시</div>
     </div>
   </div>
-  <div id="hero-pnl" style="margin-top:20px;font-size:2.2rem;font-weight:800;letter-spacing:-1px;"></div>
-  <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.4);margin-top:4px;">AI 코인봇 누적손익</div>
 </div>
 
 <!-- ─── 라이브 대시보드 ──────────────────────────────────── -->
@@ -1013,6 +1019,9 @@
       <span class="tech-badge green">⚡ 30초 실시간 감시</span>
       <span class="tech-badge purple">🛡 Daily Drawdown 보호</span>
     </div>
+
+    <!-- 누적손익 배너 -->
+    <div id="coin-pnl-banner" style="display:none;margin-bottom:20px;padding:16px 24px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;"></div>
 
     <!-- 누적 통계 -->
     <div class="coin-stats-row" id="coin-stats-row">
@@ -1683,11 +1692,27 @@
       pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
       pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
 
-      // 히어로 누적손익
-      const heroPnlEl = document.getElementById('hero-pnl');
-      if (heroPnlEl) {
-        heroPnlEl.textContent = (pnl >= 0 ? '+' : '') + Number(pnl).toLocaleString() + '원';
-        heroPnlEl.style.color = pnl >= 0 ? '#4ade80' : '#f87171';
+      // 코인 섹션 누적손익 배너
+      const banner = document.getElementById('coin-pnl-banner');
+      if (banner) {
+        const isPos = pnl > 0, isNeg = pnl < 0;
+        const pnlStr = (pnl >= 0 ? '+' : '') + Number(pnl).toLocaleString() + '원';
+        banner.style.display = 'flex';
+        banner.style.background = isPos
+          ? 'linear-gradient(135deg,rgba(248,113,113,.12) 0%,rgba(248,113,113,.06) 100%)'
+          : isNeg
+          ? 'linear-gradient(135deg,rgba(16,185,129,.1) 0%,rgba(16,185,129,.05) 100%)'
+          : 'rgba(255,255,255,.04)';
+        banner.style.border = `1px solid ${isPos ? 'rgba(248,113,113,.3)' : isNeg ? 'rgba(16,185,129,.25)' : 'rgba(255,255,255,.08)'}`;
+        banner.innerHTML = `
+          <div>
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">🤖 AI 코인봇 누적손익</div>
+            <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.03em;color:${isPos?'#f87171':isNeg?'#34d399':'var(--muted2)'};">${pnlStr}</div>
+          </div>
+          <div style="text-align:right;font-size:.78rem;color:var(--muted);line-height:1.7;">
+            <div>총 ${s.total_trades ?? 0}회 매매</div>
+            <div>수익 <span style="color:#f87171">${s.wins ?? 0}</span> · 손실 <span style="color:#34d399">${s.losses ?? 0}</span></div>
+          </div>`;
       }
 
       // 현재 보유 상태
