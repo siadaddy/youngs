@@ -21,9 +21,10 @@ IP_FILE       = os.path.join(os.path.dirname(__file__), "ip.txt")
 FAILURE_FILE  = os.path.join(os.path.dirname(__file__), "failure_state.json")
 LOCK_FILE     = os.path.join(os.path.dirname(__file__), "main.lock")
 NTFY_TOPIC   = os.getenv("NTFY_TOPIC", "siadad-aicrew")
-STOP_LOSS    = float(os.getenv("STOP_LOSS_PCT", "5.0"))
-TAKE_PROFIT  = float(os.getenv("TAKE_PROFIT_PCT", "10.0"))
-DRY_RUN      = os.getenv("DRY_RUN", "true").lower() == "true"
+STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "5.0"))
+TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "10.0"))
+DRY_RUN            = os.getenv("DRY_RUN", "true").lower() == "true"
+DAILY_LOSS_LIMIT   = float(os.getenv("DAILY_LOSS_LIMIT_KRW", "-15000"))
 
 
 # ── 유틸리티 ─────────────────────────────────────────────
@@ -68,6 +69,46 @@ def save_state(holding: dict | None):
     """보유 상태 저장"""
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(holding or {}, f, ensure_ascii=False, indent=2)
+
+
+# ── Daily Drawdown ────────────────────────────────────────
+DRAWDOWN_FILE = os.path.join(os.path.dirname(__file__), "drawdown.json")
+
+def load_drawdown() -> dict:
+    today = datetime.now().strftime("%Y-%m-%d")
+    if os.path.exists(DRAWDOWN_FILE):
+        try:
+            with open(DRAWDOWN_FILE, "r") as f:
+                d = json.load(f)
+            if d.get("date") == today:
+                return d
+        except Exception:
+            pass
+    return {"date": today, "daily_loss_krw": 0.0, "paused": False}
+
+def save_drawdown(d: dict):
+    with open(DRAWDOWN_FILE, "w") as f:
+        json.dump(d, f, ensure_ascii=False, indent=2)
+
+def check_drawdown_limit() -> bool:
+    """일일 손실 한도 초과 여부 반환 (True = 초과, 봇 정지)"""
+    d = load_drawdown()
+    if d["paused"]:
+        log(f"  🛑 Daily limit reached — 오늘 손실 {d['daily_loss_krw']:,.0f}원 / 한도 {DAILY_LOSS_LIMIT:,.0f}원 — bot paused")
+        return True
+    return False
+
+def record_loss(pnl_krw: float):
+    """손실 발생 시 drawdown 누적 기록"""
+    if pnl_krw >= 0:
+        return
+    d = load_drawdown()
+    d["daily_loss_krw"] += pnl_krw
+    if d["daily_loss_krw"] <= DAILY_LOSS_LIMIT:
+        d["paused"] = True
+        log(f"  🛑 Daily Drawdown Limit reached! 누적 손실 {d['daily_loss_krw']:,.0f}원 — bot paused")
+        notify("🛑 일일 손실 한도 도달", f"오늘 누적 손실: {d['daily_loss_krw']:,.0f}원\n한도: {DAILY_LOSS_LIMIT:,.0f}원\n봇이 오늘 하루 정지됩니다.", priority="urgent")
+    save_drawdown(d)
 
 
 def retry(label: str, fn, *args, **kwargs):
@@ -197,6 +238,10 @@ def main():
     check_and_notify_failures()
     check_ip_change()
 
+    # Step 0-1: 일일 손실 한도 체크
+    if check_drawdown_limit():
+        return
+
     # Step 1: 보유 상태 로드
     holding = load_state()
     if holding:
@@ -228,6 +273,8 @@ def main():
                 save_state(new_holding)
                 notify("🔴 손절 매도", f"{action['ticker']} 손절 매도 완료\n기준: -{STOP_LOSS}%", priority="high")
                 _publish_trades("SELL", action, new_holding, holding)
+                pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
+                record_loss(pnl)
                 holding = None  # 매도 완료 → BUY 탐색 계속
                 log("  손절 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:
