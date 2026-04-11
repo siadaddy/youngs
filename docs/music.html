@@ -665,10 +665,8 @@ function buildNebulae() {
 }
 
 // ═══════════════════════════════════════════════════
-// 지구 (Earth)
+// (지구 제거됨)
 // ═══════════════════════════════════════════════════
-let earthGroup = null;
-
 function makeEarthTex() {
   const S = 1024;
   const cvs = document.createElement('canvas');
@@ -942,10 +940,7 @@ function animate() {
   // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
   bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
 
-  // ── 지구 자전 ──
-  if (earthGroup) earthGroup.rotation.y += 0.0008;
-
-  // ── 성운 숨쉬기 ──
+// ── 성운 숨쉬기 ──
   nebulae.forEach(n => {
     n.userData.phase += 0.004;
     n.material.opacity = n.userData.baseOp + Math.sin(n.userData.phase) * 0.035;
@@ -1140,7 +1135,6 @@ async function init() {
   } catch {}
 
   buildNebulae();
-  buildEarth();
   initShootStar();
 
   // ── 재생 ring sprite ──
