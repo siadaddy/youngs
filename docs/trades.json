@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "FF",
+    "buy_price": 144.0,
+    "qty": 672.4431,
+    "invest_krw": 118780.35146468,
+    "buy_time": "2026-04-11 14:15"
+  },
   "history": [
+    {
+      "time": "2026-04-11 14:15",
+      "action": "BUY",
+      "ticker": "FF",
+      "price": 144.0,
+      "amount_krw": 118780.35146468,
+      "reason": "VB✅이고 점수 +6로 수익 가능성이 높으며, RSI 35.7로 과매도 상태가 아님. 따라서 FF를 매수하는 것이 좋음",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-11 14:15",
       "action": "SELL",
@@ -157,7 +174,7 @@
     }
   ],
   "stats": {
-    "total_trades": 13,
+    "total_trades": 14,
     "wins": 5,
     "losses": 2,
     "total_pnl_krw": 178.0,
