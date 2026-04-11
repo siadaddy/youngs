@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "SOON",
+    "buy_price": 189.0,
+    "qty": 676.2697,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-11 19:22"
+  },
   "history": [
+    {
+      "time": "2026-04-11 19:22",
+      "action": "BUY",
+      "ticker": "SOON",
+      "price": 190.0,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수 +5로 변동성 돌파 신호가 확인되며, RSI 23.9로 저점에 위치해 있어 매수 기회로 판단됩니다. 또한 ADX 22.1로 추세가 유지되고 있어 매수 후 상승 가능성이 높습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-11 19:20",
       "action": "SELL",
@@ -201,7 +218,7 @@
     }
   ],
   "stats": {
-    "total_trades": 17,
+    "total_trades": 18,
     "wins": 6,
     "losses": 3,
     "total_pnl_krw": 3489.0,
@@ -209,5 +226,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-11 19:20"
+  "updated_at": "2026-04-11 19:22"
 }
