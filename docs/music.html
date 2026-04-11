@@ -849,13 +849,8 @@ function animate() {
   // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
   const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
 
-  // ── 회전 방향·속도: 사인파로 자연스럽게 방향 전환 (~3분 주기) ──
-  const rotDir = Math.sin(tick * 0.00055);  // -1 ~ +1, 약 190초 주기
-  controls.autoRotateSpeed = rotDir * (0.45 + musicEnergy * 1.8);
-
-  // ── 은하 그룹 다축 틸트: 천천히 앞뒤·좌우로 기울어짐 ──
-  galaxyGroup.rotation.x = Math.sin(tick * 0.00038) * 0.28;
-  galaxyGroup.rotation.z = Math.sin(tick * 0.00027) * 0.14;
+  // ── 카메라 자동회전 속도 (음악 재생 중 빠르게) ──
+  controls.autoRotateSpeed = 0.35 + musicEnergy * 1.2;
 
   // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
   bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
