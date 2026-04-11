@@ -918,8 +918,22 @@ searchClear.addEventListener('click', () => { searchInput.value=''; applySearch(
 // 애니메이션 루프
 // ═══════════════════════════════════════════════════
 let tick = 0;
-function animate() {
-  requestAnimationFrame(animate);
+let rafId = null;
+let lastFrameTime = 0;
+const FRAME_MS = 1000 / 30;   // 30fps 캡
+
+// 뷰절두체 (프레임당 재계산)
+const _frustum  = new THREE.Frustum();
+const _projMat  = new THREE.Matrix4();
+
+function animate(now = 0) {
+  rafId = requestAnimationFrame(animate);
+
+  // ── 1+2: 탭 숨김·30fps 제어 ──
+  const elapsed = now - lastFrameTime;
+  if (elapsed < FRAME_MS) return;
+  lastFrameTime = now - (elapsed % FRAME_MS);
+
   tick++;
 
   // ── 뮤직 에너지 lerp ──
@@ -959,8 +973,8 @@ function animate() {
     linesMesh.geometry.attributes.position.needsUpdate = true;
   }
 
-  // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
-  bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
+  // ── 3: 블룸 강도 50% 감소 — 재생 중 별에만 집중 ──
+  bloom.strength = 0.8 + musicEnergy * 0.5 + beat * 0.5;
 
 // ── 성운 숨쉬기 ──
   nebulae.forEach(n => {
@@ -988,9 +1002,16 @@ function animate() {
 
   controls.update();
 
-  // 호버 감지
-  ray.setFromCamera(mouse, camera);
-  const hits = ray.intersectObjects(sprites);
+  // ── 4: 뷰절두체 업데이트 (화면 밖 연산 스킵용) ──
+  _projMat.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+  _frustum.setFromProjectionMatrix(_projMat);
+
+  // ── 2: 호버 raycasting 2프레임마다 ──
+  let hits = [];
+  if (tick % 2 === 0) {
+    ray.setFromCamera(mouse, camera);
+    hits = ray.intersectObjects(sprites);
+  }
 
   const newHov = hits.length ? hits[0].object : null;
   if (newHov !== hovered) {
@@ -1063,10 +1084,10 @@ function animate() {
     playRingSpr.material.opacity = 0;
   }
 
-  // ── 모든 노드 숨쉬기 (음악 에너지 반영) ──
+  // ── 4: 모든 노드 숨쉬기 — 화면 밖 별은 스킵 ──
   sprites.forEach((s, i) => {
     if (s === hovered || s === playingSprite) return;
-    // 정지: 느린 잔잔한 숨쉬기 / 재생: 빠르고 큰 맥동 + 비트 리액션
+    if (!_frustum.containsPoint(s.position)) return;   // 뷰포트 밖 스킵
     const calmPulse     = Math.sin(tick * .022 + i * .45) * 1.5;
     const energyPulse   = Math.sin(tick * .075 + i * .45) * (2.5 + beat * 6);
     const combinedPulse = calmPulse * (1 - musicEnergy) + energyPulse * musicEnergy;
@@ -1192,6 +1213,16 @@ async function init() {
 }
 
 init();
+
+// ── 1: 탭 비활성 시 RAF 완전 정지 ──
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+  } else if (rafId === null) {
+    lastFrameTime = 0;   // 재개 시 큰 elapsed 방지
+    animate();
+  }
+});
 
 document.getElementById('share-btn').addEventListener('click', () => {
   navigator.clipboard.writeText(window.location.href).then(() => {
