@@ -200,7 +200,17 @@ def main():
     # Step 1: 보유 상태 로드
     holding = load_state()
     if holding:
-        log(f"  📦 현재 보유: {holding['ticker']} | 매수가 {holding['buy_price']:,.0f}원 | {holding['qty']:.8f}개")
+        hold_hours = ""
+        if holding.get("buy_time"):
+            try:
+                buy_dt = datetime.strptime(holding["buy_time"], "%Y-%m-%d %H:%M")
+                elapsed = (datetime.now() - buy_dt).total_seconds() / 3600
+                hold_hours = f" | 보유 {elapsed:.1f}시간"
+            except Exception:
+                pass
+        bp = holding['buy_price']
+        bp_str = f"{bp:,.0f}원" if bp >= 1 else f"{bp:.4f}원"
+        log(f"  📦 현재 보유: {holding['ticker']} | 매수가 {bp_str} | {holding['qty']:.8f}개{hold_hours}")
     else:
         log("  📦 현재 보유 종목 없음")
 
@@ -254,6 +264,18 @@ def main():
         record_failure(f"AI판단 실패: {e}")
         notify("❌ 자동매매 오류", f"AI 판단 실패: {e}", priority="high")
         return
+
+    # Step 4-1: AI 손절 오판 차단 — 실제 수익률이 양수인데 손절로 SELL 지시한 경우
+    if advice["action"] == "SELL" and holding:
+        from utils.bithumb_client import get_current_price
+        _now = get_current_price(holding["ticker"])
+        if _now and holding.get("buy_price"):
+            _actual_pct = (_now / holding["buy_price"] - 1) * 100
+            if _actual_pct > -STOP_LOSS:
+                _reason = advice.get("reason", "")
+                if any(kw in _reason for kw in ["손절", "이하", "-7", "-5", "-%"]):
+                    log(f"  ⚠️  AI 손절 오판 차단 — 실제 수익률 {_actual_pct:+.2f}% → HOLD 유지")
+                    advice = {"action": "HOLD", "ticker": holding["ticker"], "reason": f"AI 손절 오판 차단 (실제 {_actual_pct:+.2f}%)"}
 
     # Step 5: 주문 실행
     try:

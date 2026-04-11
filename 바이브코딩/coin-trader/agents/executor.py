@@ -27,12 +27,12 @@ def run(action: dict, holding: dict | None) -> dict:
             print("  ⚠️  SELL 지시 but 보유 종목 없음 → 스킵")
             return None
         t = holding["ticker"]
-        qty = holding.get("qty", 0)
+        # 항상 API에서 실제 잔고 조회 — state.json 추정값과 실제 체결량 차이로 인한 5600 방지
+        qty = get_coin_balance(t)
         if qty <= 0:
-            qty = get_coin_balance(t)
-        if qty <= 0:
-            print(f"  ⚠️  {t} 잔고 없음 → 스킵")
+            print(f"  ⚠️  {t} 실제 잔고 없음 → 스킵")
             return None
+        print(f"  💰 실제 잔고: {qty:.8f}개 (state: {holding.get('qty', 0):.8f}개)")
         # 빗썸 시장가 매도 최소금액 체크 (qty × 현재가 >= 5000)
         price = get_current_price(t)
         sell_value = qty * price
@@ -48,7 +48,8 @@ def run(action: dict, holding: dict | None) -> dict:
         if holding:
             # 이미 다른 종목 보유 중 — 먼저 매도 후 매수
             print(f"  🔄 기존 보유({holding['ticker']}) 매도 후 신규 매수")
-            qty = holding.get("qty", 0) or get_coin_balance(holding["ticker"])
+            # 항상 API에서 실제 잔고 조회 — state.json 추정값과 다를 수 있음
+            qty = get_coin_balance(holding["ticker"])
             # 기존 보유 매도 전에도 최소금액 체크
             price_chk = get_current_price(holding["ticker"])
             if qty > 0 and qty * price_chk >= 5000:
@@ -56,23 +57,32 @@ def run(action: dict, holding: dict | None) -> dict:
             elif qty > 0:
                 print(f"  ⚠️  기존 보유 매도 금액 {qty * price_chk:,.0f}원 < 5,000원 — 교체 취소, HOLD 유지")
                 return holding
+            else:
+                print(f"  ⚠️  기존 보유 실제 잔고 없음 — 매도 스킵 후 매수 진행")
 
         krw = get_krw_balance()
         if krw < MIN_ORDER:
             print(f"  ⚠️  KRW 잔고 부족 ({krw:,.0f}원) — BUY 스킵")
             return None
-        invest = min(krw, MAX_INVEST)
+        invest = krw * 0.92   # 보유 KRW 기준 — 수수료 + 슬리피지 + API 오차 여유 포함
 
         result = buy_market_order(ticker, invest)
         price = get_current_price(ticker)
-        qty = invest / price if price else 0
 
-        print(f"  ✅ 매수 완료: {ticker} | {invest:,.0f}원 | 단가 {price:,.0f}원")
+        # 실제 체결 수량 API에서 조회 (추정값 대신 정확한 값 저장)
+        import time as _time
+        _time.sleep(1)  # 체결 반영 대기
+        actual_qty = get_coin_balance(ticker)
+        qty = actual_qty if actual_qty > 0 else (invest / price if price else 0)
+
+        from datetime import datetime
+        print(f"  ✅ 매수 완료: {ticker} | {invest:,.0f}원 | 단가 {price:,.0f}원 | 실제수량 {qty:.8f}개")
         return {
             "ticker": ticker,
             "buy_price": price,
             "qty": qty,
             "invest_krw": invest,
+            "buy_time": datetime.now().strftime("%Y-%m-%d %H:%M"),
         }
 
     return holding

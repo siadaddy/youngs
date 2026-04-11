@@ -13,7 +13,7 @@ load_dotenv()
 
 GROQ_KEYS = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2")] if k]
 GROQ_URL  = "https://api.groq.com/openai/v1/chat/completions"
-MODEL     = "llama-3.1-8b-instant"
+MODEL     = "llama-3.3-70b-versatile"
 
 SYSTEM = """당신은 10년 경력의 암호화폐 퀀트 트레이더입니다.
 기술적 지표(RSI, MACD, 볼린저밴드)를 기반으로 냉정하게 매매 판단을 내립니다.
@@ -55,14 +55,21 @@ def run(market_data: list, holding: dict | None) -> dict:
     print("🤖 AI 어드바이저 실행 중...")
 
     # 보유 현황 텍스트
+    def _fmt_price(p: float) -> str:
+        """1원 미만 소수점 코인도 정확하게 표시"""
+        if p >= 100:   return f"{p:,.0f}원"
+        if p >= 1:     return f"{p:,.2f}원"
+        if p >= 0.01:  return f"{p:.4f}원"
+        return f"{p:.6f}원"
+
     if holding:
         from utils.bithumb_client import get_current_price
         now_price = get_current_price(holding["ticker"])
         pct = round((now_price / holding["buy_price"] - 1) * 100, 2) if holding["buy_price"] else 0
         holding_text = (
             f"현재 보유: {holding['ticker']} | "
-            f"매수가 {holding['buy_price']:,.0f}원 | "
-            f"현재가 {now_price:,.0f}원 | "
+            f"매수가 {_fmt_price(holding['buy_price'])} | "
+            f"현재가 {_fmt_price(now_price)} | "
             f"수익률 {pct:+.2f}%"
         )
     else:
@@ -89,9 +96,21 @@ def run(market_data: list, holding: dict | None) -> dict:
         if d.get("vb"):   s += 2   # 변동성 돌파 보너스
         return s
 
-    rows = []
+    scored = []
     for d in market_data[:15]:
         score = _score(d)
+        scored.append((score, d))
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    # 상위 5개 분석 결과 로그 출력 (디버깅용)
+    print("  📊 상위 5개 종목:")
+    for score, d in scored[:5]:
+        adx = d.get("adx", 0)
+        vb_str = "VB✅" if d.get("vb") else "VB❌"
+        print(f"    {d['ticker']} | 점수:{score:+d} | RSI {d['rsi']} | {d['macd']} | {d['bb']} | ADX {adx} | {vb_str}")
+
+    rows = []
+    for score, d in scored:
         adx = d.get("adx", 0)
         trend = "추세O" if adx >= 15 else "횡보"
         vol_str = f"거래량{d['vol_change_pct']:+.0f}%"
@@ -111,38 +130,40 @@ def run(market_data: list, holding: dict | None) -> dict:
 {market_text}
 
 【판단 규칙】
-15분봉 기준 단기 매매 봇입니다. 빗썸 수수료 0.25%(왕복 0.5%)를 고려해 수익 가능성 높은 신호에만 진입하세요. 불필요한 잦은 교체는 수수료 손실입니다.
+5분봉 기준 단기 매매 봇입니다. 빗썸 수수료 0.25%(왕복 0.5%)를 고려해 수익 가능성 높은 신호에만 진입하세요. 불필요한 잦은 교체는 수수료 손실입니다.
+
+⚠️ 손절(-{stop_loss}%)·익절은 시스템 코드가 자동 처리합니다. AI는 수익률 숫자를 기준으로 손절 판단 절대 금지.
 
 1. 보유 중이면 HOLD 또는 SELL만 선택 가능
 2. 미보유 중이면 BUY(종목 지정) 또는 HOLD만 선택 가능
-3. 수익률이 -{stop_loss}% 이하면 반드시 SELL (손절)
-4. 【VB 매수 — 최우선】미보유 시 VB✅ + 점수 +1 이상 → BUY (변동성 돌파는 가장 검증된 신호)
-5. 【강한 매수】미보유 시 점수 +3 이상 + ADX 15 이상(추세O) → BUY 적극 고려
-6. 【중간 매수】미보유 시 점수 +2 이상 + ADX 15 이상 + 거래량 +20% 이상 → BUY 고려
-7. ADX 10 미만 + VB❌ 종목은 BUY 금지 — 방향성 없음
-8. 【매도】보유 종목 점수 -2 이하 이거나, RSI 70 이상 + MACD 하락/데드크로스 → SELL
-9. 【기회 교체 — 적극】보유 종목 수익률 +5% 미만이면서 점수 0 이하일 때,
+3. 【VB 매수 — 최우선】미보유 시 VB✅ + 점수 +1 이상 → BUY (변동성 돌파는 가장 검증된 신호)
+4. 【강한 매수】미보유 시 점수 +3 이상 + ADX 15 이상(추세O) → BUY 적극 고려
+5. 【중간 매수】미보유 시 점수 +2 이상 + ADX 15 이상 + 거래량 +20% 이상 → BUY 고려
+6. ADX 10 미만 + VB❌ 종목은 BUY 금지 — 방향성 없음
+   거래량 변화 -30% 이하인 종목, 현재가 100원 미만 소형 코인은 BUY 금지 — 유동성 부족으로 주문 실패 위험
+7. 【매도】보유 종목 기술 점수 -2 이하 이거나, RSI 70 이상 + MACD 하락/데드크로스 → SELL
+8. 【기회 교체 — 적극】보유 종목 수익률 +5% 미만이면서 점수 0 이하일 때,
    다른 종목이 VB✅ 이거나 점수 +3 이상 + ADX 15 이상이면 → 즉시 SELL 후 교체 (reason에 "기회 교체" 명시)
-10. 보유 종목 수익률 +5% 이상이면 수익 보호 우선, 교체 금지
-11. 뚜렷한 신호 없으면 HOLD
+9. 보유 종목 수익률 +5% 이상이면 수익 보호 우선, 교체 금지
+10. 뚜렷한 신호 없으면 HOLD
 
 반드시 아래 JSON만 출력하세요 (다른 텍스트 없이):
 {{"action": "BUY" | "SELL" | "HOLD", "ticker": "BTC" 또는 "XRP" 등 코인심볼만 (KRW- 접두어 없이), "reason": "한국어로 판단 이유 2~3문장"}}"""
 
     raw = _ask_groq(prompt)
 
-    # JSON 추출
+    # JSON 추출 — raw_decode로 첫 번째 JSON 객체만 파싱 (Extra data 오류 방지)
     raw = raw.replace("```json", "").replace("```", "").strip()
-    match = re.search(r'\{.*\}', raw, re.DOTALL)
-    if not match:
+    start = raw.find('{')
+    if start == -1:
         print(f"  ⚠️  AI 응답에서 JSON 추출 실패 → HOLD 폴백: {raw[:100]}")
         return {"action": "HOLD", "ticker": None, "reason": "AI 응답 파싱 실패 — HOLD 유지"}
 
     try:
-        result = json.loads(match.group())
+        result, _ = json.JSONDecoder().raw_decode(raw, start)
     except json.JSONDecodeError as e:
         print(f"  ⚠️  JSON 파싱 오류 → HOLD 폴백: {e}")
-        return {"action": "HOLD", "ticker": None, "reason": f"AI JSON 파싱 오류 — HOLD 유지"}
+        return {"action": "HOLD", "ticker": None, "reason": "AI JSON 파싱 오류 — HOLD 유지"}
 
     # 필드 검증
     action = result.get("action", "HOLD").upper()

@@ -805,7 +805,7 @@
   <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">AI Automation Hub · Personal Portfolio</div>
   <p class="hero-desc">
     매일 아침 5명의 AI 직원이 뉴스를 분석해 카드뉴스 · 블로그를 만들고 오늘의 음악 우주를 채웁니다.
-    AI 트레이더가 15분마다 종목을 분석하고 30초마다 손절/익절을 실시간으로 감시합니다.
+    AI 트레이더가 5분마다 종목을 분석하고 30초마다 손절/익절을 실시간으로 감시합니다.
   </p>
   <div class="hero-stats">
     <div class="stat">
@@ -910,7 +910,7 @@
     <div class="section-title">AI가 코인을 직접 삽니다</div>
     <p class="section-sub">
       RSI · MACD · 볼린저밴드 · ADX · 변동성돌파 스코어링 → Groq AI 최종 판단<br>
-      10분봉 분석 · 15분마다 실행 + 30초 실시간 감시 · 손절 -7% · 익절 +15%
+      10분봉 분석 · 5분마다 실행 + 30초 실시간 감시 · 손절 -7% · 익절 +6%
       <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
     </p>
 
@@ -1517,7 +1517,16 @@
         } catch(e) {}
 
         const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 7.0;
-        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 15.0;
+        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 6.0;
+
+        // 1원 미만 소수점 코인도 정확히 표시
+        const fmtPrice = (p) => {
+          if (!p) return '-';
+          if (p >= 100)  return Number(p).toLocaleString() + '원';
+          if (p >= 1)    return p.toFixed(2) + '원';
+          if (p >= 0.01) return p.toFixed(4) + '원';
+          return p.toFixed(6) + '원';
+        };
 
         const pct = livePrice && h.buy_price ? ((livePrice / h.buy_price - 1) * 100) : null;
         const pctStr  = pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%' : '-';
@@ -1541,11 +1550,11 @@
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
               <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
                 <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">매수가</div>
-                <div style="font-size:.95rem;font-weight:700;">${Number(h.buy_price).toLocaleString()}원</div>
+                <div style="font-size:.95rem;font-weight:700;">${fmtPrice(h.buy_price)}</div>
               </div>
               <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
                 <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">현재가</div>
-                <div style="font-size:.95rem;font-weight:700;">${livePrice ? Number(livePrice).toLocaleString()+'원' : '-'}</div>
+                <div style="font-size:.95rem;font-weight:700;">${fmtPrice(livePrice)}</div>
               </div>
               <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
                 <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">투자금</div>
