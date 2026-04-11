@@ -754,7 +754,7 @@
 
     .coin-stats-row {
       display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
-      margin-bottom: 36px;
+      margin-bottom: 48px;
     }
     .coin-stat-card {
       background: var(--glass); border: 1px solid var(--border);
@@ -863,7 +863,7 @@
     }
 
     /* ─── 테크 스택 배지 ─────────────────────────── */
-    .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; margin-bottom: 0; }
     .tech-badge {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 3px 10px; border-radius: 99px;
@@ -1056,10 +1056,10 @@
     </div>
 
     <!-- 누적손익 배너 -->
-    <div id="coin-pnl-banner" style="display:none;margin-bottom:20px;padding:16px 24px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;"></div>
+    <div id="coin-pnl-banner" style="display:none;margin-top:32px;margin-bottom:24px;padding:16px 24px;border-radius:14px;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;"></div>
 
     <!-- 누적 통계 -->
-    <div class="coin-stats-row" id="coin-stats-row">
+    <div class="coin-stats-row" id="coin-stats-row" style="margin-top:32px;">
       <div class="coin-stat-card">
         <div class="coin-stat-val" id="cs-trades">-</div>
         <div class="coin-stat-lbl">총 매매 횟수</div>
