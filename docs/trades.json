@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "SOON",
-    "buy_price": 189.0,
-    "qty": 676.2697,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-11 19:22"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-12 00:04",
+      "action": "SELL",
+      "ticker": "SOON",
+      "price": 189.0,
+      "amount_krw": 99700.0,
+      "reason": "현재 보유 종목 SOON의 수익률이 -100.00%로 매우 낮고, 기술적 지표도 좋지 않아 매도하는 것이 좋습니다. 또한, 다른 종목들의 기술 점수도 높지 않아 교체할 종목이 없습니다.",
+      "pnl_pct": 0.0,
+      "pnl_krw": 0.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-11 19:22",
       "action": "BUY",
@@ -218,13 +223,13 @@
     }
   ],
   "stats": {
-    "total_trades": 18,
-    "wins": 6,
+    "total_trades": 19,
+    "wins": 7,
     "losses": 3,
     "total_pnl_krw": 3489.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-11 19:22"
+  "updated_at": "2026-04-12 00:04"
 }
