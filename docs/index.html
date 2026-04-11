@@ -1694,6 +1694,14 @@
   }
 
   /* ─── 코인 트레이더 ──────────────────────────────────── */
+  function fmtPrice(p) {
+    if (!p) return '-';
+    if (p >= 100)  return Number(p).toLocaleString() + '원';
+    if (p >= 1)    return p.toFixed(2) + '원';
+    if (p >= 0.01) return p.toFixed(4) + '원';
+    return p.toFixed(6) + '원';
+  }
+
   let pnlChart = null;
 
   let _allTradeHistory = [];   // 필터용 전체 보관
@@ -1943,14 +1951,7 @@
         const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 7.0;
         const TAKE_PROFIT = d.stats?.take_profit_pct ?? 6.0;
 
-        // 1원 미만 소수점 코인도 정확히 표시
-        const fmtPrice = (p) => {
-          if (!p) return '-';
-          if (p >= 100)  return Number(p).toLocaleString() + '원';
-          if (p >= 1)    return p.toFixed(2) + '원';
-          if (p >= 0.01) return p.toFixed(4) + '원';
-          return p.toFixed(6) + '원';
-        };
+        // fmtPrice — 모듈 레벨에 정의됨
 
         const pct = livePrice && h.buy_price ? ((livePrice / h.buy_price - 1) * 100) : null;
         const pctStr  = pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%' : '-';
