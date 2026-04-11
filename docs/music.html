@@ -85,6 +85,36 @@
     #tip-mood { font-size:10px; color:rgba(255,255,255,.55); margin-top:6px; font-style:italic; }
     #tip-h { font-size:8px; color:rgba(255,255,255,.18); margin-top:8px; letter-spacing:2px; }
 
+    #search-wrap {
+      position:absolute; top:28px; left:50%; transform:translateX(-50%);
+      display:flex; align-items:center; gap:8px; z-index:20; pointer-events:all;
+    }
+    #search-input {
+      width:200px; background:rgba(0,0,20,.7); border:1px solid rgba(255,255,255,.15);
+      border-radius:20px; padding:6px 14px 6px 32px; font-size:12px; color:rgba(255,255,255,.85);
+      outline:none; transition:all .3s; backdrop-filter:blur(10px);
+    }
+    #search-input::placeholder { color:rgba(255,255,255,.3); }
+    #search-input:focus { border-color:rgba(255,255,255,.4); width:240px; }
+    #search-icon { position:absolute; left:10px; font-size:12px; color:rgba(255,255,255,.4); pointer-events:none; }
+    #search-clear { font-size:14px; color:rgba(255,255,255,.4); cursor:pointer; pointer-events:all; transition:color .2s; display:none; }
+    #search-clear:hover { color:rgba(255,255,255,.8); }
+
+    /* ── 공유 버튼 ── */
+    #share-btn {
+      font-size:11px; letter-spacing:2px; color:rgba(255,255,255,.5);
+      background:none; border:none; cursor:pointer; pointer-events:all;
+      transition:color .3s; padding:0; margin-right:16px;
+    }
+    #share-btn:hover { color:rgba(255,255,255,.9); }
+    #share-toast {
+      position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+      background:rgba(16,185,129,.9); color:#fff; font-size:13px; font-weight:600;
+      padding:10px 22px; border-radius:99px; pointer-events:none;
+      opacity:0; transition:opacity .3s; z-index:300;
+    }
+    #share-toast.show { opacity:1; }
+
     /* ── 장르 범례 ── */
     #legend {
       position:fixed; right:28px; top:50%; transform:translateY(-50%);
@@ -260,9 +290,10 @@
       <span class="logo">Music Universe</span>
       <span class="logo-sub">AI가 오늘의 은하를 채웠습니다</span>
     </div>
+    <div id="search-wrap"><span id="search-icon">🔍</span><input id="search-input" type="text" placeholder="곡명 · 아티스트 검색..."><span id="search-clear">✕</span></div>
+    <button id="share-btn">🔗 SHARE</button>
     <a class="back" href="index.html" target="_top">← Home</a>
   </div>
-  <div id="date-badge"></div>
   <div id="hint">별 하나가 한 곡입니다 · 클릭하면 우주가 들립니다</div>
   <div id="count"></div>
   <div id="legend"></div>
@@ -856,6 +887,34 @@ window.addEventListener('touchend', e => {
 }, { passive: true });
 
 // ═══════════════════════════════════════════════════
+// 검색 기능
+// ═══════════════════════════════════════════════════
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+let searchQuery = '';
+function applySearch() {
+  searchQuery = searchInput.value.trim().toLowerCase();
+  searchClear.style.display = searchQuery ? 'block' : 'none';
+  sprites.forEach(s => {
+    if (!searchQuery) {
+      s.userData.searchDim = false;
+      s.material.opacity = 1;
+    } else {
+      const t = (s.userData.t || '').toLowerCase();
+      const a = (s.userData.a || '').toLowerCase();
+      const match = t.includes(searchQuery) || a.includes(searchQuery);
+      s.userData.searchDim = !match;
+      s.userData.searchMatch = match;
+      s.material.opacity = match ? 1 : 0.08;
+      if (match) s.scale.setScalar(s.userData.base * 2.2);
+    }
+  });
+}
+searchInput.addEventListener('input', applySearch);
+searchInput.addEventListener('keydown', e => { if(e.key==='Escape'){searchInput.value='';applySearch();} });
+searchClear.addEventListener('click', () => { searchInput.value=''; applySearch(); });
+
+// ═══════════════════════════════════════════════════
 // 애니메이션 루프
 // ═══════════════════════════════════════════════════
 let tick = 0;
@@ -1054,7 +1113,7 @@ async function loadAndSwitch(daysAgo) {
     if (!d.songs?.length) return false;
     buildGalaxy(d.songs);
     buildLegend(d.songs);
-    if (d.updated) document.getElementById('date-badge').textContent = `AI PICKS · ${d.updated}`;
+    if (d.updated) { const db = document.getElementById('date-badge'); if (db) db.textContent = `AI PICKS · ${d.updated}`; }
     return true;
   } catch { return false; }
 }
@@ -1095,8 +1154,7 @@ async function init() {
       const d = await r.json();
       if (d.songs?.length) {
         songs = d.songs;
-        if (d.updated)
-          document.getElementById('date-badge').textContent = `AI PICKS · ${d.updated}`;
+        if (d.updated) { const db = document.getElementById('date-badge'); if (db) db.textContent = `AI PICKS · ${d.updated}`; }
       }
     }
   } catch {}
@@ -1134,6 +1192,15 @@ async function init() {
 }
 
 init();
+
+document.getElementById('share-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const t = document.getElementById('share-toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  });
+});
 </script>
+<div id="share-toast">🔗 링크가 복사되었습니다</div>
 </body>
 </html>

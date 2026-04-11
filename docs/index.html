@@ -49,6 +49,28 @@
       --shadow-glow: 0 0 40px rgba(28,105,212,.18);
     }
 
+    html.light {
+      --bg: #f0f4f8; --glass: rgba(0,0,0,.04); --glass-border: rgba(0,0,0,.1);
+      --surface: #e2e8f0; --card: #ffffff; --card2: #f8fafc;
+      --text: #0f172a; --muted: #64748b; --muted2: #475569;
+      --border: rgba(0,0,0,.1); --shadow: 0 4px 24px rgba(0,0,0,.1);
+    }
+    html.light body { background: var(--bg); color: var(--text); }
+    html.light .tab-bar { background: rgba(240,244,248,.96); border-bottom-color: rgba(0,0,0,.08); }
+    html.light .section-alt { background: rgba(0,0,0,.025); }
+    html.light .tab-btn { color: #475569; border-color: rgba(0,0,0,.12); }
+    html.light .tab-btn:hover { color: var(--bmw); }
+
+    .theme-toggle {
+      margin-left: auto; flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--glass-border); background: var(--glass);
+      color: var(--muted2); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s;
+    }
+    .theme-toggle:hover { border-color: rgba(28,105,212,.4); color: var(--bmw-lt); }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
@@ -767,7 +789,7 @@
     .trade-pnl-krw { font-size: .72rem; color: var(--muted); margin-top: 2px; }
 
     .coin-stats-row {
-      display: grid; grid-template-columns: repeat(5,1fr); gap: 16px;
+      display: grid; grid-template-columns: repeat(6,1fr); gap: 16px;
       margin-bottom: 48px;
     }
     .coin-stat-card {
@@ -787,6 +809,7 @@
       .coin-status-card { grid-template-columns: 1fr 1fr; padding: 24px; }
       .coin-meta { text-align: left; }
       .coin-stats-row { grid-template-columns: repeat(3,1fr); }
+      /* [7] 768px: 이미 repeat(3,1fr) */
       .trade-history { overflow-x: auto; }
       .section { padding: 52px 0; }
     }
@@ -891,6 +914,15 @@
     .tech-badge.purple { border-color: rgba(167,139,250,.3); color: #c4b5fd;  background: rgba(167,139,250,.08); }
     .tech-badge.gold   { border-color: rgba(245,158,11,.3);  color: #fbbf24;  background: rgba(245,158,11,.08); }
     .tech-badge.red    { border-color: rgba(248,113,113,.3); color: #f87171;  background: rgba(248,113,113,.08); }
+
+    .ticker-tbl { width:100%; border-collapse:collapse; font-size:.82rem; }
+    .ticker-tbl th { text-align:left; padding:6px 10px; color:var(--muted); font-weight:600; font-size:.72rem; letter-spacing:.05em; border-bottom:1px solid var(--border); }
+    .ticker-tbl td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.04); }
+    .ticker-tbl tr:last-child td { border-bottom:none; }
+
+    /* ─── 카테고리 필터 버튼 ──────────────────────── */
+    .cat-filter-btn { padding:5px 14px; border-radius:99px; border:1px solid var(--glass-border); background:var(--glass); color:var(--muted2); font-size:.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+    .cat-filter-btn.active { background:var(--bmw); border-color:transparent; color:#fff; }
 
     /* ─── 면책 박스 ──────────────────────────────── */
     .disclaimer-box {
@@ -1047,6 +1079,7 @@
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
   <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
+  <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
 </div>
 
 <!-- ─── 탭1: 코인 트레이더 ───────────────────────────── -->
@@ -1102,6 +1135,10 @@
         <div class="coin-stat-val" id="cs-winrate">-</div>
         <div class="coin-stat-lbl">승률</div>
       </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-holdtime">-</div>
+        <div class="coin-stat-lbl">평균 보유시간</div>
+      </div>
     </div>
 
     <!-- 현재 보유 상태 -->
@@ -1111,6 +1148,12 @@
     <div id="pnl-chart-wrap" style="display:none;margin-top:40px;margin-bottom:40px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:28px 28px 24px;">
       <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;">📈 누적손익 흐름 · 클릭 시 해당 거래로 이동</div>
       <canvas id="pnl-chart" style="width:100%;max-height:180px;"></canvas>
+    </div>
+
+    <!-- 종목별 성과 -->
+    <div id="ticker-table-wrap" style="display:none;margin-top:24px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:24px 28px;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;">📊 종목별 성과 요약 · 수익 높은 순</div>
+      <div id="ticker-table-inner"></div>
     </div>
 
     <!-- 매매 히스토리 -->
@@ -1197,6 +1240,7 @@
     <div class="section-eyebrow">📡 Today's News Feed</div>
     <div class="section-title">오늘 수집된 뉴스</div>
     <p class="section-sub" id="news-raw-sub">카테고리를 클릭하면 뉴스 목록이 펼쳐집니다</p>
+    <div id="news-cat-filter" style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px;"></div>
     <div id="news-raw-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
   </div>
 </section>
@@ -1372,8 +1416,10 @@
         <a href="about.html">👥 AI 직원 소개 &amp; 파이프라인</a>
         &nbsp;·&nbsp;
         <a href="https://github.com/siadaddy/youngs" target="_blank">GitHub</a>
-        &nbsp;·&nbsp; Powered by Groq + Stable Horde + Notion API
+        &nbsp;·&nbsp; Powered by Groq + Pollinations.ai + RSS
         &nbsp;·&nbsp; © 2026 시아아빠
+        &nbsp;·&nbsp;
+        <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fsiadaddy.github.io%2Fyoungs&count_bg=%231c69d4&title_bg=%230f1520&icon=&icon_color=%23E7E7E7&title=%EB%B0%A9%EB%AC%B8&edge_flat=true" alt="방문자" style="height:18px;vertical-align:middle;border-radius:4px;">
       </div>
     </div>
   </div>
@@ -1627,11 +1673,33 @@
         collectedAt ? `수집 시각: ${collectedAt} · 카테고리를 클릭하면 뉴스 목록이 펼쳐집니다` : '카테고리를 클릭하면 뉴스 목록이 펼쳐집니다';
       const list = document.getElementById('news-raw-list');
       list.innerHTML = '';
+      // 카테고리 필터 버튼
+      const filterBar = document.getElementById('news-cat-filter');
+      filterBar.innerHTML = '';
+      let activeCat = '전체';
+      function renderCatFilter() {
+        ['전체', ...cats].forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'cat-filter-btn' + (c === activeCat ? ' active' : '');
+          btn.textContent = c;
+          btn.onclick = () => {
+            activeCat = c;
+            document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.news-toggle').forEach(el => {
+              el.style.display = (activeCat === '전체' || el.dataset.cat === activeCat) ? '' : 'none';
+            });
+          };
+          filterBar.appendChild(btn);
+        });
+      }
+      renderCatFilter();
       cats.forEach(cat => {
         const articles = news[cat] || [];
         if (!articles.length) return;
         const toggle = document.createElement('div');
         toggle.className = 'news-toggle';
+        toggle.dataset.cat = cat;
         toggle.innerHTML = `
           <div class="news-toggle-header" onclick="this.parentElement.classList.toggle('open')">
             <span>${cat} <span style="font-size:.78rem;color:var(--muted);font-weight:400;">${articles.length}건</span></span>
@@ -1931,6 +1999,7 @@
     const wrEl = document.getElementById('cs-winrate');
     wrEl.textContent = '-';
     wrEl.style.color = 'var(--muted2)';
+    document.getElementById('cs-holdtime').textContent = '-';
   }
   async function loadCoinTrader() {
     try {
@@ -1971,6 +2040,21 @@
       } else {
         winrateEl.textContent = '-';
         winrateEl.style.color = 'var(--muted2)';
+      }
+
+      // 평균 보유시간 계산
+      const sells = (d.history || []).filter(t => t.action === 'SELL');
+      const buys  = (d.history || []).filter(t => t.action === 'BUY');
+      const holdMins = sells.map(sell => {
+        const buy = buys.find(b => b.ticker === sell.ticker && b.time < sell.time);
+        if (!buy) return null;
+        return (new Date(sell.time.replace(' ','T')) - new Date(buy.time.replace(' ','T'))) / 60000;
+      }).filter(m => m !== null && m > 0);
+      const htEl = document.getElementById('cs-holdtime');
+      if (holdMins.length > 0) {
+        const avg = holdMins.reduce((a,b)=>a+b,0) / holdMins.length;
+        htEl.textContent = avg >= 60 ? (avg/60).toFixed(1)+'h' : Math.round(avg)+'분';
+        htEl.style.color = 'var(--text)';
       }
 
       // 코인 섹션 누적손익 배너
@@ -2075,6 +2159,35 @@
       buildPnlChart(_allTradeHistory, hist);
       renderTradeHistory(hist, hist);
 
+      // 종목별 성과 집계
+      const tickerMap = {};
+      (d.history || []).forEach(t => {
+        if (t.action !== 'SELL' || t.pnl_krw == null) return;
+        if (!tickerMap[t.ticker]) tickerMap[t.ticker] = { trades:0, wins:0, totalPnl:0 };
+        tickerMap[t.ticker].trades++;
+        tickerMap[t.ticker].totalPnl += t.pnl_krw;
+        if (t.pnl_krw > 0) tickerMap[t.ticker].wins++;
+      });
+      const tickerArr = Object.entries(tickerMap).sort((a,b) => b[1].totalPnl - a[1].totalPnl);
+      if (tickerArr.length > 0) {
+        const wrap = document.getElementById('ticker-table-wrap');
+        const inner = document.getElementById('ticker-table-inner');
+        wrap.style.display = '';
+        inner.innerHTML = `<table class="ticker-tbl">
+          <thead><tr><th>종목</th><th>거래</th><th>승률</th><th>수익 합계</th></tr></thead>
+          <tbody>${tickerArr.map(([tk, v]) => {
+            const wr = v.trades ? (v.wins/v.trades*100).toFixed(0) : 0;
+            const col = v.totalPnl > 0 ? '#f87171' : v.totalPnl < 0 ? '#34d399' : 'var(--muted2)';
+            return `<tr>
+              <td style="font-weight:700;color:var(--text)">${tk}</td>
+              <td style="color:var(--muted2)">${v.trades}회</td>
+              <td style="color:${wr>=60?'var(--green)':wr>=50?'var(--gold)':'#f87171'}">${wr}%</td>
+              <td style="font-weight:700;color:${col}">${v.totalPnl>=0?'+':''}${v.totalPnl.toLocaleString()}원</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`;
+      }
+
     } catch(e) {
       setStatsDefault();
     }
@@ -2134,6 +2247,19 @@
     const d = new Date(updatedAt.replace(' ', 'T'));
     timeEl.textContent = `마지막 실행 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
   }
+
+  // 테마 초기화
+  (function() {
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.add('light');
+      document.getElementById('theme-toggle').textContent = '☀️';
+    }
+  })();
+  document.getElementById('theme-toggle').addEventListener('click', function() {
+    const isLight = document.documentElement.classList.toggle('light');
+    this.textContent = isLight ? '☀️' : '🌙';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  });
 
   init();
   loadCoinTrader();

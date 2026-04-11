@@ -1,3 +1,4 @@
+import re
 from utils.gemini_client import ask_gemini
 
 # ── 블랙리스트 후처리 ──────────────────────────────────────
@@ -21,6 +22,64 @@ def _regenerate_if_needed(text: str, prompt: str, label: str) -> str:
     if hits2:
         print(f"  ⚠️  [{label}] 재생성 후에도 감지 {hits2} — 그대로 사용")
     return new_text
+
+# ── 2. 제목-본문 일치 체크 ─────────────────────────────────
+_TITLE_STOP = {
+    '을','를','이','가','의','은','는','에','도','와','과','로','으로',
+    '그','및','등','관련','대한','위한','따른','하는','했다','있다',
+}
+
+def _check_title_consistency(headline: str, caption: str) -> bool:
+    """제목 핵심 키워드의 40% 이상이 본문에 있으면 True"""
+    words = {w for w in re.sub(r'[^\w\s]', '', headline).split()
+             if len(w) > 1 and w not in _TITLE_STOP}
+    if not words:
+        return True
+    hits = sum(1 for w in words if w in caption)
+    return hits / len(words) >= 0.4
+
+def _fix_title_consistency(headline: str, caption: str, prompt: str, label: str) -> str:
+    if _check_title_consistency(headline, caption):
+        return caption
+    print(f"  ⚠️  [{label}] 제목-본문 불일치 감지 → 재생성 (제목: {headline[:20]}...)")
+    import time; time.sleep(3)
+    extra = f"\n\n⚠️ 필수: 제목 '{headline}'에 등장하는 기업명·인물명·주제가 반드시 본문에 포함되어야 합니다."
+    new_text = ask_gemini(prompt + extra, system=SYSTEM, temperature=0.75, max_tokens=1200)
+    if not _check_title_consistency(headline, new_text):
+        print(f"  ⚠️  [{label}] 재생성 후에도 불일치 — 그대로 사용")
+    return new_text
+
+
+# ── 3. 문장 품질 체크 ──────────────────────────────────────
+_QUALITY_PATTERNS = [
+    (r'[ㄱ-ㅎㅏ-ㅣ]{2,}',            '깨진 자모'),
+    (r'[\u4e00-\u9fff]',              '한자 혼입'),
+    (r'[\u00c0-\u024f]',              '라틴확장(독어 등)'),
+    (r'[\uac00-\ud7af]{1,3}이이|[\uac00-\ud7af]{1,3}가가', '조사 중복'),
+    (r'더[가-힣]{0,3}되더니',         '미완성 문장'),
+    (r'더욱\s*되었어|성공적으로\s*된다면', '미완성 문장'),
+    (r'(?<=[가-힣])[가-힣]{0,2}(?:하다|되다)(?:더니|더라)(?!\s)',  '어색한 연결'),
+]
+
+def _check_quality(text: str) -> list:
+    issues = []
+    for pattern, desc in _QUALITY_PATTERNS:
+        if re.search(pattern, text):
+            issues.append(desc)
+    return issues
+
+def _fix_quality(text: str, prompt: str, label: str) -> str:
+    issues = _check_quality(text)
+    if not issues:
+        return text
+    print(f"  ⚠️  [{label}] 품질 문제 {issues} → 재생성 시도...")
+    import time; time.sleep(3)
+    new_text = ask_gemini(prompt, system=SYSTEM, temperature=0.72, max_tokens=1200)
+    issues2 = _check_quality(new_text)
+    if issues2:
+        print(f"  ⚠️  [{label}] 재생성 후에도 품질 문제 {issues2} — 그대로 사용")
+    return new_text
+
 
 # ── 중복 주제 감지 ─────────────────────────────────────────
 def _keyword_overlap(a: str, b: str) -> float:
@@ -87,11 +146,14 @@ def run(brief: dict) -> dict:
 - 독일어·베트남어 등 한국어·영어 아닌 외국어
 - 없는 수치·사실 창작
 - 글자 수 300자 미만 (너무 짧은 카드)
+- 제목에 등장한 기업명·인물명·주제가 본문에 전혀 없는 경우 (제목과 본문 주제 일치 필수)
 
 전체 본문 350~450자. 글 다 쓰고 빈 줄 두 개 뒤에 해시태그 8개. 해시태그는 반드시 #단어 형식으로 (빈 # 금지).
 """
         caption = ask_gemini(prompt, system=SYSTEM, temperature=0.7, max_tokens=1200)
         caption = _regenerate_if_needed(caption, prompt, f"카드{i+1}")
+        caption = _fix_title_consistency(item["headline"], caption, prompt, f"카드{i+1}")
+        caption = _fix_quality(caption, prompt, f"카드{i+1}")
 
         # 중복 주제 감지
         for prev in captions:
@@ -149,6 +211,8 @@ def run(brief: dict) -> dict:
     try:
         article = ask_gemini(blog_prompt, system=SYSTEM, temperature=0.88, max_tokens=2000)
         article = _ensure_complete(article, blog_prompt)
+        article = _fix_title_consistency(b["title"], article, blog_prompt, "블로그")
+        article = _fix_quality(article, blog_prompt, "블로그")
         print(f"  ✅ 블로그 아티클 완성 ({len(article)}자)")
     except Exception as e:
         print(f"  ⚠️  블로그 아티클 실패 (카드뉴스는 유지): {e}")

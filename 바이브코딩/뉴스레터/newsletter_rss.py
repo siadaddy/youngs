@@ -128,21 +128,47 @@ def fetch_all_articles():
 
     return all_articles
 
+# ── 제목 유사도 (핵심 키워드 겹침 비율) ──────────────────
+_TITLE_STOP = {
+    '의','을','를','이','가','은','는','에','도','와','과','로','으로',
+    '그','및','등','관련','대한','위한','따른','대해','통해','위해',
+    '하는','하고','하여','하면','했다','한다','있다','있어','됐다',
+}
+
+def _title_overlap(t1: str, t2: str) -> float:
+    def kw(s):
+        return {w for w in re.sub(r'[^\w\s]', '', s).split()
+                if len(w) > 1 and w not in _TITLE_STOP}
+    ka, kb = kw(t1), kw(t2)
+    if not ka or not kb:
+        return 0.0
+    return len(ka & kb) / min(len(ka), len(kb))
+
+
 # ── 카테고리 분류 ────────────────────────────────────────
+DEDUP_THRESHOLD = 0.7   # 70% 이상 겹치면 중복으로 판단
+
 def categorize(articles):
     result = {cat: [] for cat in CATEGORIES}
     used = set()
+    added_titles: list[str] = []   # 전체 카테고리 통합 중복 체크용
 
     for cat, keywords in CATEGORIES.items():
         for art in articles:
             if id(art) in used:
                 continue
             text = (art['title'] + ' ' + art['summary']).lower()
-            if any(kw.lower() in text for kw in keywords):
-                result[cat].append(art)
-                used.add(id(art))
-                if len(result[cat]) >= MAX_PER_CATEGORY:
-                    break
+            if not any(kw.lower() in text for kw in keywords):
+                continue
+            # 이미 다른 카테고리에 추가된 유사 기사 있으면 스킵
+            if any(_title_overlap(art['title'], seen) >= DEDUP_THRESHOLD
+                   for seen in added_titles):
+                continue
+            result[cat].append(art)
+            used.add(id(art))
+            added_titles.append(art['title'])
+            if len(result[cat]) >= MAX_PER_CATEGORY:
+                break
 
     return result
 
