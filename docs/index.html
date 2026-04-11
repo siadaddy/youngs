@@ -788,15 +788,50 @@
     .fade-in:nth-child(3){ animation-delay:.19s }
     .fade-in:nth-child(4){ animation-delay:.26s }
     .fade-in:nth-child(5){ animation-delay:.33s }
+
+    /* ─── 스켈레톤 UI ────────────────────────────── */
+    .skeleton {
+      display: inline-block;
+      background: linear-gradient(90deg, rgba(255,255,255,.06) 25%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.06) 75%);
+      background-size: 200% 100%;
+      animation: skPulse 1.4s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    @keyframes skPulse {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ─── LIVE 뱃지 강화 ─────────────────────────── */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.4);
+      color: #f87171;
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      box-shadow: 0 0 12px rgba(239,68,68,.2);
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 6px 2px rgba(239,68,68,.5);
+      animation: livePulse 1.2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: .6; }
+    }
   </style>
 </head>
 <body class="wrap">
 
 <!-- ─── 히어로 ──────────────────────────────────────────── -->
 <div class="hero">
+  <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.5;"></canvas>
   <div class="hero-eyebrow">
-    <span class="dot"></span>
-    LIVE · 매일 07:00 뉴스 · AI 음악 큐레이션 · 30초마다 코인 실시간 감시
+    <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+    &nbsp;매일 07:00 뉴스 · AI 음악 큐레이션 · 30초마다 코인 실시간 감시
   </div>
   <h1>
     🤖 시아아빠님의<br>
@@ -825,6 +860,8 @@
       <div class="stat-label">코인 실시간 감시</div>
     </div>
   </div>
+  <div id="hero-pnl" style="margin-top:20px;font-size:2.2rem;font-weight:800;letter-spacing:-1px;"></div>
+  <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.4);margin-top:4px;">AI 코인봇 누적손익</div>
 </div>
 
 <!-- ─── 라이브 대시보드 ──────────────────────────────────── -->
@@ -841,28 +878,28 @@
     <!-- 날씨 -->
     <div class="widget">
       <div class="w-label"><span class="w-icon">🌤</span> 서울 날씨</div>
-      <div class="w-val" id="w-weather"><span class="w-loading">로딩중...</span></div>
+      <div class="w-val" id="w-weather"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
       <div class="w-sub" id="w-weather-desc"></div>
     </div>
 
     <!-- 미세먼지 -->
     <div class="widget">
       <div class="w-label"><span class="w-icon">🌫</span> 미세먼지 PM2.5</div>
-      <div class="w-val" id="w-pm"><span class="w-loading">로딩중...</span></div>
+      <div class="w-val" id="w-pm"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
       <div class="w-sub" id="w-pm-sub"></div>
     </div>
 
     <!-- 환율 USD/KRW -->
     <div class="widget">
       <div class="w-label"><span class="w-icon">💵</span> 달러 환율</div>
-      <div class="w-val" id="w-usd"><span class="w-loading">로딩중...</span></div>
+      <div class="w-val" id="w-usd"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
       <div class="w-sub">USD → KRW</div>
     </div>
 
     <!-- 공포탐욕지수 -->
     <div class="widget">
       <div class="w-label"><span class="w-icon">🧭</span> 공포탐욕지수</div>
-      <div class="w-val" id="w-fng"><span class="w-loading">로딩중...</span></div>
+      <div class="w-val" id="w-fng"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
       <div class="w-sub" id="w-fng-sub">Crypto Fear &amp; Greed</div>
     </div>
 
@@ -1168,7 +1205,7 @@
       document.getElementById('w-weather-desc').textContent =
         `${desc} · 체감 ${Math.round(cur.apparent_temperature)}°C`;
     } catch {
-      document.getElementById('w-weather').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+      document.getElementById('w-weather').textContent = '--';
     }
   }
 
@@ -1200,7 +1237,7 @@
       document.getElementById('w-pm-sub').innerHTML =
         `<span class="${cls}">${lbl}</span> · PM10 ${pm10}`;
     } catch {
-      document.getElementById('w-pm').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+      document.getElementById('w-pm').textContent = '--';
     }
   }
 
@@ -1214,7 +1251,7 @@
       document.getElementById('w-usd').textContent =
         `₩${Math.round(rate).toLocaleString()}`;
     } catch {
-      document.getElementById('w-usd').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+      document.getElementById('w-usd').textContent = '--';
     }
   }
 
@@ -1245,7 +1282,7 @@
         `<span style="color:${col}">${val}</span> <span style="font-size:.72rem;color:${col};font-weight:700;">${kr}</span>`;
       document.getElementById('w-fng-sub').textContent = '0 공포 · 100 탐욕';
     } catch {
-      document.getElementById('w-fng').innerHTML = '<span style="color:var(--muted);font-size:.8rem">오류</span>';
+      document.getElementById('w-fng').textContent = '--';
     }
   }
 
@@ -1503,6 +1540,13 @@
       pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
       pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
 
+      // 히어로 누적손익
+      const heroPnlEl = document.getElementById('hero-pnl');
+      if (heroPnlEl) {
+        heroPnlEl.textContent = (pnl >= 0 ? '+' : '') + Number(pnl).toLocaleString() + '원';
+        heroPnlEl.style.color = pnl >= 0 ? '#4ade80' : '#f87171';
+      }
+
       // 현재 보유 상태
       const h = d.holding;
       const statusEl = document.getElementById('coin-status');
@@ -1658,6 +1702,53 @@
   loadCoinTrader();
   // 30초마다 코인 현재가 갱신
   setInterval(loadCoinTrader, 30 * 1000);
+
+  // ─── 히어로 별 canvas ─────────────────────────────────
+  (function initHeroCanvas() {
+    const cvs = document.getElementById('hero-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    let W, H, stars = [];
+
+    function resize() {
+      W = cvs.width  = cvs.offsetWidth;
+      H = cvs.height = cvs.offsetHeight;
+    }
+
+    function initStars() {
+      stars = Array.from({length: 60}, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: 0.5 + Math.random() * 1.8,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: 0.3 + Math.random() * 0.7,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    }
+
+    let tick = 0;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      tick += 0.02;
+      stars.forEach(s => {
+        s.x += s.vx; s.y += s.vy;
+        if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+        if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+        const a = s.alpha * (0.6 + 0.4 * Math.sin(tick + s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    initStars();
+    draw();
+    window.addEventListener('resize', () => { resize(); initStars(); });
+  })();
 </script>
 </body>
 </html>
