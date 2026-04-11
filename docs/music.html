@@ -750,7 +750,9 @@ function buildGalaxy(songs) {
     const radiusXZ = Math.sqrt(x*x + z*z);
     spr.userData = { t: song.t, a: song.a, g: genre, d: song.d || '', hue, base,
       angleXZ, radiusXZ, oy: y,
-      speed: 0.0003 + Math.random() * 0.0008,   // 별마다 다른 공전 속도
+      speed: 0.0003 + Math.random() * 0.0008,        // 별마다 다른 공전 속도
+      dir:   Math.random() < 0.5 ? 1 : -1,           // 시계/반시계 랜덤
+      tilt:  (Math.random() - 0.5) * 0.5,            // 궤도 평면 기울기 (-0.25 ~ +0.25)
       phase: Math.random() * Math.PI * 2 };
     spr.scale.setScalar(base);
 
@@ -869,16 +871,20 @@ function animate() {
   // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
   const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
 
-  // ── 별 개별 공전 — 음악 재생 시에만 회전 (musicEnergy로 smooth start/stop) ──
+  // ── 별 개별 공전 — 랜덤 방향 + 기울어진 궤도 평면 ──
   sprites.forEach(s => {
     if (s === hovered) return;
-    s.userData.angleXZ += s.userData.speed * musicEnergy;
+    s.userData.angleXZ += s.userData.speed * s.userData.dir * musicEnergy;
     const a = s.userData.angleXZ;
     const r = s.userData.radiusXZ;
     const drift = Math.sin(tick * 0.005 + s.userData.phase) * 3 * musicEnergy;
-    s.position.x = Math.cos(a) * (r + drift);
-    s.position.y = s.userData.oy + Math.sin(tick * 0.007 + s.userData.phase * 1.3) * 3 * musicEnergy;
-    s.position.z = Math.sin(a) * (r + drift);
+    const cosA = Math.cos(a), sinA = Math.sin(a);
+    s.position.x = cosA * (r + drift);
+    // tilt: 궤도 위치(sinA)에 따라 Y축으로 기울어진 만큼 높낮이 변화
+    s.position.y = s.userData.oy
+      + sinA * (r + drift) * s.userData.tilt
+      + Math.sin(tick * 0.007 + s.userData.phase * 1.3) * 2 * musicEnergy;
+    s.position.z = sinA * (r + drift);
   });
 
   // ── 콘스텔레이션 라인 위치 갱신 ──
