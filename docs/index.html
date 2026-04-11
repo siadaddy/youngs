@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <style>
     /* ─── 토큰 ─────────────────────────────────────── */
     :root {
@@ -1046,8 +1047,14 @@
     <!-- 현재 보유 상태 -->
     <div id="coin-status"></div>
 
+    <!-- 누적손익 차트 -->
+    <div id="pnl-chart-wrap" style="display:none;margin-top:32px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:20px 24px;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;">📈 누적손익 흐름 · 클릭 시 해당 거래로 이동</div>
+      <canvas id="pnl-chart" style="width:100%;max-height:180px;"></canvas>
+    </div>
+
     <!-- 매매 히스토리 -->
-    <div style="margin-top:32px;">
+    <div style="margin-top:24px;">
       <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;">
         📋 매매 히스토리
       </div>
@@ -1660,6 +1667,114 @@
   }
 
   /* ─── 코인 트레이더 ──────────────────────────────────── */
+  let pnlChart = null;
+
+  function buildPnlChart(allHistory, hist) {
+    // SELL 거래만 필터 → 오래된 순으로 정렬
+    const sells = [...allHistory]
+      .filter(t => t.action === 'SELL' && t.pnl_krw != null)
+      .reverse();
+    if (sells.length < 2) {
+      document.getElementById('pnl-chart-wrap').style.display = 'none';
+      return;
+    }
+
+    // 누적손익 계산
+    let cum = 0;
+    const cumPnl = sells.map(t => { cum += t.pnl_krw; return cum; });
+    const labels  = sells.map(t => t.time.slice(5, 16)); // "MM-DD HH:mm"
+
+    document.getElementById('pnl-chart-wrap').style.display = '';
+
+    const ctx = document.getElementById('pnl-chart').getContext('2d');
+    if (pnlChart) pnlChart.destroy();
+
+    pnlChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '누적손익',
+            data: cumPnl,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 7,
+            tension: 0.35,
+            fill: false,
+            segment: {
+              borderColor: ctx => ctx.p0.parsed.y >= 0 ? '#f87171' : '#34d399',
+            },
+            pointBackgroundColor: cumPnl.map(v => v >= 0 ? '#f87171' : '#34d399'),
+            pointBorderColor: 'transparent',
+          },
+          {
+            label: '_zero',
+            data: cumPnl.map(() => 0),
+            borderColor: 'rgba(255,255,255,.18)',
+            borderWidth: 1,
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15,21,32,.95)',
+            borderColor: 'rgba(255,255,255,.12)',
+            borderWidth: 1,
+            titleColor: '#94a3b8',
+            titleFont: { size: 11 },
+            bodyColor: '#f1f5f9',
+            bodyFont: { size: 12, weight: '700' },
+            filter: item => item.datasetIndex === 0,
+            callbacks: {
+              label: ctx => {
+                const v = ctx.raw;
+                return ` ${v >= 0 ? '+' : ''}${Number(v).toLocaleString()}원`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,.04)' },
+            ticks: { color: '#64748b', font: { size: 10 }, maxRotation: 30, maxTicksLimit: 7 }
+          },
+          y: {
+            grid: { color: 'rgba(255,255,255,.05)' },
+            ticks: {
+              color: '#64748b', font: { size: 10 },
+              callback: v => (v >= 0 ? '+' : '') + Number(v).toLocaleString() + '원'
+            }
+          }
+        },
+        onClick: (evt, elements) => {
+          if (!elements.length || elements[0].datasetIndex !== 0) return;
+          const pointIdx = elements[0].index;
+          const sellTime = sells[pointIdx]?.time;
+          if (!sellTime) return;
+          const histIdx = hist.findIndex(t => t.time === sellTime && t.action === 'SELL');
+          if (histIdx >= 0) {
+            const el = document.getElementById(`trade-item-${histIdx}`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.style.transition = 'box-shadow .3s';
+              el.style.boxShadow = '0 0 0 2px rgba(28,105,212,.7)';
+              setTimeout(() => el.style.boxShadow = '', 1800);
+            }
+          }
+        }
+      }
+    });
+  }
+
   function setStatsDefault() {
     document.getElementById('cs-trades').textContent  = '0';
     document.getElementById('cs-wins').textContent    = '0';
@@ -1795,13 +1910,16 @@
           </div>`;
       }
 
+      // 누적손익 차트
+      buildPnlChart(d.history || [], (d.history || []).slice(0, 10));
+
       // 히스토리
       const histEl = document.getElementById('coin-history');
       const hist = (d.history || []).slice(0, 10);
       if (hist.length === 0) {
         histEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px 0;">아직 매매 기록이 없습니다.</div>';
       } else {
-        histEl.innerHTML = hist.map(t => {
+        histEl.innerHTML = hist.map((t, idx) => {
           const icon   = t.action === 'BUY' ? '🟢' : t.action === 'SELL' ? '🔴' : '⏸';
           const cls    = t.action === 'BUY' ? 'buy' : t.action === 'SELL' ? 'sell' : 'hold';
           const pnlPct = t.pnl_pct != null ? t.pnl_pct : null;
@@ -1811,7 +1929,7 @@
           const krwStr = t.pnl_krw != null ? (t.pnl_krw >= 0 ? '+' : '') + Number(t.pnl_krw).toLocaleString() + '원' : '';
           const ticker = (t.ticker || '').replace('KRW-', '');
           return `
-            <div class="trade-item fade-in">
+            <div class="trade-item fade-in" id="trade-item-${idx}">
               <div class="trade-badge ${cls}">${icon}</div>
               <div class="trade-info">
                 <div class="trade-ticker">${t.action} · ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
