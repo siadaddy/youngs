@@ -1,5 +1,38 @@
 from utils.gemini_client import ask_gemini
 
+# ── 블랙리스트 후처리 ──────────────────────────────────────
+BLACKLIST = [
+    "와 이거 실화야", "와 이거", "와 이 ", "레전드네", "레전드다",
+    "헐 이거", "대박이다", "대박이야", "실화냐", "정말 인상적이야",
+    "관심이 생긴다", "관심이 집중된다", "지켜봐야겠다", "어떻게 될지 궁금",
+]
+
+def _check_blacklist(text: str) -> list:
+    return [phrase for phrase in BLACKLIST if phrase in text]
+
+def _regenerate_if_needed(text: str, prompt: str, label: str) -> str:
+    hits = _check_blacklist(text)
+    if not hits:
+        return text
+    print(f"  ⚠️  [{label}] 블랙리스트 감지 {hits} → 재생성 시도...")
+    import time; time.sleep(3)
+    new_text = ask_gemini(prompt, system=SYSTEM, temperature=0.75, max_tokens=1200)
+    hits2 = _check_blacklist(new_text)
+    if hits2:
+        print(f"  ⚠️  [{label}] 재생성 후에도 감지 {hits2} — 그대로 사용")
+    return new_text
+
+# ── 중복 주제 감지 ─────────────────────────────────────────
+def _keyword_overlap(a: str, b: str) -> float:
+    """두 제목의 핵심 키워드 겹침 비율 (0~1)"""
+    stop = {"을","를","이","가","의","은","는","에","도","와","과","로","으로","그","및","등","관련"}
+    def keywords(s):
+        return {w for w in s.replace(",","").replace(".","").split() if len(w) > 1 and w not in stop}
+    ka, kb = keywords(a), keywords(b)
+    if not ka or not kb:
+        return 0.0
+    return len(ka & kb) / min(len(ka), len(kb))
+
 SYSTEM = """
 너는 '시아아빠'야. 40대 직장인, BMW 딜러 근무.
 매일 아침 뉴스 보고 느낀 점 인스타·블로그에 올리는 사람이야.
@@ -58,6 +91,14 @@ def run(brief: dict) -> dict:
 전체 본문 350~450자. 글 다 쓰고 빈 줄 두 개 뒤에 해시태그 8개. 해시태그는 반드시 #단어 형식으로 (빈 # 금지).
 """
         caption = ask_gemini(prompt, system=SYSTEM, temperature=0.7, max_tokens=1200)
+        caption = _regenerate_if_needed(caption, prompt, f"카드{i+1}")
+
+        # 중복 주제 감지
+        for prev in captions:
+            overlap = _keyword_overlap(item["headline"], prev["headline"])
+            if overlap >= 0.6:
+                print(f"  ⚠️  카드{i+1} 주제 중복 감지 ({overlap:.0%}) — '{prev['headline']}'와 유사")
+
         captions.append({
             "headline":    item["headline"],
             "caption":     caption,

@@ -28,9 +28,10 @@ def run() -> list:
 각 곡에 다음을 포함:
 - g: 아래 중 하나 (K-pop / 인디팝 / R&B / 힙합 / 팝 / 일렉트로팝 / 인디록 / 기타)
 - s: 인기도 점수 1~10 (현재 차트 순위 기반)
+- d: 한 줄 분위기 설명 (15자 이내, 예: "몽환적인 밤의 감성", "에너지 넘치는 여름", "가슴 시린 이별")
 
 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
-{"songs": [{"t": "곡제목", "a": "아티스트명", "g": "장르", "s": 점수}, ...]}
+{"songs": [{"t": "곡제목", "a": "아티스트명", "g": "장르", "s": 점수, "d": "분위기설명"}, ...]}
 """
 
     raw = ask_gemini(prompt, system=SYSTEM, temperature=0.85,
@@ -55,6 +56,7 @@ def run() -> list:
                 "a": key[1],
                 "g": s.get("g", "기타"),
                 "s": s.get("s", 7),
+                "d": s.get("d", ""),
             })
 
     print(f"  ✅ {len(unique)}곡 큐레이션 완료")
@@ -62,6 +64,8 @@ def run() -> list:
 
 
 def save(songs: list):
+    import glob
+    from datetime import datetime, timedelta
     today = date.today().isoformat()
     out = {"updated": today, "songs": songs}
     os.makedirs(DOCS_PATH, exist_ok=True)
@@ -69,11 +73,21 @@ def save(songs: list):
     path = os.path.join(DOCS_PATH, "music.json")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
-    # music_2026-04-11.json (날짜별 히스토리)
+    # music_YYYY-MM-DD.json (날짜별 히스토리)
     dated_path = os.path.join(DOCS_PATH, f"music_{today}.json")
     with open(dated_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"  💾 music.json + music_{today}.json 저장 완료 ({len(songs)}곡)")
+    # 30일 초과 파일 자동 삭제
+    cutoff = datetime.now() - timedelta(days=30)
+    for f in glob.glob(os.path.join(DOCS_PATH, "music_????-??-??.json")):
+        try:
+            file_date = datetime.strptime(os.path.basename(f), "music_%Y-%m-%d.json")
+            if file_date < cutoff:
+                os.remove(f)
+                print(f"  🗑  오래된 파일 삭제: {os.path.basename(f)}")
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

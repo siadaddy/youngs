@@ -64,7 +64,7 @@ def run(action: dict, holding: dict | None) -> dict:
         if krw < MIN_ORDER:
             print(f"  ⚠️  KRW 잔고 부족 ({krw:,.0f}원) — BUY 스킵")
             return None
-        invest = min(krw, MAX_INVEST) * 0.92   # MAX_INVEST 한도 내에서 수수료 여유 포함
+        invest = min(krw, MAX_INVEST) * 0.997  # MAX_INVEST 한도 내에서 수수료(0.25%) 여유만
 
         result = buy_market_order(ticker, invest)
         price = get_current_price(ticker)

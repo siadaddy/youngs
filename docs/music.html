@@ -82,6 +82,7 @@
       font-size:8px; letter-spacing:1.5px; padding:3px 9px;
       border-radius:20px; text-transform:uppercase; font-weight:600;
     }
+    #tip-mood { font-size:10px; color:rgba(255,255,255,.55); margin-top:6px; font-style:italic; }
     #tip-h { font-size:8px; color:rgba(255,255,255,.18); margin-top:8px; letter-spacing:2px; }
 
     /* ── 장르 범례 ── */
@@ -101,22 +102,26 @@
       width:8px; height:8px; border-radius:50%; flex-shrink:0;
     }
 
-    /* ── 날짜 히스토리 네비 ── */
+    /* ── 날짜 히스토리 탭 (상단) ── */
     #date-nav {
-      position:fixed; bottom:108px; left:50%; transform:translateX(-50%);
-      display:flex; gap:6px; z-index:100; pointer-events:all;
+      position:absolute; top:28px; left:50%; transform:translateX(-50%);
+      display:flex; gap:5px; z-index:20; pointer-events:all;
       opacity:0; transition:opacity .5s;
     }
     #date-nav.show { opacity:1; }
     .date-btn {
-      font-size:9px; letter-spacing:1.5px; padding:6px 14px;
-      border-radius:20px; border:1px solid rgba(255,255,255,.15);
-      background:rgba(0,0,20,.75); color:rgba(255,255,255,.45);
+      font-size:8.5px; letter-spacing:1.5px; padding:5px 12px;
+      border-radius:20px; border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,20,.6); color:rgba(255,255,255,.4);
       cursor:pointer; transition:all .2s; backdrop-filter:blur(10px);
-      text-transform:uppercase;
+      text-transform:uppercase; white-space:nowrap;
     }
-    .date-btn:hover { border-color:rgba(255,255,255,.35); color:rgba(255,255,255,.85); }
-    .date-btn.active { border-color:rgba(255,255,255,.5); color:#fff; background:rgba(255,255,255,.1); }
+    .date-btn:hover { border-color:rgba(255,255,255,.3); color:rgba(255,255,255,.8); }
+    .date-btn.active { border-color:rgba(255,255,255,.45); color:#fff; background:rgba(255,255,255,.08); }
+    @media (pointer: coarse) {
+      #date-nav { top:auto; bottom:96px; transform:translateX(-50%); }
+      .date-btn { padding:7px 14px; font-size:10px; }
+    }
 
     #loading {
       position:fixed; inset:0; display:flex; flex-direction:column;
@@ -281,6 +286,7 @@
     <div id="tip-t"></div>
     <div id="tip-a"></div>
     <div id="tip-genre"></div>
+    <div id="tip-mood"></div>
     <div id="tip-h">CLICK → YOUTUBE MUSIC</div>
   </div>
 </div>
@@ -739,7 +745,7 @@ function buildGalaxy(songs) {
       depthWrite: false,
     }));
     spr.position.set(x, y, z);
-    spr.userData = { t: song.t, a: song.a, g: genre, hue, base,
+    spr.userData = { t: song.t, a: song.a, g: genre, d: song.d || '', hue, base,
       ox: x, oy: y, oz: z, phase: Math.random() * Math.PI * 2 };
     spr.scale.setScalar(base);
 
@@ -923,18 +929,22 @@ function animate() {
       gEl.style.background = gInfo.color + '33';
       gEl.style.color = gInfo.color;
       gEl.style.border = `1px solid ${gInfo.color}55`;
-      // 배경 그라디언트
+      // 분위기 설명
+      const moodEl = document.getElementById('tip-mood');
+      moodEl.textContent = ud.d || '';
+      // 배경 그라��언트 (항상 표시 — fallback 역할)
       document.getElementById('tip-art-bg').style.background =
-        `radial-gradient(circle at center, ${gInfo.color}88, ${gInfo.color}11)`;
+        `radial-gradient(circle at 40% 40%, ${gInfo.color}99, ${gInfo.color}22 60%, transparent)`;
       // 이미지 초기화
       const artEl = document.getElementById('tip-art');
       const existing = artEl.querySelector('img');
       if (existing) existing.remove();
-      // 앨범 아트 비동기 로드
+      // 앨범 아트 비동기 로드 — 실패해도 배경 그라디언트로 대체
       fetchArt({ t: ud.t, a: ud.a }).then(url => {
         if (!url || hovered?.userData.t !== ud.t) return;
         const img = document.createElement('img');
         img.src = url;
+        img.onerror = () => img.remove();  // 깨진 이미지 자동 제거
         artEl.insertBefore(img, artEl.firstChild);
       });
     }

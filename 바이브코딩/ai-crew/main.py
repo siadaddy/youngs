@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from datetime import date
 from utils.notion_reader import get_today_newsletter, NEWSLETTER_DIR
-from agents import planner, writer, designer
+from agents import planner, writer, designer, music_curator
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -77,7 +77,7 @@ def main():
     print("━" * 50)
 
     # ── Step 1: 뉴스레터 읽기 ────────────────────────────────
-    print("\n[1/4] 오늘 뉴스레터 읽는 중...")
+    print("\n[1/5] 오늘 뉴스레터 읽는 중...")
     try:
         newsletter = retry("뉴스레터 로드", get_today_newsletter)
         print(f"  ✅ 뉴스레터 로드 완료 ({len(newsletter)}자)")
@@ -95,7 +95,7 @@ def main():
         print(f"  ⚠️  뉴스 데이터 파일 없음: {data_path}")
 
     # ── Step 2: 기획자 ───────────────────────────────────────
-    print("\n[2/4] 기획자 에이전트...")
+    print("\n[2/5] 기획자 에이전트...")
     try:
         brief = retry("기획자", planner.run, newsletter, newsletter_data)
     except Exception as e:
@@ -103,7 +103,7 @@ def main():
         sys.exit(1)
 
     # ── Step 3: 작가 ─────────────────────────────────────────
-    print("\n[3/4] 작가 에이전트...")
+    print("\n[3/5] 작가 에이전트...")
     try:
         written = retry("작가", writer.run, brief)
     except Exception as e:
@@ -111,7 +111,7 @@ def main():
         sys.exit(1)
 
     # ── Step 4: 디자이너 ─────────────────────────────────────
-    print("\n[4/4] 디자이너 에이전트...")
+    print("\n[4/5] 디자이너 에이전트...")
     try:
         images = retry("디자이너", designer.run, brief, written)
     except Exception as e:
@@ -137,6 +137,15 @@ def main():
         "✅ AI 크리에이터 완료",
         f"오늘 콘텐츠 준비됐어요!\n카드뉴스 {len(written['captions'])}개 · 이미지 {img_ok}장\n{GITHUB_PAGES_URL}",
     )
+
+    # ── 음악 큐레이션 ────────────────────────────────────────
+    print("\n[5/5] 음악 큐레이터 에이전트...")
+    try:
+        songs = retry("음악 큐레이터", music_curator.run)
+        music_curator.save(songs)
+    except Exception as e:
+        print(f"  ⚠️  음악 큐레이션 실패: {e}")
+        notify("⚠️ 음악 큐레이션 실패", f"music.json 미갱신\n오류: {e}", priority="high")
 
     # ── GitHub Pages용 content.json 저장 & push ──────────────
     _publish_to_github(today, brief, written, images, newsletter_data)
