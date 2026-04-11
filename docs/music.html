@@ -703,6 +703,7 @@ function getNodeTex(hue) {
 // ═══════════════════════════════════════════════════
 const sprites   = [];
 let linesMesh   = null;
+let linePairs   = [];   // [{i, j}] — 매 프레임 position 갱신용
 
 function buildGalaxy(songs) {
   sprites.forEach(s => galaxyGroup.remove(s));
@@ -757,8 +758,9 @@ function buildGalaxy(songs) {
     sprites.push(spr);
   });
 
-  // 콘스텔레이션 라인 (같은 장르끼리 더 멀어도 연결)
-  const pts = [], cls = [];
+  // 콘스텔레이션 라인 — linePairs 저장 후 매 프레임 position 갱신
+  linePairs = [];
+  const cls = [];
   for (let i = 0; i < sprites.length; i++) {
     for (let j = i+1; j < sprites.length; j++) {
       const d = sprites[i].position.distanceTo(sprites[j].position);
@@ -768,13 +770,17 @@ function buildGalaxy(songs) {
         const alpha = (1 - d/threshold) * (sameGenre ? 0.65 : 0.28);
         const c1 = new THREE.Color().setHSL(sprites[i].userData.hue/360, .8, .6);
         const c2 = new THREE.Color().setHSL(sprites[j].userData.hue/360, .8, .6);
-        pts.push(...sprites[i].position.toArray(), ...sprites[j].position.toArray());
+        linePairs.push(i, j);
         cls.push(c1.r*alpha,c1.g*alpha,c1.b*alpha, c2.r*alpha,c2.g*alpha,c2.b*alpha);
       }
     }
   }
+  // position 버퍼는 dynamic — 매 프레임 덮어씀
+  const posArr = new Float32Array(linePairs.length * 3); // pairs/2 * 2verts * 3floats
   const lg = new THREE.BufferGeometry();
-  lg.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+  const posAttr = new THREE.BufferAttribute(posArr, 3);
+  posAttr.setUsage(THREE.DynamicDrawUsage);
+  lg.setAttribute('position', posAttr);
   lg.setAttribute('color',    new THREE.Float32BufferAttribute(cls, 3));
   linesMesh = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({
     vertexColors: true, transparent: true, opacity: 1,
@@ -874,6 +880,19 @@ function animate() {
     s.position.y = s.userData.oy + Math.sin(tick * 0.007 + s.userData.phase * 1.3) * 3 * musicEnergy;
     s.position.z = Math.sin(a) * (r + drift);
   });
+
+  // ── 콘스텔레이션 라인 위치 갱신 ──
+  if (linesMesh && linePairs.length > 0) {
+    const arr = linesMesh.geometry.attributes.position.array;
+    for (let k = 0; k < linePairs.length; k += 2) {
+      const pi = sprites[linePairs[k]].position;
+      const pj = sprites[linePairs[k+1]].position;
+      const base = k * 3;
+      arr[base]   = pi.x; arr[base+1] = pi.y; arr[base+2] = pi.z;
+      arr[base+3] = pj.x; arr[base+4] = pj.y; arr[base+5] = pj.z;
+    }
+    linesMesh.geometry.attributes.position.needsUpdate = true;
+  }
 
   // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
   bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
