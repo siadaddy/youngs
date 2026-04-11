@@ -963,9 +963,9 @@ function animate() {
 
   // ── 재생 중 별 pulse ring ──
   if (playingSprite) {
-    const wp = new THREE.Vector3();
-    playingSprite.getWorldPosition(wp);
-    playRingSpr.position.copy(wp);
+    // galaxyGroup에 별도 transform 없으므로 local position = world position
+    // getWorldPosition()은 matrixWorld 기반이라 한 프레임 뒤처지는 문제 있음
+    playRingSpr.position.copy(playingSprite.position);
     const rPulse = Math.sin(tick * 0.07) * 0.5 + 0.5;
     playRingSpr.scale.setScalar(playingSprite.userData.base * (3 + rPulse * 3));
     playRingSpr.material.opacity = 0.08 + rPulse * 0.15 + beat * 0.15;
