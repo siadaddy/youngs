@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "FF",
+    "buy_price": 138.0,
+    "qty": 890.9217,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-11 18:34"
+  },
   "history": [
+    {
+      "time": "2026-04-11 18:34",
+      "action": "BUY",
+      "ticker": "FF",
+      "price": 139.0,
+      "amount_krw": 99700.0,
+      "reason": "VB✅과 점수 +5로 변동성 돌파 신호가 나타나며, RSI 32.1로 과매도 상태이므로 매수 기회가 좋습니다. 추가로 ADX 14.2로 횡보 상태이지만, 다른 종목에 비해 상대적으로 매수 신호가 강합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-11 18:30",
       "action": "SELL",
@@ -179,7 +196,7 @@
     }
   ],
   "stats": {
-    "total_trades": 15,
+    "total_trades": 16,
     "wins": 5,
     "losses": 3,
     "total_pnl_krw": -4529.0,
@@ -187,5 +204,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-11 18:30"
+  "updated_at": "2026-04-11 18:34"
 }
