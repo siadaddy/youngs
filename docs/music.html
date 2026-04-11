@@ -540,21 +540,13 @@ composer.addPass(bloom);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping    = true;
 controls.dampingFactor    = 0.04;
-controls.autoRotate       = true;
-controls.autoRotateSpeed  = 0.2;
+controls.autoRotate       = false;
+controls.autoRotateSpeed  = 0;
 controls.minDistance      = 60;
 controls.maxDistance      = 600;
 controls.enablePan        = false;
 
 // 드래그 시작하면 자동회전 멈춤, 8초 후 재개
-let autoRotateTimer = null;
-controls.addEventListener('start', () => {
-  controls.autoRotate = false;
-  clearTimeout(autoRotateTimer);
-});
-controls.addEventListener('end', () => {
-  autoRotateTimer = setTimeout(() => { controls.autoRotate = true; }, 8000);
-});
 
 // ═══════════════════════════════════════════════════
 // 별 배경 (다층 + 색상 다양 + 은하수 띠)
@@ -849,8 +841,8 @@ function animate() {
   // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
   const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
 
-  // ── 카메라 자동회전 속도 (음악 재생 중 빠르게) ──
-  controls.autoRotateSpeed = 0.35 + musicEnergy * 1.2;
+  // ── 은하 자체 Y축 자전 (카메라 고정, 별들이 천천히 돎) ──
+  galaxyGroup.rotation.y += 0.0008 + musicEnergy * 0.002;
 
   // ── 블룸: 정지 1.6 → 재생 평균 2.4 → 비트 피크 3.2 ──
   bloom.strength = 1.6 + musicEnergy * 0.8 + beat * 0.8;
