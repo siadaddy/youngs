@@ -762,26 +762,28 @@
     /* 히어로 누적손익 */
     .hero-pnl {
       display: none;
+      flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 12px;
+      gap: 4px;
       background: var(--glass);
       border: 1px solid var(--glass-border);
-      border-radius: var(--r-md);
-      padding: 10px 24px;
+      border-radius: var(--r-lg);
+      padding: 18px 36px;
       margin: 0 auto 28px;
       width: fit-content;
-      max-width: 340px;
-      transition: border-color .3s;
-    }
-    .hero-pnl-icon { font-size: 1rem; }
-    .hero-pnl-label {
-      font-size: .7rem; font-weight: 700;
-      color: var(--muted); letter-spacing: .07em;
-      text-transform: uppercase;
+      min-width: 200px;
+      transition: border-color .3s, background .3s;
     }
     .hero-pnl-val {
-      font-size: 1.1rem; font-weight: 800;
-      letter-spacing: -.02em;
+      font-size: 2rem; font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+    }
+    .hero-pnl-label {
+      font-size: .68rem; font-weight: 600;
+      color: var(--muted); letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 2px;
     }
 
     /* ─── 코인 트레이더 ─────────────────────────── */
@@ -1049,9 +1051,8 @@
     AI 트레이더가 5분마다 종목을 분석하고 30초마다 손절/익절을 실시간으로 감시합니다.
   </p>
   <div class="hero-pnl" id="hero-pnl">
-    <span class="hero-pnl-icon">🪙</span>
-    <span class="hero-pnl-label">AI 코인봇 누적손익</span>
     <span class="hero-pnl-val" id="hero-pnl-val">-</span>
+    <span class="hero-pnl-label">AI 코인봇 누적손익</span>
   </div>
   <div class="hero-stats">
     <div class="stat">
@@ -2100,8 +2101,10 @@
       if (heroPnl && heroPnlVal) {
         heroPnl.style.display = 'flex';
         heroPnlVal.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
-        heroPnlVal.style.color = pnl > 0 ? '#10b981' : pnl < 0 ? '#f87171' : 'var(--muted2)';
-        heroPnl.style.borderColor = pnl > 0 ? 'rgba(16,185,129,.3)' : pnl < 0 ? 'rgba(248,113,113,.3)' : 'var(--glass-border)';
+        // 한국 주식/코인 기준: 수익=빨간색, 손실=파란색
+        heroPnlVal.style.color    = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
+        heroPnl.style.borderColor = pnl > 0 ? 'rgba(248,113,113,.3)' : pnl < 0 ? 'rgba(96,165,250,.3)' : 'var(--glass-border)';
+        heroPnl.style.background  = pnl > 0 ? 'rgba(248,113,113,.06)' : pnl < 0 ? 'rgba(96,165,250,.06)' : 'var(--glass)';
       }
 
       // 승률 계산
