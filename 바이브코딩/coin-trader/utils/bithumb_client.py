@@ -21,14 +21,18 @@ def get_bithumb():
 
 
 def get_krw_balance() -> float:
-    """보유 KRW 잔고 반환"""
+    """주문 가능 KRW 잔고 반환 (total_krw - in_use_krw)"""
     b = get_bithumb()
     if b is None:
         return float(os.getenv("MAX_INVEST_KRW", "80000")) * 2  # dry run 가상 잔고
-    # get_balance(coin) → (보유코인, 사용중코인, 보유원화, 사용중원화)
+    # get_balance(coin) → (보유코인, 사용중코인, total_krw, in_use_krw)
     result = b.get_balance("BTC")
+    if isinstance(result, tuple) and len(result) >= 4:
+        total_krw  = float(result[2])
+        in_use_krw = float(result[3])
+        return total_krw - in_use_krw  # 실제 주문 가능 금액
     if isinstance(result, tuple) and len(result) >= 3:
-        return float(result[2])  # total_krw
+        return float(result[2])
     return 0.0
 
 
@@ -71,23 +75,40 @@ def get_krw_tickers() -> list:
 
 
 def buy_market_order(ticker: str, amount_krw: float) -> dict:
-    """시장가 매수. DRY_RUN이면 시뮬레이션.
-    pybithumb buy_market_order는 코인 수량을 받으므로 KRW → 수량 변환 후 주문"""
+    """시장가 매수. DRY_RUN이면 시뮬레이션."""
     coin = ticker.replace("KRW-", "")
-    price = get_current_price(coin)
-    if not price:
-        raise RuntimeError(f"현재가 조회 실패 — 매수 취소 (ticker={coin})")
-    qty = amount_krw / price
-
     b = get_bithumb()
+
     if b is None:
+        price = get_current_price(coin)
+        qty = amount_krw / price if price else 0
         print(f"  [DRY RUN] 매수 시뮬레이션: {coin} {qty:.6f}개 @ {price:,.0f}원 ({amount_krw:,.0f}원)")
         return {"ticker": coin, "price": price, "qty": qty, "dry_run": True}
+
+    # 실제 주문 가능 잔고 조회
+    raw_bal = b.api.balance(currency="BTC")
+    avail_krw = float(raw_bal["data"]["available_krw"])
+
+    # 잔고의 75%만 투자 — 수수료(0.25%) + 호가 슬리피지 여유 확보
+    invest = avail_krw * 0.75
+    price = get_current_price(coin)
+    if not price:
+        raise RuntimeError(f"현재가 조회 실패 (ticker={coin})")
+    qty = invest / price
+    print(f"  💰 잔고: {avail_krw:,.0f}원 | 주문: {qty:.4f}개 @ {price:,.0f}원 ({invest:,.0f}원)")
+
+
     result = b.buy_market_order(coin, qty)
+    print(f"  🔎 Bithumb 응답: {result}")
+
     if result is None:
-        raise RuntimeError(f"매수 주문 실패 — 잔고 부족 또는 API 오류 (ticker={coin}, amount={amount_krw:,.0f}원)")
-    if isinstance(result, dict) and result.get("status") not in (None, "0000"):
-        raise RuntimeError(f"매수 주문 거부 — {result} (ticker={coin}, amount={amount_krw:,.0f}원)")
+        raise RuntimeError(f"매수 API 오류 (ticker={coin})")
+    if isinstance(result, tuple):
+        return result  # 성공: ("bid", coin, order_id, "KRW")
+    if isinstance(result, dict):
+        status = result.get("status", "")
+        if status not in (None, "0000"):
+            raise RuntimeError(f"매수 거부 [{status}] {result.get('message','')} (ticker={coin}, {invest:,.0f}원)")
     return result
 
 
