@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "XRP",
-    "buy_price": 2003.0,
-    "qty": 66.7633,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-12 00:44"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-13 01:14",
+      "action": "SELL",
+      "ticker": "XRP",
+      "price": 1979.0,
+      "amount_krw": 99700.0,
+      "reason": "현재 보유 종목 XRP의 수익률이 -100.00%로 매우 낮으며, 기술적 지표도 하락세를 보이고 있어 매도하는 것이 좋습니다. 또한, 다른 종목들의 기술 점수가 높아 기회 교체를 고려할 수 있지만, 현재 보유 종목의 수익률이 너무 낮아 먼저 매도하는 것이 우선입니다.",
+      "pnl_pct": -1.2,
+      "pnl_krw": -1602.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-12 00:44",
       "action": "BUY",
@@ -262,13 +267,13 @@
     }
   ],
   "stats": {
-    "total_trades": 22,
+    "total_trades": 23,
     "wins": 8,
-    "losses": 3,
-    "total_pnl_krw": 14016.0,
+    "losses": 4,
+    "total_pnl_krw": 12414.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-12 08:23"
+  "updated_at": "2026-04-13 01:14"
 }
