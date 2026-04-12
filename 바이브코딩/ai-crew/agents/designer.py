@@ -4,6 +4,8 @@ from urllib.parse import quote
 from dotenv import load_dotenv
 from utils.gemini_client import ask_gemini
 
+FALLBACK_FILENAME = "fallback.png"
+
 load_dotenv()
 
 # 이미지를 docs/images/ 에 저장 → GitHub Pages로 서빙
@@ -81,18 +83,23 @@ Return ONLY a JSON array, no markdown:
         print(f"  🖼  이미지 {i+1}/{len(items)} 생성 중: {item['headline'][:30]}...")
         success = _generate_image(img_prompt, save_path)
 
+        if not success:
+            print(f"  ⚠️  이미지 {i+1} 생성 실패 → fallback 이미지 사용")
+            fb_path = os.path.join(DOCS_IMAGES_DIR, FALLBACK_FILENAME)
+            fb_url  = f"{GITHUB_PAGES_BASE}/{FALLBACK_FILENAME}"
+            _ensure_fallback(fb_path)
+            save_path = fb_path
+            pages_url = fb_url
+        else:
+            print(f"  ✅ 이미지 {i+1} 저장 완료: docs/images/{filename}")
+
         images.append({
             "headline": item["headline"],
             "prompt":   img_prompt,
-            "path":     save_path if success else None,
-            "url":      pages_url if success else None,
+            "path":     save_path,
+            "url":      pages_url,
             "success":  success,
         })
-
-        if success:
-            print(f"  ✅ 이미지 {i+1} 저장 완료: docs/images/{filename}")
-        else:
-            print(f"  ⚠️  이미지 {i+1} 생성 실패")
 
         # 이미지 사이 간격 — 첫 번째 실패 후엔 더 길게 대기
         time.sleep(15 if not success else 8)
@@ -134,3 +141,44 @@ def _generate_image(prompt: str, save_path: str) -> bool:
             print(f"    ❌ 이미지 생성 오류: {e}")
 
     return False
+
+
+def _ensure_fallback(path: str):
+    """fallback.png 없으면 단색 그라디언트 이미지 자동 생성 (PIL)"""
+    if os.path.exists(path):
+        return
+    try:
+        from PIL import Image, ImageDraw
+        img = Image.new("RGB", (768, 768))
+        draw = ImageDraw.Draw(img)
+        # 위→아래 그라디언트: 진한 네이비 → 미드나잇 블루
+        for y in range(768):
+            t = y / 767
+            r = int(10  + t * (28  - 10))
+            g = int(15  + t * (45  - 15))
+            b = int(40  + t * (100 - 40))
+            draw.line([(0, y), (768, y)], fill=(r, g, b))
+        img.save(path, "PNG")
+        print(f"  🖼  fallback.png 자동 생성: {path}")
+    except ImportError:
+        # PIL 없으면 1x1 픽셀 최소 PNG 바이너리로 대체
+        _write_minimal_png(path)
+    except Exception as e:
+        print(f"  ⚠️  fallback 생성 실패: {e}")
+        _write_minimal_png(path)
+
+
+def _write_minimal_png(path: str):
+    """PIL 없을 때 최소 유효 PNG (1×1 네이비 픽셀) 저장"""
+    import struct, zlib
+    def chunk(name: bytes, data: bytes) -> bytes:
+        c = name + data
+        return struct.pack(">I", len(data)) + c + struct.pack(">I", zlib.crc32(c) & 0xFFFFFFFF)
+    header   = b'\x89PNG\r\n\x1a\n'
+    ihdr     = chunk(b'IHDR', struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0))
+    raw_data = b'\x00\x0a\x0f\x28'       # filter byte + RGB (10,15,40)
+    idat     = chunk(b'IDAT', zlib.compress(raw_data))
+    iend     = chunk(b'IEND', b'')
+    with open(path, "wb") as f:
+        f.write(header + ihdr + idat + iend)
+    print(f"  🖼  fallback.png (최소 PNG) 생성: {path}")

@@ -99,11 +99,14 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 - instagram[0]: 반드시 🚗 자동차/BMW/전기차/모빌리티 관련 뉴스 선택. 해당 카테고리 뉴스가 없으면 자동차 업계 전반 트렌드 각도로 접근. 이 규칙은 예외 없이 적용
 - 5개 모두 서로 다른 주제 (같은 인물·사건 중복 금지)
 - 제외: 범죄, 연예인 사생활, 정치 편향, 미검증 루머
+- 제외: 시군구 단위 지자체 소식, 복지/행사 안내, 특정 중소기업 단순 홍보 — 전국·국제 단위 임팩트 없는 뉴스는 선택 금지
+- instagram 5개 중 경제/산업/기술/국제 뉴스 최소 3개 이상 포함 필수
 - blog title: "뉴스레터 요약", "오늘의 뉴스", "뉴스 브리프", "4월 X일" 같은 날짜·요약성 제목 금지
 - blog는 반드시 단일 뉴스 하나에만 집중 — main_points 3개 모두 같은 사건에 대한 것
 - blog main_points는 "배경 → 내용 → 의미/영향" 구조로 작성
-- blog 주제 선정 우선순위: 국제 정치/경제 이슈 > 국내 산업/기술 > 일반 사회. 소규모 기업의 해외 진출, 지역 소식 등 임팩트 작은 뉴스는 blog 주제로 금지
+- blog 주제 선정 우선순위: 국제 정치/경제 이슈 > 국내 산업/기술 > 일반 사회. 소규모 기업 해외 진출, 지역 소식, 지자체 행사 등 임팩트 작은 뉴스는 blog 주제로 금지
 - blog source_facts: 해당 주제 하나에 대한 구체적 사실만. 다른 뉴스 내용 혼합 금지
+- source_facts는 반드시 50자 이상의 구체적 사실로 작성. "없음", "해당없음", "정보없음" 입력 금지
 - JSON만 출력, 다른 텍스트 없이
 """
     raw = ask_gemini(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2500)
@@ -118,6 +121,46 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
             raise ValueError(f"JSON 블록을 찾을 수 없음: {raw[:200]}")
         brief = json.loads(match.group())
 
+    # source_facts 할루시네이션 방지 — 부실 카드 재생성
+    _INVALID_FACTS = {"없음", "해당없음", "정보없음", "해당 없음", "정보 없음"}
+    regenerated = 0
+    for idx, item in enumerate(brief.get("instagram", [])):
+        facts = str(item.get("source_facts", "")).strip()
+        need_regen = (
+            len(facts) < 50
+            or any(kw in facts for kw in _INVALID_FACTS)
+        )
+        if not need_regen:
+            continue
+        print(f"  ⚠️  카드{idx+1} source_facts 부실({len(facts)}자) → 단일 재생성...")
+        single_prompt = f"""아래 뉴스 기사에서 카드뉴스 브리프 1개만 JSON으로 작성하세요.
+
+=== 원문 뉴스 ===
+{article_list_text if article_list_text else newsletter_text}
+
+대상 카드:
+headline: {item.get('headline')}
+angle: {item.get('angle')}
+
+출력 형식 (JSON 객체만):
+{{"headline":"...","angle":"...","keywords":[...],"tone":"...","source_facts":"실제 뉴스 내용에서 뽑은 구체적 사실 3~4문장 (수치·이름·날짜 포함, 최소 80자)","source_url":"...","source_name":"..."}}
+
+source_facts는 반드시 80자 이상의 구체적 내용으로 작성. "없음" 금지."""
+        try:
+            import time as _time; _time.sleep(3)
+            raw2 = ask_gemini(single_prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=600)
+            raw2 = raw2.replace("```json","").replace("```","").strip()
+            patched = json.loads(raw2)
+            if len(str(patched.get("source_facts","")).strip()) >= 50:
+                brief["instagram"][idx] = patched
+                regenerated += 1
+                print(f"  ✅ 카드{idx+1} source_facts 재생성 완료")
+            else:
+                print(f"  ⚠️  카드{idx+1} 재생성 후에도 부실 — 원본 유지")
+        except Exception as e:
+            print(f"  ⚠️  카드{idx+1} 재생성 실패: {e}")
+
     total = len(brief['instagram'])
-    print(f"  ✅ 인스타 {total}개, 블로그 1개 브리프 완성")
+    regen_note = f" (source_facts 재생성 {regenerated}건)" if regenerated else ""
+    print(f"  ✅ 인스타 {total}개, 블로그 1개 브리프 완성{regen_note}")
     return brief
