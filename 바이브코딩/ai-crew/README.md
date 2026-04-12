@@ -18,23 +18,26 @@ RSS 피드로 수집한 뉴스를 바탕으로, 역할이 다른 AI 에이전트
 ## 🕐 자동화 스케줄
 
 ```
-07:00 KST  🤖 run_daily.sh 실행 (launchd)
+06:40 KST  📰 뉴스 수집 (com.siadad.newsletter LaunchAgent)
+               newsletter_naver.py 실행
+               RSS 8개 카테고리 수집 (연합뉴스·YTN·MBC·SBS·한경·전자신문·헤럴드)
+               → YYYY-MM-DD.md / YYYY-MM-DD_data.json 저장
+
+07:00 KST  🤖 run_daily.sh 실행 (com.siadad.aicrew LaunchAgent)
            │
-           ├─ Step 1: 뉴스레터 수집 (newsletter_rss.py)
-           │    RSS 피드 8개 카테고리 수집 (연합뉴스·YTN·MBC·SBS·한경·전자신문·헤럴드)
-           │    Groq AI → 카테고리별 요약 + 중복 제거
-           │    → .md / _data.json 로컬 저장
+           ├─ 뉴스 데이터 파일 존재 확인
+           │    없으면 긴급 수집 폴백 실행 후 진행
            │
-           └─ Step 2: AI 크리에이터 (main.py)
+           └─ AI 크리에이터 (main.py)
                 기획자 → 작가 → 디자이너 → 음악 큐레이터 → GitHub 배포
                 → docs/images/ 저장 → GitHub Pages 자동 push
                 각 단계 실패 시 최대 3회 자동 재시도
 
-~08:00 KST  ✅ 모든 작업 완료
+~07:20 KST  ✅ 모든 작업 완료
              📱 ntfy 앱으로 완료 알림 수신
 ```
 
-**절전 대응**: `sudo pmset repeat wakeorpoweron MTWRFSU 06:55:00` 으로 맥북 자동 깨움
+**절전 대응**: `sudo pmset repeat wakeorpoweron MTWRFSU 06:35:00` 으로 맥북 자동 깨움
 
 ---
 
@@ -66,10 +69,12 @@ RSS 피드로 수집한 뉴스를 바탕으로, 역할이 다른 AI 에이전트
 - 카드뉴스 글 **5개** (350~450자 + 해시태그 8개)
 - 블로그 아티클 1개 (700~900자, 대화체 소제목 2개)
 - **source_facts 기반 작성** — 원문에 없는 수치·이름·날짜 창작 금지
-- 품질 3단계 후처리:
+- 품질 5단계 후처리:
   1. 블랙리스트 감지 → 재생성 ("와 이거 실화야" 등 상투적 표현)
   2. 제목-본문 키워드 불일치 감지 → 재생성
-  3. 깨진 자모·한자 혼입·어색한 문장 패턴 감지 → 재생성
+  3. 깨진 자모·한자 혼입·격식체 혼입 등 패턴 감지 → 재생성
+  4. 해시태그 위치 교정 → 본문 중간 해시태그 자동 끝으로 이동
+  5. 해시태그 수 검증 → 8개 미만이면 재생성
 
 **출력**: 카드뉴스 5개 + 블로그 아티클
 
@@ -79,11 +84,12 @@ RSS 피드로 수집한 뉴스를 바탕으로, 역할이 다른 AI 에이전트
 
 > "글보다 먼저 눈을 사로잡는 이미지, 제 전문입니다."
 
-**모델**: Groq — Llama 3.3 70B (프롬프트 생성) + Stable Horde (이미지 생성, 키 불필요)
+**모델**: Groq — Llama 3.3 70B (프롬프트 생성) + Pollinations.ai Flux (이미지 생성)
 **담당**:
 - 5개 헤드라인용 영문 프롬프트 API 1회 호출로 일괄 생성
-- Stable Horde로 **768×768 이미지 5장** 생성
+- Pollinations.ai로 **768×768 이미지 5장** 생성 (최대 3회 재시도)
 - 밝고 모던한 SNS 카드뉴스 스타일 (Bloomberg / Wired 톤)
+- 이미지 생성 실패 시 `fallback.png` 자동 대체 — `url`/`path` None 노출 없음
 - `docs/images/{날짜}_image_{n}.png` 로컬 저장
 
 **출력**: 이미지 5장 (`https://siadaddy.github.io/youngs/images/`)
@@ -96,11 +102,11 @@ RSS 피드로 수집한 뉴스를 바탕으로, 역할이 다른 AI 에이전트
 
 **모델**: Groq — Llama 3.3 70B · temperature 0.85
 **담당**:
-- K-pop 아이돌·솔로 약 30곡 / 한국 인디·팝·R&B 약 15곡
-- 팝(미국·영국) 약 20곡 / R&B·힙합·일렉트로팝 약 10곡
-- 최근 2~3년 내 발매 또는 현재 차트 활성곡 위주
-- 한 아티스트 최대 3곡 | 중복 자동 제거 | 70곡+ 큐레이션
-- 인기도 점수 산출 + 분위기 태그 생성
+- K-pop 20곡 / 한국 인디·팝·R&B·힙합 20곡 / 팝(미국·영국) 20곡
+- R&B·힙합·일렉트로팝 15곡 / 기타(재즈·보사노바·인디록) 5곡
+- 발라드 전체 20% 이하, 업템포·중간 템포 우선
+- 인기도 점수 분포 고정: 9~10점 10곡 / 7~8점 35곡 / 5~6점 20곡 / 1~4점 10곡
+- 한 아티스트 최대 3곡 | 중복 자동 제거 | 75곡+ 큐레이션
 - 실패 시 전날 music.json 유지 (파이프라인 영향 없음)
 
 **출력**: `docs/music.json` → 뮤직 유니버스 자동 업데이트
@@ -139,10 +145,10 @@ RSS 피드로 수집한 뉴스를 바탕으로, 역할이 다른 AI 에이전트
     ├── agents/
     │   ├── planner.py          ← 🎯 기획자 (5개 선정, source_facts 생성)
     │   ├── writer.py           ← ✍️  작가 (카드뉴스 5개, 블로그, 3단계 품질 체크)
-    │   ├── designer.py         ← 🎨 디자이너 (768×768, Stable Horde)
+    │   ├── designer.py         ← 🎨 디자이너 (768×768, Pollinations.ai, fallback 자동)
     │   └── music_curator.py    ← 🎵 음악 큐레이터 (70곡+, docs/music.json)
     └── utils/
-        ├── gemini_client.py    ← Groq API 클라이언트 (key1→key2 폴백, 외국어 필터)
+        ├── gemini_client.py    ← Groq API 클라이언트 (key1~4 라운드로빈, 외국어 필터)
         └── notion_reader.py    ← 로컬 .md 파일 직접 읽기
 
 docs/                           ← GitHub Pages 루트
@@ -164,8 +170,10 @@ docs/                           ← GitHub Pages 루트
 ## 🔧 .env 설정
 
 ```
-GROQ_API_KEY=...           # key1 소진 시 key2 자동 전환
+GROQ_API_KEY=...           # 라운드로빈 — 요청마다 key1→2→3→4 순환
 GROQ_API_KEY_2=...
+GROQ_API_KEY_3=...
+GROQ_API_KEY_4=...
 NEWSLETTER_DIR=/Users/youngchulyu/바이브코딩/뉴스레터
 NTFY_TOPIC=siadad-aicrew
 ```
@@ -177,8 +185,8 @@ NTFY_TOPIC=siadad-aicrew
 | 기술 | 용도 | 비용 |
 |------|------|------|
 | RSS 피드 (feedparser) | 뉴스 수집 (8개 언론사) | 무료 |
-| Groq Llama 3.3 70B | 텍스트 생성 전반 · 음악 큐레이션 (키 2개 폴백) | 무료 |
-| Stable Horde | AI 이미지 생성 768×768 (키 불필요) | 무료 |
+| Groq Llama 3.3 70B | 텍스트 생성 전반 · 음악 큐레이션 (키 4개 라운드로빈) | 무료 |
+| Pollinations.ai Flux | AI 이미지 생성 768×768 (키 불필요) | 무료 |
 | YouTube Data API v3 | 음악 검색 + IFrame 재생 | 무료 |
 | iTunes API | 앨범아트 조회 | 무료 |
 | Three.js (WebGL) | 3D 뮤직 유니버스 | 무료 |
@@ -223,7 +231,7 @@ NTFY_TOPIC=siadad-aicrew
 | 디자이너 | 3회 재시도 → 실패해도 빈 이미지로 계속 진행 |
 | 음악 큐레이터 | 3회 재시도 → 실패해도 무시 (전날 music.json 유지) |
 | GitHub 배포 | 3회 재시도 → 모두 실패 시 종료 + 알림 |
-| Groq 429 오류 | retry-after 대기 후 재시도 → key2 자동 전환 |
+| Groq 429 오류 | 즉시 다음 키로 전환 (key1→2→3→4 라운드로빈) |
 
 ---
 
@@ -248,6 +256,14 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 ---
 
 ## 📝 업데이트 로그
+
+### 2026-04-12
+- **뉴스 수집 분리**: 06:40 별도 LaunchAgent → ai-crew 07:00 즉시 시작 (약 5분 단축)
+- **Groq 키 4개**: key1~4 라운드로빈 (ai-crew) / 폴백 체인 (coin-trader)
+- **작가 품질 5단계**: 해시태그 위치 교정 + 해시태그 수 검증 추가
+- **음악 큐레이터 장르 균형**: K-pop 20 / 한국인디 20 / 팝 20 / R&B 15 / 기타 5, 발라드 20% 제한
+- **디자이너 fallback**: 이미지 실패 시 fallback.png 자동 대체 (None 노출 제거)
+- **기획자 강화**: 지자체/소규모홍보 제외, 경제/산업/기술/국제 최소 3개, source_facts 부실 재생성
 
 ### 2026-04-11
 - **뉴스레터 품질 개선**: 작가 3단계 후처리 추가 (블랙리스트 → 제목-본문 불일치 → 문장 품질)
@@ -285,4 +301,4 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ---
 
-*최종 업데이트: 2026-04-11 | Powered by Groq + Stable Horde + YouTube API + Three.js + GitHub Pages*
+*최종 업데이트: 2026-04-12 | Powered by Groq + Pollinations.ai + YouTube API + Three.js + GitHub Pages*

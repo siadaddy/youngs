@@ -2,7 +2,7 @@
 
 > RSS 피드로 매일 오전 뉴스를 자동 수집해 카테고리별로 정리하는 시스템
 
-**실행 환경**: MacBook (launchd) — 매일 07:00 자동 실행
+**실행 환경**: MacBook (launchd) — 매일 **06:40** 자동 실행 (ai-crew 07:00보다 20분 선행)
 
 ---
 
@@ -10,12 +10,14 @@
 
 ```
 뉴스레터/
-├── newsletter_rss.py    ← 메인 스크립트 (RSS 수집 + 카테고리 분류)
+├── newsletter_naver.py  ← 메인 스크립트 (RSS 수집 + 카테고리 분류 + data.json 생성)
+├── newsletter_rss.py    ← 레거시 (미사용)
 ├── newsletter.py        ← 레거시 (미사용)
 ├── .env                 ← API 키 (숨김 파일, Cmd+Shift+. 로 표시)
 ├── newsletter.log       ← launchd 실행 로그
 ├── README.md            ← 이 파일
-└── YYYY-MM-DD.md        ← 날짜별 수집 결과
+├── YYYY-MM-DD.md        ← 날짜별 뉴스레터 (마크다운)
+└── YYYY-MM-DD_data.json ← AI 크리에이터용 구조화 데이터
 ```
 
 ---
@@ -24,17 +26,19 @@
 
 | 항목 | 내용 |
 |------|------|
-| 실행 시간 | 매일 07:00 launchd 자동 실행 |
+| 실행 시간 | 매일 06:40 launchd 자동 실행 (com.siadad.newsletter) |
 | 수집 방식 | RSS feedparser (공신력 있는 매체 직접 구독) |
 | 출력 | `YYYY-MM-DD.md` + `YYYY-MM-DD_data.json` |
-| 스크립트 | newsletter_rss.py |
-| 로그 | newsletter.log |
+| 스크립트 | newsletter_naver.py |
+| 로그 | newsletter.log / newsletter_error.log |
 
 ### .env 파일 내용
 
 ```
 GROQ_API_KEY=...
 GROQ_API_KEY_2=...
+GROQ_API_KEY_3=...
+GROQ_API_KEY_4=...
 NEWSLETTER_DIR=/Users/youngchulyu/바이브코딩/뉴스레터
 ```
 
@@ -42,11 +46,11 @@ NEWSLETTER_DIR=/Users/youngchulyu/바이브코딩/뉴스레터
 
 ```bash
 # 상태 확인
-launchctl list | grep aicrew
+launchctl list | grep newsletter
 
 # 재시작
-launchctl unload ~/Library/LaunchAgents/com.siadad.aicrew.plist
-launchctl load ~/Library/LaunchAgents/com.siadad.aicrew.plist
+launchctl unload ~/Library/LaunchAgents/com.siadad.newsletter.plist
+launchctl load ~/Library/LaunchAgents/com.siadad.newsletter.plist
 ```
 
 ---
@@ -84,7 +88,7 @@ launchctl load ~/Library/LaunchAgents/com.siadad.aicrew.plist
 
 ```bash
 cd /Users/youngchulyu/바이브코딩/뉴스레터
-python3 newsletter_rss.py
+python3 newsletter_naver.py
 ```
 
 ---

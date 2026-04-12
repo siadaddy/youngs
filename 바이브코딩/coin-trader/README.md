@@ -64,8 +64,10 @@ BITHUMB_ACCESS_KEY=...      # 빗썸 API 1.0 키 (주문 권한 필수)
 BITHUMB_SECRET_KEY=...
 BITHUMB_ACCESS_KEY_V2=...   # API 2.0 (IP 관리 가능 — 추후 전환용, 현재 미사용)
 BITHUMB_SECRET_KEY_V2=...
-GROQ_API_KEY=...            # key1 소진 시 key2 자동 전환
+GROQ_API_KEY=...            # 폴백 체인 — key1 실패 시 key2→3→4 순서로 전환
 GROQ_API_KEY_2=...
+GROQ_API_KEY_3=...
+GROQ_API_KEY_4=...
 MAX_INVEST_KRW=100000       # 최대 투자금액 (원)
 STOP_LOSS_PCT=4.0           # 자동 손절 기준 (%)
 TAKE_PROFIT_PCT=6.0         # 자동 익절 기준 (%)
@@ -115,7 +117,7 @@ NTFY_TOPIC=siadad-aicrew
 | Daily Drawdown | 일일 누적 손실 -15,000원 초과 시 당일 봇 정지 (자정 초기화) |
 | 매도 최소금액 체크 | qty × 현재가 < 5,000원이면 매도 보류 |
 | IP 변경 감지 | 공인 IP 변경 시 ntfy 긴급 알림 (빗썸 API 재등록 안내) |
-| Groq 폴백 | key1 소진 시 key2 자동 전환, 429 rate limit 대기 처리 |
+| Groq 폴백 | 429 발생 시 즉시 key1→2→3→4 폴백 체인, 모두 소진 시 대기 |
 | 외국어 필터 | AI 응답에서 한자·일본어·아랍어·키릴 자동 제거 |
 | DRY_RUN | 실제 주문 없이 전체 흐름 시뮬레이션 |
 | 전체 타임아웃 | 10분 초과 시 강제 종료 (BaseException 하드킬) |
@@ -211,6 +213,11 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ## 📝 업데이트 로그
 
+### 2026-04-12
+- **Groq 키 4개**: key1~4 폴백 체인 (429 즉시 다음 키 전환)
+- **주문 가능 잔고 개선**: `available_krw` 직접 조회 후 75% 투자 (수수료·슬리피지 여유)
+- **히어로 누적손익**: index.html 통계줄 5번째 항목으로 통합 (수익=빨간/손실=파란)
+
 ### 2026-04-11
 - **5분 간격 전환**: 15분 → 5분 (96회/일 → 288회/일)
 - **30분봉 전환**: 10분봉 → 30분봉 (minute30, RSI/ADX period 9→14)
@@ -240,4 +247,4 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ---
 
-*최종 업데이트: 2026-04-11 | Powered by Groq + pybithumb + GitHub Pages*
+*최종 업데이트: 2026-04-12 | Powered by Groq + pybithumb + GitHub Pages*

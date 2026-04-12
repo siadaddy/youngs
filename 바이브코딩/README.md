@@ -10,9 +10,9 @@
 
 | 프로젝트 | 설명 | 실행 주기 |
 |---------|------|---------|
-| [ai-crew](./ai-crew/) | AI 뉴스레터 자동 생성 (에디터픽 + 카드뉴스) | 매일 07:30 |
+| [ai-crew](./ai-crew/) | AI 뉴스레터 자동 생성 (카드뉴스 5개 + 블로그 + 이미지 + 음악) | 매일 07:00 |
 | [coin-trader](./coin-trader/) | AI 코인 자동매매 (빗썸 KRW 마켓) | 5분마다 |
-| [뉴스레터](./뉴스레터/) | RSS 뉴스 자동 수집 & 카테고리 분류 | 매일 07:00 |
+| [뉴스레터](./뉴스레터/) | RSS 뉴스 자동 수집 & 카테고리 분류 | 매일 06:40 |
 | [docs](./docs/) | GitHub Pages 대시보드 | — |
 
 ---
@@ -21,13 +21,13 @@
 
 RSS로 수집된 뉴스를 바탕으로 Groq AI가 에디터픽 기사와 카드뉴스를 자동 생성합니다.
 
-- **AI 모델**: Groq Llama 3.3 70B
-- **이미지**: Pollinations.ai (Flux 모델)
-- **품질 검사**: 3단계 (완성도 · 제목-본문 일관성 · 문장 품질)
+- **AI 모델**: Groq Llama 3.3 70B (키 4개 라운드로빈)
+- **이미지**: Pollinations.ai (Flux 모델), 실패 시 fallback 이미지 자동 대체
+- **품질 검사**: 5단계 (블랙리스트 · 제목-본문 일관성 · 문장 품질 · 해시태그 위치 · 해시태그 수)
 - **출력**: GitHub Pages 뉴스레터 탭 자동 게시
 
 ```
-뉴스 수집(RSS) → AI 기사 작성 → 이미지 생성 → GitHub Pages 게시
+뉴스 수집(06:40) → AI 기사 작성(07:00) → 이미지 생성 → GitHub Pages 게시
 ```
 
 → [자세히 보기](./ai-crew/README.md)
@@ -81,7 +81,7 @@ RSS로 수집된 뉴스를 바탕으로 Groq AI가 에디터픽 기사와 카드
 
 | 구분 | 기술 |
 |------|------|
-| AI | Groq API (Llama 3.3 70B) |
+| AI | Groq API (Llama 3.3 70B) — 키 4개 운용 |
 | 이미지 생성 | Pollinations.ai (Flux) |
 | 뉴스 수집 | feedparser (RSS) |
 | 코인 API | pybithumb (빗썸) |
@@ -98,11 +98,14 @@ RSS로 수집된 뉴스를 바탕으로 Groq AI가 에디터픽 기사와 카드
 ```
 MacBook (항상 켜짐, pmset -c sleep 0)
 │
-├── 07:00  launchd → 뉴스레터/newsletter_rss.py   (RSS 수집)
-├── 07:30  launchd → ai-crew/main.py              (AI 뉴스레터 생성 + 게시)
-└── 매 5분 launchd → coin-trader/main.py          (코인 매매 실행)
+├── 06:40  launchd → 뉴스레터/newsletter_naver.py      (RSS 뉴스 수집)
+├── 07:00  launchd → ai-crew/run_daily.sh              (AI 뉴스레터 생성 + 게시)
+│          07:15~20  GitHub Pages 자동 배포 완료
+├── 08:30  launchd → coin-trader/main.py report        (일일 리포트)
+└── 매 5분  launchd → coin-trader/main.py              (코인 매매 실행)
+           상시    launchd → coin-trader/price_guard.py (30초 손절/익절 감시)
 ```
 
 ---
 
-*최종 업데이트: 2026-04-11*
+*최종 업데이트: 2026-04-12*
