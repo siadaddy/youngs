@@ -6,7 +6,8 @@
   <title>Music Universe</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#000; overflow:hidden; font-family:'Apple SD Gothic Neo',-apple-system,'Noto Sans KR',sans-serif; -webkit-font-smoothing:antialiased; cursor:none; }
+    body { background:#000008; overflow:hidden; font-family:'Apple SD Gothic Neo',-apple-system,'Noto Sans KR',sans-serif; -webkit-font-smoothing:antialiased; cursor:none; }
+    #bg-canvas { position:fixed; inset:0; z-index:-1; display:block; }
 
     #cur {
       position:fixed; width:10px; height:10px; border-radius:50%;
@@ -258,6 +259,7 @@
 </head>
 <body>
 
+<canvas id="bg-canvas"></canvas>
 <div id="cur"></div>
 
 <!-- ── 플레이어 바 ── -->
@@ -352,16 +354,6 @@ const GENRE = {
   '일렉트로팝': { hue: 185, color: '#6bffe8' },
   '인디록':     { hue:  25, color: '#ff9f6b' },
   '기타':       { hue:   0, color: '#aaaaaa' },
-};
-const GENRE_ANCHORS = {
-  'K-pop':      { theta: 0.5,  phi: 1.2 },
-  '인디팝':     { theta: 1.8,  phi: 0.8 },
-  'R&B':        { theta: 3.2,  phi: 1.5 },
-  '힙합':       { theta: 4.5,  phi: 1.0 },
-  '팝':         { theta: 2.5,  phi: 0.5 },
-  '일렉트로팝': { theta: 0.0,  phi: 1.8 },
-  '인디록':     { theta: 5.5,  phi: 1.3 },
-  '기타':       { theta: 3.8,  phi: 0.6 },
 };
 
 let ytPlayer   = null;
@@ -536,8 +528,8 @@ async function fetchArt(song) {
 // Scene / Camera / Renderer
 // ═══════════════════════════════════════════════════
 const scene    = new THREE.Scene();
-scene.fog      = new THREE.FogExp2(0x000008, 0.0011);
-scene.background = new THREE.Color(0x000008);
+scene.fog      = new THREE.FogExp2(0x000008, 0.0009);
+scene.background = null;
 
 // 은하 전체를 담는 그룹 (다축 회전 구현용)
 const galaxyGroup = new THREE.Group();
@@ -546,7 +538,8 @@ scene.add(galaxyGroup);
 const camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 3000);
 camera.position.set(0, 50, 300);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
 renderer.setSize(W, H);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -560,6 +553,7 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(W, H);
   composer.setSize(W, H);
+  buildBgCanvas();
 });
 
 // ═══════════════════════════════════════════════════
@@ -654,6 +648,53 @@ controls.enablePan        = false;
 })();
 
 // ═══════════════════════════════════════════════════
+// 2D 배경 캔버스 — 고정 성운 + 고정 별 레이어
+// ═══════════════════════════════════════════════════
+function buildBgCanvas() {
+  const cvs = document.getElementById('bg-canvas');
+  cvs.width = innerWidth;
+  cvs.height = innerHeight;
+  const ctx = cvs.getContext('2d');
+
+  // 베이스: 완전 검정에 가까운 딥스페이스
+  ctx.fillStyle = '#000008';
+  ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+  // 성운 구름 3~4개 (짙은 퍼플/딥블루, 은은하게)
+  const clouds = [
+    { x: 0.18, y: 0.40, r: Math.min(W,H)*0.52, hue: 272, op: 0.22 },  // 퍼플 좌중
+    { x: 0.78, y: 0.58, r: Math.min(W,H)*0.44, hue: 218, op: 0.18 },  // 딥블루 우하
+    { x: 0.50, y: 0.08, r: Math.min(W,H)*0.40, hue: 248, op: 0.15 },  // 인디고 상단
+    { x: 0.88, y: 0.22, r: Math.min(W,H)*0.35, hue: 192, op: 0.16 },  // 청록 우상단
+  ];
+  clouds.forEach(c => {
+    const cx = c.x * cvs.width;
+    const cy = c.y * cvs.height;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, c.r);
+    g.addColorStop(0,    `hsla(${c.hue},88%,18%,${c.op})`);
+    g.addColorStop(0.42, `hsla(${c.hue},75%,12%,${(c.op*0.5).toFixed(3)})`);
+    g.addColorStop(1,    `hsla(${c.hue},60%,8%,0)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+  });
+
+  // 고정 배경 별 280개 (1px, 움직이지 않음)
+  for (let i = 0; i < 280; i++) {
+    const x  = Math.random() * cvs.width;
+    const y  = Math.random() * cvs.height;
+    const op = 0.2 + Math.random() * 0.4;
+    const sz = Math.random() < 0.82 ? 0.5 : 1;
+    const t  = Math.random();
+    // 별 색: 청백 / 따뜻한 흰색 / 순수 흰색
+    const [r2,g2,b2] = t < 0.3 ? [185,210,255] : t < 0.55 ? [255,245,225] : [255,255,255];
+    ctx.beginPath();
+    ctx.arc(x, y, sz, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${r2},${g2},${b2},${op})`;
+    ctx.fill();
+  }
+}
+
+// ═══════════════════════════════════════════════════
 // 성운 (Nebulae) — 배경 컬러 클라우드
 // ═══════════════════════════════════════════════════
 const nebulae = [];
@@ -696,14 +737,14 @@ function buildNebulae() {
 // ═══════════════════════════════════════════════════
 // 별똥별 (Shooting Star)
 // ═══════════════════════════════════════════════════
-let shootMesh, shootTimer = 420;
+let shootMesh, shootTimer = 450;
 let shootProgress = -1, shootStart = new THREE.Vector3(), shootDir = new THREE.Vector3();
 
 function initShootStar() {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
   shootMesh = new THREE.Line(geo, new THREE.LineBasicMaterial({
-    color:0xffffff, transparent:true, opacity:0,
+    color:0xd0eeff, transparent:true, opacity:0,   // 연한 하늘색
     blending:THREE.AdditiveBlending, linewidth:2,
   }));
   scene.add(shootMesh);
@@ -747,28 +788,17 @@ function buildGalaxy(songs) {
     const genre  = song.g || null;
     const hue    = genre ? (GENRE[genre] || GENRE['기타']).hue : Math.round(200 + (i/n)*300) % 360;
 
-    // 배치: 장르 있으면 클러스터, 없으면 완전 랜덤 구형 분포
+    // 완전 랜덤 구형 분포 (클러스터링 없음)
     const r = 40 + Math.pow(Math.random(), 0.55) * 140;
-    let x, y, z;
-    if (genre && GENRE_ANCHORS[genre]) {
-      const anchor = GENRE_ANCHORS[genre];
-      const theta  = anchor.theta + (Math.random() - 0.5) * 1.8;
-      const phi    = anchor.phi   + (Math.random() - 0.5) * 1.0;
-      x = r * Math.sin(phi) * Math.cos(theta);
-      y = r * Math.sin(phi) * Math.sin(theta);
-      z = r * Math.cos(phi);
-    } else {
-      // 완전 랜덤 구형 분포
-      const theta = Math.random() * Math.PI * 2;
-      const phi   = Math.acos(2 * Math.random() - 1);
-      x = r * Math.sin(phi) * Math.cos(theta);
-      y = r * Math.sin(phi) * Math.sin(theta);
-      z = r * Math.cos(phi);
-    }
+    const theta = Math.random() * Math.PI * 2;
+    const phi   = Math.acos(2 * Math.random() - 1);
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
 
-    // 인기도 기반 노드 크기
+    // 인기도 기반 노드 크기 (2~20px, 원근감 편차 확대)
     const score = song.s || 7;
-    const base  = 9 + score * 0.7;  // score 1 → 9.7, score 10 → 16
+    const base  = 2 + (score - 1) / 9 * 18;   // score 1 → 2px, score 10 → 20px
 
     const spr = new THREE.Sprite(new THREE.SpriteMaterial({
       map: getNodeTex(hue),
@@ -781,7 +811,7 @@ function buildGalaxy(songs) {
     const radiusXZ = Math.sqrt(x*x + z*z);
     spr.userData = { t: song.t, a: song.a, g: genre, d: song.d || '', hue, base,
       angleXZ, radiusXZ, oy: y,
-      speed: 0.0003 + Math.random() * 0.0008,        // 별마다 다른 공전 속도
+      speed: 0.005 / base + Math.random() * 0.0002,   // 작은별=빠름, 큰별=느림 (시차 효과)
       dir:   Math.random() < 0.5 ? 1 : -1,           // 시계/반시계 랜덤
       tilt:  (Math.random() - 0.5) * 0.5,            // 궤도 평면 기울기 (-0.25 ~ +0.25)
       phase: Math.random() * Math.PI * 2 };
@@ -984,7 +1014,7 @@ function animate(now = 0) {
 
   // ── 별똥별 ──
   if (--shootTimer <= 0) {
-    shootTimer = 480 + Math.random() * 660;
+    shootTimer = 450 + Math.random() * 300;   // 15~25초 (30fps 기준)
     shootStart.set((Math.random()-.5)*1600, 280+Math.random()*380, (Math.random()-.5)*900);
     shootDir.set((Math.random()-.5)*1.2, -1-Math.random()*.8, (Math.random()-.5)*.6).normalize();
     shootProgress = 0;
@@ -1180,6 +1210,7 @@ async function init() {
     }
   } catch {}
 
+  buildBgCanvas();
   buildNebulae();
   initShootStar();
 
