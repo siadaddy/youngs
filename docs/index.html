@@ -759,32 +759,6 @@
       box-shadow: 0 0 8px rgba(77,144,240,.5);
     }
 
-    /* 히어로 누적손익 */
-    .hero-pnl {
-      display: none;
-      flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 4px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--r-lg);
-      padding: 18px 36px;
-      margin: 0 auto 28px;
-      width: fit-content;
-      min-width: 200px;
-      transition: border-color .3s, background .3s;
-    }
-    .hero-pnl-val {
-      font-size: 2rem; font-weight: 900;
-      letter-spacing: -.03em;
-      line-height: 1.1;
-    }
-    .hero-pnl-label {
-      font-size: .68rem; font-weight: 600;
-      color: var(--muted); letter-spacing: .08em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
 
     /* ─── 코인 트레이더 ─────────────────────────── */
     .coin-status-card {
@@ -1050,10 +1024,6 @@
     매일 아침 5명의 AI 직원이 뉴스를 분석해 카드뉴스 · 블로그를 만들고 오늘의 음악 우주를 채웁니다.
     AI 트레이더가 5분마다 종목을 분석하고 30초마다 손절/익절을 실시간으로 감시합니다.
   </p>
-  <div class="hero-pnl" id="hero-pnl">
-    <span class="hero-pnl-val" id="hero-pnl-val">-</span>
-    <span class="hero-pnl-label">AI 코인봇 누적손익</span>
-  </div>
   <div class="hero-stats">
     <div class="stat">
       <div class="stat-val">5명</div>
@@ -1070,6 +1040,10 @@
     <div class="stat">
       <div class="stat-val">30초</div>
       <div class="stat-label">코인 실시간 감시</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="hero-pnl-val" style="font-size:1.25rem;">-</div>
+      <div class="stat-label">AI코인봇 누적손익</div>
     </div>
   </div>
 </div>
@@ -2095,16 +2069,11 @@
       pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
       pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
 
-      // 히어로 누적손익 (수익=초록, 손실=빨강)
-      const heroPnl = document.getElementById('hero-pnl');
+      // 히어로 통계줄 — 누적손익 (한국 기준: 수익=빨간, 손실=파란)
       const heroPnlVal = document.getElementById('hero-pnl-val');
-      if (heroPnl && heroPnlVal) {
-        heroPnl.style.display = 'flex';
+      if (heroPnlVal) {
         heroPnlVal.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
-        // 한국 주식/코인 기준: 수익=빨간색, 손실=파란색
-        heroPnlVal.style.color    = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
-        heroPnl.style.borderColor = pnl > 0 ? 'rgba(248,113,113,.3)' : pnl < 0 ? 'rgba(96,165,250,.3)' : 'var(--glass-border)';
-        heroPnl.style.background  = pnl > 0 ? 'rgba(248,113,113,.06)' : pnl < 0 ? 'rgba(96,165,250,.06)' : 'var(--glass)';
+        heroPnlVal.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
       }
 
       // 승률 계산

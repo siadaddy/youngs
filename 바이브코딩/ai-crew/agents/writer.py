@@ -59,6 +59,9 @@ _QUALITY_PATTERNS = [
     (r'더[가-힣]{0,3}되더니',         '미완성 문장'),
     (r'더욱\s*되었어|성공적으로\s*된다면', '미완성 문장'),
     (r'(?<=[가-힣])[가-힣]{0,2}(?:하다|되다)(?:더니|더라)(?!\s)',  '어색한 연결'),
+    (r'더욱[가-힣]{0,2}시킬',         '붙여쓰기(더욱~시킬)'),   # "더욱심화시킬" 류
+    (r'[가-힣]+\s*운\s*시장',         '오탈자(운송시장)'),       # "운시장" 류
+    (r'습니다\.|겠습니다\.|됩니다\.',  '격식체 혼입'),
 ]
 
 def _check_quality(text: str) -> list:
@@ -79,6 +82,52 @@ def _fix_quality(text: str, prompt: str, label: str) -> str:
     if issues2:
         print(f"  ⚠️  [{label}] 재생성 후에도 품질 문제 {issues2} — 그대로 사용")
     return new_text
+
+
+# ── 4. 해시태그 위치 교정 ──────────────────────────────────
+def _fix_hashtag_position(text: str) -> str:
+    """본문 중간에 박힌 해시태그 블록을 맨 끝으로 이동"""
+    lines = text.split('\n')
+    hashtag_lines = []
+    body_lines = []
+    for line in lines:
+        stripped = line.strip()
+        # 해시태그 전용 줄 (80% 이상이 #태그)
+        if stripped and re.match(r'^(#[가-힣A-Za-z0-9_]+\s*)+$', stripped):
+            hashtag_lines.append(stripped)
+        else:
+            body_lines.append(line)
+
+    if not hashtag_lines:
+        return text
+
+    # 본문 끝 공백 줄 제거 후 해시태그 블록 추가
+    body = '\n'.join(body_lines).rstrip()
+    tags = ' '.join(hashtag_lines)
+    return f"{body}\n\n{tags}"
+
+
+def _count_hashtags(text: str) -> int:
+    return len(re.findall(r'#[가-힣A-Za-z0-9_]+', text))
+
+
+def _fix_hashtags(text: str, prompt: str, label: str) -> str:
+    """유효 해시태그 8개 미만이면 최대 2회 재생성"""
+    count = _count_hashtags(text)
+    if count >= 8:
+        return text
+    print(f"  ⚠️  [{label}] 해시태그 {count}개 (8개 미만) → 재생성 시도...")
+    import time
+    for attempt in range(2):
+        time.sleep(3)
+        new_text = ask_gemini(prompt, system=SYSTEM, temperature=0.75, max_tokens=1200)
+        new_count = _count_hashtags(new_text)
+        if new_count >= 8:
+            print(f"  ✅ [{label}] 해시태그 {new_count}개 확보")
+            return new_text
+        print(f"  ⚠️  [{label}] 재생성 {attempt+1}회: 해시태그 {new_count}개 — 계속...")
+    print(f"  ⚠️  [{label}] 해시태그 부족({count}개) 해결 못함 — 그대로 사용")
+    return text
 
 
 # ── 중복 주제 감지 ─────────────────────────────────────────
@@ -142,18 +191,20 @@ def run(brief: dict) -> dict:
 - "~를 보고 경악했다", "~에 놀랐다", "정말 인상적이야" 같은 과장·공허한 감정 표현
 - 레이블([사실], [분석] 등)
 - 빈 해시태그(# 뒤에 텍스트 없이 공백만 있는 것, "# #", "# " 등)
+- 해시태그를 본문 중간에 삽입하는 것 — 해시태그는 반드시 본문이 끝난 후 맨 마지막에만
 - 한글 단어를 한자로 혼용 (車량, 金錢 등)
 - 독일어·베트남어 등 한국어·영어 아닌 외국어
 - 없는 수치·사실 창작
-- 글자 수 300자 미만 (너무 짧은 카드)
 - 제목에 등장한 기업명·인물명·주제가 본문에 전혀 없는 경우 (제목과 본문 주제 일치 필수)
 
-전체 본문 350~450자. 글 다 쓰고 빈 줄 두 개 뒤에 해시태그 8개. 해시태그는 반드시 #단어 형식으로 (빈 # 금지).
+본문(해시태그 제외) 120~200자. 글 다 쓴 뒤 빈 줄 두 개 → 해시태그 8개를 한 줄에. 해시태그는 반드시 #단어 형식 (빈 # 금지). 해시태그를 본문 사이에 넣으면 실패.
 """
         caption = ask_gemini(prompt, system=SYSTEM, temperature=0.7, max_tokens=1200)
         caption = _regenerate_if_needed(caption, prompt, f"카드{i+1}")
         caption = _fix_title_consistency(item["headline"], caption, prompt, f"카드{i+1}")
         caption = _fix_quality(caption, prompt, f"카드{i+1}")
+        caption = _fix_hashtag_position(caption)
+        caption = _fix_hashtags(caption, prompt, f"카드{i+1}")
 
         # 중복 주제 감지
         for prev in captions:
@@ -213,6 +264,8 @@ def run(brief: dict) -> dict:
         article = _ensure_complete(article, blog_prompt)
         article = _fix_title_consistency(b["title"], article, blog_prompt, "블로그")
         article = _fix_quality(article, blog_prompt, "블로그")
+        article = _fix_hashtag_position(article)
+        article = _fix_hashtags(article, blog_prompt, "블로그")
         print(f"  ✅ 블로그 아티클 완성 ({len(article)}자)")
     except Exception as e:
         print(f"  ⚠️  블로그 아티클 실패 (카드뉴스는 유지): {e}")

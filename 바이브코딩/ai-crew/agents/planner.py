@@ -1,6 +1,21 @@
 import json, re, html
 from utils.gemini_client import ask_gemini
 
+_PLAN_STOP = {
+    '의','을','를','이','가','은','는','에','도','와','과','로','으로',
+    '그','및','등','관련','대한','위한','따른','하는','하고','하여',
+    '했다','한다','있다','있어','됐다','통해','위해','대해',
+}
+
+def _title_overlap(t1: str, t2: str) -> float:
+    def kw(s):
+        return {w for w in re.sub(r'[^\w\s]', '', s).split()
+                if len(w) > 1 and w not in _PLAN_STOP}
+    ka, kb = kw(t1), kw(t2)
+    if not ka or not kb:
+        return 0.0
+    return len(ka & kb) / min(len(ka), len(kb))
+
 SYSTEM = """당신은 콘텐츠 브리프를 작성하는 편집자입니다. JSON만 출력합니다."""
 
 NEWSLETTER_MAX_CHARS = 3000   # 토큰 절약 — 기사 원문 블록에 더 집중
@@ -16,19 +31,37 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
     # 카테고리별 원문 뉴스 — 제목 + summary(실제 본문) + URL 포함
     article_list_text = ""
     if newsletter_data and newsletter_data.get("categorized"):
-        lines = []
+        # 전체 후보 수집
+        candidates = []
         for cat, articles in newsletter_data["categorized"].items():
             for a in articles[:ARTICLE_PER_CAT]:
-                title   = html.unescape(a.get("title", ""))
-                link    = a.get("link", "")
-                # summary 또는 body 키 모두 시도 (수집 방식에 따라 키 이름 다름)
-                summary = html.unescape(
-                    a.get("summary", "") or a.get("body", "")
-                ).strip()[:400]
-                if summary:
-                    lines.append(f"[{cat}] {title}\n  내용: {summary}\n  URL: {link}")
-                else:
-                    lines.append(f"[{cat}] {title}\n  URL: {link}")
+                candidates.append((cat, a))
+
+        # 유사 제목 중복 제거 (70% 이상 겹치면 첫 번째만 유지)
+        DEDUP_THR = 0.7
+        deduped, seen_titles = [], []
+        for cat, a in candidates:
+            title = html.unescape(a.get("title", ""))
+            if any(_title_overlap(title, t) >= DEDUP_THR for t in seen_titles):
+                continue
+            deduped.append((cat, a))
+            seen_titles.append(title)
+
+        removed = len(candidates) - len(deduped)
+        if removed:
+            print(f"  🔍 중복 기사 {removed}건 제거 (유사도 ≥{int(DEDUP_THR*100)}%)")
+
+        lines = []
+        for cat, a in deduped:
+            title   = html.unescape(a.get("title", ""))
+            link    = a.get("link", "")
+            summary = html.unescape(
+                a.get("summary", "") or a.get("body", "")
+            ).strip()[:400]
+            if summary:
+                lines.append(f"[{cat}] {title}\n  내용: {summary}\n  URL: {link}")
+            else:
+                lines.append(f"[{cat}] {title}\n  URL: {link}")
         article_list_text = "\n\n".join(lines)
 
     prompt = f"""아래 뉴스 데이터에서 오늘의 핵심 뉴스 5개를 골라 콘텐츠 브리프를 JSON으로 작성하세요.
@@ -63,7 +96,7 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 }}
 
 규칙:
-- instagram[0]: 반드시 자동차/BMW/전기차 관련. 없으면 자동차 업계 트렌드로 대체
+- instagram[0]: 반드시 🚗 자동차/BMW/전기차/모빌리티 관련 뉴스 선택. 해당 카테고리 뉴스가 없으면 자동차 업계 전반 트렌드 각도로 접근. 이 규칙은 예외 없이 적용
 - 5개 모두 서로 다른 주제 (같은 인물·사건 중복 금지)
 - 제외: 범죄, 연예인 사생활, 정치 편향, 미검증 루머
 - blog title: "뉴스레터 요약", "오늘의 뉴스", "뉴스 브리프", "4월 X일" 같은 날짜·요약성 제목 금지
