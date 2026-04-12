@@ -697,17 +697,33 @@
     .w-change.flat { color: var(--muted); }
     .w-loading { color: var(--muted); font-size: .78rem; animation: blink 1.5s ease-in-out infinite; }
 
-    /* 미세먼지 색상 */
-    .pm-good   { color: var(--green); }
-    .pm-normal { color: #facc15; }
-    .pm-bad    { color: #fb923c; }
-    .pm-worst  { color: #f87171; }
+    /* 미세먼지 색상 (PM2.5 기준) */
+    .pm-good   { color: #38bdf8; }   /* 좋음 — 파란색 */
+    .pm-normal { color: #10b981; }   /* 보통 — 초록색 */
+    .pm-bad    { color: #fb923c; }   /* 나쁨 — 주황색 */
+    .pm-worst  { color: #f87171; }   /* 매우나쁨 — 빨간색 */
 
     @media (max-width: 1024px) {
       .dashboard-inner { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 768px) {
-      .dashboard-inner { grid-template-columns: repeat(2, 1fr); }
+      /* 위젯 가로 스와이프 슬라이더 */
+      .dashboard-inner {
+        display: flex !important;
+        grid-template-columns: unset;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 10px;
+        padding: 16px 24px 12px;
+      }
+      .dashboard-inner::-webkit-scrollbar { display: none; }
+      .dashboard-inner .widget {
+        flex-shrink: 0;
+        width: calc(100vw / 1.2 - 32px);
+        scroll-snap-align: start;
+      }
       .featured-card { grid-template-columns: 1fr; }
       .featured-card .fc-image { min-height: 220px; }
       .fc-body { padding: 24px 22px; }
@@ -719,8 +735,53 @@
       .hero-stats { gap: 20px; }
     }
     @media (max-width: 480px) {
-      .dashboard-inner { grid-template-columns: repeat(2, 1fr); }
       .w-val.clock { font-size: 1.1rem; }
+    }
+
+    /* 위젯 dot 인디케이터 */
+    .widget-dots {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0 12px;
+    }
+    @media (max-width: 768px) { .widget-dots { display: flex; } }
+    .widget-dot {
+      width: 6px; height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,.18);
+      transition: all .25s;
+      cursor: pointer;
+    }
+    .widget-dot.active {
+      width: 20px;
+      background: var(--bmw-lt);
+      box-shadow: 0 0 8px rgba(77,144,240,.5);
+    }
+
+    /* 히어로 누적손익 */
+    .hero-pnl {
+      display: none;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-md);
+      padding: 10px 24px;
+      margin: 0 auto 28px;
+      width: fit-content;
+      max-width: 340px;
+      transition: border-color .3s;
+    }
+    .hero-pnl-icon { font-size: 1rem; }
+    .hero-pnl-label {
+      font-size: .7rem; font-weight: 700;
+      color: var(--muted); letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .hero-pnl-val {
+      font-size: 1.1rem; font-weight: 800;
+      letter-spacing: -.02em;
     }
 
     /* ─── 코인 트레이더 ─────────────────────────── */
@@ -987,6 +1048,11 @@
     매일 아침 5명의 AI 직원이 뉴스를 분석해 카드뉴스 · 블로그를 만들고 오늘의 음악 우주를 채웁니다.
     AI 트레이더가 5분마다 종목을 분석하고 30초마다 손절/익절을 실시간으로 감시합니다.
   </p>
+  <div class="hero-pnl" id="hero-pnl">
+    <span class="hero-pnl-icon">🪙</span>
+    <span class="hero-pnl-label">AI 코인봇 누적손익</span>
+    <span class="hero-pnl-val" id="hero-pnl-val">-</span>
+  </div>
   <div class="hero-stats">
     <div class="stat">
       <div class="stat-val">5명</div>
@@ -1047,6 +1113,8 @@
     </div>
 
   </div>
+  <!-- 모바일 위젯 dot 인디케이터 -->
+  <div class="widget-dots" id="widget-dots"></div>
 
   <!-- TradingView Ticker Tape -->
   <div class="tv-ticker-wrap">
@@ -2026,6 +2094,16 @@
       pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
       pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
 
+      // 히어로 누적손익 (수익=초록, 손실=빨강)
+      const heroPnl = document.getElementById('hero-pnl');
+      const heroPnlVal = document.getElementById('hero-pnl-val');
+      if (heroPnl && heroPnlVal) {
+        heroPnl.style.display = 'flex';
+        heroPnlVal.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
+        heroPnlVal.style.color = pnl > 0 ? '#10b981' : pnl < 0 ? '#f87171' : 'var(--muted2)';
+        heroPnl.style.borderColor = pnl > 0 ? 'rgba(16,185,129,.3)' : pnl < 0 ? 'rgba(248,113,113,.3)' : 'var(--glass-border)';
+      }
+
       // 승률 계산
       const wins = s.wins ?? 0, total = s.total_trades ?? 0;
       const sellCount = d.history ? d.history.filter(t => t.action === 'SELL').length : total;
@@ -2310,6 +2388,44 @@
     draw();
     window.addEventListener('resize', () => { resize(); initStars(); });
   })();
+
+  // ── 모바일 위젯 스와이프 슬라이더 ──
+  function initWidgetSlider() {
+    const dotsEl = document.getElementById('widget-dots');
+    if (!dotsEl) return;
+    if (window.innerWidth >= 768) { dotsEl.innerHTML = ''; return; }
+
+    const inner   = document.querySelector('.dashboard-inner');
+    const widgets = Array.from(inner.querySelectorAll('.widget'));
+    const n = widgets.length;
+
+    // 도트 생성
+    dotsEl.innerHTML = '';
+    widgets.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'widget-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => {
+        inner.scrollTo({ left: widgets[i].offsetLeft - 24, behavior: 'smooth' });
+      });
+      dotsEl.appendChild(dot);
+    });
+
+    const dots = Array.from(dotsEl.querySelectorAll('.widget-dot'));
+    let ticking = false;
+    inner.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const cardW = widgets[0] ? widgets[0].offsetWidth + 10 : 1;
+        const idx = Math.min(n - 1, Math.round(inner.scrollLeft / cardW));
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  initWidgetSlider();
+  window.addEventListener('resize', initWidgetSlider);
 </script>
 </body>
 </html>
