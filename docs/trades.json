@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 1980.0,
+    "qty": 66.6556,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-13 01:33"
+  },
   "history": [
+    {
+      "time": "2026-04-13 01:33",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 1981.0,
+      "amount_krw": 99700.0,
+      "reason": "XRP의 RSI는 39.3으로 과매도 상태가 아니며, MACD 골든크로스(강한매수) 신호가 발생했습니다. 또한 ADX는 35.2로 추세가 있는 것으로 나타나며, 점수는 +5로 수익 가능성이 높은 신호입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-13 01:14",
       "action": "SELL",
@@ -267,7 +284,7 @@
     }
   ],
   "stats": {
-    "total_trades": 23,
+    "total_trades": 24,
     "wins": 8,
     "losses": 4,
     "total_pnl_krw": 12414.0,
@@ -275,5 +292,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-13 01:14"
+  "updated_at": "2026-04-13 01:33"
 }
