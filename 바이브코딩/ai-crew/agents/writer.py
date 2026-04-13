@@ -130,6 +130,119 @@ def _fix_hashtags(text: str, prompt: str, label: str) -> str:
     return text
 
 
+# ── 5. 반복 문장 감지 & 교정 ──────────────────────────────
+def _sentence_tokens(text: str) -> set:
+    STOP = {
+        "을","를","이","가","의","은","는","에","도","와","과","로","으로",
+        "그","및","등","이다","있다","하다","됩니다","합니다","했다","있어",
+        "하는","한다","된다","했어","이야","거야","이에","따라","위해",
+    }
+    tokens = re.sub(r'[^\w\s]', '', text).split()
+    return {t for t in tokens if len(t) > 1 and t not in STOP}
+
+
+def _detect_repetition(text: str) -> list:
+    """유사 문장 쌍(70% 이상 토큰 겹침) 목록 반환"""
+    # 해시태그·소제목 제거 후 문장 분리
+    body = re.sub(r'#[가-힣A-Za-z0-9_]+', '', text)
+    body = re.sub(r'##[^\n]*', '', body)
+    # '. ' 또는 '.\n' 기준 문장 분리
+    raw_sents = re.split(r'(?<=[다야요죠])\.\s+|(?<=[!?])\s+|(?<=\.)\s+', body)
+    sents = [s.strip() for s in raw_sents if len(s.strip()) > 15]
+
+    pairs = []
+    for i in range(len(sents)):
+        for j in range(i + 1, len(sents)):
+            ka = _sentence_tokens(sents[i])
+            kb = _sentence_tokens(sents[j])
+            if not ka or not kb:
+                continue
+            overlap = len(ka & kb) / min(len(ka), len(kb))
+            if overlap >= 0.70:
+                pairs.append((sents[i][:40], sents[j][:40], round(overlap, 2)))
+    return pairs
+
+
+def _fix_repetition(text: str, prompt: str, label: str, max_tokens: int = 2000) -> str:
+    """반복 문장 감지 시 최대 2회 재생성"""
+    pairs = _detect_repetition(text)
+    if not pairs:
+        return text
+    print(f"  ⚠️  [{label}] 반복 문장 {len(pairs)}쌍 감지 → 재생성 시도...")
+    import time
+    extra = (
+        "\n\n⚠️ 반복 문장 절대 금지: 이미 쓴 내용을 다른 표현으로 바꿔 반복하지 마."
+        " 각 문장은 새로운 정보나 시각을 담아야 해."
+    )
+    for attempt in range(2):
+        time.sleep(3)
+        new_text = ask_gemini(prompt + extra, system=SYSTEM, temperature=0.82, max_tokens=max_tokens)
+        new_pairs = _detect_repetition(new_text)
+        if not new_pairs:
+            print(f"  ✅ [{label}] 반복 제거 완료")
+            return new_text
+        print(f"  ⚠️  [{label}] 재생성 {attempt+1}회: 반복 {len(new_pairs)}쌍 — 계속...")
+    print(f"  ⚠️  [{label}] 반복 해결 못함 — 그대로 사용")
+    return text
+
+
+# ── 6. 에디터픽 구조 강제 (## 섹션 2문장 / 300자 이내) ──────
+def _trim_section_content(content: str) -> str:
+    """섹션 내용을 최대 2문장, 300자 이내로 정리"""
+    content = content.strip()
+    # '다.' '야.' '요.' '죠.' 뒤 공백 기준으로 문장 분리
+    sents = re.split(r'(?<=[다야요죠])\.\s+', content)
+    sents = [s.strip() for s in sents if s.strip()]
+    if len(sents) >= 2:
+        result = sents[0].rstrip('.') + '. ' + sents[1].rstrip('.') + '.'
+    elif sents:
+        result = sents[0] if sents[0].endswith('.') else sents[0] + '.'
+    else:
+        result = content
+
+    # 300자 초과 시 마지막 문장 경계에서 truncate
+    if len(result) > 300:
+        cut = result[:300]
+        for punct in ['.', '!', '?']:
+            pos = cut.rfind(punct)
+            if pos > 80:
+                result = cut[:pos + 1]
+                break
+        else:
+            result = cut
+    return result
+
+
+def _enforce_editor_structure(text: str) -> str:
+    """## 소제목 아래 각 섹션을 2문장 / 300자 이내로 후처리"""
+    # 해시태그 분리
+    hashtag_match = re.search(r'\n\n((?:#[가-힣A-Za-z0-9_]+ *)+)\s*$', text)
+    if hashtag_match:
+        hashtags = hashtag_match.group(1).strip()
+        body = text[:hashtag_match.start()]
+    else:
+        hashtags = ""
+        body = text
+
+    # '\n## 제목' 기준 분리
+    segments = re.split(r'(\n## [^\n]+)', body)
+    output = [segments[0]]  # intro (## 이전 본문)
+    i = 1
+    while i < len(segments):
+        heading = segments[i]          # '\n## 소제목'
+        output.append(heading)
+        i += 1
+        if i < len(segments) and not segments[i].lstrip().startswith('## '):
+            trimmed = _trim_section_content(segments[i])
+            output.append('\n' + trimmed + '\n')
+            i += 1
+
+    result = ''.join(output)
+    if hashtags:
+        result = result.rstrip() + '\n\n' + hashtags
+    return result
+
+
 # ── 중복 주제 감지 ─────────────────────────────────────────
 def _keyword_overlap(a: str, b: str) -> float:
     """두 제목의 핵심 키워드 겹침 비율 (0~1)"""
@@ -249,8 +362,10 @@ def run(brief: dict) -> dict:
 - "와 이거 실화야", "이러한", "이처럼", "이를 통해", "~에 큰 영향을 미칠", "~로 보인다", "주목할 필요"
 - "~를 바랍니다", "~지켜봐야겠다", "~어떻게 될지 궁금하다", "관심이 집중된다" 같은 공허한 마무리
 - "내일도", "앞으로도", "이러한 상황이 지속된다면" 같은 의미 없는 마무리
+- 동일한 주어+서술어 조합 2회 이상 사용 금지
 - 같은 내용을 문단마다 반복하는 것. 각 문단은 반드시 새로운 정보·시각 포함.
-- 이미 앞에서 한 말을 다른 표현으로 재진술하는 것 (같은 포인트 두 번 금지)
+- 이미 앞에서 한 말을 다른 표현으로 재진술하는 것 — 같은 포인트 표현만 바꿔 반복 금지
+- 각 ## 소제목 아래: 반드시 이전 섹션에서 언급하지 않은 새로운 내용만. 재진술·요약 금지.
 - "개인적으로는 ~을 바란다", "~이루어지길 바라는 마음으로 글을 마치며" 같은 편집자 개인 의견 표명
 - 한글 단어를 한자로 혼용 / 한국어·영어 외 외국어
 
@@ -264,6 +379,8 @@ def run(brief: dict) -> dict:
         article = _ensure_complete(article, blog_prompt)
         article = _fix_title_consistency(b["title"], article, blog_prompt, "블로그")
         article = _fix_quality(article, blog_prompt, "블로그")
+        article = _fix_repetition(article, blog_prompt, "블로그", max_tokens=2000)
+        article = _enforce_editor_structure(article)
         article = _fix_hashtag_position(article)
         article = _fix_hashtags(article, blog_prompt, "블로그")
         print(f"  ✅ 블로그 아티클 완성 ({len(article)}자)")
