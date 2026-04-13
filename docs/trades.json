@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "USDT",
-    "buy_price": 1486.0,
-    "qty": 88.7831,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-14 04:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-14 08:29",
+      "action": "SELL",
+      "ticker": "USDT",
+      "price": 1473.0,
+      "amount_krw": 99700.0,
+      "reason": "현재 보유 종목 USDT의 수익률이 -100.00%로 매우 낮으며, 기술 점수도 낮은 편입니다. 또한, 현재 시장 상황을 분석해 보아 하락 추세가 지속되고 있어 매도하는 것이 좋을 것으로 판단됩니다.",
+      "pnl_pct": -0.87,
+      "pnl_krw": -1154.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-14 04:00",
       "action": "BUY",
@@ -306,13 +311,13 @@
     }
   ],
   "stats": {
-    "total_trades": 26,
+    "total_trades": 27,
     "wins": 9,
-    "losses": 4,
-    "total_pnl_krw": 13081.0,
+    "losses": 5,
+    "total_pnl_krw": 11927.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-14 04:00"
+  "updated_at": "2026-04-14 08:29"
 }
