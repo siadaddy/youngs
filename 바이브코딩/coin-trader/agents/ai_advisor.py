@@ -33,14 +33,21 @@ def _ask_groq(prompt: str) -> str:
         for attempt in range(1, 4):
             r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=30)
             if r.status_code == 429:
-                wait = min(int(r.headers.get("retry-after", 30)) + 5, 90)
-                print(f"  ⏳ Groq 키{key_idx+1} 속도 제한 — {wait}초 대기 ({attempt}/3)...")
+                # 다음 키가 있으면 즉시 전환 — 대기 없음
+                if key_idx < len(GROQ_KEYS) - 1:
+                    print(f"  ⚠️  Groq 키{key_idx+1} 429 → 즉시 키{key_idx+2}로 전환")
+                    break
+                # 마지막 키면 잠깐 대기 후 재시도
+                wait = min(int(r.headers.get("retry-after", 10)), 20)
+                print(f"  ⏳ Groq 키{key_idx+1}(마지막) 속도 제한 — {wait}초 대기 ({attempt}/3)...")
                 time.sleep(wait)
                 continue
             r.raise_for_status()
             return _sanitize(r.json()["choices"][0]["message"]["content"].strip())
-        if key_idx < len(GROQ_KEYS) - 1:
-            print(f"  ⚠️  Groq 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
+        else:
+            # inner loop 정상 종료(break 없음) = 마지막 키도 3회 소진
+            if key_idx < len(GROQ_KEYS) - 1:
+                print(f"  ⚠️  Groq 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
 
     raise RuntimeError("모든 Groq API 키 소진")
 
