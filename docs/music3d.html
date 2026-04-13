@@ -239,19 +239,20 @@ import * as THREE from 'three';
 // ═══════════════════════════════════════════
 // 상수
 // ═══════════════════════════════════════════
-const YT_KEY   = 'AIzaSyBGVbnH0iL_1unWWfktA6nrZMT29uSkOK0';
-const SPHERE_R = 8;
-const POP_OUT  = 1.4;   // 재생 중 타일이 튀어나오는 거리
+const YT_KEY      = 'AIzaSyBGVbnH0iL_1unWWfktA6nrZMT29uSkOK0';
+const SPHERE_R    = 5.5;   // 화면 60~65% 크기
+const POP_OUT     = 0.9;   // 재생 중 타일이 튀어나오는 거리
+const TOTAL_TILES = 290;   // 구 전체를 채울 타일 수 (노래+빈타일 합계)
 
 const GENRE = {
-  'K-pop':      '#ff6eb4',
-  '인디팝':     '#6bff9e',
-  'R&B':        '#6bb5ff',
-  '힙합':       '#ffd06b',
-  '팝':         '#c86bff',
-  '일렉트로팝': '#6bffe8',
-  '인디록':     '#ff9f6b',
-  '기타':       '#aaaaaa',
+  'K-pop':      '#ff006e',   // 형광 핑크
+  '인디팝':     '#00f5d4',   // 형광 민트
+  'R&B':        '#9b5de5',   // 보라
+  '힙합':       '#ff9f1c',   // 주황
+  '팝':         '#00b4d8',   // 하늘
+  '일렉트로팝': '#7209b7',   // 딥 바이올렛
+  '인디록':     '#f72585',   // 핫핑크
+  '기타':       '#e0e0e0',   // 흰색 계열
 };
 function genreColor(g) { return GENRE[g] || GENRE['기타']; }
 
@@ -433,7 +434,7 @@ async function fetchArt(song) {
 let W = innerWidth, H = innerHeight;
 const scene    = new THREE.Scene();
 const camera   = new THREE.PerspectiveCamera(50, W/H, 0.1, 200);
-camera.position.z = 22;
+camera.position.z = 18;
 
 const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, canvas: (() => {
   const c = document.createElement('canvas');
@@ -462,7 +463,7 @@ scene.add(sphereGroup);
 // 내부 발광 구 (반사 느낌)
 const innerSphere = new THREE.Mesh(
   new THREE.SphereGeometry(SPHERE_R - 0.15, 32, 32),
-  new THREE.MeshStandardMaterial({ color: 0x050010, roughness:0.9, metalness:0.1 })
+  new THREE.MeshStandardMaterial({ color: 0x030018, roughness:0.6, metalness:0.4 })
 );
 sphereGroup.add(innerSphere);
 
@@ -481,28 +482,45 @@ function fibPoints(n, r) {
   return pts;
 }
 
-// 타일 텍스처 생성 (장르 색상 + 테두리)
+// 노래 타일 텍스처 — 네온 유리 느낌 (1px 격자, 홀로그램 하이라이트)
 function makeTileTexture(hex) {
   const cv = document.createElement('canvas');
   cv.width = cv.height = 64;
   const ctx = cv.getContext('2d');
-  // 배경 (격자선 = 3px gap)
-  ctx.fillStyle = '#000010';
+  // 격자 틈 (1px) = 거의 붙어있는 느낌
+  ctx.fillStyle = '#00000a';
   ctx.fillRect(0, 0, 64, 64);
-  // 메인 타일
+  // 메인 fill — 살짝 어둡게 (유리 속 색상)
   ctx.fillStyle = hex;
-  ctx.fillRect(3, 3, 58, 58);
-  // 하이라이트 그라디언트 (disco 반사 느낌)
-  const g = ctx.createLinearGradient(3, 3, 61, 61);
-  g.addColorStop(0, 'rgba(255,255,255,0.25)');
-  g.addColorStop(0.5, 'rgba(255,255,255,0.05)');
-  g.addColorStop(1, 'rgba(0,0,0,0.15)');
-  ctx.fillStyle = g;
-  ctx.fillRect(3, 3, 58, 58);
-  // 테두리 (은은하게)
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-  ctx.lineWidth = 0.8;
-  ctx.strokeRect(3.4, 3.4, 57.2, 57.2);
+  ctx.globalAlpha = 0.65;
+  ctx.fillRect(1, 1, 62, 62);
+  ctx.globalAlpha = 1;
+  // 유리 반사 하이라이트 (좌상단 밝게)
+  const hi = ctx.createLinearGradient(1, 1, 35, 35);
+  hi.addColorStop(0,   'rgba(255,255,255,0.5)');
+  hi.addColorStop(0.25,'rgba(255,255,255,0.15)');
+  hi.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = hi;
+  ctx.fillRect(1, 1, 62, 62);
+  // 네온 테두리 — 같은 색 밝게
+  ctx.strokeStyle = hex;
+  ctx.globalAlpha = 0.9;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(1.5, 1.5, 61, 61);
+  ctx.globalAlpha = 1;
+  return new THREE.CanvasTexture(cv);
+}
+
+// 빈 타일 텍스처 — 어두운 반투명 격자
+function makeEmptyTileTexture() {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 16;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#020210';
+  ctx.fillRect(0, 0, 16, 16);
+  ctx.strokeStyle = 'rgba(80,80,150,0.18)';
+  ctx.lineWidth = 0.6;
+  ctx.strokeRect(0.8, 0.8, 14.4, 14.4);
   return new THREE.CanvasTexture(cv);
 }
 
@@ -512,58 +530,73 @@ function makeTileTexture(hex) {
 let tiles = [];
 let playingTile = null;
 
-// 타일 크기 계산: 구 표면적 / 곡 수 기반
-function calcTileSize(n) {
+// 타일 크기 계산: 전체 TOTAL_TILES 기준으로 촘촘하게
+function calcTileSize() {
   const area = 4 * Math.PI * SPHERE_R * SPHERE_R;
-  const perTile = area / n;
-  return Math.sqrt(perTile) * 0.82;  // 82% → 18% gap
+  return Math.sqrt(area / TOTAL_TILES) * 0.97;  // 97% → 3% gap (1~2px)
 }
 
 function buildDisco(songs) {
-  // 기존 타일 제거
+  // 기존 타일 전부 제거
   for (const t of tiles) sphereGroup.remove(t);
   tiles = [];
+  sphereGroup.children
+    .filter(c => c !== innerSphere)
+    .forEach(c => sphereGroup.remove(c));
 
   const n = songs.length;
-  const points = fibPoints(n, SPHERE_R);
-  const tileSize = calcTileSize(n);
+  const total = Math.max(TOTAL_TILES, n);
+  const allPoints = fibPoints(total, SPHERE_R);
+  const tileSize  = calcTileSize();
   const geo = new THREE.PlaneGeometry(tileSize, tileSize);
 
+  // ── 빈 타일 텍스처 (공유)
+  const emptyTex = makeEmptyTileTexture();
+  const emptyMat = new THREE.MeshStandardMaterial({
+    map: emptyTex,
+    transparent: true, opacity: 0.28,
+    roughness: 0.15, metalness: 0.2,
+    depthWrite: false,
+  });
+
+  // ── 장르 텍스처 캐시
   const texCache = {};
 
-  songs.forEach((song, i) => {
-    const hex = genreColor(song.g);
-    if (!texCache[hex]) texCache[hex] = makeTileTexture(hex);
-
-    const brightness = 0.4 + (((song.s ?? 7) - 1) / 9) * 0.8; // 인기도 → 밝기 0.4~1.2
-
-    const mat = new THREE.MeshStandardMaterial({
-      map: texCache[hex],
-      emissive: new THREE.Color(hex),
-      emissiveIntensity: brightness * 0.7,
-      roughness: 0.3,
-      metalness: 0.5,
-      transparent: false,
-    });
-
-    const tile = new THREE.Mesh(geo, mat.clone());
-    const pt = points[i];
+  // 노래 개수만큼 먼저 배치, 나머지는 빈 타일
+  allPoints.forEach((pt, i) => {
     const normal = pt.clone().normalize();
+    let mesh;
 
-    tile.position.copy(pt);
-    // +Z を normal 방향으로 (바깥을 향하도록)
-    tile.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+    if (i < n) {
+      // ── 노래 타일 (네온 유리)
+      const song = songs[i];
+      const hex  = genreColor(song.g);
+      if (!texCache[hex]) texCache[hex] = makeTileTexture(hex);
+      const brightness = 0.45 + (((song.s ?? 7) - 1) / 9) * 0.85;
+      const mat = new THREE.MeshStandardMaterial({
+        map: texCache[hex],
+        emissive: new THREE.Color(hex),
+        emissiveIntensity: brightness,
+        transparent: true, opacity: 0.82,
+        roughness: 0.08, metalness: 0.25,
+      });
+      mesh = new THREE.Mesh(geo, mat);
+      mesh.userData = {
+        t: song.t, a: song.a, g: song.g,
+        s: song.s ?? 7, d: song.d ?? '',
+        normal, baseIntensity: brightness, popP: 0,
+        isSong: true,
+      };
+      tiles.push(mesh);  // 인터랙션 대상
+    } else {
+      // ── 빈 타일 (어두운 격자)
+      mesh = new THREE.Mesh(geo, emptyMat);
+      mesh.userData = { normal, popP: 0, isSong: false };
+    }
 
-    tile.userData = {
-      t: song.t, a: song.a, g: song.g,
-      s: song.s ?? 7, d: song.d ?? '',
-      normal,
-      baseIntensity: brightness * 0.7,
-      popP: 0,  // 0=구 표면, 1=완전히 튀어나옴
-    };
-
-    sphereGroup.add(tile);
-    tiles.push(tile);
+    mesh.position.copy(pt);
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+    sphereGroup.add(mesh);
   });
 
   // 플레이리스트 초기화
