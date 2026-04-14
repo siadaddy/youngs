@@ -37,15 +37,25 @@ def get_krw_balance() -> float:
 
 
 def get_coin_balance(ticker: str) -> float:
-    """보유 코인 수량 반환. ticker = 'BTC' 형식"""
+    """보유 코인 수량 반환. ticker = 'BTC' 형식.
+    실제 잔고 없음 → 0.0 / API 오류 → -1.0 (호출자에서 구분 처리)"""
+    import time
     b = get_bithumb()
-    coin = ticker.replace("KRW-", "")  # 혹시 KRW- 형식이 넘어와도 처리
+    coin = ticker.replace("KRW-", "")
     if b is None:
         return 0.0
-    result = b.get_balance(coin)
-    if isinstance(result, tuple) and len(result) >= 1:
-        return float(result[0])  # total_coin
-    return 0.0
+    for attempt in range(3):
+        try:
+            result = b.get_balance(coin)
+            if isinstance(result, tuple) and len(result) >= 1:
+                return float(result[0])
+            # None 또는 예상 외 타입 — 재시도
+        except Exception as e:
+            print(f"  ⚠️  get_coin_balance({coin}) 오류 ({attempt+1}/3): {e}")
+        if attempt < 2:
+            time.sleep(2)
+    print(f"  ⚠️  get_coin_balance({coin}) 3회 실패 → -1.0 반환 (API 오류 sentinel)")
+    return -1.0  # 실제 잔고 0과 구분하는 sentinel
 
 
 def get_current_price(ticker: str) -> float:

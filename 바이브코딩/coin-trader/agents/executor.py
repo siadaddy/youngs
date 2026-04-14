@@ -27,14 +27,27 @@ def run(action: dict, holding: dict | None) -> dict:
             print("  ⚠️  SELL 지시 but 보유 종목 없음 → 스킵")
             return None
         t = holding["ticker"]
-        # 항상 API에서 실제 잔고 조회 — state.json 추정값과 실제 체결량 차이로 인한 5600 방지
+        # 실제 잔고 조회 (3회 재시도 포함)
         qty = get_coin_balance(t)
-        if qty <= 0:
-            print(f"  ⚠️  {t} 실제 잔고 없음 → 스킵")
+        if qty < 0:
+            # API 오류(-1.0) — state.json qty 폴백으로 매도 시도
+            fallback_qty = holding.get("qty", 0)
+            print(f"  ⚠️  {t} 잔고 조회 API 오류 → state.json 폴백 수량 {fallback_qty:.8f}개 사용")
+            if fallback_qty <= 0:
+                print(f"  ⚠️  state.json에도 수량 없음 → holding 클리어")
+                return None
+            qty = fallback_qty
+        elif qty == 0:
+            print(f"  ⚠️  {t} 실제 잔고 없음 (이미 매도됨) → holding 클리어")
             return None
-        print(f"  💰 실제 잔고: {qty:.8f}개 (state: {holding.get('qty', 0):.8f}개)")
-        # 빗썸 시장가 매도 최소금액 체크 (qty × 현재가 >= 5000)
+        else:
+            print(f"  💰 실제 잔고: {qty:.8f}개 (state: {holding.get('qty', 0):.8f}개)")
+        # 현재가 조회 — 0이면 API 오류로 보고 SELL 보류
         price = get_current_price(t)
+        if price <= 0:
+            print(f"  ⚠️  {t} 현재가 0원 (API 오류) — SELL 보류, holding 유지")
+            return holding
+        # 빗썸 시장가 매도 최소금액 체크 (qty × 현재가 >= 5000)
         sell_value = qty * price
         if sell_value < 5000:
             print(f"  ⚠️  매도 금액 {sell_value:,.0f}원 < 5,000원 최소 기준 — 매도 보류 (가격 회복 대기)")
@@ -50,8 +63,14 @@ def run(action: dict, holding: dict | None) -> dict:
             print(f"  🔄 기존 보유({holding['ticker']}) 매도 후 신규 매수")
             # 항상 API에서 실제 잔고 조회 — state.json 추정값과 다를 수 있음
             qty = get_coin_balance(holding["ticker"])
+            if qty < 0:
+                qty = holding.get("qty", 0)
+                print(f"  ⚠️  기존 보유 잔고 API 오류 → state.json 폴백 {qty:.8f}개")
             # 기존 보유 매도 전에도 최소금액 체크
             price_chk = get_current_price(holding["ticker"])
+            if price_chk <= 0:
+                print(f"  ⚠️  기존 보유 현재가 조회 실패 — 교체 취소, HOLD 유지")
+                return holding
             if qty > 0 and qty * price_chk >= 5000:
                 sell_market_order(holding["ticker"], qty)
             elif qty > 0:
