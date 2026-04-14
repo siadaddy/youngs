@@ -67,10 +67,13 @@ def get_krw_tickers() -> list:
     import time
     for attempt in range(3):
         try:
-            return pybithumb.get_tickers(payment_currency="KRW")
+            result = pybithumb.get_tickers(payment_currency="KRW")
+            if result is not None:
+                return result
         except Exception:
-            if attempt < 2:
-                time.sleep(5)
+            pass
+        if attempt < 2:
+            time.sleep(5)
     return []
 
 

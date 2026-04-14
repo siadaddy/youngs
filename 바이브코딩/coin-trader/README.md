@@ -213,6 +213,10 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ## 📝 업데이트 로그
 
+### 2026-04-14
+- **시장 분석 NoneType 크래시 수정**: `pybithumb.get_tickers()` 가 예외 없이 `None` 반환 시 10시간 이상 장애 발생 → `get_krw_tickers()` None 차단 + `get_top_tickers()` `or []` 방어 추가
+- **Groq 429 즉시 전환**: `ai_advisor.py` — 429 시 90초 대기 후 키 전환 → 즉시 전환으로 개선 (타임아웃 방지)
+
 ### 2026-04-12
 - **Groq 키 4개**: key1~4 폴백 체인 (429 즉시 다음 키 전환)
 - **주문 가능 잔고 개선**: `available_krw` 직접 조회 후 75% 투자 (수수료·슬리피지 여유)
@@ -247,4 +251,4 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ---
 
-*최종 업데이트: 2026-04-12 | Powered by Groq + pybithumb + GitHub Pages*
+*최종 업데이트: 2026-04-14 | Powered by Groq + pybithumb + GitHub Pages*

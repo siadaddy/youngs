@@ -257,6 +257,12 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ## 📝 업데이트 로그
 
+### 2026-04-14
+- **Groq 전체 키 소진 대응**: `gemini_client.py` — 4개 키 모두 429 시 90초 대기 후 최대 2회 글로벌 재시도 추가 (TPM 윈도우 리셋 대응)
+- **작가 품질 게이트 전면 개편**: `quality_check()` 통합 함수 도입 — 블랙리스트·제목-본문 불일치·패턴·해시태그·반복 표현 모두 단일 함수로 처리, 재생성 시 targeted hint 삽입
+- **기획자 프롬프트 강화**: 의료/제약 단순 정책 뉴스 제외, 5개 카드 중복 기업·사건 구체 예시 추가
+- **music3d.html 추가**: 디스코볼 스타일 3D 뮤직 페이지 (Fibonacci 구면 배치, 네온 글라스 타일, 290개 고밀도)
+
 ### 2026-04-12
 - **뉴스 수집 분리**: 06:40 별도 LaunchAgent → ai-crew 07:00 즉시 시작 (약 5분 단축)
 - **Groq 키 4개**: key1~4 라운드로빈 (ai-crew) / 폴백 체인 (coin-trader)
@@ -301,4 +307,4 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ---
 
-*최종 업데이트: 2026-04-12 | Powered by Groq + Pollinations.ai + YouTube API + Three.js + GitHub Pages*
+*최종 업데이트: 2026-04-14 | Powered by Groq + Pollinations.ai + YouTube API + Three.js + GitHub Pages*

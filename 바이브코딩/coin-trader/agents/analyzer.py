@@ -82,7 +82,7 @@ def _bb_position(series: pd.Series, period: int = 20) -> str:
 
 def get_top_tickers(n: int = 20) -> list:
     """24h 거래대금 기준 상위 n개 빗썸 티커 반환 (BTC 형식)"""
-    tickers = get_krw_tickers()
+    tickers = get_krw_tickers() or []
     try:
         import requests
         # 빗썸 공개 API — 전체 종목 시세 (거래대금 포함)

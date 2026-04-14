@@ -56,7 +56,9 @@ def _sanitize(text: str) -> str:
 
 
 def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096, json_mode: bool = False) -> str:
-    """Groq API 호출 — 라운드로빈 키 분배 + 429 시 다른 키로 즉시 전환"""
+    """Groq API 호출 — 라운드로빈 키 분배 + 429 시 다른 키로 즉시 전환
+    전체 키 소진 시 90초 대기 후 최대 2회 글로벌 재시도 (TPM 윈도우 리셋 대기)
+    """
     import time
 
     messages = []
@@ -73,51 +75,65 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
     if json_mode:
         payload["response_format"] = {"type": "json_object"}
 
-    # 라운드로빈 시작 키 결정 → 429 시 나머지 키 순서대로 재시도
-    start_idx = next(_key_cycle) if GROQ_KEYS else 0
-    key_order = [GROQ_KEYS[(start_idx + i) % len(GROQ_KEYS)] for i in range(len(GROQ_KEYS))]
+    MAX_GLOBAL_RETRIES = 2   # 전체 키 소진 후 재시도 횟수
+    GLOBAL_WAIT        = 90  # 전체 키 소진 후 대기 (초) — Groq TPM 윈도우(1분) + 여유
+    last_r = None
 
-    for key_idx, api_key in enumerate(key_order):
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        }
-        key_label = f"키{(start_idx + key_idx) % len(GROQ_KEYS) + 1}"
+    for global_attempt in range(MAX_GLOBAL_RETRIES + 1):
+        if global_attempt > 0:
+            print(f"  ⏳ 전체 키 소진 — {GLOBAL_WAIT}초 대기 후 재시도 ({global_attempt}/{MAX_GLOBAL_RETRIES})...")
+            time.sleep(GLOBAL_WAIT)
 
-        for attempt in range(1, 4):
-            try:
-                r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
-            except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as conn_err:
-                # 네트워크 끊김 (Connection aborted / RemoteDisconnected / ReadTimeout)
-                if attempt < 3:
-                    wait = 15 * attempt  # 15초, 30초 대기
-                    print(f"  ⚠️  Groq {key_label} 연결 오류 — {wait}초 후 재시도 ({attempt}/3): {conn_err}")
+        # 라운드로빈 시작 키 결정 → 429 시 나머지 키 순서대로 재시도
+        start_idx = next(_key_cycle) if GROQ_KEYS else 0
+        key_order = [GROQ_KEYS[(start_idx + i) % len(GROQ_KEYS)] for i in range(len(GROQ_KEYS))]
+
+        for key_idx, api_key in enumerate(key_order):
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            }
+            key_label = f"키{(start_idx + key_idx) % len(GROQ_KEYS) + 1}"
+
+            for attempt in range(1, 4):
+                try:
+                    r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
+                    last_r = r
+                except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as conn_err:
+                    # 네트워크 끊김 (Connection aborted / RemoteDisconnected / ReadTimeout)
+                    if attempt < 3:
+                        wait = 15 * attempt  # 15초, 30초 대기
+                        print(f"  ⚠️  Groq {key_label} 연결 오류 — {wait}초 후 재시도 ({attempt}/3): {conn_err}")
+                        time.sleep(wait)
+                        continue
+                    # 3회 모두 연결 실패 → 다음 키 시도
+                    print(f"  ⚠️  Groq {key_label} 연결 3회 실패 → 다음 키 전환...")
+                    break
+
+                if r.status_code == 429:
+                    # 다른 키가 남아있으면 바로 전환, 없으면 잠깐 대기
+                    if key_idx < len(key_order) - 1:
+                        print(f"  ⚡ Groq {key_label} TPM 초과 → 다른 키로 즉시 전환...")
+                        break
+                    retry_after = int(r.headers.get("retry-after", 15))
+                    wait = min(retry_after + 3, 30)
+                    print(f"  ⏳ Groq {key_label} 속도 제한 — {wait}초 대기 ({attempt}/3)...")
                     time.sleep(wait)
                     continue
-                # 3회 모두 연결 실패 → 다음 키 시도
-                print(f"  ⚠️  Groq {key_label} 연결 3회 실패 → 다음 키 전환...")
-                break
 
-            if r.status_code == 429:
-                # 다른 키가 남아있으면 바로 전환, 없으면 잠깐 대기
-                if key_idx < len(key_order) - 1:
-                    print(f"  ⚡ Groq {key_label} TPM 초과 → 다른 키로 즉시 전환...")
-                    break
-                retry_after = int(r.headers.get("retry-after", 15))
-                wait = min(retry_after + 3, 30)
-                print(f"  ⏳ Groq {key_label} 속도 제한 — {wait}초 대기 ({attempt}/3)...")
-                time.sleep(wait)
-                continue
+                r.raise_for_status()
+                result = r.json()["choices"][0]["message"]["content"].strip()
+                if key_idx > 0 or global_attempt > 0:
+                    print(f"  ✅ Groq {key_label}로 성공" + (f" (글로벌 재시도 {global_attempt}회 후)" if global_attempt > 0 else ""))
+                return _sanitize(result)
 
-            r.raise_for_status()
-            result = r.json()["choices"][0]["message"]["content"].strip()
-            if key_idx > 0:
-                print(f"  ✅ Groq {key_label}로 성공")
-            return _sanitize(result)
+            # 이 키로 실패 → 다음 키 시도
+            if key_idx < len(key_order) - 1:
+                print(f"  ⚠️  Groq {key_label} 소진 → 다음 키 전환...")
 
-        # 이 키로 실패 → 다음 키 시도
-        if key_idx < len(key_order) - 1:
-            print(f"  ⚠️  Groq {key_label} 소진 → 다음 키 전환...")
+        # 이 글로벌 시도에서 모든 키 소진 → 다음 글로벌 시도
 
-    # 모든 키 소진
-    r.raise_for_status()
+    # 모든 글로벌 재시도 소진
+    if last_r is not None:
+        last_r.raise_for_status()
+    raise RuntimeError("모든 Groq API 키 및 글로벌 재시도 소진")

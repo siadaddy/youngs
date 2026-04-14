@@ -186,6 +186,13 @@ launchctl load  ~/Library/LaunchAgents/com.siadad.aicrew.plist
 
 ## 📝 변경 이력
 
+### 2026-04-14
+- **코인 트레이더 안정성**: 빗썸 API 불안정 시 `get_krw_tickers()` None 크래시 수정 (10시간 장애 원인)
+- **Groq 429 전체 키 소진 대응**: `gemini_client.py` 90초 글로벌 재시도 추가 (07:00 작가 실패 방지)
+- **Groq 429 즉시 전환**: `ai_advisor.py` 90초 대기 → 즉시 전환 (10분 타임아웃 방지)
+- **작가 품질 게이트 전면 개편**: `quality_check()` 통합 함수 — 5단계 검증 + targeted hint 재생성
+- **기획자 프롬프트 강화**: 의료/제약 단순 뉴스 제외, 카드 중복 기업·사건 예시 추가
+
 ### 2026-04-12
 - **뉴스 수집 분리**: 06:40 별도 LaunchAgent → ai-crew 07:00 즉시 시작 (~5분 단축)
 - **Groq 키 4개**: ai-crew 라운드로빈 / coin-trader 폴백 체인
@@ -221,4 +228,4 @@ launchctl load  ~/Library/LaunchAgents/com.siadad.aicrew.plist
 
 ---
 
-*최종 업데이트: 2026-04-12 | Powered by Groq + Pollinations.ai + pybithumb + Three.js + GitHub Pages*
+*최종 업데이트: 2026-04-14 | Powered by Groq + Pollinations.ai + pybithumb + Three.js + GitHub Pages*
