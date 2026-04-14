@@ -96,7 +96,7 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 }}
 
 규칙:
-- instagram[0]: 반드시 🚗 자동차/BMW/전기차/모빌리티 관련 뉴스 선택. 해당 카테고리 뉴스가 없으면 자동차 업계 전반 트렌드 각도로 접근. 이 규칙은 예외 없이 적용
+- instagram[0]: 반드시 자동차/모빌리티/전기차/수소차/자동차부품/자동차금융 관련 뉴스여야 함. 동물/사건사고/연예/스포츠는 절대 금지. 해당 카테고리 뉴스가 없으면 자동차 업계 전반 트렌드 각도로 접근. 이 규칙은 예외 없이 적용
 - 5개 카드는 반드시 서로 다른 사건/인물/기업을 다뤄야 함. 같은 사건을 다른 각도로 쓰는 것도 중복으로 간주하고 하나만 선택.
   예) '미군 이란 항구 봉쇄' + '미국 이란 긴장 고조' → 같은 사건, 하나만 / '테슬라 실적 부진' + '테슬라 주가 하락' → 같은 기업 같은 맥락, 하나만
   5개 각각이 완전히 다른 주제여야 독자가 다양한 정보를 얻을 수 있음
@@ -123,6 +123,51 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
         if not match:
             raise ValueError(f"JSON 블록을 찾을 수 없음: {raw[:200]}")
         brief = json.loads(match.group())
+
+    # instagram[0] 자동차 주제 검증 — 자동차 키워드 없으면 swap 또는 강제 재생성
+    _CAR_KW = {
+        '자동차','차량','전기차','수소차','모빌리티','BMW','현대차','기아','테슬라',
+        '벤츠','아우디','폭스바겐','토요타','혼다','EV','하이브리드','자율주행','충전',
+        '배터리','내연기관','SUV','세단','트럭','부품','딜러','출고','리콜','카셰어링',
+        '모터쇼','자동차금융','할부','카풀','완성차','카니발','팰리세이드','아이오닉',
+        '제네시스','포르쉐','람보르기니','페라리','닛산','쉐보레','지프','포드',
+    }
+    _CAR_BANNED = {'동물','늑대','곰','호랑이','뱀','연예','스포츠','야구','축구','농구','배구'}
+
+    def _is_car(item: dict) -> bool:
+        text = (item.get('headline','') + item.get('angle','') + str(item.get('keywords',[])))
+        return any(kw in text for kw in _CAR_KW)
+
+    instagram = brief.get("instagram", [])
+    if instagram and not _is_car(instagram[0]):
+        # 나머지 카드 중 자동차 관련 찾아서 swap
+        swap_idx = next((i for i, it in enumerate(instagram[1:], 1) if _is_car(it)), None)
+        if swap_idx:
+            print(f"  ⚠️  instagram[0] 자동차 무관 → 카드{swap_idx+1}과 swap")
+            instagram[0], instagram[swap_idx] = instagram[swap_idx], instagram[0]
+        else:
+            # 자동차 카드가 아예 없으면 instagram[0] 강제 재생성
+            print("  ⚠️  instagram[0] 자동차 무관 + 대체 없음 → 강제 재생성")
+            car_prompt = f"""아래 뉴스에서 자동차/모빌리티/전기차/수소차 관련 기사 하나를 골라 카드뉴스 브리프 JSON을 작성하세요.
+반드시 자동차 관련 뉴스여야 합니다. 동물·사건사고·연예·스포츠는 절대 금지.
+
+=== 원문 뉴스 ===
+{article_list_text if article_list_text else newsletter_text}
+
+출력 형식 (JSON 객체만):
+{{"headline":"...","angle":"...","keywords":[...],"tone":"...","source_facts":"실제 뉴스 내용에서 뽑은 구체적 사실 3~4문장 (수치·이름·날짜 포함, 최소 80자)","source_url":"...","source_name":"..."}}"""
+            try:
+                import time as _time; _time.sleep(3)
+                raw_car = ask_gemini(car_prompt, system=SYSTEM, temperature=0.5, json_mode=True, max_tokens=600)
+                raw_car = raw_car.replace("```json","").replace("```","").strip()
+                car_item = json.loads(raw_car)
+                if _is_car(car_item):
+                    brief["instagram"][0] = car_item
+                    print("  ✅ instagram[0] 자동차 카드 재생성 완료")
+                else:
+                    print("  ⚠️  재생성 후에도 자동차 무관 — 원본 유지")
+            except Exception as e:
+                print(f"  ⚠️  instagram[0] 재생성 실패: {e}")
 
     # source_facts 할루시네이션 방지 — 부실 카드 재생성
     _INVALID_FACTS = {"없음", "해당없음", "정보없음", "해당 없음", "정보 없음"}

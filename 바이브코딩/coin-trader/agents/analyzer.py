@@ -80,7 +80,7 @@ def _bb_position(series: pd.Series, period: int = 20) -> str:
         return "중상단" if price > mid else "중하단"
 
 
-def get_top_tickers(n: int = 20) -> list:
+def get_top_tickers(n: int = 15) -> list:
     """24h 거래대금 기준 상위 n개 빗썸 티커 반환 (BTC 형식)"""
     tickers = get_krw_tickers() or []
     try:
@@ -142,7 +142,7 @@ def analyze_ticker(ticker: str) -> dict | None:
         return None
 
 
-def run(top_n: int = 20) -> list:
+def run(top_n: int = 15) -> list:
     """상위 종목 분석 결과 리스트 반환 — 병렬 처리(max_workers=5)로 속도 개선"""
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
