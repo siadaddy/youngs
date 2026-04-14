@@ -71,6 +71,58 @@ def save_state(holding: dict | None):
         json.dump(holding or {}, f, ensure_ascii=False, indent=2)
 
 
+def _cleanup_orphaned_holdings(holding: dict | None):
+    """state.json에 없는 잔여 코인 감지 → 자동 매도 (BIOT 같은 사례 방지)"""
+    from utils.bithumb_client import get_coin_balance, get_current_price, sell_market_order
+
+    current_ticker = holding["ticker"] if holding else None
+
+    # trades.json 히스토리에서 최근 BUY 종목 목록 수집
+    try:
+        repo_root = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=os.path.dirname(__file__), text=True
+        ).strip()
+        trades_path = os.path.join(repo_root, "docs", "trades.json")
+        with open(trades_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return
+
+    # 현재 holding이 아닌 BUY 기록 종목만 추출 (중복 제거)
+    candidates = {
+        e["ticker"] for e in data.get("history", [])
+        if e.get("action") == "BUY" and e.get("ticker") and e.get("ticker") != current_ticker
+    }
+
+    if not candidates:
+        return
+
+    for ticker in candidates:
+        try:
+            qty = get_coin_balance(ticker)
+            if qty <= 0:
+                continue
+            price = get_current_price(ticker)
+            if price <= 0:
+                log(f"  ⚠️  [orphan] {ticker}: 현재가 조회 실패 — 스킵")
+                continue
+            value = qty * price
+            if value < 5000:
+                log(f"  ℹ️  [orphan] {ticker}: {qty:.4f}개 ({value:.0f}원) — 최소금액 미달, 스킵")
+                continue
+            log(f"  🧹 [orphan] {ticker} {qty:.4f}개 ({value:,.0f}원) 잔여 감지 → 즉시 매도")
+            sell_market_order(ticker, qty)
+            notify(
+                "🧹 잔여 코인 자동 정리",
+                f"{ticker} {qty:.4f}개 ({value:,.0f}원)\nstate.json 미등록 잔여 코인 자동 매도 완료",
+                priority="high",
+            )
+            log(f"  ✅ [orphan] {ticker} 매도 완료")
+        except Exception as e:
+            log(f"  ⚠️  [orphan] {ticker} 처리 실패 (무시): {e}")
+
+
 # ── Daily Drawdown ────────────────────────────────────────
 DRAWDOWN_FILE = os.path.join(os.path.dirname(__file__), "drawdown.json")
 
@@ -244,6 +296,10 @@ def main():
 
     # Step 1: 보유 상태 로드
     holding = load_state()
+
+    # Step 1-1: orphaned 포지션 감지 및 정리
+    # state.json에 없지만 빗썸에 실제 잔고가 남아있는 코인 자동 매도
+    _cleanup_orphaned_holdings(holding)
     if holding:
         hold_hours = ""
         if holding.get("buy_time"):
