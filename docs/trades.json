@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "D",
+    "buy_price": 15.6,
+    "qty": 2025.3392,
+    "invest_krw": 42000.674668492,
+    "buy_time": "2026-04-15 06:15"
+  },
   "history": [
+    {
+      "time": "2026-04-15 06:15",
+      "action": "BUY",
+      "ticker": "D",
+      "price": 15.56,
+      "amount_krw": 42000.674668492,
+      "reason": "VB✅와 강한 매수 신호인 골든크로스(강한매수)가 발생하였으며, ADX 60.1로 추세가 명확하여 BUY 신호가 발생했습니다. 또한, 다른 종목에 비해 상대적으로 강한 상승를 보이고 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-15 05:55",
       "action": "SELL",
@@ -333,7 +350,7 @@
     }
   ],
   "stats": {
-    "total_trades": 29,
+    "total_trades": 30,
     "wins": 9,
     "losses": 6,
     "total_pnl_krw": -118647.0,
@@ -341,5 +358,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-15 05:55"
+  "updated_at": "2026-04-15 06:15"
 }
