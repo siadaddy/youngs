@@ -133,7 +133,34 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
 
         # 이 글로벌 시도에서 모든 키 소진 → 다음 글로벌 시도
 
-    # 모든 글로벌 재시도 소진
+    # 모든 글로벌 재시도 소진 → Gemini 폴백
+    gemini_key = os.getenv("GEMINI_API_KEY", "")
+    if gemini_key:
+        print("  ⚠️  Groq 전체 실패 → Gemini 2.5 Flash 폴백 시도...")
+        try:
+            gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
+            contents = []
+            if system:
+                gemini_payload = {
+                    "system_instruction": {"parts": [{"text": system + _LANG_RULE}]},
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
+                }
+            else:
+                gemini_payload = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
+                }
+            if json_mode:
+                gemini_payload["generationConfig"]["responseMimeType"] = "application/json"
+            gr = requests.post(gemini_url, json=gemini_payload, timeout=60)
+            gr.raise_for_status()
+            result = gr.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+            print("  ✅ Gemini 폴백 성공")
+            return _sanitize(result)
+        except Exception as ge:
+            print(f"  ❌ Gemini 폴백도 실패: {ge}")
+
     if last_r is not None:
         last_r.raise_for_status()
-    raise RuntimeError("모든 Groq API 키 및 글로벌 재시도 소진")
+    raise RuntimeError("모든 Groq API 키 및 Gemini 폴백 소진")
