@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "HEMI",
-    "buy_price": 11.5,
-    "qty": 11211.3297,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-15 12:05"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-15 18:22",
+      "action": "SELL",
+      "ticker": "HEMI",
+      "price": 11.04,
+      "amount_krw": 99700.0,
+      "reason": "실시간 손절 -4.00% (기준 -4.0%)",
+      "pnl_pct": -4.0,
+      "pnl_krw": -5157.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-15 12:05",
       "action": "BUY",
@@ -361,13 +366,13 @@
     }
   ],
   "stats": {
-    "total_trades": 31,
+    "total_trades": 32,
     "wins": 10,
-    "losses": 5,
-    "total_pnl_krw": 13892.0,
+    "losses": 6,
+    "total_pnl_krw": 8735.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-15 12:05"
+  "updated_at": "2026-04-15 18:22"
 }
