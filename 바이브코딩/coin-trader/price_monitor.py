@@ -144,6 +144,12 @@ def main():
     signal.signal(signal.SIGALRM, lambda s, f: (_ for _ in ()).throw(TimeoutError("모니터 타임아웃")))
     signal.alarm(90)  # 1.5분 타임아웃 (5분 주기보다 짧게)
 
+    # .env 매 실행마다 재로드 — 설정 변경 즉시 반영
+    load_dotenv(override=True)
+    global STOP_LOSS, TAKE_PROFIT
+    STOP_LOSS   = float(os.getenv("STOP_LOSS_PCT", "7.0"))
+    TAKE_PROFIT = float(os.getenv("TAKE_PROFIT_PCT", "15.0"))
+
     log("⚡ 가격 모니터 실행")
 
     # main.py가 실행 중이면 스킵 (lock 파일 확인)
