@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "HEMI",
+    "buy_price": 11.1,
+    "qty": 11172.0184,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-15 18:25"
+  },
   "history": [
+    {
+      "time": "2026-04-15 18:25",
+      "action": "BUY",
+      "ticker": "HEMI",
+      "price": 11.1,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수 +5로 변동성 돌파 신호가 발생하여 매수 신호가 강함. 또한 RSI 33.3으로 과매도 상태이므로 매수 기회로 판단됨.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-15 18:22",
       "action": "SELL",
@@ -366,7 +383,7 @@
     }
   ],
   "stats": {
-    "total_trades": 32,
+    "total_trades": 33,
     "wins": 10,
     "losses": 6,
     "total_pnl_krw": 8735.0,
@@ -374,5 +391,5 @@
     "stop_loss_pct": 7.0,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-04-15 18:22"
+  "updated_at": "2026-04-15 18:25"
 }
