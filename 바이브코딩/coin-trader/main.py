@@ -491,9 +491,6 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
                 data["stats"]["total_pnl_krw"] = round(
                     data["stats"].get("total_pnl_krw", 0) + (pnl_krw or 0), 0
                 )
-            elif action == "BUY" and new_holding:
-                data["stats"]["total_trades"] += 1
-
             entry = {
                 "time": now_str,
                 "action": action,
