@@ -11,6 +11,8 @@ client_secret*.json
 **/client_secret*.json
 token*.json
 **/token*.json
+video_cache.json
+**/video_cache.json
 
 # Python 캐시
 __pycache__/

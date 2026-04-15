@@ -143,12 +143,57 @@ def main():
     try:
         songs = retry("음악 큐레이터", music_curator.run)
         music_curator.save(songs)
+        # 유튜브 뮤직 플레이리스트 자동 생성
+        _create_youtube_playlist(songs, today)
     except Exception as e:
         print(f"  ⚠️  음악 큐레이션 실패: {e}")
         notify("⚠️ 음악 큐레이션 실패", f"music.json 미갱신\n오류: {e}", priority="high")
 
     # ── GitHub Pages용 content.json 저장 & push ──────────────
     _publish_to_github(today, brief, written, images, newsletter_data)
+
+
+def _create_youtube_playlist(songs: list, today: str):
+    """AI 추천곡을 유튜브 뮤직 플레이리스트로 자동 생성"""
+    import sys
+    from pathlib import Path
+
+    script = Path(__file__).parent.parent / "docs" / "youtube_playlist.py"
+    token  = Path(__file__).parent.parent / "docs" / "token.json"
+
+    if not script.exists():
+        print("  ⚠️  youtube_playlist.py 없음 — 스킵")
+        return
+    if not token.exists():
+        print("  ⚠️  token.json 없음 — 첫 인증 필요, 유튜브 플레이리스트 스킵")
+        notify("⚠️ 유튜브 뮤직 인증 필요",
+               "token.json이 없습니다.\npython3 docs/youtube_playlist.py 를 한 번 수동 실행해 인증하세요.",
+               priority="high")
+        return
+
+    print("  🎵 유튜브 뮤직 플레이리스트 생성 중...")
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script)],
+            capture_output=True, text=True, timeout=300
+        )
+        if result.returncode == 0:
+            # 플레이리스트 URL 추출
+            for line in result.stdout.splitlines():
+                if "music.youtube.com/playlist" in line:
+                    url = line.strip()
+                    print(f"  ✅ 유튜브 뮤직 플레이리스트 생성 완료")
+                    print(f"     {url}")
+                    notify("🎵 오늘의 플레이리스트 생성",
+                           f"{len(songs)}곡 추가됨\n{url}", priority="default")
+                    return
+            print(f"  ✅ 유튜브 뮤직 플레이리스트 생성 완료")
+        else:
+            print(f"  ⚠️  유튜브 플레이리스트 생성 실패:\n{result.stderr[:300]}")
+    except subprocess.TimeoutExpired:
+        print("  ⚠️  유튜브 플레이리스트 생성 타임아웃 (5분 초과)")
+    except Exception as e:
+        print(f"  ⚠️  유튜브 플레이리스트 생성 오류: {e}")
 
 
 def _publish_to_github(today, brief, written, images, newsletter_data):
