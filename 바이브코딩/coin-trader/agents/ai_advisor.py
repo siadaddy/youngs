@@ -11,9 +11,11 @@ def _sanitize(text: str) -> str:
 
 load_dotenv()
 
-GROQ_KEYS = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2"), os.getenv("GROQ_API_KEY_3"), os.getenv("GROQ_API_KEY_4")] if k]
-GROQ_URL  = "https://api.groq.com/openai/v1/chat/completions"
-MODEL     = "llama-3.3-70b-versatile"
+GROQ_KEYS    = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2"), os.getenv("GROQ_API_KEY_3"), os.getenv("GROQ_API_KEY_4")] if k]
+GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL   = "llama-3.3-70b-versatile"
+GEMINI_KEY   = os.getenv("GEMINI_API_KEY", "")
+GEMINI_URL   = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
 SYSTEM = """당신은 10년 경력의 암호화폐 퀀트 트레이더입니다.
 기술적 지표(RSI, MACD, 볼린저밴드)를 기반으로 냉정하게 매매 판단을 내립니다.
@@ -26,18 +28,16 @@ def _ask_groq(prompt: str) -> str:
         {"role": "system", "content": SYSTEM},
         {"role": "user", "content": prompt},
     ]
-    payload = {"model": MODEL, "messages": messages, "temperature": 0.3, "max_tokens": 300}
+    payload = {"model": GROQ_MODEL, "messages": messages, "temperature": 0.3, "max_tokens": 300}
 
     for key_idx, api_key in enumerate(GROQ_KEYS):
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
         for attempt in range(1, 4):
             r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=30)
             if r.status_code == 429:
-                # 다음 키가 있으면 즉시 전환 — 대기 없음
                 if key_idx < len(GROQ_KEYS) - 1:
                     print(f"  ⚠️  Groq 키{key_idx+1} 429 → 즉시 키{key_idx+2}로 전환")
                     break
-                # 마지막 키면 잠깐 대기 후 재시도
                 wait = min(int(r.headers.get("retry-after", 10)), 20)
                 print(f"  ⏳ Groq 키{key_idx+1}(마지막) 속도 제한 — {wait}초 대기 ({attempt}/3)...")
                 time.sleep(wait)
@@ -45,11 +45,35 @@ def _ask_groq(prompt: str) -> str:
             r.raise_for_status()
             return _sanitize(r.json()["choices"][0]["message"]["content"].strip())
         else:
-            # inner loop 정상 종료(break 없음) = 마지막 키도 3회 소진
             if key_idx < len(GROQ_KEYS) - 1:
                 print(f"  ⚠️  Groq 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
 
     raise RuntimeError("모든 Groq API 키 소진")
+
+
+def _ask_gemini(prompt: str) -> str:
+    """Groq 전부 실패 시 Gemini 폴백"""
+    if not GEMINI_KEY:
+        raise RuntimeError("GEMINI_API_KEY 없음")
+    payload = {
+        "system_instruction": {"parts": [{"text": SYSTEM}]},
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 300},
+    }
+    r = requests.post(f"{GEMINI_URL}?key={GEMINI_KEY}", json=payload, timeout=30)
+    r.raise_for_status()
+    return _sanitize(r.json()["candidates"][0]["content"]["parts"][0]["text"].strip())
+
+
+def _ask_llm(prompt: str) -> str:
+    """Groq 우선, 실패 시 Gemini 폴백"""
+    try:
+        return _ask_groq(prompt)
+    except Exception as e:
+        print(f"  ⚠️  Groq 전체 실패 ({e}) → Gemini 폴백 시도...")
+        result = _ask_gemini(prompt)
+        print("  ✅ Gemini 폴백 성공")
+        return result
 
 
 def run(market_data: list, holding: dict | None, cooldown_tickers: list | None = None) -> dict:
@@ -176,7 +200,7 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
 반드시 아래 JSON만 출력하세요 (다른 텍스트 없이):
 {{"action": "BUY" | "SELL" | "HOLD", "ticker": "BTC" 또는 "XRP" 등 코인심볼만 (KRW- 접두어 없이), "reason": "한국어로 판단 이유 2~3문장"}}"""
 
-    raw = _ask_groq(prompt)
+    raw = _ask_llm(prompt)
 
     # JSON 추출 — raw_decode로 첫 번째 JSON 객체만 파싱 (Extra data 오류 방지)
     raw = raw.replace("```json", "").replace("```", "").strip()
