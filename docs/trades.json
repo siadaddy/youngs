@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "PYR",
+    "buy_price": 383.0,
+    "qty": 322.1823,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-16 00:41"
+  },
   "history": [
+    {
+      "time": "2026-04-16 00:41",
+      "action": "BUY",
+      "ticker": "PYR",
+      "price": 384.0,
+      "amount_krw": 99700.0,
+      "reason": "VB✅이 아닌데도 점수 +3으로 높으며, MACD 상승과 거래량이 많이 증가한 것을 고려하여 매수 신호로 판단됩니다. 또한 ADX 값이 49.6로 추세가 있는 것으로 나타나서 매수에 적극적으로 고려합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-16 00:36",
       "action": "SELL",
@@ -407,5 +424,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-16 00:36"
+  "updated_at": "2026-04-16 00:41"
 }
