@@ -52,7 +52,7 @@ def _ask_groq(prompt: str) -> str:
     raise RuntimeError("모든 Groq API 키 소진")
 
 
-def run(market_data: list, holding: dict | None) -> dict:
+def run(market_data: list, holding: dict | None, cooldown_tickers: list | None = None) -> dict:
     """
     market_data: analyzer.run() 결과 리스트
     holding: {"ticker": "KRW-BTC", "buy_price": 120000000, "qty": 0.0001} 또는 None
@@ -141,12 +141,17 @@ def run(market_data: list, holding: dict | None) -> dict:
             pass
     hold_info = f"(매수 후 {hold_minutes}분 경과)" if holding else ""
 
+    # 재진입 쿨다운 종목 텍스트
+    cooldown_text = ""
+    if cooldown_tickers:
+        cooldown_text = f"\n【⛔ 재진입 금지 종목 (손절 후 쿨다운 중)】\n{', '.join(cooldown_tickers)}\n위 종목은 BUY 절대 금지 — 쿨다운 해제까지 진입 금지.\n"
+
     prompt = f"""【현재 포트폴리오】
 {holding_text} {hold_info}
 
 【KRW 시장 상위 종목 분석 (30분봉 + 변동성돌파 기준)】
 {market_text}
-
+{cooldown_text}
 【판단 규칙】
 30분봉 기준 스윙 매매 봇입니다. 빗썸 수수료 0.25%(왕복 0.5%)를 고려해 수익 가능성 높은 신호에만 진입하세요.
 
@@ -154,8 +159,8 @@ def run(market_data: list, holding: dict | None) -> dict:
 
 1. 보유 중이면 HOLD 또는 SELL만 선택 가능
 2. 미보유 중이면 BUY(종목 지정) 또는 HOLD만 선택 가능
-3. 【VB 매수 — 최우선】미보유 시 VB✅ + 점수 +2 이상 → BUY (변동성 돌파는 가장 검증된 신호)
-4. 【강한 매수】미보유 시 점수 +4 이상 + ADX 20 이상(추세O) → BUY 적극 고려
+3. 【VB 매수 — 최우선】미보유 시 VB✅ + 점수 +3 이상 → BUY (변동성 돌파는 가장 검증된 신호)
+4. 【강한 매수】미보유 시 점수 +5 이상 + ADX 25 이상(추세O) → BUY 적극 고려
 5. ADX 15 미만 + VB❌ 종목은 BUY 금지 — 방향성 없음
    거래량 변화 -30% 이하인 종목, 현재가 500원 미만 소형 코인은 BUY 금지 — 유동성 부족 위험
 6. 【매도】보유 종목 기술 점수 -2 이하 이거나, RSI 70 이상 + MACD 하락/데드크로스 → SELL
@@ -163,7 +168,7 @@ def run(market_data: list, holding: dict | None) -> dict:
    - 매수 후 최소 60분 경과
    - 보유 종목 수익률 -2% 미만
    - 보유 종목 기술 점수 -1 이하
-   - 다른 종목 점수 +4 이상 + ADX 20 이상 또는 VB✅ + 점수 +3 이상
+   - 다른 종목 점수 +5 이상 + ADX 25 이상 또는 VB✅ + 점수 +4 이상
 8. 보유 종목 수익률 -2% 이상이면 무조건 HOLD — 섣부른 교체 금지
 9. 보유 종목 수익률 +3% 이상이면 수익 보호 우선, 교체 절대 금지
 10. 뚜렷한 신호 없으면 HOLD

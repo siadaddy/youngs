@@ -123,6 +123,54 @@ def _cleanup_orphaned_holdings(holding: dict | None):
             log(f"  ⚠️  [orphan] {ticker} 처리 실패 (무시): {e}")
 
 
+# ── 손절 후 재진입 쿨다운 ─────────────────────────────────
+COOLDOWN_FILE = os.path.join(os.path.dirname(__file__), "cooldown.json")
+COOLDOWN_HOURS = 2  # 손절 후 같은 종목 재진입 금지 시간
+
+def get_cooldown_tickers() -> list:
+    """현재 쿨다운 중인 종목 목록 반환"""
+    if not os.path.exists(COOLDOWN_FILE):
+        return []
+    try:
+        with open(COOLDOWN_FILE, "r") as f:
+            data = json.load(f)
+        now = datetime.now()
+        active = []
+        expired = []
+        for ticker, until_str in data.items():
+            until = datetime.strptime(until_str, "%Y-%m-%d %H:%M")
+            if now < until:
+                active.append(ticker)
+                log(f"  ⛔ 쿨다운 중: {ticker} (해제: {until_str})")
+            else:
+                expired.append(ticker)
+        # 만료된 쿨다운 정리
+        if expired:
+            for t in expired:
+                del data[t]
+            with open(COOLDOWN_FILE, "w") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        return active
+    except Exception:
+        return []
+
+def add_cooldown(ticker: str):
+    """손절 후 종목을 쿨다운 목록에 등록"""
+    try:
+        data = {}
+        if os.path.exists(COOLDOWN_FILE):
+            with open(COOLDOWN_FILE, "r") as f:
+                data = json.load(f)
+        from datetime import timedelta
+        until = (datetime.now() + timedelta(hours=COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
+        data[ticker] = until
+        with open(COOLDOWN_FILE, "w") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        log(f"  ⛔ 재진입 쿨다운 등록: {ticker} → {until}까지 BUY 금지")
+    except Exception as e:
+        log(f"  ⚠️  쿨다운 등록 실패 (무시): {e}")
+
+
 # ── Daily Drawdown ────────────────────────────────────────
 DRAWDOWN_FILE = os.path.join(os.path.dirname(__file__), "drawdown.json")
 
@@ -331,6 +379,7 @@ def main():
                 _publish_trades("SELL", action, new_holding, holding)
                 pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
                 record_loss(pnl)
+                add_cooldown(holding["ticker"])  # 손절 종목 재진입 쿨다운 등록
                 holding = None  # 매도 완료 → BUY 탐색 계속
                 log("  손절 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:
@@ -360,9 +409,12 @@ def main():
         notify("❌ 자동매매 오류", f"시장 분석 실패: {e}", priority="high")
         return
 
+    # Step 3-1: 쿨다운 종목 목록 조회
+    cooldown_tickers = get_cooldown_tickers()
+
     # Step 4: AI 판단
     try:
-        advice = retry("AI 판단", ai_advisor.run, market_data, holding)
+        advice = retry("AI 판단", ai_advisor.run, market_data, holding, cooldown_tickers)
     except Exception as e:
         record_failure(f"AI판단 실패: {e}")
         notify("❌ 자동매매 오류", f"AI 판단 실패: {e}", priority="high")
@@ -397,7 +449,7 @@ def main():
         old_holding = holding
         holding = None
         try:
-            buy_advice = retry("AI 매수 재판단", ai_advisor.run, market_data, None)
+            buy_advice = retry("AI 매수 재판단", ai_advisor.run, market_data, None, cooldown_tickers)
         except Exception as e:
             log(f"  ⚠️  매수 재판단 실패: {e}")
             return
