@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "IN",
+    "buy_price": 124.0,
+    "qty": 1043.1252,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-15 23:15"
+  },
   "history": [
+    {
+      "time": "2026-04-15 23:15",
+      "action": "BUY",
+      "ticker": "IN",
+      "price": 125.0,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수 +5를 만족하여 변동성 돌파 신호가 발생하였고, ADX 25 이상으로 추세가 있는 종목입니다. 따라서 BUY 신호가 발생하여 진입합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-15 23:14",
       "action": "SELL",
@@ -385,5 +402,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-15 23:14"
+  "updated_at": "2026-04-15 23:15"
 }
