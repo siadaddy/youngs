@@ -14,7 +14,7 @@ load_dotenv()
 GROQ_KEYS    = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2"), os.getenv("GROQ_API_KEY_3"), os.getenv("GROQ_API_KEY_4")] if k]
 GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL   = "llama-3.3-70b-versatile"
-GEMINI_KEY   = os.getenv("GEMINI_API_KEY", "")
+GEMINI_KEYS  = [k for k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", "")] if k]
 GEMINI_MODELS = ["gemini-2.0-flash", "gemini-2.5-flash"]
 
 SYSTEM = """당신은 10년 경력의 암호화폐 퀀트 트레이더입니다.
@@ -52,28 +52,31 @@ def _ask_groq(prompt: str) -> str:
 
 
 def _ask_gemini(prompt: str) -> str:
-    """Groq 전부 실패 시 Gemini 폴백 — 2개 모델 × 3회 재시도"""
-    if not GEMINI_KEY:
+    """Groq 전부 실패 시 Gemini 폴백 — 키1→키2, 각 키에서 2.0-flash→2.5-flash"""
+    if not GEMINI_KEYS:
         raise RuntimeError("GEMINI_API_KEY 없음")
     payload_base = {
         "system_instruction": {"parts": [{"text": SYSTEM}]},
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.3, "maxOutputTokens": 300},
     }
-    for model in GEMINI_MODELS:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
-        for attempt in range(1, 4):
-            try:
-                r = requests.post(url, json=payload_base, timeout=30)
-                r.raise_for_status()
-                return _sanitize(r.json()["candidates"][0]["content"]["parts"][0]["text"].strip())
-            except Exception as e:
-                status = getattr(getattr(e, 'response', None), 'status_code', 0)
-                wait = 65 if status == 429 else 10
-                print(f"  ⚠️  Gemini {model} 시도 {attempt} 실패: {e}")
-                if attempt < 3:
-                    time.sleep(wait)
-    raise RuntimeError("Gemini 모든 모델 실패")
+    for key_idx, gemini_key in enumerate(GEMINI_KEYS):
+        for model in GEMINI_MODELS:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+            for attempt in range(1, 4):
+                try:
+                    r = requests.post(url, json=payload_base, timeout=30)
+                    r.raise_for_status()
+                    return _sanitize(r.json()["candidates"][0]["content"]["parts"][0]["text"].strip())
+                except Exception as e:
+                    status = getattr(getattr(e, 'response', None), 'status_code', 0)
+                    wait = 65 if status == 429 else 10
+                    print(f"  ⚠️  Gemini 키{key_idx+1}/{model} 시도 {attempt} 실패: {e}")
+                    if attempt < 3:
+                        time.sleep(wait)
+        if key_idx < len(GEMINI_KEYS) - 1:
+            print(f"  ⏳ Gemini 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
+    raise RuntimeError("Gemini 모든 키/모델 실패")
 
 
 def _ask_llm(prompt: str) -> str:

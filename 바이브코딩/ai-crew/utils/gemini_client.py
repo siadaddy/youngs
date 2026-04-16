@@ -46,50 +46,57 @@ def _sanitize(text: str) -> str:
 
 
 def _call_gemini(prompt: str, system: str, temperature: float, max_tokens: int, json_mode: bool) -> str:
-    """Gemini API 직접 호출 — 2.0-flash 우선, 실패 시 2.5-flash"""
+    """Gemini API 직접 호출 — 키1→키2 순서, 각 키에서 2.0-flash→2.5-flash 시도"""
     import time
-    gemini_key = os.getenv("GEMINI_API_KEY", "")
-    if not gemini_key:
+    gemini_keys = [k for k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", "")] if k]
+    if not gemini_keys:
         raise RuntimeError("GEMINI_API_KEY 없음")
 
     gemini_models = ["gemini-2.0-flash", "gemini-2.5-flash"]
-    for model_idx, gmodel in enumerate(gemini_models):
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{gmodel}:generateContent?key={gemini_key}"
-        if system:
-            payload = {
-                "system_instruction": {"parts": [{"text": system + _LANG_RULE}]},
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
-            }
-        else:
-            payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
-            }
-        if json_mode:
-            payload["generationConfig"]["responseMimeType"] = "application/json"
 
-        for attempt in range(1, 4):
-            try:
-                r = requests.post(url, json=payload, timeout=60)
-                r.raise_for_status()
-                result = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
-                if model_idx > 0 or attempt > 1:
-                    print(f"  ✅ Gemini {gmodel} 성공" + (f" (시도 {attempt})" if attempt > 1 else ""))
-                return _sanitize(result)
-            except Exception as e:
-                status = getattr(getattr(e, 'response', None), 'status_code', 0)
-                print(f"  ⚠️  Gemini {gmodel} 시도 {attempt}/3 실패: {e}")
-                if attempt < 3:
-                    wait = 65 if status == 429 else 15
-                    print(f"      {wait}초 대기 후 재시도...")
-                    time.sleep(wait)
+    for key_idx, gemini_key in enumerate(gemini_keys):
+        key_label = f"키{key_idx + 1}"
+        for model_idx, gmodel in enumerate(gemini_models):
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{gmodel}:generateContent?key={gemini_key}"
+            if system:
+                payload = {
+                    "system_instruction": {"parts": [{"text": system + _LANG_RULE}]},
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
+                }
+            else:
+                payload = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
+                }
+            if json_mode:
+                payload["generationConfig"]["responseMimeType"] = "application/json"
 
-        # 다음 모델로 전환 전 대기
-        if model_idx < len(gemini_models) - 1:
-            print(f"  ⏳ Gemini {gmodel} 실패 → 다음 모델로 전환...")
+            for attempt in range(1, 4):
+                try:
+                    r = requests.post(url, json=payload, timeout=60)
+                    r.raise_for_status()
+                    result = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    if key_idx > 0 or model_idx > 0 or attempt > 1:
+                        print(f"  ✅ Gemini {key_label}/{gmodel} 성공" + (f" (시도 {attempt})" if attempt > 1 else ""))
+                    return _sanitize(result)
+                except Exception as e:
+                    status = getattr(getattr(e, 'response', None), 'status_code', 0)
+                    print(f"  ⚠️  Gemini {key_label}/{gmodel} 시도 {attempt}/3 실패: {e}")
+                    if attempt < 3:
+                        wait = 65 if status == 429 else 15
+                        print(f"      {wait}초 대기 후 재시도...")
+                        time.sleep(wait)
 
-    raise RuntimeError("Gemini 모든 모델 실패")
+            # 이 모델 실패 → 다음 모델로
+            if model_idx < len(gemini_models) - 1:
+                print(f"  ⏳ Gemini {key_label}/{gmodel} 실패 → 다음 모델...")
+
+        # 이 키 실패 → 다음 키로
+        if key_idx < len(gemini_keys) - 1:
+            print(f"  ⏳ Gemini {key_label} 소진 → 키{key_idx + 2}로 전환...")
+
+    raise RuntimeError("Gemini 모든 키/모델 실패")
 
 
 def _call_groq(prompt: str, system: str, temperature: float, max_tokens: int, json_mode: bool) -> str:
