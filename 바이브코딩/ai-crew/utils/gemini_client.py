@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# 두 키를 라운드로빈으로 분배 — 요청마다 번갈아 사용해 TPM 2배 확보
 GROQ_KEYS = [
     k for k in [
         os.getenv("GROQ_API_KEY"),
@@ -13,8 +12,8 @@ GROQ_KEYS = [
         os.getenv("GROQ_API_KEY_4"),
     ] if k
 ]
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.3-70b-versatile"
+GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "llama-3.3-70b-versatile"   # 컨텍스트 크기용 — Groq 폴백에서만 사용
 
 # 라운드로빈 이터레이터 (모듈 로드 시 한 번만 생성)
 _key_cycle = itertools.cycle(range(len(GROQ_KEYS))) if GROQ_KEYS else iter([])
@@ -31,34 +30,70 @@ _LANG_RULE = (
 
 
 def _sanitize(text: str) -> str:
-    # CJK 통합 한자
     text = re.sub(r'[\u4e00-\u9fff]', '', text)
     text = re.sub(r'[\u3400-\u4dbf]', '', text)
     text = re.sub(r'[\U00020000-\U0002A6DF]', '', text)
-    # 일본어 히라가나·가타카나
     text = re.sub(r'[\u3040-\u309f]', '', text)
     text = re.sub(r'[\u30a0-\u30ff]', '', text)
-    # 아랍어
     text = re.sub(r'[\u0600-\u06ff]', '', text)
-    # 태국어
     text = re.sub(r'[\u0e00-\u0e7f]', '', text)
-    # 키릴 문자 (러시아어 등)
     text = re.sub(r'[\u0400-\u04ff]', '', text)
-    # 데바나가리 (힌디어)
     text = re.sub(r'[\u0900-\u097f]', '', text)
-    # 베트남어 전용 Latin 확장 문자 (ắ, ặ, ồ, ư, ớ, quốc 등)
     text = re.sub(r'[\u1e00-\u1eff]', '', text)
-    # 연속 공백 → 단일 공백
     text = re.sub(r'[ \t]{2,}', ' ', text)
-    # 3줄 이상 빈 줄 → 2줄
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
 
-def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096, json_mode: bool = False) -> str:
-    """Groq API 호출 — 라운드로빈 키 분배 + 429 시 다른 키로 즉시 전환
-    전체 키 소진 시 90초 대기 후 최대 2회 글로벌 재시도 (TPM 윈도우 리셋 대기)
-    """
+def _call_gemini(prompt: str, system: str, temperature: float, max_tokens: int, json_mode: bool) -> str:
+    """Gemini API 직접 호출 — 2.0-flash 우선, 실패 시 2.5-flash"""
+    import time
+    gemini_key = os.getenv("GEMINI_API_KEY", "")
+    if not gemini_key:
+        raise RuntimeError("GEMINI_API_KEY 없음")
+
+    gemini_models = ["gemini-2.0-flash", "gemini-2.5-flash"]
+    for model_idx, gmodel in enumerate(gemini_models):
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{gmodel}:generateContent?key={gemini_key}"
+        if system:
+            payload = {
+                "system_instruction": {"parts": [{"text": system + _LANG_RULE}]},
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
+            }
+        else:
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
+            }
+        if json_mode:
+            payload["generationConfig"]["responseMimeType"] = "application/json"
+
+        for attempt in range(1, 4):
+            try:
+                r = requests.post(url, json=payload, timeout=60)
+                r.raise_for_status()
+                result = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                if model_idx > 0 or attempt > 1:
+                    print(f"  ✅ Gemini {gmodel} 성공" + (f" (시도 {attempt})" if attempt > 1 else ""))
+                return _sanitize(result)
+            except Exception as e:
+                status = getattr(getattr(e, 'response', None), 'status_code', 0)
+                print(f"  ⚠️  Gemini {gmodel} 시도 {attempt}/3 실패: {e}")
+                if attempt < 3:
+                    wait = 65 if status == 429 else 15
+                    print(f"      {wait}초 대기 후 재시도...")
+                    time.sleep(wait)
+
+        # 다음 모델로 전환 전 대기
+        if model_idx < len(gemini_models) - 1:
+            print(f"  ⏳ Gemini {gmodel} 실패 → 다음 모델로 전환...")
+
+    raise RuntimeError("Gemini 모든 모델 실패")
+
+
+def _call_groq(prompt: str, system: str, temperature: float, max_tokens: int, json_mode: bool) -> str:
+    """Groq API 호출 — 라운드로빈 키 분배, 폴백용"""
     import time
 
     messages = []
@@ -67,7 +102,7 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
     messages.append({"role": "user", "content": prompt})
 
     payload = {
-        "model": MODEL,
+        "model": GROQ_MODEL,
         "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
@@ -75,97 +110,58 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
     if json_mode:
         payload["response_format"] = {"type": "json_object"}
 
-    MAX_GLOBAL_RETRIES = 2   # 전체 키 소진 후 재시도 횟수
-    GLOBAL_WAIT        = 90  # 전체 키 소진 후 대기 (초) — Groq TPM 윈도우(1분) + 여유
+    if not GROQ_KEYS:
+        raise RuntimeError("GROQ API 키 없음")
+
+    start_idx = next(_key_cycle)
+    key_order = [GROQ_KEYS[(start_idx + i) % len(GROQ_KEYS)] for i in range(len(GROQ_KEYS))]
     last_r = None
 
-    for global_attempt in range(MAX_GLOBAL_RETRIES + 1):
-        if global_attempt > 0:
-            print(f"  ⏳ 전체 키 소진 — {GLOBAL_WAIT}초 대기 후 재시도 ({global_attempt}/{MAX_GLOBAL_RETRIES})...")
-            time.sleep(GLOBAL_WAIT)
+    for key_idx, api_key in enumerate(key_order):
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        key_label = f"키{(start_idx + key_idx) % len(GROQ_KEYS) + 1}"
 
-        # 라운드로빈 시작 키 결정 → 429 시 나머지 키 순서대로 재시도
-        start_idx = next(_key_cycle) if GROQ_KEYS else 0
-        key_order = [GROQ_KEYS[(start_idx + i) % len(GROQ_KEYS)] for i in range(len(GROQ_KEYS))]
+        for attempt in range(1, 3):   # 키당 최대 2회 시도
+            try:
+                r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
+                last_r = r
+            except Exception as conn_err:
+                print(f"  ⚠️  Groq {key_label} 연결 오류: {conn_err}")
+                break
 
-        for key_idx, api_key in enumerate(key_order):
-            headers = {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-            }
-            key_label = f"키{(start_idx + key_idx) % len(GROQ_KEYS) + 1}"
+            if r.status_code == 413:
+                # 프롬프트가 너무 큼 — 다른 키 시도해도 동일하므로 즉시 포기
+                print(f"  ⚡ Groq {key_label} 413 프롬프트 초과 — Groq 폴백 불가")
+                raise RuntimeError("Groq 413: 프롬프트가 너무 큼 — Gemini만 사용 가능")
+            if r.status_code == 429:
+                print(f"  ⚡ Groq {key_label} 429 → 다음 키 전환...")
+                break
 
-            for attempt in range(1, 4):
-                try:
-                    r = requests.post(GROQ_URL, headers=headers, json=payload, timeout=60)
-                    last_r = r
-                except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as conn_err:
-                    # 네트워크 끊김 (Connection aborted / RemoteDisconnected / ReadTimeout)
-                    if attempt < 3:
-                        wait = 15 * attempt  # 15초, 30초 대기
-                        print(f"  ⚠️  Groq {key_label} 연결 오류 — {wait}초 후 재시도 ({attempt}/3): {conn_err}")
-                        time.sleep(wait)
-                        continue
-                    # 3회 모두 연결 실패 → 다음 키 시도
-                    print(f"  ⚠️  Groq {key_label} 연결 3회 실패 → 다음 키 전환...")
-                    break
+            r.raise_for_status()
+            result = r.json()["choices"][0]["message"]["content"].strip()
+            print(f"  ✅ Groq {key_label} 폴백 성공")
+            return _sanitize(result)
 
-                if r.status_code == 429:
-                    # 다른 키가 남아있으면 바로 전환, 없으면 잠깐 대기
-                    if key_idx < len(key_order) - 1:
-                        print(f"  ⚡ Groq {key_label} TPM 초과 → 다른 키로 즉시 전환...")
-                        break
-                    retry_after = int(r.headers.get("retry-after", 15))
-                    wait = min(retry_after + 3, 30)
-                    print(f"  ⏳ Groq {key_label} 속도 제한 — {wait}초 대기 ({attempt}/3)...")
-                    time.sleep(wait)
-                    continue
-
-                r.raise_for_status()
-                result = r.json()["choices"][0]["message"]["content"].strip()
-                if key_idx > 0 or global_attempt > 0:
-                    print(f"  ✅ Groq {key_label}로 성공" + (f" (글로벌 재시도 {global_attempt}회 후)" if global_attempt > 0 else ""))
-                return _sanitize(result)
-
-            # 이 키로 실패 → 다음 키 시도
-            if key_idx < len(key_order) - 1:
-                print(f"  ⚠️  Groq {key_label} 소진 → 다음 키 전환...")
-
-        # 이 글로벌 시도에서 모든 키 소진 → 다음 글로벌 시도
-
-    # 모든 글로벌 재시도 소진 → Gemini 폴백
-    gemini_key = os.getenv("GEMINI_API_KEY", "")
-    if gemini_key:
-        import time as _time
-        gemini_models = ["gemini-2.0-flash", "gemini-2.5-flash"]
-        for gmodel in gemini_models:
-            gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{gmodel}:generateContent?key={gemini_key}"
-            if system:
-                gemini_payload = {
-                    "system_instruction": {"parts": [{"text": system + _LANG_RULE}]},
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
-                }
-            else:
-                gemini_payload = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 8192)},
-                }
-            if json_mode:
-                gemini_payload["generationConfig"]["responseMimeType"] = "application/json"
-            for attempt in range(1, 4):
-                try:
-                    print(f"  ⚠️  Groq 전체 실패 → Gemini {gmodel} 폴백 시도 ({attempt}/3)...")
-                    gr = requests.post(gemini_url, json=gemini_payload, timeout=60)
-                    gr.raise_for_status()
-                    result = gr.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
-                    print(f"  ✅ Gemini {gmodel} 폴백 성공")
-                    return _sanitize(result)
-                except Exception as ge:
-                    print(f"  ❌ Gemini {gmodel} 시도 {attempt} 실패: {ge}")
-                    if attempt < 3:
-                        _time.sleep(10 * attempt)
+        if key_idx < len(key_order) - 1:
+            print(f"  ⚠️  Groq {key_label} 소진 → 다음 키...")
 
     if last_r is not None:
         last_r.raise_for_status()
-    raise RuntimeError("모든 Groq API 키 및 Gemini 폴백 소진")
+    raise RuntimeError("Groq 모든 키 소진")
+
+
+def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 4096, json_mode: bool = False) -> str:
+    """Gemini 우선 호출 → 실패 시 Groq 폴백
+    뉴스레터처럼 프롬프트가 큰 작업에 Gemini가 적합 (TPM 100만, 대형 컨텍스트)
+    """
+    # 1순위: Gemini
+    try:
+        return _call_gemini(prompt, system, temperature, max_tokens, json_mode)
+    except Exception as e:
+        print(f"  ⚠️  Gemini 전체 실패 ({e}) → Groq 폴백 시도...")
+
+    # 2순위: Groq 폴백
+    try:
+        return _call_groq(prompt, system, temperature, max_tokens, json_mode)
+    except Exception as e:
+        raise RuntimeError(f"Gemini + Groq 모두 실패: {e}")

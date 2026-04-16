@@ -78,7 +78,7 @@ def publish_sell(new_holding: dict | None, old_holding: dict, reason: str):
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
         if new_holding is None:
-            from utils.upbit_client import get_current_price
+            from utils.bithumb_client import get_current_price
             ticker   = old_holding["ticker"]
             price    = get_current_price(ticker)
             buy_p    = old_holding.get("buy_price", 0)
@@ -170,7 +170,7 @@ def main():
 
     # 현재가 조회
     try:
-        from utils.upbit_client import get_current_price
+        from utils.bithumb_client import get_current_price
         price = get_current_price(ticker)
     except Exception as e:
         log(f"⚠️  가격 조회 실패: {e}")

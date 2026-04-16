@@ -68,9 +68,11 @@ def _ask_gemini(prompt: str) -> str:
                 r.raise_for_status()
                 return _sanitize(r.json()["candidates"][0]["content"]["parts"][0]["text"].strip())
             except Exception as e:
+                status = getattr(getattr(e, 'response', None), 'status_code', 0)
+                wait = 65 if status == 429 else 10
                 print(f"  ⚠️  Gemini {model} 시도 {attempt} 실패: {e}")
                 if attempt < 3:
-                    time.sleep(10)
+                    time.sleep(wait)
     raise RuntimeError("Gemini 모든 모델 실패")
 
 
