@@ -15,7 +15,7 @@ GROQ_KEYS    = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2
 GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL   = "llama-3.3-70b-versatile"
 GEMINI_KEY   = os.getenv("GEMINI_API_KEY", "")
-GEMINI_URL   = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+GEMINI_MODELS = ["gemini-2.0-flash", "gemini-2.5-flash"]
 
 SYSTEM = """당신은 10년 경력의 암호화폐 퀀트 트레이더입니다.
 기술적 지표(RSI, MACD, 볼린저밴드)를 기반으로 냉정하게 매매 판단을 내립니다.
@@ -52,17 +52,26 @@ def _ask_groq(prompt: str) -> str:
 
 
 def _ask_gemini(prompt: str) -> str:
-    """Groq 전부 실패 시 Gemini 폴백"""
+    """Groq 전부 실패 시 Gemini 폴백 — 2개 모델 × 3회 재시도"""
     if not GEMINI_KEY:
         raise RuntimeError("GEMINI_API_KEY 없음")
-    payload = {
+    payload_base = {
         "system_instruction": {"parts": [{"text": SYSTEM}]},
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.3, "maxOutputTokens": 300},
     }
-    r = requests.post(f"{GEMINI_URL}?key={GEMINI_KEY}", json=payload, timeout=30)
-    r.raise_for_status()
-    return _sanitize(r.json()["candidates"][0]["content"]["parts"][0]["text"].strip())
+    for model in GEMINI_MODELS:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
+        for attempt in range(1, 4):
+            try:
+                r = requests.post(url, json=payload_base, timeout=30)
+                r.raise_for_status()
+                return _sanitize(r.json()["candidates"][0]["content"]["parts"][0]["text"].strip())
+            except Exception as e:
+                print(f"  ⚠️  Gemini {model} 시도 {attempt} 실패: {e}")
+                if attempt < 3:
+                    time.sleep(10)
+    raise RuntimeError("Gemini 모든 모델 실패")
 
 
 def _ask_llm(prompt: str) -> str:
