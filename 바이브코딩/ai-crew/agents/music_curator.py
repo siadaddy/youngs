@@ -4,7 +4,56 @@ from utils.gemini_client import ask_gemini
 
 SYSTEM = """음악 큐레이터. JSON만 출력합니다."""
 
-DOCS_PATH = os.path.join(os.path.dirname(__file__), '../../../docs')
+DOCS_PATH = os.path.join(os.path.dirname(__file__), '../../docs')
+
+
+def _extract_songs(raw: str) -> list:
+    """손상된 JSON에서도 곡 목록을 최대한 추출하는 강건한 파서"""
+    raw = raw.replace("```json", "").replace("```", "").strip()
+
+    # 1단계: 그대로 파싱 시도
+    try:
+        data = json.loads(raw)
+        return data.get("songs", [])
+    except json.JSONDecodeError:
+        pass
+
+    # 2단계: songs 배열 시작점 찾아서 개별 객체 추출
+    songs = []
+    # songs 배열 시작 위치 탐색
+    arr_start = raw.find('"songs"')
+    if arr_start == -1:
+        arr_start = 0
+    bracket = raw.find('[', arr_start)
+    if bracket == -1:
+        bracket = raw.find('[')
+
+    if bracket != -1:
+        # 완전한 JSON 객체들만 추출 (불완전한 마지막 항목 제외)
+        chunk = raw[bracket:]
+        # 각 { ... } 블록을 개별 파싱
+        depth = 0
+        obj_start = None
+        for i, ch in enumerate(chunk):
+            if ch == '{':
+                if depth == 0:
+                    obj_start = i
+                depth += 1
+            elif ch == '}':
+                depth -= 1
+                if depth == 0 and obj_start is not None:
+                    obj_str = chunk[obj_start:i+1]
+                    try:
+                        obj = json.loads(obj_str)
+                        if obj.get("t"):  # 제목 있는 항목만
+                            songs.append(obj)
+                    except json.JSONDecodeError:
+                        pass
+                    obj_start = None
+
+    if songs:
+        print(f"  ⚠️  JSON 복구: {len(songs)}곡 추출 성공")
+    return songs
 
 
 def run() -> list:
@@ -35,15 +84,11 @@ def run() -> list:
 """
 
     raw = ask_gemini(prompt, system=SYSTEM, temperature=0.85,
-                     json_mode=True, max_tokens=5000)
-    raw = raw.replace("```json", "").replace("```", "").strip()
+                     json_mode=True, max_tokens=8000)
+    songs = _extract_songs(raw)
 
-    try:
-        data  = json.loads(raw)
-        songs = data.get("songs", [])
-    except json.JSONDecodeError:
-        m = re.search(r'\{.*\}', raw, re.DOTALL)
-        songs = json.loads(m.group()).get("songs", []) if m else []
+    if not songs:
+        raise ValueError(f"JSON에서 곡을 추출하지 못함. 원본 앞부분: {raw[:200]}")
 
     # 중복 제거 (t+a 기준)
     seen, unique = set(), []

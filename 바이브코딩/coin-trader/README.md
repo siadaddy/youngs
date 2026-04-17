@@ -70,7 +70,7 @@ GROQ_API_KEY_3=...
 GROQ_API_KEY_4=...
 MAX_INVEST_KRW=100000       # 최대 투자금액 (원)
 STOP_LOSS_PCT=4.0           # 자동 손절 기준 (%)
-TAKE_PROFIT_PCT=6.0         # 자동 익절 기준 (%)
+TAKE_PROFIT_PCT=8.0         # 자동 익절 기준 (%)
 DAILY_LOSS_LIMIT_KRW=-15000 # 일일 손실 한도 (원, 초과 시 당일 봇 정지)
 DRY_RUN=false               # true=시뮬레이션, false=실제 주문
 NTFY_TOPIC=siadad-aicrew
@@ -113,7 +113,7 @@ NTFY_TOPIC=siadad-aicrew
 | 기능 | 내용 |
 |------|------|
 | 손절 | 매수가 대비 -4% 자동 매도 |
-| 익절 | 매수가 대비 +6% 자동 매도 |
+| 익절 | 매수가 대비 +8% 자동 매도 |
 | Daily Drawdown | 일일 누적 손실 -15,000원 초과 시 당일 봇 정지 (자정 초기화) |
 | 매도 최소금액 체크 | qty × 현재가 < 5,000원이면 매도 보류 |
 | IP 변경 감지 | 공인 IP 변경 시 ntfy 긴급 알림 (빗썸 API 재등록 안내) |
@@ -251,4 +251,12 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ---
 
-*최종 업데이트: 2026-04-14 | Powered by Groq + pybithumb + GitHub Pages*
+### 2026-04-17
+- **익절 기준 8%로 상향**: TAKE_PROFIT_PCT=6 → 8 (.env 수정)
+- **price_guard.py .env 핫리로드 수정**: 데몬 시작 시 .env 1회만 읽던 버그 수정 → 루프마다 `load_dotenv(override=True)` + `global STOP_LOSS, TAKE_PROFIT` 재할당으로 설정 변경 즉시 반영
+- **ai_advisor.py Gemini 이중 키**: GEMINI_API_KEY_2 추가, 429 시 65초 대기 후 키 전환
+- **Gemini 폴백 강화**: 키1→키2 순서, 각 키에서 2.0-flash→2.5-flash 시도
+
+---
+
+*최종 업데이트: 2026-04-17 | Powered by Groq + Gemini + pybithumb + GitHub Pages*

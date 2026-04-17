@@ -100,16 +100,25 @@ RSS 피드로 수집한 뉴스를 바탕으로, 역할이 다른 AI 에이전트
 
 > "오늘 하루 어울리는 음악, 제가 골라드릴게요."
 
-**모델**: Groq — Llama 3.3 70B · temperature 0.85
+**모델**: Gemini 우선 → 실패 시 Groq 폴백 · temperature 0.85 · JSON 모드
 **담당**:
-- K-pop 20곡 / 한국 인디·팝·R&B·힙합 20곡 / 팝(미국·영국) 20곡
-- R&B·힙합·일렉트로팝 15곡 / 기타(재즈·보사노바·인디록) 5곡
-- 발라드 전체 20% 이하, 업템포·중간 템포 우선
-- 인기도 점수 분포 고정: 9~10점 10곡 / 7~8점 35곡 / 5~6점 20곡 / 1~4점 10곡
-- 한 아티스트 최대 3곡 | 중복 자동 제거 | 75곡+ 큐레이션
+- 2000년대 힙합 15곡 / 최신 힙합 10곡 / 러닝·업템포 25곡 / K-pop 25곡 / 여성 보컬 발라드 25곡
+- 한 아티스트 최대 3곡 | 트롯·클래식·동요 제외 | 100곡 큐레이션 목표
+- 손상된 JSON 자동 복구 (`_extract_songs()`) — Gemini가 잘린 JSON 반환해도 유효한 곡만 추출
 - 실패 시 전날 music.json 유지 (파이프라인 영향 없음)
 
-**출력**: `docs/music.json` → 뮤직 유니버스 자동 업데이트
+**출력**: `docs/music.json` + `docs/music_YYYY-MM-DD.json` (날짜별 보관, 30일 자동 삭제)
+
+### 🎶 YouTube Music 자동 플레이리스트
+
+**파일**: `docs/youtube_playlist.py`
+**동작**:
+- `playlist_state.json`에 플레이리스트 ID와 추가된 곡 목록을 영구 보관
+- "AI 추천 플레이리스트" 이름으로 고정 플레이리스트 하나만 유지
+- 날마다 새 곡만 추가 — 이미 추가된 곡은 자동 건너뜀
+- `video_cache.json`으로 videoId 캐시 → YouTube 검색 API 할당량 절약
+- 할당량 초과 시 중간에 멈춰도 진행분 보존 (추가할 때마다 state 저장)
+- **할당량**: 하루 100회 검색 (각 100 unit) — 리셋 시각 오후 4시 KST (PDT 기준 자정)
 
 ---
 
@@ -307,4 +316,14 @@ tail -f /Users/youngchulyu/바이브코딩/ai-crew/crew.log
 
 ---
 
-*최종 업데이트: 2026-04-14 | Powered by Groq + Pollinations.ai + YouTube API + Three.js + GitHub Pages*
+### 2026-04-17
+- **음악 큐레이터 장르 전면 개편**: K-pop·힙합·인디 → 2000년대힙합·최신힙합·러닝업템포·K-pop·여성발라드 5장르 (100곡)
+- **음악 큐레이터 JSON 복구 로직 추가**: `_extract_songs()` — Gemini 잘린 JSON도 유효한 곡 개별 파싱 후 추출
+- **음악 큐레이터 경로 버그 수정**: DOCS_PATH `../../../docs` → `../../docs` (저장 위치 바이브코딩/docs로 수정)
+- **YouTube Music 누적 플레이리스트**: 매일 새 플레이리스트 생성 → 고정 "AI 추천 플레이리스트" 하나에 신곡만 누적 추가
+- **AI 모델 전략 변경**: Gemini 우선 → Groq 폴백 (gemini_client.py 전면 재작성)
+- **Gemini 이중 키**: GEMINI_API_KEY + GEMINI_API_KEY_2 순차 시도
+
+---
+
+*최종 업데이트: 2026-04-17 | Powered by Gemini + Groq + Pollinations.ai + YouTube API + Three.js + GitHub Pages*

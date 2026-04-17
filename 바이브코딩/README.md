@@ -81,11 +81,12 @@ RSS로 수집된 뉴스를 바탕으로 Groq AI가 에디터픽 기사와 카드
 
 | 구분 | 기술 |
 |------|------|
-| AI | Groq API (Llama 3.3 70B) — 키 4개 운용 |
+| AI | Gemini 2.0/2.5-flash (키 2개) + Groq Llama 3.3 70B (키 4개) — 용도별 우선순위 |
 | 이미지 생성 | Pollinations.ai (Flux) |
 | 뉴스 수집 | feedparser (RSS) |
 | 코인 API | pybithumb (빗썸) |
-| 음악 데이터 | YouTube Data API · iTunes API |
+| 음악 데이터 | YouTube Data API v3 (일 100회 할당량, 리셋 16:00 KST) · iTunes API |
+| 유튜브 플레이리스트 | "AI 추천 플레이리스트" 고정, 신곡만 누적 추가 (playlist_state.json) |
 | 자동화 | macOS launchd |
 | 알림 | ntfy |
 | 호스팅 | GitHub Pages |
@@ -108,4 +109,4 @@ MacBook (항상 켜짐, pmset -c sleep 0)
 
 ---
 
-*최종 업데이트: 2026-04-14*
+*최종 업데이트: 2026-04-17*
