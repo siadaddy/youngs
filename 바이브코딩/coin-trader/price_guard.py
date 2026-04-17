@@ -138,11 +138,17 @@ def publish_trade(action: str, holding: dict, new_holding: dict | None, reason: 
 
 
 def main():
+    global STOP_LOSS, TAKE_PROFIT
     dry_tag = " [DRY RUN]" if DRY_RUN else ""
     log(f"🛡️ 가격 감시 시작{dry_tag} | 손절 -{STOP_LOSS}% | 익절 +{TAKE_PROFIT}% | {INTERVAL}초 간격")
 
     while True:
         try:
+            # .env 매 루프마다 재로드 — 설정 변경 즉시 반영
+            load_dotenv(override=True)
+            STOP_LOSS   = float(os.getenv("STOP_LOSS_PCT", "4.0"))
+            TAKE_PROFIT = float(os.getenv("TAKE_PROFIT_PCT", "8.0"))
+
             # main.py 실행 중이면 스킵 (매매 충돌 방지)
             if os.path.exists(LOCK_FILE):
                 time.sleep(INTERVAL)
