@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "IP",
+    "buy_price": 901.0,
+    "qty": 142.0572,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-17 18:00"
+  },
   "history": [
+    {
+      "time": "2026-04-17 18:00",
+      "action": "BUY",
+      "ticker": "IP",
+      "price": 902.0,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수 +5를 만족하여 변동성 돌파 신호가 확인되며, 추세도 강한 편으로 보입니다. 따라서 IP를 매수하는 것이 적절합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-17 17:57",
       "action": "SELL",
@@ -429,5 +446,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-17 17:57"
+  "updated_at": "2026-04-17 18:00"
 }
