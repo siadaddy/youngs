@@ -107,6 +107,7 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
 - blog title: "뉴스레터 요약", "오늘의 뉴스", "뉴스 브리프", "4월 X일" 같은 날짜·요약성 제목 금지
 - blog는 반드시 단일 뉴스 하나에만 집중 — main_points 3개 모두 같은 사건에 대한 것
 - blog main_points는 "배경 → 내용 → 의미/영향" 구조로 작성
+- blog 주제는 instagram 5개 카드에서 다루지 않은 별도 주제로 선정할 것. instagram 카드 중 하나와 같은 사건·기업·인물을 blog 주제로 고르면 실패. 반드시 6번째로 새로운 주제여야 함.
 - blog 주제 선정 우선순위: 국제 정치/경제 이슈 > 국내 산업/기술 > 일반 사회. 소규모 기업 해외 진출, 지역 소식, 지자체 행사 등 임팩트 작은 뉴스는 blog 주제로 금지
 - blog source_facts: 해당 주제 하나에 대한 구체적 사실만. 다른 뉴스 내용 혼합 금지
 - source_facts는 반드시 50자 이상의 구체적 사실로 작성. "없음", "해당없음", "정보없음" 입력 금지
@@ -123,6 +124,55 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
         if not match:
             raise ValueError(f"JSON 블록을 찾을 수 없음: {raw[:200]}")
         brief = json.loads(match.group())
+
+    # blog ↔ instagram 주제 중복 검증 — 70% 이상 겹치면 blog 재선정
+    blog_title = brief.get("blog", {}).get("title", "")
+    instagram  = brief.get("instagram", [])
+    overlap_pairs = [
+        (i, _title_overlap(blog_title, item.get("headline", "")))
+        for i, item in enumerate(instagram)
+    ]
+    max_overlap_idx, max_overlap_val = max(overlap_pairs, key=lambda x: x[1], default=(-1, 0.0))
+
+    if max_overlap_val >= 0.7:
+        card_headlines = "\n".join(
+            f"  - 카드{i+1}: {item.get('headline','')}" for i, item in enumerate(instagram)
+        )
+        print(f"  ⚠️  blog 주제 '{blog_title[:35]}' ↔ 카드{max_overlap_idx+1} 겹침({max_overlap_val:.0%}) → blog 재선정")
+        blog_regen_prompt = f"""아래 뉴스에서 blog 주제를 하나 골라 JSON으로 작성하세요.
+단, 아래 instagram 카드 5개 주제와 완전히 달라야 합니다 — 같은 사건·기업·인물 절대 금지.
+
+=== 이미 사용된 instagram 카드 주제 (blog 주제로 금지) ===
+{card_headlines}
+
+=== 원문 뉴스 ===
+{article_list_text if article_list_text else newsletter_text}
+
+출력 형식 (JSON 객체만):
+{{"title": "단일 주제 블로그 제목 (위 카드 주제와 다른 사건·기업·인물)", "main_points": ["배경","내용","의미/영향"], "tone": "친근하고 읽기 쉬운", "target": "뉴스에 관심 있는 30~40대", "source_facts": "해당 주제 구체적 사실 4~6개 (수치·이름·날짜 포함, 위 카드 주제 내용 혼합 금지)"}}
+
+규칙:
+- 국제 정치/경제 이슈 > 국내 산업/기술 우선
+- "뉴스레터 요약", "오늘의 뉴스", 날짜성 제목 금지
+- JSON만 출력"""
+        try:
+            import time as _time; _time.sleep(3)
+            raw_blog = ask_gemini(blog_regen_prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=800)
+            raw_blog = raw_blog.replace("```json","").replace("```","").strip()
+            new_blog = json.loads(raw_blog)
+            new_title = new_blog.get("title", "")
+            # 재생성 후에도 여전히 겹치면 경고만 출력
+            still_overlap = any(
+                _title_overlap(new_title, item.get("headline","")) >= 0.7
+                for item in instagram
+            )
+            if still_overlap:
+                print(f"  ⚠️  blog 재선정 후에도 겹침 — 그대로 사용")
+            else:
+                brief["blog"] = new_blog
+                print(f"  ✅ blog 재선정 완료: '{new_title[:40]}'")
+        except Exception as e:
+            print(f"  ⚠️  blog 재선정 실패: {e} — 원본 유지")
 
     # instagram[0] 자동차 주제 검증 — 자동차 키워드 없으면 swap 또는 강제 재생성
     _CAR_KW = {

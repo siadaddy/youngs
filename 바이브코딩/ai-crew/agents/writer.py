@@ -72,6 +72,24 @@ _TOPIC_STOP = {
     "을","를","이","가","의","은","는","에","도","와","과","로","으로","그","및","등","관련",
 }
 
+# ── 고유명사 교정 딕셔너리 ─────────────────────────────────────
+_PROPER_NOUNS = {
+    "앤스로픽":  "앤트로픽",
+    "클로드":    "Claude",
+    "챗지피티":  "ChatGPT",
+    "챗 지피티": "ChatGPT",
+    "오픈에이아이": "OpenAI",
+    "오픈 에이아이": "OpenAI",
+    "메타버스":  "메타버스",   # 정확 표기 유지용
+    "구글 딥마인드": "Google DeepMind",
+    "딥마인드":  "DeepMind",
+    "제미나이":  "Gemini",
+    "젬마":      "Gemma",
+    "마이크로소프트": "Microsoft",
+    "아이폰":    "iPhone",
+    "아이패드":  "iPad",
+}
+
 
 # ═══════════════════════════════════════════════════════════════
 # 순수 체크 함수 (side-effect 없음, API 호출 없음)
@@ -153,6 +171,34 @@ def _fix_hashtag_position(text: str) -> str:
     return f"{body}\n\n{tags}"
 
 
+def _fix_proper_nouns(text: str) -> str:
+    """고유명사 오표기 자동 교정"""
+    for wrong, correct in _PROPER_NOUNS.items():
+        text = text.replace(wrong, correct)
+    return text
+
+
+def _get_first_sentence(text: str) -> str:
+    """카드 본문에서 첫 문장 추출 (이모지 포함 첫 줄)"""
+    for line in text.strip().split('\n'):
+        line = line.strip()
+        if not line:
+            continue
+        # 첫 문장 부호까지만
+        m = re.search(r'^.+?[.!?]', line)
+        return m.group() if m else line[:80]
+    return ""
+
+
+def _intro_overlap(a: str, b: str) -> float:
+    """두 첫 문장의 토큰 겹침 비율"""
+    ta = _sent_tokens(re.sub(r'[^\w\s]', '', a))
+    tb = _sent_tokens(re.sub(r'[^\w\s]', '', b))
+    if not ta or not tb:
+        return 0.0
+    return len(ta & tb) / min(len(ta), len(tb))
+
+
 def _trim_section(content: str) -> str:
     """섹션 내용을 최대 2문장, 300자 이내로 정리"""
     content = content.strip()
@@ -202,6 +248,7 @@ def quality_check(
     text: str,
     headline: str = "",
     check_repetition: bool = False,
+    prior_intros: list | None = None,
 ) -> dict:
     """
     모든 품질 검사를 수행하고 결과를 반환.
@@ -238,7 +285,21 @@ def quality_check(
         issues.append(f"해시태그 {ht_count}개 (8개 미만)")
         hints.append("⚠️ 해시태그 8개 이상 필수. 본문 맨 끝에 한 줄로.")
 
-    # 5. 반복 문장 (블로그만)
+    # 5. 도입부 유사도 (이전 카드들과 첫 문장 비교)
+    if prior_intros:
+        my_intro = _get_first_sentence(text)
+        for prev in prior_intros:
+            sim = _intro_overlap(my_intro, prev)
+            if sim >= 0.7:
+                issues.append(f"도입부 유사 (겹침 {sim:.0%}): '{prev[:30]}'")
+                hints.append(
+                    f"⚠️ 도입부 표현이 앞 카드와 {sim:.0%} 겹침. 완전히 다른 방식으로 시작해야 함.\n"
+                    f"   금지된 도입 패턴: {', '.join(repr(p[:30]) for p in prior_intros)}\n"
+                    "   새로운 각도의 첫 문장: 반전 사실·짧은 팩트·솔직한 의문 등 다양하게."
+                )
+                break  # 하나만 찾으면 충분
+
+    # 6. 반복 문장 (블로그만)
     if check_repetition:
         reps = _detect_repetition(text)
         if reps:
@@ -284,6 +345,7 @@ def _generate_with_quality(
     temperature: float,
     is_blog: bool = False,
     check_repetition: bool = False,
+    prior_intros: list | None = None,
     max_retries: int = 2,
 ) -> tuple:
     """
@@ -294,6 +356,7 @@ def _generate_with_quality(
     """
     def _autofix(t: str) -> str:
         t = _fix_hashtag_position(t)
+        t = _fix_proper_nouns(t)
         if is_blog:
             t = _enforce_editor_structure(t)
         return t
@@ -303,7 +366,7 @@ def _generate_with_quality(
     if is_blog:
         text = _ensure_complete(text, prompt)
     text = _autofix(text)
-    result = quality_check(text, headline, check_repetition=check_repetition)
+    result = quality_check(text, headline, check_repetition=check_repetition, prior_intros=prior_intros)
 
     if result["passed"]:
         return text, 0
@@ -322,7 +385,7 @@ def _generate_with_quality(
         if is_blog:
             text = _ensure_complete(text, new_prompt)
         text = _autofix(text)
-        result = quality_check(text, headline, check_repetition=check_repetition)
+        result = quality_check(text, headline, check_repetition=check_repetition, prior_intros=prior_intros)
         if result["passed"]:
             print(f"  ✅ [{label}] {attempt}회 재생성 후 품질 통과")
             return text, attempt
@@ -341,6 +404,8 @@ def run(brief: dict) -> dict:
 
     # ── 카드뉴스 ───────────────────────────────────────────────
     captions = []
+    prior_intros: list[str] = []   # 이전 카드들의 첫 문장 누적
+
     for i, item in enumerate(brief["instagram"]):
         label = f"카드{i + 1}"
 
@@ -353,16 +418,25 @@ def run(brief: dict) -> dict:
             if source_facts.strip() else ""
         )
 
+        # 이전 카드 도입부 힌트 (2번째 카드부터)
+        prior_intro_note = ""
+        if prior_intros:
+            prior_intro_note = (
+                "\n⚠️ 아래 도입부는 이미 앞 카드에서 사용됨 — 이 카드의 첫 문장은 완전히 다른 방식으로 시작할 것:\n"
+                + "\n".join(f'  - "{s}"' for s in prior_intros)
+                + "\n"
+            )
+
         prompt = f"""인스타그램 카드뉴스 캡션 써줘. 주제: "{item['headline']}"
 {facts_note}
 각도: {item['angle']}
 톤: {item['tone']}
-
+{prior_intro_note}
 [글 구조 — 레이블 없이 내용만 바로 써]
 ① 이모지 1개 + 스크롤 멈추게 하는 첫 문장 (한 줄). 이모지 없으면 실패.
   - 솔직한 반응·반전 사실·짧은 팩트로 시작. 질문으로만 시작하지 마.
-  - "와 이거 실화야" 절대 금지. 매번 다른 표현으로.
-  - 예시: "솔직히 이 수치 보고 좀 놀랐어." / "이거 생각보다 진짜 큰 변화야." / "오늘 이 뉴스 보고 좀 멈칫했어."
+  - "와 이거 실화야" 절대 금지. 카드마다 도입부 표현이 달라야 함 — 앞 카드와 같은 패턴 반복 금지.
+  - 예시: "솔직히 이 수치 보고 좀 놀랐어." / "이거 생각보다 진짜 큰 변화야." / "오늘 이 뉴스 보고 좀 멈칫했어." / "이 숫자 보고 두 번 읽었어." / "솔직히 이게 이렇게 빠를 줄 몰랐어."
 ② 배경 1~2문장 + 핵심 사실 2~3줄. 구체적 수치·이름·날짜 포함. 추상적 묘사 금지.
 ③ 짧고 여운 있는 마지막 한 문장. 반드시 마침표로 끝내기.
 
@@ -387,8 +461,14 @@ def run(brief: dict) -> dict:
         caption, retries = _generate_with_quality(
             prompt, item["headline"], label,
             max_tokens=1200, temperature=0.7,
+            prior_intros=prior_intros if prior_intros else None,
         )
         quality_log.append((label, retries))
+
+        # 이 카드의 첫 문장을 누적 (다음 카드 비교용)
+        first = _get_first_sentence(caption)
+        if first:
+            prior_intros.append(first)
 
         # 카드 간 주제 중복 감지 — 로그만 (planner 단에서 수정 필요)
         for prev in captions:
