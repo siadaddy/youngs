@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "PYR",
-    "buy_price": 383.0,
-    "qty": 322.1823,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-16 00:41"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-17 17:57",
+      "action": "SELL",
+      "ticker": "PYR",
+      "price": 406.0,
+      "amount_krw": 99700.0,
+      "reason": "실시간 익절 6.01% (기준 +6.0%)",
+      "pnl_pct": 6.01,
+      "pnl_krw": 7410.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-16 00:41",
       "action": "BUY",
@@ -416,13 +421,13 @@
     }
   ],
   "stats": {
-    "total_trades": 18,
-    "wins": 7,
+    "total_trades": 19,
+    "wins": 8,
     "losses": 11,
-    "total_pnl_krw": -1842.0,
+    "total_pnl_krw": 5568.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-17 08:30"
+  "updated_at": "2026-04-17 17:57"
 }
