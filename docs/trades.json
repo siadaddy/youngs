@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "SKL",
+    "buy_price": 11.07,
+    "qty": 11810.0527,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-18 14:00"
+  },
   "history": [
+    {
+      "time": "2026-04-18 14:00",
+      "action": "BUY",
+      "ticker": "SKL",
+      "price": 11.09,
+      "amount_krw": 99700.0,
+      "reason": "VB✅과 점수 +4로 변동성 돌파 신호가 확인되며, 추세가 유지되고 있어 매수 기회로 판단됩니다. 또한, 다른 종목에 비해 상대적으로 저렴한 가격으로 매수할 수 있는 기회입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-18 13:33",
       "action": "SELL",
@@ -473,5 +490,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-18 13:33"
+  "updated_at": "2026-04-18 14:00"
 }
