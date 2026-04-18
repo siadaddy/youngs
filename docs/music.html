@@ -54,7 +54,7 @@
     @keyframes hFade { 0%,60%{opacity:1} 100%{opacity:0} }
 
     #count {
-      position:absolute; bottom:52px; right:36px;
+      position:absolute; bottom:52px; right:60px;
       font-size:10px; letter-spacing:2px; color:rgba(255,255,255,.4);
     }
 
@@ -118,7 +118,7 @@
 
     /* ── 장르 범례 ── */
     #legend {
-      position:fixed; right:28px; top:50%; transform:translateY(-50%);
+      position:fixed; right:52px; top:50%; transform:translateY(-50%);
       display:flex; flex-direction:column; gap:7px;
       pointer-events:none; z-index:10; opacity:0;
       transition:opacity .5s;
@@ -132,6 +132,71 @@
     .legend-dot {
       width:8px; height:8px; border-radius:50%; flex-shrink:0;
     }
+
+    /* ── 플레이리스트 패널 ── */
+    #playlist-panel {
+      position:fixed; right:0; top:0; bottom:0; width:220px; z-index:40;
+      background:rgba(4,4,20,0.92); border-left:1px solid rgba(255,255,255,0.07);
+      backdrop-filter:blur(24px);
+      display:flex; flex-direction:column;
+      transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1);
+      pointer-events:all;
+    }
+    #playlist-panel.open { transform:translateX(0); }
+    #pl-header {
+      padding:20px 16px 12px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0;
+    }
+    #pl-title { font-size:10px; letter-spacing:2.5px; color:rgba(255,255,255,.55); text-transform:uppercase; }
+    #pl-toggle {
+      position:fixed; right:0; top:50%; transform:translateY(-50%);
+      width:24px; height:56px; background:rgba(4,4,20,0.85);
+      border:1px solid rgba(255,255,255,0.07); border-right:none;
+      border-radius:8px 0 0 8px; cursor:pointer; z-index:41;
+      display:flex; align-items:center; justify-content:center;
+      color:rgba(255,255,255,.45); font-size:10px;
+      transition:color .2s, background .2s; pointer-events:all;
+    }
+    #pl-toggle:hover { background:rgba(20,20,50,.95); color:rgba(255,255,255,.9); }
+    #pl-list {
+      flex:1; overflow-y:auto; padding:8px 0;
+    }
+    #pl-list::-webkit-scrollbar { width:3px; }
+    #pl-list::-webkit-scrollbar-track { background:transparent; }
+    #pl-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:3px; }
+    .pl-item {
+      display:flex; align-items:center; gap:10px;
+      padding:8px 14px; cursor:pointer;
+      transition:background .15s;
+    }
+    .pl-item:hover { background:rgba(255,255,255,.05); }
+    .pl-item.playing { background:rgba(255,255,255,.08); }
+    .pl-dot {
+      width:7px; height:7px; border-radius:50%; flex-shrink:0;
+    }
+    .pl-info { flex:1; min-width:0; }
+    .pl-song { font-size:11px; color:rgba(255,255,255,.8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pl-artist { font-size:9.5px; color:rgba(255,255,255,.35); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+    .pl-del {
+      width:18px; height:18px; border-radius:50%; border:none; background:none;
+      color:rgba(255,255,255,.2); font-size:13px; cursor:pointer; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      transition:color .15s, background .15s;
+    }
+    .pl-del:hover { color:rgba(255,80,80,.8); background:rgba(255,80,80,.1); }
+    #pl-footer {
+      padding:10px 14px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0;
+    }
+    #pl-clear {
+      width:100%; padding:7px; border-radius:8px;
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+      color:rgba(255,255,255,.35); font-size:10px; letter-spacing:1.5px;
+      cursor:pointer; transition:all .2s; text-transform:uppercase;
+    }
+    #pl-clear:hover { background:rgba(255,60,60,.08); border-color:rgba(255,60,60,.2); color:rgba(255,80,80,.7); }
+    #pl-empty { font-size:10px; color:rgba(255,255,255,.2); text-align:center; padding:30px 14px; letter-spacing:1px; }
+    @media (pointer: coarse) { #playlist-panel { display:none; } #pl-toggle { display:none; } }
 
     /* ── 날짜 히스토리 탭 (상단) ── */
     #date-nav {
@@ -281,6 +346,21 @@
   <button id="player-close" title="닫기">✕</button>
 </div>
 
+<!-- ── 플레이리스트 패널 ── -->
+<button id="pl-toggle" title="내 플레이리스트">♪</button>
+<div id="playlist-panel">
+  <div id="pl-header">
+    <span id="pl-title">My Playlist</span>
+    <button id="pl-close" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:16px;cursor:pointer;line-height:1;" title="닫기">✕</button>
+  </div>
+  <div id="pl-list">
+    <div id="pl-empty">별을 클릭해 추가하세요</div>
+  </div>
+  <div id="pl-footer">
+    <button id="pl-clear">전체 비우기</button>
+  </div>
+</div>
+
 <div id="loading">
   <span class="ld-label">Universe Loading</span>
   <div class="ld-dots"><span></span><span></span><span></span></div>
@@ -346,14 +426,21 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 const YT_KEY = 'AIzaSyBGVbnH0iL_1unWWfktA6nrZMT29uSkOK0';
 
 const GENRE = {
-  'K-pop':      { hue: 320, color: '#ff6eb4' },
-  '인디팝':     { hue: 140, color: '#6bff9e' },
-  'R&B':        { hue: 205, color: '#6bb5ff' },
-  '힙합':       { hue:  40, color: '#ffd06b' },
-  '팝':         { hue: 270, color: '#c86bff' },
-  '일렉트로팝': { hue: 185, color: '#6bffe8' },
-  '인디록':     { hue:  25, color: '#ff9f6b' },
-  '기타':       { hue:   0, color: '#aaaaaa' },
+  'K-pop':      { hue: 340, color: '#ff6b9d' },   // 코랄 핑크
+  '인디팝':     { hue: 160, color: '#00f5a0' },   // 민트
+  'R&B':        { hue: 275, color: '#9b5de5' },   // 바이올렛
+  '힙합':       { hue:  48, color: '#ffd60a' },   // 골드
+  '팝':         { hue: 195, color: '#00d4ff' },   // 시안
+  '일렉트로팝': { hue: 200, color: '#4cc9f0' },   // 하늘
+  '인디록':     { hue:  32, color: '#ff9f1c' },   // 주황
+  '기타':       { hue:   0, color: '#e0e0e0' },   // 연한 흰색
+};
+
+// 장르별 BPM 기반 beat 속도 (30fps 기준)
+const GENRE_BEAT = {
+  'K-pop': 0.060, '힙합': 0.055, '팝': 0.048,
+  'R&B': 0.032, '인디팝': 0.035, '일렉트로팝': 0.055,
+  '인디록': 0.050, '기타': 0.042,
 };
 
 let ytPlayer   = null;
@@ -533,6 +620,7 @@ scene.background = null;
 
 // 은하 전체를 담는 그룹 (다축 회전 구현용)
 const galaxyGroup = new THREE.Group();
+galaxyGroup.rotation.z = Math.PI / 9.5;   // ~19° 기울기 (은하 디스크 틸트)
 scene.add(galaxyGroup);
 
 const camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 3000);
@@ -788,13 +876,18 @@ function buildGalaxy(songs) {
     const genre  = song.g || null;
     const hue    = genre ? (GENRE[genre] || GENRE['기타']).hue : Math.round(200 + (i/n)*300) % 360;
 
-    // 완전 랜덤 구형 분포 (클러스터링 없음)
-    const r = 40 + Math.pow(Math.random(), 0.55) * 140;
-    const theta = Math.random() * Math.PI * 2;
-    const phi   = Math.acos(2 * Math.random() - 1);
-    const x = r * Math.sin(phi) * Math.cos(theta);
-    const y = r * Math.sin(phi) * Math.sin(theta);
-    const z = r * Math.cos(phi);
+    // 은하 디스크 분포 — Box-Muller 가우시안으로 중앙 밀집
+    function gauss() {
+      let u, v;
+      do { u = Math.random(); v = Math.random(); } while (u === 0);
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const armAngle = (Math.floor(Math.random() * 3)) * (Math.PI * 2 / 3) + Math.random() * 0.8;
+    const diskR = Math.abs(gauss()) * 70 + 15;
+    const theta = armAngle + diskR * 0.012;
+    const x = Math.cos(theta) * diskR + gauss() * 8;
+    const z = Math.sin(theta) * diskR + gauss() * 8;
+    const y = gauss() * (8 + diskR * 0.04);
 
     // 인기도 기반 노드 크기 (2~20px, 원근감 편차 확대)
     const score = song.s || 7;
@@ -873,6 +966,7 @@ window.addEventListener('mousemove', e => {
 // ── 데스크탑 클릭 ──
 window.addEventListener('click', () => {
   if (!hovered) return;
+  addToPanel(hovered.userData);
   const idx = sprites.indexOf(hovered);
   playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
     .map(s => ({ t: s.userData.t, a: s.userData.a }));
@@ -909,6 +1003,7 @@ window.addEventListener('touchend', e => {
 
   if (!closest || minDist > 70) return;   // 70px 이내 별만 반응
 
+  addToPanel(closest.userData);
   const idx = sprites.indexOf(closest);
   playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
     .map(sp => ({ t: sp.userData.t, a: sp.userData.a }));
@@ -945,6 +1040,98 @@ searchInput.addEventListener('keydown', e => { if(e.key==='Escape'){searchInput.
 searchClear.addEventListener('click', () => { searchInput.value=''; applySearch(); });
 
 // ═══════════════════════════════════════════════════
+// 플레이리스트 패널
+// ═══════════════════════════════════════════════════
+const PL_KEY = 'music_universe_playlist';
+let panelOpen = false;
+let panelList = [];  // [{t, a, g, hue}]
+
+function loadPanelList() {
+  try { panelList = JSON.parse(localStorage.getItem(PL_KEY)) || []; } catch { panelList = []; }
+}
+function savePanelList() {
+  try { localStorage.setItem(PL_KEY, JSON.stringify(panelList)); } catch {}
+}
+
+function renderPanelPlaylist() {
+  const listEl = document.getElementById('pl-list');
+  const emptyEl = document.getElementById('pl-empty');
+  listEl.querySelectorAll('.pl-item').forEach(el => el.remove());
+  if (panelList.length === 0) {
+    if (emptyEl) emptyEl.style.display = '';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  panelList.forEach((item, idx) => {
+    const gInfo = GENRE[item.g] || GENRE['기타'];
+    const div = document.createElement('div');
+    div.className = 'pl-item' + (playingSprite && playingSprite.userData.t === item.t && playingSprite.userData.a === item.a ? ' playing' : '');
+    div.innerHTML = `<div class="pl-dot" style="background:${gInfo.color};box-shadow:0 0 5px ${gInfo.color}88;"></div>
+      <div class="pl-info"><div class="pl-song">${item.t}</div><div class="pl-artist">${item.a}</div></div>
+      <button class="pl-del" data-idx="${idx}" title="제거">✕</button>`;
+    div.addEventListener('click', e => {
+      if (e.target.classList.contains('pl-del')) return;
+      const spr = sprites.find(s => s.userData.t === item.t && s.userData.a === item.a);
+      if (spr) {
+        const sidx = sprites.indexOf(spr);
+        playlist = [...sprites.slice(sidx), ...sprites.slice(0, sidx)].map(s => ({ t: s.userData.t, a: s.userData.a }));
+        playIdx = 0; playSong(playlist[0]);
+      } else {
+        playlist = [{ t: item.t, a: item.a }]; playIdx = 0; playSong(playlist[0]);
+      }
+    });
+    listEl.appendChild(div);
+  });
+  listEl.querySelectorAll('.pl-del').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const i = parseInt(btn.dataset.idx);
+      panelList.splice(i, 1);
+      savePanelList();
+      renderPanelPlaylist();
+    });
+  });
+}
+
+function addToPanel(userData) {
+  const already = panelList.some(p => p.t === userData.t && p.a === userData.a);
+  if (!already) {
+    panelList.push({ t: userData.t, a: userData.a, g: userData.g, hue: userData.hue });
+    savePanelList();
+    renderPanelPlaylist();
+    // 패널 닫혀 있으면 토스트로 알림
+    if (!panelOpen) {
+      const tog = document.getElementById('pl-toggle');
+      tog.style.color = '#fff';
+      setTimeout(() => { tog.style.color = ''; }, 1200);
+    }
+  }
+}
+
+function setPanelOpen(open) {
+  panelOpen = open;
+  const panel = document.getElementById('playlist-panel');
+  const tog = document.getElementById('pl-toggle');
+  if (open) {
+    panel.classList.add('open');
+    tog.style.right = '220px';
+    tog.textContent = '✕';
+    renderPanelPlaylist();
+  } else {
+    panel.classList.remove('open');
+    tog.style.right = '0';
+    tog.textContent = '♪';
+  }
+}
+
+loadPanelList();
+document.getElementById('pl-toggle').addEventListener('click', () => setPanelOpen(!panelOpen));
+document.getElementById('pl-close').addEventListener('click', () => setPanelOpen(false));
+document.getElementById('pl-clear').addEventListener('click', () => {
+  panelList = []; savePanelList(); renderPanelPlaylist();
+});
+
+// ═══════════════════════════════════════════════════
 // 애니메이션 루프
 // ═══════════════════════════════════════════════════
 let tick = 0;
@@ -969,24 +1156,32 @@ function animate(now = 0) {
   // ── 뮤직 에너지 lerp ──
   musicEnergy += ((isPlaying ? 1 : 0) - musicEnergy) * 0.035;
 
-  // 비트 시뮬레이션 ~120 BPM (60fps 기준 0.0333 * 2π rad/frame)
-  beatPhase += 0.0333 * Math.PI * 2;
+  // ── 은하 그룹 자체 회전 (아이들: 느리고 불규칙, 음악: 빨라짐) ──
+  const baseRot  = 0.00018;
+  const musicRot = musicEnergy * 0.00055;
+  const sineVar  = Math.sin(tick * 0.0031) * 0.00008 + Math.sin(tick * 0.0071) * 0.00004;
+  galaxyGroup.rotation.y += baseRot + musicRot + sineVar;
+
+  // 비트 시뮬레이션 — 장르 BPM 기반 속도
+  const curGenreBeat = (playingSprite && GENRE_BEAT[playingSprite.userData.g])
+    ? GENRE_BEAT[playingSprite.userData.g] : 0.042;
+  beatPhase += curGenreBeat * Math.PI * 2;
   // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
   const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
 
-  // ── 별 개별 공전 — 랜덤 방향 + 기울어진 궤도 평면 ──
+  // ── 별 개별 드리프트 — 항상 켜짐, 음악 시 폭 확대 ──
   sprites.forEach(s => {
     if (s === hovered) return;
-    s.userData.angleXZ += s.userData.speed * s.userData.dir * musicEnergy;
+    const driftScale = 1.2 + musicEnergy * 2.0;
+    s.userData.angleXZ += s.userData.speed * s.userData.dir * (0.25 + musicEnergy * 0.75);
     const a = s.userData.angleXZ;
     const r = s.userData.radiusXZ;
-    const drift = Math.sin(tick * 0.005 + s.userData.phase) * 3 * musicEnergy;
+    const drift = Math.sin(tick * 0.005 + s.userData.phase) * driftScale;
     const cosA = Math.cos(a), sinA = Math.sin(a);
     s.position.x = cosA * (r + drift);
-    // tilt: 궤도 위치(sinA)에 따라 Y축으로 기울어진 만큼 높낮이 변화
     s.position.y = s.userData.oy
       + sinA * (r + drift) * s.userData.tilt
-      + Math.sin(tick * 0.007 + s.userData.phase * 1.3) * 2 * musicEnergy;
+      + Math.sin(tick * 0.007 + s.userData.phase * 1.3) * (0.5 + musicEnergy * 1.5);
     s.position.z = sinA * (r + drift);
   });
 
