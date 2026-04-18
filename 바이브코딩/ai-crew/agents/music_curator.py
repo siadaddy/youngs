@@ -56,56 +56,74 @@ def _extract_songs(raw: str) -> list:
     return songs
 
 
-def run() -> list:
-    print("🎵 음악 큐레이터 실행 중...")
+# 장르별 프롬프트 정의 (10곡씩 분리 호출 → JSON 잘림 방지)
+GENRE_PROMPTS = [
+    ("2000s힙합",  "2000~2009년 발매 해외(미국·영국) 힙합 명곡 10곡. Eminem·Jay-Z·Kanye West·50 Cent·Nelly·Ludacris·Lil Wayne 등. 한국 힙합 절대 제외."),
+    ("최신힙합",   "2020년 이후 발매 해외(미국·영국) 힙합 10곡. Drake·Kendrick Lamar·Travis Scott·Post Malone·J. Cole·21 Savage 등. 한국 힙합 절대 제외."),
+    ("러닝업템포", "BPM 140~180의 에너지 넘치는 러닝·운동용 곡 10곡. 장르 무관, 신나고 빠른 템포만."),
+    ("K-pop",      "최근 3년 이내 인기 K-pop 남자 아이돌·솔로 10곡. 걸그룹 제외. BTS·EXO·Stray Kids·SEVENTEEN·NCT·ATEEZ 등."),
+    ("여성발라드", "감성적인 여성 보컬 발라드 10곡. 한국·팝 무관. 이별·그리움 감성. 아이유·백아연·헤이즈·Adele·Billie Eilish·SZA 등."),
+    ("걸그룹",     "최근 3년 이내 인기 K-pop 걸그룹 10곡. BLACKPINK·aespa·NewJeans·IVE·TWICE·LE SSERAFIM·ITZY·MAMAMOO 등."),
+    ("최신곡",     "2024~2025년 발매 최신 해외 팝·R&B 10곡. 한국 곡 제외. Sabrina Carpenter·Charli XCX·Ariana Grande·Taylor Swift·The Weeknd·SZA 등."),
+]
 
-    prompt = """아래 장르별 조건에 맞는 음악 정확히 100곡을 추천해줘.
 
-장르별 곡수 (반드시 정확히 지킬 것):
-- 【2000년대 힙합】 정확히 15곡: 2000~2009년 발매 해외(미국·영국) 힙합 명곡만 (예: Eminem, Jay-Z, Kanye West, 50 Cent, Nelly, Ludacris 등 — 한국 힙합 절대 제외)
-- 【최신 힙합】 정확히 10곡: 2020년 이후 발매 해외(미국·영국) 힙합만 (예: Drake, Kendrick Lamar, Travis Scott, Post Malone, J. Cole 등 — 한국 힙합 절대 제외)
-- 【러닝·업템포】 정확히 25곡: BPM 150~170 내외의 에너지 넘치는 곡, 러닝·운동 시 듣기 좋은 곡 (K-pop·팝·EDM·힙합 장르 무관, 단 BPM 높고 신나야 함)
-- 【K-pop】 정확히 25곡: 최근 3년 이내 인기 K-pop (아이돌·솔로 무관, 다양한 그룹)
-- 【여성 보컬 발라드】 정확히 25곡: 애절하고 감성적인 여성 보컬 발라드 (한국·팝 무관, 이별·그리움·슬픔 감성, 예: 아이유, 백아연, 헤이즈, Adele, Billie Eilish 등)
+def _fetch_genre(genre_name: str, genre_desc: str) -> list:
+    """장르 1개 10곡 수집 (실패 시 빈 리스트)"""
+    prompt = f"""{genre_desc}
 
-공통 조건:
-- 한 아티스트당 최대 3곡
+조건:
+- 정확히 10곡, 한 아티스트당 최대 2곡
 - 아티스트명은 영문 또는 한글 원어 표기
-- 트롯, 클래식, 동요 절대 제외
-- 각 카테고리 곡수를 반드시 정확히 맞출 것 — 틀리면 실패
+- 트롯·클래식·동요 절대 제외
 
-각 곡에 다음을 포함:
-- g: 카테고리 그대로 표기 (2000s힙합 / 최신힙합 / 러닝업템포 / K-pop / 여성발라드)
-- s: 인기도 점수 1~10
-- d: 한 줄 분위기 설명 (15자 이내)
+JSON 형식으로만 출력 (설명 없이):
+{{"songs":[{{"t":"곡제목","a":"아티스트명","g":"{genre_name}","s":인기도1~10,"d":"분위기15자이내"}},...]}}"""
 
-아래 JSON 형식으로만 출력 (다른 텍스트 없이):
-{"songs": [{"t": "곡제목", "a": "아티스트명", "g": "장르", "s": 점수, "d": "분위기설명"}, ...]}
-"""
+    try:
+        raw = ask_gemini(prompt, system=SYSTEM, temperature=0.85,
+                         json_mode=True, max_tokens=1500)
+        songs = _extract_songs(raw)
+        # g 값 강제 지정 (AI가 임의로 바꾸는 경우 대비)
+        for s in songs:
+            s["g"] = genre_name
+        return songs
+    except Exception as e:
+        print(f"  ⚠️  [{genre_name}] 수집 실패: {e}")
+        return []
 
-    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.85,
-                     json_mode=True, max_tokens=8000)
-    songs = _extract_songs(raw)
 
-    if not songs:
-        raise ValueError(f"JSON에서 곡을 추출하지 못함. 원본 앞부분: {raw[:200]}")
+def run() -> list:
+    print("🎵 음악 큐레이터 실행 중... (장르별 분리 수집)")
 
-    # 중복 제거 (t+a 기준)
-    seen, unique = set(), []
-    for s in songs:
-        key = (s.get("t","").strip(), s.get("a","").strip())
-        if key not in seen and key[0]:
-            seen.add(key)
-            unique.append({
-                "t": key[0],
-                "a": key[1],
-                "g": s.get("g", "기타"),
-                "s": s.get("s", 7),
-                "d": s.get("d", ""),
-            })
+    all_songs = []
+    seen = set()
 
-    print(f"  ✅ {len(unique)}곡 큐레이션 완료")
-    return unique
+    for genre_name, genre_desc in GENRE_PROMPTS:
+        print(f"  🎧 [{genre_name}] 수집 중...", end=" ", flush=True)
+        songs = _fetch_genre(genre_name, genre_desc)
+
+        # 중복 제거
+        added = 0
+        for s in songs:
+            key = (s.get("t", "").strip(), s.get("a", "").strip())
+            if key not in seen and key[0]:
+                seen.add(key)
+                all_songs.append({
+                    "t": key[0],
+                    "a": key[1],
+                    "g": s.get("g", genre_name),
+                    "s": s.get("s", 7),
+                    "d": s.get("d", ""),
+                })
+                added += 1
+        print(f"{added}곡 ✅" if added else "0곡 ⚠️")
+
+    if not all_songs:
+        raise ValueError("모든 장르 수집 실패")
+
+    print(f"  ✅ 총 {len(all_songs)}곡 큐레이션 완료")
+    return all_songs
 
 
 def save(songs: list):

@@ -427,21 +427,26 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 const YT_KEY = 'AIzaSyBGVbnH0iL_1unWWfktA6nrZMT29uSkOK0';
 
 const GENRE = {
-  'K-pop':      { hue: 340, color: '#ff6b9d' },   // 코랄 핑크
-  '인디팝':     { hue: 160, color: '#00f5a0' },   // 민트
-  'R&B':        { hue: 275, color: '#9b5de5' },   // 바이올렛
-  '힙합':       { hue:  48, color: '#ffd60a' },   // 골드
-  '팝':         { hue: 195, color: '#00d4ff' },   // 시안
-  '일렉트로팝': { hue: 200, color: '#4cc9f0' },   // 하늘
-  '인디록':     { hue:  32, color: '#ff9f1c' },   // 주황
-  '기타':       { hue:   0, color: '#e0e0e0' },   // 연한 흰색
+  '2000s힙합':  { hue:  45, color: '#ffd60a' },   // 골드 — 올드스쿨 바이브
+  '최신힙합':   { hue: 270, color: '#9b5de5' },   // 바이올렛 — 현대 트랩
+  '러닝업템포': { hue: 150, color: '#00f5a0' },   // 민트그린 — 에너지
+  'K-pop':      { hue: 340, color: '#ff6b9d' },   // 코랄핑크 — 아이돌
+  '여성발라드': { hue: 230, color: '#74b9ff' },   // 소프트블루 — 감성
+  '걸그룹':     { hue:   0, color: '#ff4d6d' },   // 레드핑크 — 걸크러시
+  '최신곡':     { hue: 195, color: '#00d4ff' },   // 시안 — 트렌디
+  '기타':       { hue:   0, color: '#e0e0e0' },   // 화이트 — 미분류
 };
 
 // 장르별 BPM 기반 beat 속도 (30fps 기준)
 const GENRE_BEAT = {
-  'K-pop': 0.060, '힙합': 0.055, '팝': 0.048,
-  'R&B': 0.032, '인디팝': 0.035, '일렉트로팝': 0.055,
-  '인디록': 0.050, '기타': 0.042,
+  '2000s힙합':  0.048,  // ~90 BPM
+  '최신힙합':   0.053,  // ~100 BPM 트랩
+  '러닝업템포': 0.068,  // ~150 BPM 빠름
+  'K-pop':      0.060,  // ~115 BPM
+  '여성발라드': 0.025,  // ~70 BPM 느림
+  '걸그룹':     0.063,  // ~120 BPM
+  '최신곡':     0.055,  // ~105 BPM
+  '기타':       0.042,
 };
 
 let ytPlayer   = null;

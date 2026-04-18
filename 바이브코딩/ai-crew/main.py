@@ -138,19 +138,41 @@ def main():
         f"오늘 콘텐츠 준비됐어요!\n카드뉴스 {len(written['captions'])}개 · 이미지 {img_ok}장\n{GITHUB_PAGES_URL}",
     )
 
-    # ── 음악 큐레이션 ────────────────────────────────────────
+    # ── 음악 큐레이션 (주 1회) ──────────────────────────────
     print("\n[5/5] 음악 큐레이터 에이전트...")
-    try:
-        songs = retry("음악 큐레이터", music_curator.run)
-        music_curator.save(songs)
-        # 유튜브 뮤직 플레이리스트 자동 생성
-        _create_youtube_playlist(songs, today)
-    except Exception as e:
-        print(f"  ⚠️  음악 큐레이션 실패: {e}")
-        notify("⚠️ 음악 큐레이션 실패", f"music.json 미갱신\n오류: {e}", priority="high")
+    if _should_run_music():
+        try:
+            songs = retry("음악 큐레이터", music_curator.run)
+            music_curator.save(songs)
+            _create_youtube_playlist(songs, today)
+        except Exception as e:
+            print(f"  ⚠️  음악 큐레이션 실패: {e}")
+            notify("⚠️ 음악 큐레이션 실패", f"music.json 미갱신\n오류: {e}", priority="high")
+    else:
+        print("  ⏭  음악 수집 스킵 (마지막 수집 7일 미경과)")
 
     # ── GitHub Pages용 content.json 저장 & push ──────────────
     _publish_to_github(today, brief, written, images, newsletter_data)
+
+
+def _should_run_music() -> bool:
+    """마지막 음악 수집이 7일 이상 지났으면 True"""
+    import json
+    from datetime import datetime, timedelta
+    from pathlib import Path
+    music_file = Path(__file__).parent.parent / "docs" / "music.json"
+    if not music_file.exists():
+        return True
+    try:
+        with open(music_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        updated = data.get("updated")
+        if not updated:
+            return True
+        last = datetime.strptime(updated, "%Y-%m-%d")
+        return (datetime.now() - last).days >= 7
+    except Exception:
+        return True
 
 
 def _create_youtube_playlist(songs: list, today: str):
