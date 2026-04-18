@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "NCT",
+    "buy_price": 13.04,
+    "qty": 9270.1764,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-18 21:00"
+  },
   "history": [
+    {
+      "time": "2026-04-18 21:00",
+      "action": "BUY",
+      "ticker": "NCT",
+      "price": 13.04,
+      "amount_krw": 99700.0,
+      "reason": "VB✅ 및 점수 +4로 변동성 돌파 신호가 확인되며, RSI 35.6으로 과매도 상태가 아님을 확인하여 매수 신호로 판단됩니다. 또한 ADX 32.4로 추세가 확인되며, 거래량 변화가 큰 편은 아니지만 매수 조건을 충족합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-18 20:37",
       "action": "SELL",
@@ -517,5 +534,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-18 20:37"
+  "updated_at": "2026-04-18 21:00"
 }
