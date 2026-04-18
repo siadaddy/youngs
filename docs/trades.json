@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "SKL",
-    "buy_price": 11.07,
-    "qty": 11810.0527,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-18 14:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-18 20:19",
+      "action": "SELL",
+      "ticker": "SKL",
+      "price": 10.62,
+      "amount_krw": 99700.0,
+      "reason": "실시간 손절 -4.07% (기준 -4.0%)",
+      "pnl_pct": -4.07,
+      "pnl_krw": -5315.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-18 14:00",
       "action": "BUY",
@@ -482,13 +487,13 @@
     }
   ],
   "stats": {
-    "total_trades": 21,
+    "total_trades": 22,
     "wins": 9,
-    "losses": 12,
-    "total_pnl_krw": 10743.0,
+    "losses": 13,
+    "total_pnl_krw": 5428.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-18 14:00"
+  "updated_at": "2026-04-18 20:19"
 }
