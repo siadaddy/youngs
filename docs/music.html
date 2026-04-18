@@ -478,12 +478,32 @@ const _yt = document.createElement('script');
 _yt.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(_yt);
 
+// ── videoId 로컬 캐시 (video_cache.json) ──
+let _vidCache = null;
+async function _loadVidCache() {
+  if (_vidCache) return _vidCache;
+  try {
+    const r = await fetch('video_cache.json?t=' + Date.now());
+    _vidCache = r.ok ? await r.json() : {};
+  } catch { _vidCache = {}; }
+  return _vidCache;
+}
+
 async function searchVideo(song) {
-  const q = encodeURIComponent(`${song.t} ${song.a}`);
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${YT_KEY}`;
-  const r   = await fetch(url);
-  const d   = await r.json();
-  return d.items?.[0]?.id?.videoId ?? null;
+  // 1) 로컬 캐시 우선 (video_cache.json)
+  const cache = await _loadVidCache();
+  const cacheKey = `${song.a}|${song.t}`;
+  if (cache[cacheKey]) return cache[cacheKey];
+
+  // 2) YouTube Data API 검색 (캐시 미스 시)
+  try {
+    const q   = encodeURIComponent(`${song.t} ${song.a}`);
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${YT_KEY}`;
+    const r   = await fetch(url);
+    if (!r.ok) return null;
+    const d   = await r.json();
+    return d.items?.[0]?.id?.videoId ?? null;
+  } catch { return null; }
 }
 
 function showNowPlaying(song) {
