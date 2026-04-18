@@ -480,22 +480,27 @@ document.head.appendChild(_yt);
 
 // ── videoId 로컬 캐시 (video_cache.json) ──
 let _vidCache = null;
-async function _loadVidCache() {
-  if (_vidCache) return _vidCache;
-  try {
-    const r = await fetch('video_cache.json?t=' + Date.now());
-    _vidCache = r.ok ? await r.json() : {};
-  } catch { _vidCache = {}; }
-  return _vidCache;
-}
+// 페이지 로드 시 미리 캐시 로드 (fire-and-forget) → 클릭 시 동기 참조 가능
+fetch('video_cache.json?t=' + Date.now())
+  .then(r => r.ok ? r.json() : {})
+  .then(d => { _vidCache = d; })
+  .catch(() => { _vidCache = {}; });
 
 async function searchVideo(song) {
-  // 1) 로컬 캐시 우선 (video_cache.json)
-  const cache = await _loadVidCache();
+  // 1) 로컬 캐시 (이미 로드됐으면 동기)
   const cacheKey = `${song.a}|${song.t}`;
-  if (cache[cacheKey]) return cache[cacheKey];
+  if (_vidCache && _vidCache[cacheKey]) return _vidCache[cacheKey];
 
-  // 2) YouTube Data API 검색 (캐시 미스 시)
+  // 2) 캐시 아직 로딩 중이면 기다렸다가 재확인
+  if (!_vidCache) {
+    try {
+      const r = await fetch('video_cache.json?t=' + Date.now());
+      _vidCache = r.ok ? await r.json() : {};
+    } catch { _vidCache = {}; }
+    if (_vidCache[cacheKey]) return _vidCache[cacheKey];
+  }
+
+  // 3) YouTube Data API 검색 (캐시 미스 시)
   try {
     const q   = encodeURIComponent(`${song.t} ${song.a}`);
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${YT_KEY}`;
@@ -515,6 +520,14 @@ function showNowPlaying(song) {
   window._nowTimer = setTimeout(() => t.classList.remove('show'), 4000);
 }
 
+const _waitReady = () => new Promise(res => {
+  if (ytReady) { res(); return; }
+  let n = 0;
+  const iv = setInterval(() => {
+    if (ytReady || ++n > 50) { clearInterval(iv); res(); }
+  }, 100);
+});
+
 async function playSong(song) {
   // 재생 중 별 추적
   playingSprite = sprites.find(s => s.userData.t === song.t && s.userData.a === song.a) ?? null;
@@ -524,26 +537,28 @@ async function playSong(song) {
   const srch = document.getElementById('player-searching');
   document.getElementById('player-title').textContent  = song.t;
   document.getElementById('player-artist').textContent = song.a;
-  srch.classList.add('on');
   bar.classList.add('open');
   showNowPlaying(song);
 
+  // ── 캐시 히트 + 플레이어 준비 완료 → 사용자 제스처 컨텍스트 안에서 즉시 재생 ──
+  const cacheKey = `${song.a}|${song.t}`;
+  const cachedVid = _vidCache ? _vidCache[cacheKey] : null;
+
+  if (cachedVid && ytReady) {
+    ytPlayer.loadVideoById(cachedVid);   // await 없이 동기 호출 → Chrome 오토플레이 허용
+    return;
+  }
+
+  // ── 캐시 미스 or 플레이어 미준비 → async 경로 (제스처 체인 소멸 허용, 사용자 알림) ──
+  srch.classList.add('on');
   try {
-    const vid = await searchVideo(song);
+    const vid = cachedVid || await searchVideo(song);
     srch.classList.remove('on');
     if (!vid) {
       window.open(`https://music.youtube.com/search?q=${encodeURIComponent(song.t+' '+song.a)}`, '_blank');
       return;
     }
-    // 플레이어 준비 대기 (최대 5초)
-    const waitReady = () => new Promise(res => {
-      if (ytReady) { res(); return; }
-      let n = 0;
-      const iv = setInterval(() => {
-        if (ytReady || ++n > 50) { clearInterval(iv); res(); }
-      }, 100);
-    });
-    await waitReady();
+    await _waitReady();
     if (ytReady) ytPlayer.loadVideoById(vid);
   } catch {
     srch.classList.remove('on');
