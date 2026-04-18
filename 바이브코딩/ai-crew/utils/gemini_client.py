@@ -172,3 +172,23 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
         return _call_groq(prompt, system, temperature, max_tokens, json_mode)
     except Exception as e:
         raise RuntimeError(f"Gemini + Groq 모두 실패: {e}")
+
+
+def ask_groq_first(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 2048, json_mode: bool = False) -> str:
+    """Groq 우선 호출 → 실패 시 Gemini 폴백
+    음악 큐레이터처럼 짧은 요청을 여러 번 반복하는 작업에 적합
+    (Groq 키 4개 라운드로빈 → Gemini 429 걱정 없음)
+    """
+    # 1순위: Groq (키 4개 라운드로빈)
+    try:
+        result = _call_groq(prompt, system, temperature, max_tokens, json_mode)
+        print(f"  ✅ Groq 성공")
+        return result
+    except Exception as e:
+        print(f"  ⚠️  Groq 전체 실패 ({e}) → Gemini 폴백 시도...")
+
+    # 2순위: Gemini 폴백
+    try:
+        return _call_gemini(prompt, system, temperature, max_tokens, json_mode)
+    except Exception as e:
+        raise RuntimeError(f"Groq + Gemini 모두 실패: {e}")
