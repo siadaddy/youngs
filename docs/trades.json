@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "NCT",
+    "buy_price": 12.31,
+    "qty": 9478.8596,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-18 21:30"
+  },
   "history": [
+    {
+      "time": "2026-04-18 21:30",
+      "action": "BUY",
+      "ticker": "NCT",
+      "price": 12.31,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수 +5를 만족하여 최우선 매수 신호가 발생하였습니다. 또한 ADX 30.9로 추세가 존재하며, RSI 33.4로 과매도 상태입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-18 21:15",
       "action": "SELL",
@@ -539,5 +556,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-18 21:15"
+  "updated_at": "2026-04-18 21:30"
 }
