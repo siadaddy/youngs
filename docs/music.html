@@ -358,7 +358,7 @@
     <div id="pl-empty">별을 클릭해 추가하세요</div>
   </div>
   <div id="pl-footer">
-    <button id="pl-clear">전체 비우기</button>
+    <div id="pl-count" style="font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.25);text-align:center;text-transform:uppercase;"></div>
   </div>
 </div>
 
@@ -493,6 +493,7 @@ function showNowPlaying(song) {
 async function playSong(song) {
   // 재생 중 별 추적
   playingSprite = sprites.find(s => s.userData.t === song.t && s.userData.a === song.a) ?? null;
+  updatePanelHighlight();
 
   const bar  = document.getElementById('player-bar');
   const srch = document.getElementById('player-searching');
@@ -946,6 +947,10 @@ function buildGalaxy(songs) {
   galaxyGroup.add(linesMesh);
 
   document.getElementById('count').textContent = `${n} SONGS`;
+
+  // 패널 곡 목록 갱신
+  panelSongs = songs.map(s => ({ t: s.t, a: s.a, g: s.g || '기타' }));
+  if (panelOpen) renderPanelPlaylist();
 }
 
 // ═══════════════════════════════════════════════════
@@ -967,7 +972,6 @@ window.addEventListener('mousemove', e => {
 // ── 데스크탑 클릭 ──
 window.addEventListener('click', () => {
   if (!hovered) return;
-  addToPanel(hovered.userData);
   const idx = sprites.indexOf(hovered);
   playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
     .map(s => ({ t: s.userData.t, a: s.userData.a }));
@@ -1004,7 +1008,6 @@ window.addEventListener('touchend', e => {
 
   if (!closest || minDist > 70) return;   // 70px 이내 별만 반응
 
-  addToPanel(closest.userData);
   const idx = sprites.indexOf(closest);
   playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
     .map(sp => ({ t: sp.userData.t, a: sp.userData.a }));
@@ -1041,84 +1044,76 @@ searchInput.addEventListener('keydown', e => { if(e.key==='Escape'){searchInput.
 searchClear.addEventListener('click', () => { searchInput.value=''; applySearch(); });
 
 // ═══════════════════════════════════════════════════
-// 플레이리스트 패널
+// 플레이리스트 패널 — 전체 곡 목록 표시
 // ═══════════════════════════════════════════════════
-const PL_KEY = 'music_universe_playlist';
 let panelOpen = false;
-let panelList = [];  // [{t, a, g, hue}]
-
-function loadPanelList() {
-  try { panelList = JSON.parse(localStorage.getItem(PL_KEY)) || []; } catch { panelList = []; }
-}
-function savePanelList() {
-  try { localStorage.setItem(PL_KEY, JSON.stringify(panelList)); } catch {}
-}
+let panelSongs = [];   // buildGalaxy 호출 시 채워짐
 
 function renderPanelPlaylist() {
-  const listEl = document.getElementById('pl-list');
-  const emptyEl = document.getElementById('pl-empty');
-  listEl.querySelectorAll('.pl-item').forEach(el => el.remove());
-  if (panelList.length === 0) {
-    if (emptyEl) emptyEl.style.display = '';
+  const listEl  = document.getElementById('pl-list');
+  const countEl = document.getElementById('pl-count');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  if (panelSongs.length === 0) {
+    listEl.innerHTML = '<div id="pl-empty">곡 데이터 로딩 중...</div>';
     return;
   }
-  if (emptyEl) emptyEl.style.display = 'none';
-  panelList.forEach((item, idx) => {
+  if (countEl) countEl.textContent = `${panelSongs.length} songs`;
+  panelSongs.forEach((item, idx) => {
     const gInfo = GENRE[item.g] || GENRE['기타'];
+    const isPlaying = playingSprite
+      && playingSprite.userData.t === item.t
+      && playingSprite.userData.a === item.a;
     const div = document.createElement('div');
-    div.className = 'pl-item' + (playingSprite && playingSprite.userData.t === item.t && playingSprite.userData.a === item.a ? ' playing' : '');
+    div.className = 'pl-item' + (isPlaying ? ' playing' : '');
+    div.dataset.idx = idx;
     div.innerHTML = `<div class="pl-dot" style="background:${gInfo.color};box-shadow:0 0 5px ${gInfo.color}88;"></div>
-      <div class="pl-info"><div class="pl-song">${item.t}</div><div class="pl-artist">${item.a}</div></div>
-      <button class="pl-del" data-idx="${idx}" title="제거">✕</button>`;
-    div.addEventListener('click', e => {
-      if (e.target.classList.contains('pl-del')) return;
+      <div class="pl-info">
+        <div class="pl-song">${item.t}</div>
+        <div class="pl-artist">${item.a}</div>
+      </div>`;
+    div.addEventListener('click', () => {
       const spr = sprites.find(s => s.userData.t === item.t && s.userData.a === item.a);
       if (spr) {
         const sidx = sprites.indexOf(spr);
-        playlist = [...sprites.slice(sidx), ...sprites.slice(0, sidx)].map(s => ({ t: s.userData.t, a: s.userData.a }));
-        playIdx = 0; playSong(playlist[0]);
+        playlist = [...sprites.slice(sidx), ...sprites.slice(0, sidx)]
+          .map(s => ({ t: s.userData.t, a: s.userData.a }));
       } else {
-        playlist = [{ t: item.t, a: item.a }]; playIdx = 0; playSong(playlist[0]);
+        playlist = panelSongs.map(s => ({ t: s.t, a: s.a }));
       }
+      playIdx = 0;
+      playSong({ t: item.t, a: item.a });
     });
     listEl.appendChild(div);
   });
-  listEl.querySelectorAll('.pl-del').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const i = parseInt(btn.dataset.idx);
-      panelList.splice(i, 1);
-      savePanelList();
-      renderPanelPlaylist();
-    });
-  });
 }
 
-function addToPanel(userData) {
-  const already = panelList.some(p => p.t === userData.t && p.a === userData.a);
-  if (!already) {
-    panelList.push({ t: userData.t, a: userData.a, g: userData.g, hue: userData.hue });
-    savePanelList();
-    renderPanelPlaylist();
-    // 패널 닫혀 있으면 토스트로 알림
-    if (!panelOpen) {
-      const tog = document.getElementById('pl-toggle');
-      tog.style.color = '#fff';
-      setTimeout(() => { tog.style.color = ''; }, 1200);
-    }
+// 재생 중인 항목 하이라이트 갱신 (playSong 호출 후 실행)
+function updatePanelHighlight() {
+  const listEl = document.getElementById('pl-list');
+  if (!listEl || !playingSprite) return;
+  listEl.querySelectorAll('.pl-item').forEach(el => el.classList.remove('playing'));
+  const idx = panelSongs.findIndex(s => s.t === playingSprite.userData.t && s.a === playingSprite.userData.a);
+  if (idx === -1) return;
+  const target = listEl.querySelectorAll('.pl-item')[idx];
+  if (target) {
+    target.classList.add('playing');
+    target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 }
 
 function setPanelOpen(open) {
   panelOpen = open;
   const panel = document.getElementById('playlist-panel');
-  const tog = document.getElementById('pl-toggle');
-  tog.style.transition = 'right .35s cubic-bezier(.4,0,.2,1), color .2s, background .2s, border-color .2s';
+  const tog   = document.getElementById('pl-toggle');
+  tog.style.transition = 'right .35s cubic-bezier(.4,0,.2,1), color .2s, background .2s';
   if (open) {
     panel.classList.add('open');
     tog.style.right = '220px';
     tog.innerHTML = '✕<span style="font-size:7px;letter-spacing:0.5px;opacity:0.6;font-family:sans-serif;">CLOSE</span>';
     renderPanelPlaylist();
+    // 현재 재생 중인 곡으로 스크롤
+    setTimeout(updatePanelHighlight, 100);
   } else {
     panel.classList.remove('open');
     tog.style.right = '0';
@@ -1126,12 +1121,8 @@ function setPanelOpen(open) {
   }
 }
 
-loadPanelList();
 document.getElementById('pl-toggle').addEventListener('click', () => setPanelOpen(!panelOpen));
-document.getElementById('pl-close').addEventListener('click', () => setPanelOpen(false));
-document.getElementById('pl-clear').addEventListener('click', () => {
-  panelList = []; savePanelList(); renderPanelPlaylist();
-});
+document.getElementById('pl-close').addEventListener('click',  () => setPanelOpen(false));
 
 // ═══════════════════════════════════════════════════
 // 애니메이션 루프
