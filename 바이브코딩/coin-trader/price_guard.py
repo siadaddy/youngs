@@ -14,14 +14,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-STATE_FILE  = os.path.join(os.path.dirname(__file__), "state.json")
-LOCK_FILE   = os.path.join(os.path.dirname(__file__), "main.lock")
-LOG_FILE    = os.path.join(os.path.dirname(__file__), "trader.log")
-NTFY_TOPIC  = os.getenv("NTFY_TOPIC", "siadad-aicrew")
-STOP_LOSS   = float(os.getenv("STOP_LOSS_PCT", "7.0"))
-TAKE_PROFIT = float(os.getenv("TAKE_PROFIT_PCT", "15.0"))
-DRY_RUN     = os.getenv("DRY_RUN", "true").lower() == "true"
-INTERVAL    = 30  # 체크 간격 (초)
+STATE_FILE     = os.path.join(os.path.dirname(__file__), "state.json")
+COOLDOWN_FILE  = os.path.join(os.path.dirname(__file__), "cooldown.json")
+LOCK_FILE      = os.path.join(os.path.dirname(__file__), "main.lock")
+LOG_FILE       = os.path.join(os.path.dirname(__file__), "trader.log")
+NTFY_TOPIC     = os.getenv("NTFY_TOPIC", "siadad-aicrew")
+STOP_LOSS      = float(os.getenv("STOP_LOSS_PCT", "7.0"))
+TAKE_PROFIT    = float(os.getenv("TAKE_PROFIT_PCT", "15.0"))
+DRY_RUN        = os.getenv("DRY_RUN", "true").lower() == "true"
+INTERVAL       = 30  # 체크 간격 (초)
+COOLDOWN_HOURS        = 3  # 손절 종목 재진입 금지
+GLOBAL_COOLDOWN_HOURS = 2  # 전역 매수 금지 (하락장 연속 손절 방지)
 
 
 def log(msg: str):
@@ -70,6 +73,27 @@ def get_price(ticker: str) -> float | None:
         return price if price else None
     except Exception:
         return None
+
+
+def add_cooldown(ticker: str):
+    """손절 후 종목 쿨다운 + 전역 쿨다운 등록 (main.py와 공유)"""
+    try:
+        from datetime import timedelta
+        data = {}
+        if os.path.exists(COOLDOWN_FILE):
+            with open(COOLDOWN_FILE, "r") as f:
+                data = json.load(f)
+        now = datetime.now()
+        ticker_until = (now + timedelta(hours=COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
+        global_until = (now + timedelta(hours=GLOBAL_COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
+        data[ticker]    = ticker_until
+        data["_global"] = global_until
+        with open(COOLDOWN_FILE, "w") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        log(f"  ⛔ 종목 쿨다운: {ticker} → {ticker_until}까지")
+        log(f"  🚫 전역 쿨다운: 모든 BUY → {global_until}까지 금지")
+    except Exception as e:
+        log(f"  ⚠️  쿨다운 등록 실패: {e}")
 
 
 def execute_sell(holding: dict, reason: str) -> dict | None:
@@ -171,9 +195,10 @@ def main():
                 log(f"🔴 손절 발동: {holding['ticker']} | {pct:.2f}% | 현재가 {price:,.0f}원")
                 reason = f"실시간 손절 {pct:.2f}% (기준 -{STOP_LOSS}%)"
                 new_holding = execute_sell(holding, reason)
+                add_cooldown(holding["ticker"])  # 종목 쿨다운 + 전역 쿨다운 등록
                 notify(
                     f"🔴 손절 매도{dry_tag}",
-                    f"{holding['ticker']} 실시간 손절\n수익률: {pct:.2f}%\n현재가: {price:,.0f}원",
+                    f"{holding['ticker']} 실시간 손절\n수익률: {pct:.2f}%\n현재가: {price:,.0f}원\n⛔ {GLOBAL_COOLDOWN_HOURS}시간 매수 금지",
                     priority="urgent"
                 )
                 publish_trade("SELL", holding, new_holding, reason, price)

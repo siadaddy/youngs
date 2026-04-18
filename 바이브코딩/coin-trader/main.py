@@ -124,11 +124,12 @@ def _cleanup_orphaned_holdings(holding: dict | None):
 
 
 # ── 손절 후 재진입 쿨다운 ─────────────────────────────────
-COOLDOWN_FILE = os.path.join(os.path.dirname(__file__), "cooldown.json")
-COOLDOWN_HOURS = 2  # 손절 후 같은 종목 재진입 금지 시간
+COOLDOWN_FILE  = os.path.join(os.path.dirname(__file__), "cooldown.json")
+COOLDOWN_HOURS = 3   # 손절 후 같은 종목 재진입 금지 시간
+GLOBAL_COOLDOWN_HOURS = 2  # 손절 후 모든 종목 매수 금지 시간 (하락장 연속 손절 방지)
 
 def get_cooldown_tickers() -> list:
-    """현재 쿨다운 중인 종목 목록 반환"""
+    """현재 쿨다운 중인 종목 목록 반환 (_global 제외)"""
     if not os.path.exists(COOLDOWN_FILE):
         return []
     try:
@@ -138,6 +139,8 @@ def get_cooldown_tickers() -> list:
         active = []
         expired = []
         for ticker, until_str in data.items():
+            if ticker == "_global":
+                continue
             until = datetime.strptime(until_str, "%Y-%m-%d %H:%M")
             if now < until:
                 active.append(ticker)
@@ -154,19 +157,45 @@ def get_cooldown_tickers() -> list:
     except Exception:
         return []
 
+def is_global_cooldown() -> bool:
+    """전역 쿨다운 중이면 True (손절 후 모든 종목 매수 금지)"""
+    if not os.path.exists(COOLDOWN_FILE):
+        return False
+    try:
+        with open(COOLDOWN_FILE, "r") as f:
+            data = json.load(f)
+        until_str = data.get("_global")
+        if not until_str:
+            return False
+        until = datetime.strptime(until_str, "%Y-%m-%d %H:%M")
+        if datetime.now() < until:
+            log(f"  🚫 전역 매수 쿨다운 중 (해제: {until_str}) — 모든 BUY 금지")
+            return True
+        # 만료 → 삭제
+        del data["_global"]
+        with open(COOLDOWN_FILE, "w") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return False
+    except Exception:
+        return False
+
 def add_cooldown(ticker: str):
-    """손절 후 종목을 쿨다운 목록에 등록"""
+    """손절 후 종목 쿨다운 + 전역 쿨다운 동시 등록"""
     try:
         data = {}
         if os.path.exists(COOLDOWN_FILE):
             with open(COOLDOWN_FILE, "r") as f:
                 data = json.load(f)
         from datetime import timedelta
-        until = (datetime.now() + timedelta(hours=COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
-        data[ticker] = until
+        now = datetime.now()
+        ticker_until = (now + timedelta(hours=COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
+        global_until = (now + timedelta(hours=GLOBAL_COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
+        data[ticker]   = ticker_until
+        data["_global"] = global_until
         with open(COOLDOWN_FILE, "w") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        log(f"  ⛔ 재진입 쿨다운 등록: {ticker} → {until}까지 BUY 금지")
+        log(f"  ⛔ 종목 쿨다운: {ticker} → {ticker_until}까지")
+        log(f"  🚫 전역 쿨다운: 모든 BUY → {global_until}까지 금지")
     except Exception as e:
         log(f"  ⚠️  쿨다운 등록 실패 (무시): {e}")
 
@@ -432,7 +461,13 @@ def main():
                     log(f"  ⚠️  AI 손절 오판 차단 — 실제 수익률 {_actual_pct:+.2f}% → HOLD 유지")
                     advice = {"action": "HOLD", "ticker": holding["ticker"], "reason": f"AI 손절 오판 차단 (실제 {_actual_pct:+.2f}%)"}
 
-    # Step 5: 주문 실행
+    # Step 5: BUY 시 전역 쿨다운 체크 (손절 후 모든 종목 매수 금지)
+    if advice["action"] == "BUY" and holding is None:
+        if is_global_cooldown():
+            advice = {"action": "HOLD", "ticker": None, "reason": "손절 후 전역 쿨다운 중 — BUY 차단"}
+            log("  🚫 전역 쿨다운으로 BUY 차단 → HOLD")
+
+    # Step 6: 주문 실행
     try:
         new_holding = executor.run(advice, holding)
     except Exception as e:
@@ -440,11 +475,14 @@ def main():
         notify("❌ 자동매매 오류", f"주문 실행 실패: {e}", priority="high")
         return
 
-    # Step 5-1: SELL 완료 직후 즉시 매수 기회 재탐색
+    # Step 6-1: SELL 완료 직후 즉시 매수 기회 재탐색 (전역 쿨다운 없을 때만)
     if advice["action"] == "SELL" and new_holding is None:
         save_state(None)
         _publish_trades("SELL", advice, None, holding)
         notify("🔴 매도 완료", f"{advice.get('ticker')} 매도\n이유: {advice.get('reason','')}")
+        if is_global_cooldown():
+            log("  🚫 전역 쿨다운 중 — 즉시 매수 재판단 스킵")
+            return
         log("  🔄 매도 완료 → 즉시 매수 기회 재판단...")
         old_holding = holding
         holding = None
