@@ -1,6 +1,6 @@
 import os, json, re
 from datetime import date
-from utils.gemini_client import ask_groq_first
+from utils.gemini_client import ask_gemini25_first
 
 SYSTEM = """음악 큐레이터. JSON만 출력합니다."""
 
@@ -81,8 +81,8 @@ JSON 형식으로만 출력 (설명 없이):
 {{"songs":[{{"t":"곡제목","a":"아티스트명","g":"{genre_name}","s":인기도1~10,"d":"분위기15자이내"}},...]}}"""
 
     try:
-        raw = ask_groq_first(prompt, system=SYSTEM, temperature=0.85,
-                             json_mode=True, max_tokens=1500)
+        raw = ask_gemini25_first(prompt, system=SYSTEM, temperature=0.85,
+                                json_mode=True, max_tokens=1500)
         songs = _extract_songs(raw)
         # g 값 강제 지정 (AI가 임의로 바꾸는 경우 대비)
         for s in songs:

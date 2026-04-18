@@ -175,20 +175,65 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
 
 
 def ask_groq_first(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 2048, json_mode: bool = False) -> str:
-    """Groq 우선 호출 → 실패 시 Gemini 폴백
-    음악 큐레이터처럼 짧은 요청을 여러 번 반복하는 작업에 적합
-    (Groq 키 4개 라운드로빈 → Gemini 429 걱정 없음)
-    """
-    # 1순위: Groq (키 4개 라운드로빈)
+    """Groq 우선 호출 → 실패 시 Gemini 폴백"""
     try:
         result = _call_groq(prompt, system, temperature, max_tokens, json_mode)
         print(f"  ✅ Groq 성공")
         return result
     except Exception as e:
         print(f"  ⚠️  Groq 전체 실패 ({e}) → Gemini 폴백 시도...")
-
-    # 2순위: Gemini 폴백
     try:
         return _call_gemini(prompt, system, temperature, max_tokens, json_mode)
     except Exception as e:
         raise RuntimeError(f"Groq + Gemini 모두 실패: {e}")
+
+
+def ask_gemini25_first(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 2048, json_mode: bool = False) -> str:
+    """Gemini 2.5-flash 우선 (2.0-flash 스킵) → 실패 시 Groq 폴백
+    음악 큐레이터처럼 반복 호출이 많은 작업용.
+    2.0-flash는 RPM 429가 일상적이므로 처음부터 건너뜀.
+    """
+    import time
+
+    gemini_keys = [k for k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", "")] if k]
+
+    # 1순위: Gemini 2.5-flash (키1 → 키2)
+    for key_idx, gemini_key in enumerate(gemini_keys):
+        key_label = f"키{key_idx + 1}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": max(max_tokens, 2048)},
+        }
+        if system:
+            payload["system_instruction"] = {"parts": [{"text": system}]}
+        if json_mode:
+            payload["generationConfig"]["responseMimeType"] = "application/json"
+
+        for attempt in range(1, 3):   # 키당 최대 2회
+            try:
+                r = requests.post(url, json=payload, timeout=60)
+                r.raise_for_status()
+                result = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                print(f"  ✅ Gemini 2.5-flash {key_label} 성공")
+                return _sanitize(result)
+            except Exception as e:
+                status = getattr(getattr(e, 'response', None), 'status_code', 0)
+                print(f"  ⚠️  Gemini 2.5-flash {key_label} 시도 {attempt}/2 실패: {status or e}")
+                if attempt < 2:
+                    wait = 30 if status == 429 else 10
+                    print(f"      {wait}초 대기 후 재시도...")
+                    time.sleep(wait)
+
+        if key_idx < len(gemini_keys) - 1:
+            print(f"  ⏳ Gemini 2.5-flash {key_label} 실패 → 키{key_idx + 2}로 전환...")
+
+    print(f"  ⚠️  Gemini 2.5-flash 전체 실패 → Groq 폴백...")
+
+    # 2순위: Groq 폴백
+    try:
+        result = _call_groq(prompt, system, temperature, max_tokens, json_mode)
+        print(f"  ✅ Groq 폴백 성공")
+        return result
+    except Exception as e:
+        raise RuntimeError(f"Gemini 2.5-flash + Groq 모두 실패: {e}")
