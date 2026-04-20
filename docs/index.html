@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🤖 시아아빠님의 AI 자동화 허브</title>
+  <title>시아 아빠의 Claude 실험실</title>
 
   <!-- OG / SNS 공유 메타태그 -->
   <meta name="description" content="AI가 매일 뉴스를 분석해 카드뉴스·블로그를 자동 생성하고, 코인봇이 24시간 자동매매하는 AI 자동화 허브입니다." />
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://siadaddy.github.io/youngs/" />
-  <meta property="og:title"       content="🤖 시아아빠님의 AI 자동화 허브" />
-  <meta property="og:description" content="AI 뉴스레터 자동 생성 · AI 코인 자동매매 · Music Universe — 매일 아침 5명의 AI 직원이 일합니다." />
+  <meta property="og:title"       content="시아 아빠의 Claude 실험실" />
+  <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 3월 말 Claude를 만나 한 달 만에 만든 것들 — AI 뉴스레터 · 코인 자동매매 · 3D 뮤직 갤러리" />
   <meta property="og:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
   <meta property="og:locale"      content="ko_KR" />
   <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="🤖 시아아빠님의 AI 자동화 허브" />
-  <meta name="twitter:description" content="AI 뉴스레터 자동 생성 · AI 코인 자동매매 · Music Universe" />
+  <meta name="twitter:title"       content="시아 아빠의 Claude 실험실" />
+  <meta name="twitter:description" content="코딩 몰랐던 아빠가 Claude 만나 한 달 만에 만든 것들" />
   <meta name="twitter:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1015,6 +1015,60 @@
       0%,100% { transform: scale(1); opacity: 1; }
       50%      { transform: scale(1.4); opacity: .6; }
     }
+
+    /* ─── 나의 이야기 ──────────────────────────────────── */
+    .story-banner {
+      background: linear-gradient(135deg, rgba(28,105,212,.08) 0%, rgba(167,139,250,.06) 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 0;
+    }
+    .story-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .story-tag {
+      font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+      color: var(--bmw-lt); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .story-title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800; line-height: 1.3;
+      letter-spacing: -.02em; margin-bottom: 20px;
+    }
+    .story-body {
+      font-size: .95rem; color: var(--muted2);
+      line-height: 1.9;
+    }
+    .story-milestones { display: flex; flex-direction: column; gap: 16px; }
+    .story-milestone {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color .2s;
+    }
+    .story-milestone.active {
+      border-color: rgba(28,105,212,.4);
+      background: rgba(28,105,212,.06);
+    }
+    .ms-date {
+      font-size: .78rem; font-weight: 700; color: var(--bmw-lt);
+      min-width: 80px; flex-shrink: 0;
+    }
+    .story-milestone.active .ms-date { color: var(--green); }
+    .ms-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); flex-shrink: 0;
+    }
+    .story-milestone.active .ms-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .ms-text { font-size: .9rem; font-weight: 600; color: var(--text); }
+    @media (max-width: 720px) {
+      .story-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
   </style>
 </head>
 <body class="wrap">
@@ -1024,16 +1078,16 @@
   <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.5;"></canvas>
   <div class="hero-eyebrow">
     <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-    &nbsp;매일 07:00 뉴스 · AI 음악 큐레이션 · 30초마다 코인 실시간 감시
+    &nbsp;2026년 3월 말 시작 · 코딩 비전공 · Claude와 함께
   </div>
   <h1>
-    <span class="sub">🤖 시아아빠님의</span>
-    <span class="line2">AI 자동화 허브</span>
+    <span class="sub">시아 아빠가</span>
+    <span class="line2">Claude 만나서<br>만든 것들</span>
   </h1>
-  <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">AI Automation Hub · Personal Portfolio</div>
+  <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background · Built with Claude · Since March 2026</div>
   <p class="hero-desc">
-    매일 아침 5명의 AI 직원이 뉴스를 분석해 카드뉴스 · 블로그를 만들고 오늘의 음악 우주를 채웁니다.
-    AI 트레이더가 5분마다 종목을 분석하고 30초마다 손절/익절을 실시간으로 감시합니다.
+    코딩을 한 줄도 못 썼습니다. 2026년 3월 말, Claude를 처음 열었습니다.<br>
+    그리고 한 달도 안 됐는데 이걸 다 만들었습니다.
   </p>
   <div class="hero-stats">
     <div class="stat">
@@ -1124,6 +1178,47 @@
         "locale": "kr"
       }
       </script>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 나의 이야기 ──────────────────────────────────────── -->
+<div class="story-banner">
+  <div class="container">
+    <div class="story-inner">
+      <div class="story-left">
+        <div class="story-tag">✦ 이 사이트에 대해</div>
+        <h2 class="story-title">코딩 몰라도 됩니다.<br>Claude가 있으면.</h2>
+        <p class="story-body">
+          딸 시아(2022년생)를 키우는 평범한 아빠입니다.<br>
+          개발 배경 없음. 코딩 경험 없음.<br><br>
+          2026년 3월 말, 처음으로 Claude를 열었습니다.<br>
+          뭔가 만들어 보고 싶었고, 그냥 물어봤습니다.<br><br>
+          한 달도 안 됐는데 이 사이트가 생겼습니다.
+        </p>
+      </div>
+      <div class="story-milestones">
+        <div class="story-milestone">
+          <span class="ms-date">2026.03 말</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">Claude 첫 대화</span>
+        </div>
+        <div class="story-milestone">
+          <span class="ms-date">2주 후</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">AI 뉴스레터 자동화 완성</span>
+        </div>
+        <div class="story-milestone">
+          <span class="ms-date">3주 후</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">코인 자동매매 봇 가동</span>
+        </div>
+        <div class="story-milestone active">
+          <span class="ms-date">지금</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">3D 뮤직 갤러리까지 — 아직 진행 중</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1460,14 +1555,14 @@
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-logo">🤖 시아아빠님의 AI 크리에이터</div>
+      <div class="footer-logo">시아 아빠의 Claude 실험실</div>
       <div class="footer-divider"></div>
       <div>
         <a href="about.html">👥 AI 직원 소개 &amp; 파이프라인</a>
         &nbsp;·&nbsp;
         <a href="https://github.com/siadaddy/youngs" target="_blank">GitHub</a>
         &nbsp;·&nbsp; Powered by Groq + Pollinations.ai + RSS
-        &nbsp;·&nbsp; © 2026 시아아빠
+        &nbsp;·&nbsp; © 2026 시아 아빠
       </div>
       <div style="margin-top:10px;display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);">
         <img src="https://hits.sh/siadaddy.github.io/youngs.svg?style=flat&color=1c69d4&label=visits" alt="hits" style="height:18px;border-radius:4px;" onerror="this.style.display='none'">
