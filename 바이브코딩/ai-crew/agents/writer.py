@@ -479,8 +479,11 @@ def run(brief: dict) -> dict:
                     f" — '{prev['headline'][:30]}'와 유사 (planner 점검 필요)"
                 )
 
+        # 제목 앞 쉼표·마침표·특수문자 자동 제거
+        clean_headline = re.sub(r'^[,.\s!?·•]+', '', item["headline"]).strip()
+
         captions.append({
-            "headline":    item["headline"],
+            "headline":    clean_headline,
             "caption":     caption,
             "source_url":  item.get("source_url", ""),
             "source_name": item.get("source_name", ""),
