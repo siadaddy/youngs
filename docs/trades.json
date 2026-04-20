@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "MERL",
+    "buy_price": 55.58,
+    "qty": 1888.7883,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-21 02:00"
+  },
   "history": [
+    {
+      "time": "2026-04-21 02:00",
+      "action": "BUY",
+      "ticker": "MERL",
+      "price": 55.63,
+      "amount_krw": 99700.0,
+      "reason": "MERL의 RSI가 22.9로 과매도 상태이며, ADX가 39.6로 추세가 있는 상황입니다. 또한 VB가 ❌이지만, 점수가 +3으로 높아 BUY 신호를 받았습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-20 23:46",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 1.16,
       "pnl_krw": 145.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-09 21:20",
-      "action": "BUY",
-      "ticker": "XRP",
-      "price": 1983.0,
-      "amount_krw": 22130.0,
-      "reason": "XRP의 변동성 돌파 신호와 점수 +3, ADX 44.7(추세O)로 강한 매수 신호가 발생했습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,5 +567,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-21 01:00"
+  "updated_at": "2026-04-21 02:00"
 }
