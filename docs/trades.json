@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "LINK",
-    "buy_price": 13940.0,
-    "qty": 7.927,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-19 00:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-20 21:30",
+      "action": "SELL",
+      "ticker": "LINK",
+      "price": 13730.0,
+      "amount_krw": 99700.0,
+      "reason": "8시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.51,
+      "pnl_krw": -1665.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-19 00:00",
       "action": "BUY",
@@ -545,27 +550,16 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-06 21:02",
-      "action": "SELL",
-      "ticker": "XVS",
-      "price": 5870.0,
-      "amount_krw": 22465.0,
-      "reason": "기존 보유 종목 XVS의 수익률이 -2.94%로 낮으며, 다른 종목이 더 좋은 신호를 보이고 있어 기회 교체를 결정했습니다.",
-      "pnl_pct": -2.72,
-      "pnl_krw": -737.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 25,
+    "total_trades": 26,
     "wins": 9,
-    "losses": 16,
-    "total_pnl_krw": -13162.0,
+    "losses": 17,
+    "total_pnl_krw": -14827.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-20 07:30"
+  "updated_at": "2026-04-20 21:30"
 }
