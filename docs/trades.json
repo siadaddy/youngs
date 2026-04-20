@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "FORT",
+    "buy_price": 30.08,
+    "qty": 3480.6476,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-21 07:30"
+  },
   "history": [
+    {
+      "time": "2026-04-21 07:30",
+      "action": "BUY",
+      "ticker": "FORT",
+      "price": 30.11,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수가 양호하여 BUY 신호가 발생하였으며, 빠른 진입과 청산을 목표로 하는 30분봉 단기 매매 봇에 적합한 종목입니다. 또한, 현재가와 거래량 변화가 매수 규칙에 위배되지 않아 진입이 가능합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 07:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "현재 보유 중인 A8의 기술적 지표가 좋지 않아 매도합니다. RSI 20.6, MACD 하락, BB 중하단.",
       "pnl_pct": -0.46,
       "pnl_krw": -217.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-11 02:20",
-      "action": "BUY",
-      "ticker": "A8",
-      "price": 15.37,
-      "amount_krw": 22304.0,
-      "reason": "변동성 돌파 신호 및 점수 +5로 VB✅ 종목으로 최우선 매수입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
