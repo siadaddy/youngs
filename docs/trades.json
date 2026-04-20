@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "PIEVERSE",
-    "buy_price": 1462.0,
-    "qty": 74.3671,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-20 21:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-20 23:46",
+      "action": "SELL",
+      "ticker": "PIEVERSE",
+      "price": 1400.0,
+      "amount_krw": 99700.0,
+      "reason": "실시간 손절 -4.24% (기준 -4.0%)",
+      "pnl_pct": -4.24,
+      "pnl_krw": -4611.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-20 21:30",
       "action": "BUY",
@@ -545,27 +550,16 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-09 18:47",
-      "action": "SELL",
-      "ticker": "BTC",
-      "price": 106201000.0,
-      "amount_krw": 21240.0,
-      "reason": "RSI 70 이상 과매수 + MACD 하락 신호, 익절 매도",
-      "pnl_pct": 1.66,
-      "pnl_krw": 242.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 26,
+    "total_trades": 27,
     "wins": 9,
-    "losses": 17,
-    "total_pnl_krw": -14827.0,
+    "losses": 18,
+    "total_pnl_krw": -19438.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 8.0
   },
-  "updated_at": "2026-04-20 21:30"
+  "updated_at": "2026-04-20 23:46"
 }
