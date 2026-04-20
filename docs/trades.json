@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "PIEVERSE",
+    "buy_price": 1462.0,
+    "qty": 74.3671,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-20 21:30"
+  },
   "history": [
+    {
+      "time": "2026-04-20 21:30",
+      "action": "BUY",
+      "ticker": "PIEVERSE",
+      "price": 1464.0,
+      "amount_krw": 99700.0,
+      "reason": "PIEVERSE의 RSI가 22.3으로 과매도 상태이며, VB✅와 점수 +5를 만족하여 BUY 신호가 발생했습니다. 또한 ADX가 15.1로 추세가 형성되지 않은 상태이므로 매수 기회입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-20 21:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "RSI 70 이상 과매수 + MACD 하락 신호, 익절 매도",
       "pnl_pct": 1.66,
       "pnl_krw": 242.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-06 21:17",
-      "action": "BUY",
-      "ticker": "BTC",
-      "price": 104463000.0,
-      "amount_krw": 20892.0,
-      "reason": "VB✅이고 점수 +5이면서 ADX 33.9로 추세가 확인되며, 변동성 돌파 신호가 발생하여 매수 신호가 강한 것으로 판단됩니다. 또한, 현재 RSI 13.2로 과매도 상태이므로 반등 가능성이 있습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
