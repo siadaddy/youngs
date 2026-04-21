@@ -21,8 +21,11 @@ IP_FILE       = os.path.join(os.path.dirname(__file__), "ip.txt")
 FAILURE_FILE  = os.path.join(os.path.dirname(__file__), "failure_state.json")
 LOCK_FILE     = os.path.join(os.path.dirname(__file__), "main.lock")
 NTFY_TOPIC   = os.getenv("NTFY_TOPIC", "siadad-aicrew")
-STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "5.0"))
-TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "10.0"))
+STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "4.0"))      # 5→4% 타이트하게
+TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "5.0"))    # 10→5% 자주 챙기기
+TRAILING_STOP_PCT  = float(os.getenv("TRAILING_STOP_PCT", "2.5"))  # 고점 대비 -2.5% 트레일링
+TRAILING_ACTIVATE  = float(os.getenv("TRAILING_ACTIVATE_PCT", "3.0"))  # +3% 수익 시 트레일링 활성
+MAX_HOLD_HOURS     = float(os.getenv("MAX_HOLD_HOURS", "8.0"))     # 8시간 이상 보유 강제 청산
 DRY_RUN            = os.getenv("DRY_RUN", "true").lower() == "true"
 DAILY_LOSS_LIMIT   = float(os.getenv("DAILY_LOSS_LIMIT_KRW", "-15000"))
 
@@ -125,8 +128,8 @@ def _cleanup_orphaned_holdings(holding: dict | None):
 
 # ── 손절 후 재진입 쿨다운 ─────────────────────────────────
 COOLDOWN_FILE  = os.path.join(os.path.dirname(__file__), "cooldown.json")
-COOLDOWN_HOURS = 3   # 손절 후 같은 종목 재진입 금지 시간
-GLOBAL_COOLDOWN_HOURS = 2  # 손절 후 모든 종목 매수 금지 시간 (하락장 연속 손절 방지)
+COOLDOWN_HOURS = 6   # 손절 후 같은 종목 재진입 금지 시간 (3→6시간)
+GLOBAL_COOLDOWN_HOURS = 4  # 손절 후 모든 종목 매수 금지 시간 (2→4시간)
 
 def get_cooldown_tickers() -> list:
     """현재 쿨다운 중인 종목 목록 반환 (_global 제외)"""
@@ -318,19 +321,61 @@ def check_ip_change():
 
 # ── 손절 / 익절 체크 ──────────────────────────────────────
 
+def update_high_price(holding: dict) -> dict:
+    """현재가가 고점보다 높으면 high_price 갱신 후 state 저장"""
+    from utils.bithumb_client import get_current_price
+    try:
+        now = get_current_price(holding["ticker"])
+        if now and now > holding.get("high_price", holding["buy_price"]):
+            holding["high_price"] = now
+            save_state(holding)
+            log(f"  📈 고점 갱신: {holding['ticker']} → {now:,.0f}원")
+    except Exception:
+        pass
+    return holding
+
+
 def check_exit(holding: dict) -> str | None:
-    """손절 또는 익절 조건 확인 → 'stop_loss' | 'take_profit' | None"""
+    """손절/익절/트레일링스탑/시간초과 확인
+    반환: 'stop_loss' | 'take_profit' | 'trailing_stop' | 'time_exit' | None
+    """
     from utils.bithumb_client import get_current_price
     now = get_current_price(holding["ticker"])
     if not now or not holding.get("buy_price"):
         return None
+
     pct = (now / holding["buy_price"] - 1) * 100
+
+    # ── 1. 일반 손절 ──────────────────────────────────────
     if pct <= -STOP_LOSS:
         log(f"  🔴 손절 발동: {holding['ticker']} | {pct:.2f}% (기준: -{STOP_LOSS}%)")
         return "stop_loss"
+
+    # ── 2. 일반 익절 ──────────────────────────────────────
     if pct >= TAKE_PROFIT:
         log(f"  🟡 익절 발동: {holding['ticker']} | {pct:.2f}% (기준: +{TAKE_PROFIT}%)")
         return "take_profit"
+
+    # ── 3. 트레일링 스탑 (+3% 이상 수익 구간에서 활성) ────
+    high = holding.get("high_price", holding["buy_price"])
+    high_pct = (high / holding["buy_price"] - 1) * 100
+    if high_pct >= TRAILING_ACTIVATE:
+        trail_pct = (now / high - 1) * 100
+        if trail_pct <= -TRAILING_STOP_PCT:
+            log(f"  🟠 트레일링 스탑: {holding['ticker']} | 고점 대비 {trail_pct:.2f}% 하락 (고점 {high:,.0f}원 → 현재 {now:,.0f}원)")
+            return "trailing_stop"
+
+    # ── 4. 시간 기반 강제 청산 (죽은 포지션 정리) ─────────
+    if holding.get("buy_time"):
+        try:
+            buy_dt = datetime.strptime(holding["buy_time"], "%Y-%m-%d %H:%M")
+            hold_hours = (datetime.now() - buy_dt).total_seconds() / 3600
+            if hold_hours >= MAX_HOLD_HOURS and pct <= -1.0:
+                log(f"  ⏰ 시간 초과 강제 청산: {holding['ticker']} | {hold_hours:.1f}시간 보유 | 수익률 {pct:.2f}%")
+                return "time_exit"
+        except Exception:
+            pass
+
     return None
 
 
@@ -392,41 +437,40 @@ def main():
     else:
         log("  📦 현재 보유 종목 없음")
 
-    # Step 2: 손절 / 익절 체크 (보유 중일 때)
+    # Step 2: 고점 갱신 + 손절/익절/트레일링/시간초과 체크
     if holding:
+        holding = update_high_price(holding)  # 고점 추적 갱신
+
         try:
             exit_type = check_exit(holding)
         except Exception as e:
             log(f"  ⚠️  손절/익절 체크 실패 (무시하고 계속): {e}")
             exit_type = None
-        if exit_type == "stop_loss":
-            action = {"action": "SELL", "ticker": holding["ticker"], "reason": f"자동 손절 -{STOP_LOSS}%"}
+
+        exit_labels = {
+            "stop_loss":     ("🔴 손절 매도",     f"자동 손절 -{STOP_LOSS}%",       "high"),
+            "take_profit":   ("🟡 익절 매도",     f"자동 익절 +{TAKE_PROFIT}%",     "high"),
+            "trailing_stop": ("🟠 트레일링 익절", f"트레일링 스탑 (고점 대비 -{TRAILING_STOP_PCT}%)", "high"),
+            "time_exit":     ("⏰ 시간 초과 청산", f"{MAX_HOLD_HOURS:.0f}시간 보유 + 수익률 -1% 미만", "default"),
+        }
+
+        if exit_type in exit_labels:
+            notif_title, sell_reason, priority = exit_labels[exit_type]
+            action = {"action": "SELL", "ticker": holding["ticker"], "reason": sell_reason}
             try:
                 new_holding = executor.run(action, holding)
                 save_state(new_holding)
-                notify("🔴 손절 매도", f"{action['ticker']} 손절 매도 완료\n기준: -{STOP_LOSS}%", priority="high")
+                notify(notif_title, f"{action['ticker']} 매도 완료\n이유: {sell_reason}", priority=priority)
                 _publish_trades("SELL", action, new_holding, holding)
-                pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
-                record_loss(pnl)
-                add_cooldown(holding["ticker"])  # 손절 종목 재진입 쿨다운 등록
-                holding = None  # 매도 완료 → BUY 탐색 계속
-                log("  손절 처리 완료 — 즉시 매수 기회 탐색 계속")
+                if exit_type == "stop_loss":
+                    pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
+                    record_loss(pnl)
+                    add_cooldown(holding["ticker"])
+                holding = None
+                log(f"  {exit_type} 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:
-                log(f"  ❌ 손절 매도 실패: {e}")
-                notify("❌ 손절 실패", f"{holding['ticker']} 손절 주문 오류: {e}", priority="urgent")
-                return
-        elif exit_type == "take_profit":
-            action = {"action": "SELL", "ticker": holding["ticker"], "reason": f"자동 익절 +{TAKE_PROFIT}%"}
-            try:
-                new_holding = executor.run(action, holding)
-                save_state(new_holding)
-                notify("🟡 익절 매도", f"{action['ticker']} 익절 매도 완료\n기준: +{TAKE_PROFIT}%", priority="high")
-                _publish_trades("SELL", action, new_holding, holding)
-                holding = None  # 매도 완료 → BUY 탐색 계속
-                log("  익절 처리 완료 — 즉시 매수 기회 탐색 계속")
-            except Exception as e:
-                log(f"  ❌ 익절 매도 실패: {e}")
-                notify("❌ 익절 실패", f"{holding['ticker']} 익절 주문 오류: {e}", priority="urgent")
+                log(f"  ❌ {exit_type} 매도 실패: {e}")
+                notify(f"❌ {exit_type} 실패", f"{holding['ticker']} 매도 오류: {e}", priority="urgent")
                 return
 
     # Step 3: 시장 분석
@@ -487,7 +531,8 @@ def main():
         old_holding = holding
         holding = None
         try:
-            buy_advice = retry("AI 매수 재판단", ai_advisor.run, market_data, None, cooldown_tickers)
+            fresh_cooldowns = get_cooldown_tickers()  # 방금 등록한 쿨다운 반영
+            buy_advice = retry("AI 매수 재판단", ai_advisor.run, market_data, None, fresh_cooldowns)
         except Exception as e:
             log(f"  ⚠️  매수 재판단 실패: {e}")
             return

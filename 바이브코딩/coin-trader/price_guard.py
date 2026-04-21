@@ -19,12 +19,12 @@ COOLDOWN_FILE  = os.path.join(os.path.dirname(__file__), "cooldown.json")
 LOCK_FILE      = os.path.join(os.path.dirname(__file__), "main.lock")
 LOG_FILE       = os.path.join(os.path.dirname(__file__), "trader.log")
 NTFY_TOPIC     = os.getenv("NTFY_TOPIC", "siadad-aicrew")
-STOP_LOSS      = float(os.getenv("STOP_LOSS_PCT", "7.0"))
-TAKE_PROFIT    = float(os.getenv("TAKE_PROFIT_PCT", "15.0"))
+STOP_LOSS      = float(os.getenv("STOP_LOSS_PCT", "4.0"))
+TAKE_PROFIT    = float(os.getenv("TAKE_PROFIT_PCT", "5.0"))
 DRY_RUN        = os.getenv("DRY_RUN", "true").lower() == "true"
 INTERVAL       = 30  # 체크 간격 (초)
-COOLDOWN_HOURS        = 3  # 손절 종목 재진입 금지
-GLOBAL_COOLDOWN_HOURS = 2  # 전역 매수 금지 (하락장 연속 손절 방지)
+COOLDOWN_HOURS        = 6  # 손절 종목 재진입 금지 (3→6시간)
+GLOBAL_COOLDOWN_HOURS = 4  # 전역 매수 금지 (2→4시간)
 
 
 def log(msg: str):
