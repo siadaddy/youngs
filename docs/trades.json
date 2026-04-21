@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "FORT",
-    "buy_price": 26.72,
-    "qty": 3602.8463,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-21 15:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-21 16:00",
+      "action": "SELL",
+      "ticker": "FORT",
+      "price": 26.46,
+      "amount_krw": 99700.0,
+      "reason": "기회 교체: 현재 보유 종목 FORT의 수익률이 -0.97%로 낮고, 다른 종목인 USDT의 기술 점수가 +6으로 높으며, ADX가 57.6로 강한 추세를 보이고 있어 기회 교체를 결정했습니다. USDT의 골든크로스와 중하단에서의 거래량 감소에도 불구하고, 높은 ADX와 강한 매수 신호로 인해 교체 결정했습니다.",
+      "pnl_pct": -0.97,
+      "pnl_krw": -937.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 15:00",
       "action": "BUY",
@@ -545,27 +550,16 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-11 14:15",
-      "action": "SELL",
-      "ticker": "FITFI",
-      "price": 0.8821,
-      "amount_krw": 21902.0,
-      "reason": "현재 보유 종목 FITFI의 수익률이 -0.82%로 낮으며, 기술 점수도 낮아 매도 신호가 발생했습니다.",
-      "pnl_pct": -0.99,
-      "pnl_krw": -329.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 30,
+    "total_trades": 31,
     "wins": 10,
-    "losses": 20,
-    "total_pnl_krw": -27777.0,
+    "losses": 21,
+    "total_pnl_krw": -28714.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-21 15:00"
+  "updated_at": "2026-04-21 16:00"
 }
