@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "FORT",
+    "buy_price": 26.72,
+    "qty": 3602.8463,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-21 15:00"
+  },
   "history": [
+    {
+      "time": "2026-04-21 15:00",
+      "action": "BUY",
+      "ticker": "FORT",
+      "price": 26.72,
+      "amount_krw": 99700.0,
+      "reason": "현재가가 과매도 상태에 있고, RSI가 24.0으로 과매도 상태이며, ADX가 30.8로 추세가 있는 상황입니다. 또한 VB가 ✅로 변동성 돌파 신호가 확인되었습니다. 하지만 FORT는 재진입 금지 종목으로 BUY 절대 금지입니다. 대신 다른 종목을 살펴보면, EDU의 RSI가 45.7로 과매도 상태가 아니며, ADX가 29.7로 추세가 있고, VB가 ✅로 변동성 돌파 신호가 확인됩니다. 따라서 EDU를 BUY하는 것이 적절합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 12:49",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.99,
       "pnl_krw": -329.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-11 08:50",
-      "action": "BUY",
-      "ticker": "FITFI",
-      "price": 0.8909,
-      "amount_krw": 22120.0,
-      "reason": "FITFI는 RSI 24.8, MACD 상승, BB 중하단, 거래량-61%, ADX 19.6(추세O)로 신호가 있습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,5 +567,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-21 12:49"
+  "updated_at": "2026-04-21 15:00"
 }
