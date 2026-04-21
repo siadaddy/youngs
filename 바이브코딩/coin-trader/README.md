@@ -2,38 +2,46 @@
 
 > 빗썸 KRW 마켓에서 AI가 종목 선정·매수·매도를 완전 자동화하는 트레이딩 시스템
 
-**실행 환경**: MacBook (launchd) — 5분마다 자동 실행 (288회/일)
+**실행 환경**: MacBook (launchd) — 30분마다 자동 실행 (48회/일)
+**투자금**: 5만원 | **실전 운용 중** (DRY_RUN=false)
 
 ---
 
 ## 📋 시스템 개요
 
-빗썸 KRW 전체 마켓에서 거래대금 상위 20개 종목을 분석하고,
+빗썸 KRW 전체 마켓에서 24h 거래대금 상위 종목을 분석하고,
 Groq AI(Llama 3.3 70B)가 기술적 지표를 바탕으로 BUY / SELL / HOLD를 판단합니다.
+
+**핵심 보호 장치**: 손절 발생 시 해당 종목을 학습·기록하고, 반복 손절 종목은 자동으로 차단합니다.
 
 ---
 
 ## 🕐 자동화 흐름
 
 ```
-매 시 :00 / :05 / :10 / ... / :55 (하루 288회)
+매 :00 / :30 (하루 48회)
 │
-├─ Step 0: Daily Drawdown 체크 → 일일 손실 한도 도달 시 당일 봇 정지
-├─ Step 1: 공인 IP 변경 감지 → 변경 시 ntfy 긴급 알림
-├─ Step 2: state.json 로드 → 현재 보유 종목 확인
-├─ Step 3: 손절/익절 체크 → 발동 시 즉시 매도 후 BUY 재탐색
+├─ Step 0: 이전 실패 감지 + IP 변경 체크
+├─ Step 0-1: Daily Drawdown 체크 → 일일 손실 한도 초과 시 당일 봇 정지
+├─ Step 0-2: 📚 블랙리스트 초기화 (없으면 거래 기록에서 자동 구성)
+├─ Step 1: state.json 로드 → 현재 보유 종목 확인
+├─ Step 1-1: orphaned 포지션 감지 및 정리
+├─ Step 2: 고점 갱신 + 손절/익절/트레일링스탑/강제청산 체크
 │           price_guard.py도 30초마다 독립 감시 (이중화)
-├─ Step 4: 빗썸 KRW 마켓 거래대금 상위 20개 종목 선별
-├─ Step 5: 각 종목 30분봉 OHLCV → RSI / MACD / 볼린저밴드 / ADX / 변동성돌파 계산
-│           (ThreadPoolExecutor max_workers=5 병렬 처리)
-├─ Step 6: 전역 쿨다운 체크 → 손절 후 2h 동안 모든 BUY 금지
-├─ Step 7: Groq AI 판단 → BUY(종목명) / SELL / HOLD + 한국어 이유
-│           쿨다운 종목 목록 전달 → AI가 제외 후 판단
-├─ Step 8: 주문 실행 (빗썸 시장가, 최소금액 5,000원 체크)
-│   └─ SELL 직후 → 전역 쿨다운 없을 때만 즉시 BUY 재판단
-├─ Step 9: state.json 업데이트
-├─ Step 10: ntfy 결과 알림
-└─ Step 11: docs/trades.json 업데이트 → GitHub Pages push
+├─ Step 3: 시장 분석
+│   ├─ 빗썸 24h 거래대금 상위 선별
+│   ├─ 🚫 블랙리스트·스테이블코인 제외
+│   ├─ 🚫 24h 거래대금 20억원 미만 제외
+│   └─ 30분봉 RSI·MACD·볼린저밴드·ADX·VB 계산 (병렬 5개)
+├─ Step 3-1: 쿨다운 종목 목록 조회
+├─ Step 4: Groq AI 판단 → BUY / SELL / HOLD + 한국어 이유
+├─ Step 4-1: AI 오판 차단 (실제 수익률 양수인데 손절 SELL → HOLD 강제 전환)
+├─ Step 5: 전역 쿨다운 체크 → BUY 차단 여부 결정
+├─ Step 6: 주문 실행 (빗썸 시장가)
+│   ├─ SELL 후 → 기회교체 쿨다운 등록 + 시장 재수집 + 즉시 BUY 재판단
+│   └─ 스테이블코인·블랙리스트 하드차단 (executor 레벨)
+├─ Step 7: 결과 알림 (ntfy)
+└─ Step 8: trades.json (블랙리스트 포함) → GitHub Pages push
 ```
 
 ---
@@ -42,20 +50,21 @@ Groq AI(Llama 3.3 70B)가 기술적 지표를 바탕으로 BUY / SELL / HOLD를 
 
 ```
 coin-trader/
-├── main.py                 ← 오케스트레이터 (5분 간격)
-├── price_guard.py          ← 실시간 가격 감시 (30초 간격, 손절/익절 + 쿨다운 등록)
-├── run_trader.sh           ← launchd 실행 스크립트
-├── state.json              ← 보유 종목·매수가·수량 (재시작 시 복원)
-├── cooldown.json           ← 손절 후 쿨다운 (종목별 3h + 전역 _global 2h)
-├── drawdown.json           ← 일일 손실 누적 추적 (자정 자동 초기화)
+├── main.py                 ← 오케스트레이터 (30분 간격)
+├── price_guard.py          ← 실시간 가격 감시 (30초, 손절/익절/쿨다운)
+├── state.json              ← 보유 종목·매수가·수량·고점 (재시작 시 복원)
+├── cooldown.json           ← 손절 후 쿨다운 (종목 6h + 전역 _global 4h)
+├── blacklist.json          ← 📚 반복 손절 학습 데이터 (영구 저장)
+├── drawdown.json           ← 일일 손실 누적 (자정 자동 초기화)
 ├── ip.txt                  ← 마지막 확인 공인 IP (변경 감지용)
 ├── trader.log              ← 실행 로그
 ├── agents/
-│   ├── analyzer.py         ← 거래량 상위 20개 + 30분봉 기술적 지표 계산 (병렬)
-│   ├── ai_advisor.py       ← Groq AI 판단 (key1→2→3→4 폴백, 외국어 필터)
-│   └── executor.py         ← 빗썸 시장가 주문 실행 + 최소금액 체크
+│   ├── analyzer.py         ← 거래량 상위 + 30분봉 기술 지표 계산 (병렬)
+│   ├── ai_advisor.py       ← Groq AI 판단 (key1→2→3→4 폴백)
+│   └── executor.py         ← 빗썸 시장가 주문 + 스테이블코인·블랙리스트 하드차단
 └── utils/
     ├── bithumb_client.py   ← pybithumb 래퍼 (잔고·현재가·매수·매도)
+    ├── blacklist.py        ← 📚 학습 블랙리스트 엔진
     └── upbit_client.py     ← 레거시 (미사용)
 ```
 
@@ -63,20 +72,23 @@ coin-trader/
 
 ## 🔧 .env 설정
 
-```
-BITHUMB_ACCESS_KEY=...      # 빗썸 API 1.0 키 (주문 권한 필수)
+```env
+BITHUMB_ACCESS_KEY=...         # 빗썸 API 1.0 키 (주문 권한 필수)
 BITHUMB_SECRET_KEY=...
-GROQ_API_KEY=...            # 폴백 체인 — key1 실패 시 key2→3→4 순서로 전환
+GROQ_API_KEY=...               # 폴백 체인 — 429 시 즉시 key2→3→4 전환
 GROQ_API_KEY_2=...
 GROQ_API_KEY_3=...
 GROQ_API_KEY_4=...
-GEMINI_API_KEY=...          # Groq 전체 소진 시 폴백
+GEMINI_API_KEY=...             # Groq 전체 소진 시 폴백
 GEMINI_API_KEY_2=...
-MAX_INVEST_KRW=100000       # 최대 투자금액 (원)
-STOP_LOSS_PCT=4.0           # 자동 손절 기준 (%)
-TAKE_PROFIT_PCT=8.0         # 자동 익절 기준 (%)
-DAILY_LOSS_LIMIT_KRW=-15000 # 일일 손실 한도 (원, 초과 시 당일 봇 정지)
-DRY_RUN=false               # true=시뮬레이션, false=실제 주문
+MAX_INVEST_KRW=50000           # 최대 투자금액 (원)
+STOP_LOSS_PCT=4.0              # 자동 손절 기준 (%)
+TAKE_PROFIT_PCT=5.0            # 자동 익절 기준 (%)
+TRAILING_STOP_PCT=2.5          # 트레일링스탑: 고점 대비 하락 기준 (%)
+TRAILING_ACTIVATE_PCT=3.0      # 트레일링스탑: 활성화 수익률 기준 (%)
+MAX_HOLD_HOURS=8.0             # 강제청산: 최대 보유 시간 (h)
+DAILY_LOSS_LIMIT_KRW=-7500    # 일일 손실 한도 (원, 초과 시 당일 봇 정지)
+DRY_RUN=false                  # true=시뮬레이션, false=실제 주문
 NTFY_TOPIC=siadad-aicrew
 ```
 
@@ -86,104 +98,107 @@ NTFY_TOPIC=siadad-aicrew
 
 | 지표 | 설정 | 매수 점수 | 매도 점수 |
 |------|------|----------|----------|
-| RSI | **14봉** (30분봉 기준 표준) | <35: +2 / <45: +1 | >65: -1 / >75: -2 |
+| RSI | 14봉 (30분봉) | 20~35: +2 / 35~50: +1 / **<20: 0 (급락 중, 중립)** | >65: -1 / >75: -2 |
 | MACD | 12/26/9 | 골든크로스: +2 / 상승: +1 | 데드크로스: -2 / 하락: -1 |
-| 볼린저밴드 | 20/2 | 하단: +2 / 중하단: +1 | 상단: -2 / 중상단: -1 |
-| ADX | **14봉** | ≥15: 추세O (매수 허용) | <10: 횡보 (매수 금지) |
-| **변동성 돌파(VB)** | K=0.5 (일봉) | **+2 보너스** (최우선 매수 신호) | — |
-
-분석 기준: **30분봉** (minute30)
+| 볼린저밴드 | 20/2σ | 하단: +2 / 중하단: +1 | 상단: -2 / 중상단: -1 |
+| ADX | 14봉 | **≥20** 추세 있음 (매수 허용) | <20 횡보 (매수 금지) |
+| **변동성 돌파(VB)** | K=0.5 (일봉) | **거래량+20% 동반: +2 / 미동반: +1** | — |
 
 **변동성 돌파 공식**: `오늘 시가 + (전일 고가 - 전일 저가) × 0.5`
-현재가가 이 목표가를 돌파하면 VB✅ 신호 발생
 
 ---
 
-## 📋 매매 판단 규칙
+## 🛡 안전장치 전체
 
-1. **VB 매수 (최우선)**: 미보유 시 VB✅ + 점수 +1 이상 → BUY
-2. **강한 매수**: 점수 +3 이상 + ADX 15 이상 → BUY
-3. **중간 매수**: 점수 +2 이상 + ADX 15 이상 + 거래량 +20% 이상 → BUY
-4. **매도**: 보유 종목 점수 -2 이하 또는 RSI 70+ + MACD 하락/데드크로스 → SELL
-5. **기회 교체**: 보유 수익률 +5% 미만 + 점수 0 이하 + 다른 종목 VB✅/점수+3 → 즉시 SELL 후 BUY
-6. **SELL 직후 재탐색**: 전역 쿨다운 없을 때만 — 매도 완료 즉시 AI 재판단 → BUY 신호 있으면 즉시 매수
-7. **수익 보호**: 보유 수익률 +5% 이상이면 교체 금지
-8. **횡보 금지**: ADX <10 + VB❌ 종목은 BUY 금지
-
----
-
-## 🛡 안전장치
-
-| 기능 | 내용 |
+| 기능 | 기준 |
 |------|------|
-| 손절 | 매수가 대비 -4% 자동 매도 (price_guard 30초 감시 + main.py 5분 체크) |
-| 익절 | 매수가 대비 +8% 자동 매도 |
-| **손절 후 전역 쿨다운** | 손절 발동 시 2h 동안 **모든 종목 BUY 금지** (하락장 연속 손절 방지) |
-| **손절 종목 쿨다운** | 손절 종목 3h 재진입 금지 |
-| Daily Drawdown | 일일 누적 손실 -15,000원 초과 시 당일 봇 정지 (자정 초기화) |
-| 매도 최소금액 체크 | qty × 현재가 < 5,000원이면 매도 보류 |
+| 손절 | 매수가 대비 -4% 자동 매도 |
+| 익절 | 매수가 대비 +5% 자동 매도 |
+| 트레일링스탑 | +3% 수익 시 활성 → 고점 대비 -2.5% 하락 시 매도 |
+| 강제청산 | 8시간 이상 보유 + 수익률 -1% 이하 → 강제 매도 |
+| **📚 학습 블랙리스트** | 손절 2회→3일 / 3회→7일 / 4회→14일 / 5회+→30일 차단 |
+| 스테이블코인 차단 | USDT·USDC·DAI·BUSD·TUSD 등 하드코드 BUY 금지 |
+| 종목 쿨다운 | 손절 후 해당 종목 **6시간** 재진입 금지 |
+| 전역 쿨다운 | 손절 후 모든 종목 **4시간** BUY 금지 |
+| 기회교체 쿨다운 | 기회교체 SELL 후 해당 종목 **2시간** 재진입 금지 |
+| Daily Drawdown | 일일 손실 -7,500원 초과 시 당일 봇 정지 |
+| 거래대금 필터 | 24h 거래대금 20억원 미만 잡코인 제외 |
+| buy_market_order 수정 | executor 계산 투자금 그대로 사용 (avail_krw×0.75 오버라이드 버그 수정) |
+| AI 오판 차단 | 실제 수익률 양수인데 AI가 손절 SELL 지시 → HOLD 강제 전환 |
+| 즉시 재판단 시 재수집 | SELL 후 동일 시장 데이터가 아닌 새 데이터로 AI 재판단 |
 | IP 변경 감지 | 공인 IP 변경 시 ntfy 긴급 알림 (빗썸 API 재등록 안내) |
-| Groq 폴백 | 429 발생 시 즉시 key1→2→3→4 폴백 체인, 모두 소진 시 Gemini 폴백 |
-| 외국어 필터 | AI 응답에서 한자·일본어·아랍어·키릴 자동 제거 |
-| DRY_RUN | 실제 주문 없이 전체 흐름 시뮬레이션 |
-| 전체 타임아웃 | 10분 초과 시 강제 종료 (BaseException 하드킬) |
+| Groq 폴백 | 429 즉시 key1→2→3→4 전환, 전체 소진 시 Gemini 폴백 |
+| 전체 타임아웃 | 10분 초과 시 SIGALRM 강제 종료 |
 
 ---
 
-## 🔄 쿨다운 시스템 상세
+## 📚 학습 블랙리스트 시스템
+
+```
+손절 1회 → 기록만 (6h 쿨다운 적용)
+손절 2회 → blacklist.json 등록, 3일간 분석·매수 차단
+손절 3회 → 7일 차단
+손절 4회 → 14일 차단
+손절 5회+ → 30일 차단
+```
+
+**3중 차단 구조**:
+1. `analyzer.py` — 분석 대상에서 제외 (AI가 아예 보지 못함)
+2. `ai_advisor.py` — 프롬프트에 블랙리스트 명시
+3. `executor.py` — 하드코드 BUY 차단 (분석 통과해도 막힘)
+
+```bash
+# 블랙리스트 현황 확인
+python3 -c "
+from utils.blacklist import get_summary
+for line in get_summary(): print(line)
+"
+```
+
+---
+
+## 🔄 쿨다운 시스템
 
 ```json
 // cooldown.json 구조
 {
-  "SKL": "2026-04-19 15:33",    // 종목별: 손절 후 3h 동안 해당 종목 BUY 금지
-  "_global": "2026-04-19 14:33" // 전역: 손절 후 2h 동안 모든 종목 BUY 금지
+  "NCT": "2026-04-25 23:55",   // 손절 종목 쿨다운 (6h)
+  "FORT": "2026-04-24 12:49",  // 손절 종목 쿨다운 (6h)
+  "_global": "2026-04-21 16:49" // 전역 쿨다운 (4h) — 어떤 종목도 BUY 금지
 }
 ```
 
-**동작 흐름**:
-1. `price_guard.py` 손절 발동 → `add_cooldown(ticker)` 호출
-2. `cooldown.json`에 종목(3h) + `_global`(2h) 동시 기록
-3. `main.py` 다음 실행 → `is_global_cooldown()` → BUY 차단
-4. 2h 후 전역 해제 → BUY 재개 / 3h 후 종목 해제 → 해당 종목 재진입 가능
+---
+
+## 📋 AI 매매 판단 규칙 (요약)
+
+**매수 조건**:
+1. USDT/USDC 등 스테이블코인 → 절대 BUY 금지
+2. RSI < 20 → BUY 금지 (급락 추세)
+3. VB✅ + 거래량+20% + 점수+4 이상 → BUY 최우선
+4. 점수+5 이상 + ADX≥25 + MACD 상승/골든 → BUY 적극 고려
+5. ADX < 20 + VB❌ → BUY 금지 (횡보장)
+6. 거래량 -30% 이하 → BUY 금지
+
+**보유 시간별 매도 기준**:
+- 4h 미만: 점수 -3 이하 or RSI72+ + 데드크로스 → SELL
+- 4~6h: 점수 -1 이하 or RSI70+ + 하락 → SELL
+- 6h+, 수익률 0% 이하: 반등 신호 없으면 SELL
+
+**기회 교체 (매우 신중)**:
+- 90분 이상 + 수익률 -3% 미만 + 점수 -2 이하 + 다른 종목 VB✅+점수+5+ADX25 → 교체
 
 ---
 
-## 💻 맥북 뚜껑 닫힘 설정 (필수)
+## 💻 맥북 설정 (필수)
 
 ```bash
-# AC 전원 연결 시 시스템 절전 끄기
+# AC 전원 연결 시 절전 비활성화
 sudo pmset -c sleep 0
 
-# 설정 확인
-pmset -g | grep "^[ ]*sleep"
-# → sleep    0 이어야 함
+# 확인
+pmset -g | grep "^[ ]*sleep"  # → sleep 0 이어야 함
 ```
-
----
-
-## 📊 GitHub Pages 대시보드
-
-**라이브**: `https://siadaddy.github.io/youngs/` → 코인 트레이더 탭
-
-- 매매 통계 (총 거래 / 승 / 패 / 승률 / 누적 손익)
-- 누적 손익 차트 (Chart.js, 수익=초록 / 손실=빨강)
-- 봇 상태 표시 (마지막 실행 시각 기준 🟢≤5분/🟡≤30분/🔴>30분)
-- 현재 보유 종목 실시간 표시
-- 최근 50건 매매 이력 + AI 판단 이유
-
----
-
-## 📱 ntfy 알림
-
-| 상황 | 알림 |
-|------|------|
-| 매수 완료 | 🟢 종목·단가·AI 이유 |
-| 즉시 재매수 | 🟢 SELL 직후 BUY 신호 감지 시 |
-| 매도 완료 | 🔴 종목·이유 |
-| 손절 매도 | 🔴 긴급 + 쿨다운 시간 안내 |
-| 익절 매도 | 🟡 |
-| Daily Drawdown 한도 도달 | 🛑 긴급 — 당일 봇 정지 |
-| IP 변경 | 🔴 긴급 — 빗썸 재등록 필요 |
 
 ---
 
@@ -195,14 +210,14 @@ cd /Users/youngchulyu/바이브코딩/coin-trader
 # 전체 실행
 python3 main.py
 
-# 잔고 확인
-python3 -c "
-from utils.bithumb_client import get_krw_balance
-print(f'KRW 잔고: {get_krw_balance():,.0f}원')
-"
+# 블랙리스트 현황
+python3 -c "from utils.blacklist import get_summary; [print(l) for l in get_summary()]"
 
 # 쿨다운 현황
 cat cooldown.json
+
+# 보유 현황
+cat state.json
 
 # 로그 확인
 tail -f trader.log
@@ -213,16 +228,15 @@ tail -f trader.log
 ## ⚙️ launchd 관리
 
 ```bash
-# 상태 확인
 launchctl list | grep siadad
 
 # cointrader 재시작
 launchctl unload ~/Library/LaunchAgents/com.siadad.cointrader.plist
-launchctl load ~/Library/LaunchAgents/com.siadad.cointrader.plist
+launchctl load   ~/Library/LaunchAgents/com.siadad.cointrader.plist
 
 # priceguard 재시작
 launchctl unload ~/Library/LaunchAgents/com.siadad.priceguard.plist
-launchctl load ~/Library/LaunchAgents/com.siadad.priceguard.plist
+launchctl load   ~/Library/LaunchAgents/com.siadad.priceguard.plist
 ```
 
 ---
@@ -237,43 +251,43 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ## 📝 업데이트 로그
 
+### 2026-04-21 (현재)
+- **학습 블랙리스트**: `utils/blacklist.py` 신규 — 손절 횟수 누적 학습, 자동 차단
+- **투자금 축소**: 10만원 → 5만원 / 일일한도 -15,000원 → -7,500원
+- **buy_market_order 버그 수정**: amount_krw 파라미터 무시 버그 수정
+- **기회교체 쿨다운**: 기회교체 SELL 후 2시간 해당 종목 재진입 금지
+- **즉시 재판단 시 데이터 재수집**: SELL 후 시장 데이터 새로 가져와서 AI 재판단
+- **스테이블코인 하드차단**: executor 코드 레벨 차단 (AI 무시해도 막힘)
+- **RSI<20 중립**: 급락 중 극단적 과매도는 반등 신호 아님 → 0점 처리
+- **VB 조건 강화**: 거래량+20% 동반 시 +2 / 미동반 시 +1
+- **ADX 기준 강화**: 15→20 이상
+- **거래대금 필터**: 24h 20억원 미만 잡코인 분석 제외
+
+### 2026-04-21 (이전)
+- **트레일링스탑**: +3% 활성 → 고점 대비 -2.5% 하락 시 매도
+- **8시간 강제청산**: MAX_HOLD_HOURS=8
+- **쿨다운 강화**: 종목 3h→6h / 전역 2h→4h
+- **익절 수정**: +8% → +5%
+
 ### 2026-04-19
-- **손절 후 즉시 재매수 방지 전면 개선**:
-  - `price_guard.py` 손절 시 `cooldown.json` 미기록 버그 수정 → `add_cooldown()` 추가
-  - 전역 쿨다운 `_global` 도입: 손절 후 2h 동안 **모든 종목 BUY 금지**
-  - `is_global_cooldown()` 신규: main.py BUY 전 / SELL 후 재탐색 전 체크
-  - 종목별 쿨다운: 2h → 3h 강화
+- **손절 후 즉시 재매수 방지**: stale cooldown 버그 수정 → fresh 쿨다운 사용
 
 ### 2026-04-17
-- **익절 기준 8%로 상향**: TAKE_PROFIT_PCT=6 → 8 (.env 수정)
-- **price_guard.py .env 핫리로드**: 루프마다 `load_dotenv(override=True)` 재할당
-- **ai_advisor.py Gemini 이중 키**: GEMINI_API_KEY_2 추가, 429 시 65초 대기
+- **ai_advisor.py Gemini 이중 키**: GEMINI_API_KEY_2 추가
 
 ### 2026-04-14
-- **시장 분석 NoneType 크래시 수정**: `pybithumb.get_tickers()` None 반환 시 장애 → None 차단 추가
-- **Groq 429 즉시 전환**: 90초 대기 → 즉시 다음 키 전환으로 개선
+- **시장 분석 NoneType 크래시 수정**
+- **Groq 429 즉시 전환**: 90초 대기 → 즉시 다음 키
 
 ### 2026-04-12
-- **Groq 키 4개**: key1~4 폴백 체인
-- **주문 가능 잔고 개선**: `available_krw` 직접 조회 후 75% 투자
-
-### 2026-04-11
-- **5분 간격 전환**: 15분 → 5분 (96회/일 → 288회/일)
-- **30분봉 전환**: 10분봉 → 30분봉
-- **손절 -4% / 익절 +6%** (이후 익절 +8% 상향)
-- **Daily Drawdown 보호 추가**: 일일 손실 -15,000원 초과 시 당일 봇 정지
-
-### 2026-04-06
-- **빗썸 전환 완료**: 업비트 → 빗썸 (pybithumb API 1.0)
-- **SELL 직후 즉시 BUY 재탐색** 추가
+- **빗썸 전환 완료**: 업비트 → pybithumb
 
 ### 2026-04-03
-- **analyzer.py 병렬화**: ThreadPoolExecutor(max_workers=5)
-- **price_guard.py 추가**: 손절/익절 실시간 감시
+- **변동성 돌파(VB)**: K=0.5, analyzer.py 병렬화
 
 ### 2026-03-28
 - 시스템 최초 구축
 
 ---
 
-*최종 업데이트: 2026-04-19 | Powered by Groq + Gemini + pybithumb + GitHub Pages*
+*최종 업데이트: 2026-04-21 | Powered by Groq + Gemini + pybithumb + GitHub Pages*
