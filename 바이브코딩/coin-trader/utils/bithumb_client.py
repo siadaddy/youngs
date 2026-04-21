@@ -98,17 +98,14 @@ def buy_market_order(ticker: str, amount_krw: float) -> dict:
         print(f"  [DRY RUN] 매수 시뮬레이션: {coin} {qty:.6f}개 @ {price:,.0f}원 ({amount_krw:,.0f}원)")
         return {"ticker": coin, "price": price, "qty": qty, "dry_run": True}
 
-    # 실제 주문 가능 잔고 조회
-    raw_bal = b.api.balance(currency="BTC")
-    avail_krw = float(raw_bal["data"]["available_krw"])
-
-    # 잔고의 75%만 투자 — 수수료(0.25%) + 호가 슬리피지 여유 확보
-    invest = avail_krw * 0.75
+    # amount_krw를 그대로 사용 — executor에서 이미 MAX_INVEST 한도 계산 완료
+    # (이전 코드: avail_krw * 0.75로 계산해 파라미터를 무시하던 버그 수정)
     price = get_current_price(coin)
     if not price:
         raise RuntimeError(f"현재가 조회 실패 (ticker={coin})")
+    invest = amount_krw
     qty = invest / price
-    print(f"  💰 잔고: {avail_krw:,.0f}원 | 주문: {qty:.4f}개 @ {price:,.0f}원 ({invest:,.0f}원)")
+    print(f"  💰 주문: {qty:.4f}개 @ {price:,.0f}원 ({invest:,.0f}원)")
 
 
     result = b.buy_market_order(coin, qty)

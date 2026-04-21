@@ -21,13 +21,14 @@ IP_FILE       = os.path.join(os.path.dirname(__file__), "ip.txt")
 FAILURE_FILE  = os.path.join(os.path.dirname(__file__), "failure_state.json")
 LOCK_FILE     = os.path.join(os.path.dirname(__file__), "main.lock")
 NTFY_TOPIC   = os.getenv("NTFY_TOPIC", "siadad-aicrew")
-STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "4.0"))      # 5→4% 타이트하게
-TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "5.0"))    # 10→5% 자주 챙기기
-TRAILING_STOP_PCT  = float(os.getenv("TRAILING_STOP_PCT", "2.5"))  # 고점 대비 -2.5% 트레일링
-TRAILING_ACTIVATE  = float(os.getenv("TRAILING_ACTIVATE_PCT", "3.0"))  # +3% 수익 시 트레일링 활성
-MAX_HOLD_HOURS     = float(os.getenv("MAX_HOLD_HOURS", "8.0"))     # 8시간 이상 보유 강제 청산
+STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "4.0"))
+TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "5.0"))
+TRAILING_STOP_PCT  = float(os.getenv("TRAILING_STOP_PCT", "2.5"))
+TRAILING_ACTIVATE  = float(os.getenv("TRAILING_ACTIVATE_PCT", "3.0"))
+MAX_HOLD_HOURS     = float(os.getenv("MAX_HOLD_HOURS", "8.0"))
 DRY_RUN            = os.getenv("DRY_RUN", "true").lower() == "true"
-DAILY_LOSS_LIMIT   = float(os.getenv("DAILY_LOSS_LIMIT_KRW", "-15000"))
+DAILY_LOSS_LIMIT   = float(os.getenv("DAILY_LOSS_LIMIT_KRW", "-7500"))  # 5만원 기준 일일 손실 한도
+SWITCH_COOLDOWN_HOURS = 2  # 기회 교체 후 해당 종목 재진입 금지 시간
 
 
 # ── 유틸리티 ─────────────────────────────────────────────
@@ -201,6 +202,28 @@ def add_cooldown(ticker: str):
         log(f"  🚫 전역 쿨다운: 모든 BUY → {global_until}까지 금지")
     except Exception as e:
         log(f"  ⚠️  쿨다운 등록 실패 (무시): {e}")
+
+
+def _add_switch_cooldown(ticker: str):
+    """기회 교체 SELL 후 해당 종목 단기 쿨다운 등록 (전역 쿨다운 없음)
+    손절보다 짧게 — 같은 종목 즉시 재매수만 차단"""
+    try:
+        data = {}
+        if os.path.exists(COOLDOWN_FILE):
+            with open(COOLDOWN_FILE, "r") as f:
+                data = json.load(f)
+        from datetime import timedelta
+        until = (datetime.now() + timedelta(hours=SWITCH_COOLDOWN_HOURS)).strftime("%Y-%m-%d %H:%M")
+        # 이미 더 긴 쿨다운이 있으면 덮어쓰지 않음
+        existing = data.get(ticker)
+        if existing and datetime.strptime(existing, "%Y-%m-%d %H:%M") > datetime.strptime(until, "%Y-%m-%d %H:%M"):
+            return
+        data[ticker] = until
+        with open(COOLDOWN_FILE, "w") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        log(f"  🔄 교체 쿨다운: {ticker} → {until}까지 재진입 금지 ({SWITCH_COOLDOWN_HOURS}시간)")
+    except Exception as e:
+        log(f"  ⚠️  교체 쿨다운 등록 실패 (무시): {e}")
 
 
 # ── Daily Drawdown ────────────────────────────────────────
@@ -524,15 +547,30 @@ def main():
         save_state(None)
         _publish_trades("SELL", advice, None, holding)
         notify("🔴 매도 완료", f"{advice.get('ticker')} 매도\n이유: {advice.get('reason','')}")
+
+        # ★ 기회 교체 SELL 시 해당 종목에 단기 쿨다운 등록 (즉시 재매수 방지)
+        if holding:
+            sold_ticker = holding["ticker"]
+            reason_text = advice.get("reason", "")
+            if "기회 교체" in reason_text or advice.get("action") == "SELL":
+                _add_switch_cooldown(sold_ticker)
+
         if is_global_cooldown():
             log("  🚫 전역 쿨다운 중 — 즉시 매수 재판단 스킵")
             return
-        log("  🔄 매도 완료 → 즉시 매수 기회 재판단...")
-        old_holding = holding
+        log("  🔄 매도 완료 → 즉시 매수 기회 재판단 (시장 데이터 재수집)...")
         holding = None
+
+        # ★ 시장 데이터 재수집 — 같은 데이터로 재판단하면 똑같은 결론
+        try:
+            fresh_market_data = retry("시장 재분석", analyzer.run)
+        except Exception as e:
+            log(f"  ⚠️  시장 재분석 실패: {e}")
+            return
+
         try:
             fresh_cooldowns = get_cooldown_tickers()  # 방금 등록한 쿨다운 반영
-            buy_advice = retry("AI 매수 재판단", ai_advisor.run, market_data, None, fresh_cooldowns)
+            buy_advice = retry("AI 매수 재판단", ai_advisor.run, fresh_market_data, None, fresh_cooldowns)
         except Exception as e:
             log(f"  ⚠️  매수 재판단 실패: {e}")
             return

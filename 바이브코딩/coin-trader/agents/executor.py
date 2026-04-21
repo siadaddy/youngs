@@ -4,8 +4,9 @@ from utils.bithumb_client import (
     buy_market_order, sell_market_order,
 )
 
-MAX_INVEST = float(os.getenv("MAX_INVEST_KRW", "80000"))
-MIN_ORDER  = 5000   # 빗썸 최소 주문금액
+MAX_INVEST   = float(os.getenv("MAX_INVEST_KRW", "50000"))  # 10만→5만
+MIN_ORDER    = 5000   # 빗썸 최소 주문금액
+STABLECOINS  = {"USDT", "USDC", "DAI", "BUSD", "TUSD", "USDD", "FDUSD", "USDP"}  # 매수 절대 금지
 
 
 def run(action: dict, holding: dict | None) -> dict:
@@ -58,6 +59,12 @@ def run(action: dict, holding: dict | None) -> dict:
         return None
 
     if verb == "BUY":
+        # 스테이블코인 하드 차단 — AI 프롬프트 무시해도 여기서 막음
+        coin_upper = (ticker or "").replace("KRW-", "").upper()
+        if coin_upper in STABLECOINS:
+            print(f"  🚫 스테이블코인 BUY 차단: {coin_upper} → HOLD 유지")
+            return holding
+
         if holding:
             # 이미 다른 종목 보유 중 — 먼저 매도 후 매수
             print(f"  🔄 기존 보유({holding['ticker']}) 매도 후 신규 매수")
