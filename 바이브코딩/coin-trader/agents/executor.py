@@ -3,6 +3,7 @@ from utils.bithumb_client import (
     get_krw_balance, get_coin_balance, get_current_price,
     buy_market_order, sell_market_order,
 )
+from utils.blacklist import is_blacklisted
 
 MAX_INVEST   = float(os.getenv("MAX_INVEST_KRW", "50000"))  # 10만→5만
 MIN_ORDER    = 5000   # 빗썸 최소 주문금액
@@ -63,6 +64,11 @@ def run(action: dict, holding: dict | None) -> dict:
         coin_upper = (ticker or "").replace("KRW-", "").upper()
         if coin_upper in STABLECOINS:
             print(f"  🚫 스테이블코인 BUY 차단: {coin_upper} → HOLD 유지")
+            return holding
+
+        # 블랙리스트 하드 차단 — 분석 단계에서 제외됐어도 이중 확인
+        if is_blacklisted(coin_upper):
+            print(f"  🚫 블랙리스트 BUY 차단: {coin_upper} (반복 손절 학습) → HOLD 유지")
             return holding
 
         if holding:

@@ -2,6 +2,10 @@ import pybithumb
 import pandas as pd
 import numpy as np
 from utils.bithumb_client import get_krw_tickers, get_current_price
+from utils.blacklist import get_blacklisted_tickers
+
+# 24h 최소 거래대금 (원) — 이 미만은 유동성 부족 잡코인으로 제외
+MIN_DAILY_VOLUME_KRW = 2_000_000_000  # 20억원
 
 
 def _rsi(series: pd.Series, period: int = 14) -> float:
@@ -81,23 +85,51 @@ def _bb_position(series: pd.Series, period: int = 20) -> str:
 
 
 def get_top_tickers(n: int = 15) -> list:
-    """24h 거래대금 기준 상위 n개 빗썸 티커 반환 (BTC 형식)"""
+    """
+    24h 거래대금 기준 상위 n개 빗썸 티커 반환 (BTC 형식)
+    필터:
+      1. 최소 거래대금 20억원 이상 (유동성 보장)
+      2. 블랙리스트 종목 제외 (반복 손절 학습)
+      3. 스테이블코인 제외
+    """
+    STABLECOINS = {"USDT", "USDC", "DAI", "BUSD", "TUSD", "USDD", "FDUSD", "USDP"}
     tickers = get_krw_tickers() or []
+    blacklisted = set(get_blacklisted_tickers())
+
+    if blacklisted:
+        print(f"  🚫 블랙리스트 제외: {', '.join(sorted(blacklisted))}")
+
     try:
         import requests
-        # 빗썸 공개 API — 전체 종목 시세 (거래대금 포함)
         r = requests.get("https://api.bithumb.com/public/ticker/ALL_KRW", timeout=10)
         data = r.json().get("data", {})
-        # acc_trade_value: 24h 거래대금
-        ranked = sorted(
-            [(coin, float(info.get("acc_trade_value", 0)))
-             for coin, info in data.items() if coin != "date" and coin in tickers],
-            key=lambda x: x[1], reverse=True
-        )
-        return [coin for coin, _ in ranked[:n]]
+
+        ranked = []
+        filtered_out = []
+        for coin, info in data.items():
+            if coin == "date":
+                continue
+            if coin not in tickers:
+                continue
+            if coin in STABLECOINS:
+                continue
+            if coin in blacklisted:
+                filtered_out.append(f"{coin}(블랙리스트)")
+                continue
+            vol = float(info.get("acc_trade_value", 0))
+            if vol < MIN_DAILY_VOLUME_KRW:
+                continue  # 거래대금 20억 미만 제외
+            ranked.append((coin, vol))
+
+        ranked.sort(key=lambda x: x[1], reverse=True)
+        result = [coin for coin, _ in ranked[:n]]
+        print(f"  ✅ 선정 종목 {len(result)}개 (필터: 20억↑, 블랙리스트 제외)")
+        return result
+
     except Exception as e:
         print(f"  ⚠️  상위 종목 조회 실패, 기본 목록 사용: {e}")
-        return tickers[:n]
+        # 폴백: 블랙리스트만 제외
+        return [t for t in tickers if t not in blacklisted and t not in STABLECOINS][:n]
 
 
 def analyze_ticker(ticker: str) -> dict | None:

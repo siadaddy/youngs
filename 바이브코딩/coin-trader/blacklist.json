@@ -1,0 +1,62 @@
+{
+  "FORT": {
+    "stop_loss_count": 2,
+    "last_stop_loss": "2026-04-21 12:49",
+    "blacklisted_until": "2026-04-24 12:49",
+    "history": [
+      "2026-04-21 09:19",
+      "2026-04-21 12:49"
+    ]
+  },
+  "PIEVERSE": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-20 23:46",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-20 23:46"
+    ]
+  },
+  "NCT": {
+    "stop_loss_count": 3,
+    "last_stop_loss": "2026-04-18 23:55",
+    "blacklisted_until": "2026-04-25 23:55",
+    "history": [
+      "2026-04-18 20:37",
+      "2026-04-18 21:15",
+      "2026-04-18 23:55"
+    ]
+  },
+  "SKL": {
+    "stop_loss_count": 2,
+    "last_stop_loss": "2026-04-18 20:19",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-18 13:33",
+      "2026-04-18 20:19"
+    ]
+  },
+  "IN": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-16 00:36",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-16 00:36"
+    ]
+  },
+  "HEMI": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-15 18:22",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-15 18:22"
+    ]
+  },
+  "BIOT": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-15 07:15",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-15 07:15"
+    ]
+  }
+}

@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from datetime import datetime
 from dotenv import load_dotenv
 from agents import analyzer, ai_advisor, executor
+from utils.blacklist import register_stop_loss, get_summary as blacklist_summary, init_from_history
 
 load_dotenv()
 
@@ -435,6 +436,26 @@ def main():
     check_and_notify_failures()
     check_ip_change()
 
+    # Step 0-2: 블랙리스트 초기화 (blacklist.json 없으면 거래 기록에서 자동 구성)
+    bl_file = os.path.join(os.path.dirname(__file__), "blacklist.json")
+    if not os.path.exists(bl_file):
+        try:
+            repo_root = subprocess.check_output(
+                ["git", "rev-parse", "--show-toplevel"],
+                cwd=os.path.dirname(__file__), text=True
+            ).strip()
+            init_from_history(os.path.join(repo_root, "docs", "trades.json"))
+        except Exception:
+            pass
+    # 블랙리스트 현황 로그 출력
+    bl_lines = blacklist_summary()
+    if bl_lines:
+        log(f"  📚 블랙리스트 현황 ({len(bl_lines)}개 종목):")
+        for line in bl_lines:
+            log(line)
+    else:
+        log("  📚 블랙리스트: 없음")
+
     # Step 0-1: 일일 손실 한도 체크
     if check_drawdown_limit():
         return
@@ -489,6 +510,16 @@ def main():
                     pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
                     record_loss(pnl)
                     add_cooldown(holding["ticker"])
+                    bl_entry = register_stop_loss(holding["ticker"])  # 📚 학습: 손절 횟수 누적
+                    # 블랙리스트 등록 시 알림
+                    if bl_entry.get("blacklisted_until"):
+                        count = bl_entry["stop_loss_count"]
+                        until = bl_entry["blacklisted_until"]
+                        notify(
+                            f"📚 블랙리스트 등록: {holding['ticker']}",
+                            f"손절 {count}회 → 차단 (해제: {until})\n이 종목은 차단 기간 동안 매수하지 않습니다.",
+                            priority="high"
+                        )
                 holding = None
                 log(f"  {exit_type} 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:
