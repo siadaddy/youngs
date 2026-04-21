@@ -713,6 +713,13 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
         data["holding"] = new_holding
         data["updated_at"] = now_str
 
+        # 블랙리스트 현황 포함 (웹사이트에서 표시용)
+        try:
+            from utils.blacklist import load_blacklist
+            data["blacklist"] = load_blacklist()
+        except Exception:
+            pass
+
         with open(trades_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 

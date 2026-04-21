@@ -1240,7 +1240,7 @@
     <div class="section-title">AI가 코인을 직접 삽니다</div>
     <p class="section-sub">
       RSI · MACD · 볼린저밴드 · ADX · 변동성돌파 스코어링 → Groq AI 최종 판단<br>
-      30분봉 분석 · 30분마다 실행 + 30초 실시간 감시 · 손절 -4% · 익절 +5% · 트레일링스탑 · 8h 강제청산
+      투자금 5만원 · 30분마다 실행 + 30초 실시간 감시 · 손절 -4% · 익절 +5% · 트레일링스탑 · 8h 강제청산
       <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
     </p>
     <div class="tech-stack">
@@ -1250,6 +1250,13 @@
       <span class="tech-badge green">⚡ 30분마다 자동 실행</span>
       <span class="tech-badge purple">🛡 Daily Drawdown 보호</span>
       <span class="tech-badge gold">🟠 트레일링스탑 · 8h 강제청산</span>
+      <span class="tech-badge" style="background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.25);">📚 학습 블랙리스트</span>
+    </div>
+
+    <!-- 블랙리스트 현황 인포박스 -->
+    <div id="blacklist-box" style="display:none;margin-top:20px;padding:14px 20px;border-radius:12px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#f87171;text-transform:uppercase;margin-bottom:10px;">📚 학습 블랙리스트 — 반복 손절 종목 자동 차단</div>
+      <div id="blacklist-inner" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
     <!-- 봇 상태 -->
@@ -1443,13 +1450,13 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 코인 자동매매 트레이더</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          RSI·MACD·볼린저밴드·ADX 기술 지표 스코어링 + Groq AI 최종 판단. 손절 -4% · 익절 +5% · 트레일링스탑 · 8h 강제청산 · 일일 손실 한도 보호
+          RSI·MACD·볼린저밴드·ADX 스코어링 + Groq AI 최종 판단. 투자금 5만원 · 손절 -4% · 익절 +5% · 트레일링스탑 · 8h 강제청산 · <strong style="color:#f87171;">📚 학습 블랙리스트</strong>로 반복 손절 종목 자동 차단
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Python</span>
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Groq API</span>
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Bithumb API</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">TA-Lib</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">pybithumb</span>
         </div>
       </a>
 
@@ -2148,6 +2155,61 @@
     wrEl.style.color = 'var(--muted2)';
     document.getElementById('cs-holdtime').textContent = '-';
   }
+  // ─── 학습 블랙리스트 렌더링 ───────────────────────────
+  async function loadBlacklist() {
+    try {
+      // blacklist는 trades.json 안에 포함돼 있음
+      const res = await fetch(`trades.json?t=${Date.now()}`);
+      if (!res.ok) return;
+      const trades = await res.json();
+      const data = trades.blacklist || {};
+      const box   = document.getElementById('blacklist-box');
+      const inner = document.getElementById('blacklist-inner');
+      if (!box || !inner) return;
+
+      const now = Date.now();
+      const active = [];  // 차단 중
+      const warned = [];  // 경고
+
+      for (const [coin, info] of Object.entries(data)) {
+        const count = info.stop_loss_count || 0;
+        const until = info.blacklisted_until
+          ? new Date(info.blacklisted_until.replace(' ','T'))
+          : null;
+        const isActive = until && until > now;
+        if (isActive) {
+          active.push({ coin, count, until: info.blacklisted_until });
+        } else if (count >= 1) {
+          warned.push({ coin, count });
+        }
+      }
+
+      if (active.length === 0 && warned.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+
+      box.style.display = 'block';
+      inner.innerHTML = '';
+
+      active.forEach(({ coin, count, until }) => {
+        const el = document.createElement('div');
+        el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);font-size:.75rem;';
+        el.innerHTML = `<span style="font-weight:800;color:#f87171;">🚫 ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 · ${until} 해제</span>`;
+        inner.appendChild(el);
+      });
+
+      warned.forEach(({ coin, count }) => {
+        const el = document.createElement('div');
+        el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);font-size:.75rem;';
+        el.innerHTML = `<span style="font-weight:800;color:#f59e0b;">⚠️ ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 (${count >= 1 ? '다음 손절 시 차단' : ''})</span>`;
+        inner.appendChild(el);
+      });
+    } catch (e) {
+      // blacklist.json 없으면 조용히 무시
+    }
+  }
+
   async function loadCoinTrader() {
     try {
       const res = await fetch(`trades.json?t=${Date.now()}`);
@@ -2417,8 +2479,11 @@
 
   init();
   loadCoinTrader();
+  loadBlacklist();
   // 30초마다 코인 현재가·봇 상태 갱신
   setInterval(loadCoinTrader, 30 * 1000);
+  // 블랙리스트는 5분마다 갱신
+  setInterval(loadBlacklist, 5 * 60 * 1000);
 
   // ─── 히어로 별 canvas ─────────────────────────────────
   (function initHeroCanvas() {

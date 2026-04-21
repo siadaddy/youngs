@@ -148,6 +148,14 @@ def publish_trade(action: str, holding: dict, new_holding: dict | None, reason: 
         data["holding"] = new_holding
         data["updated_at"] = now_str
 
+        # 블랙리스트 현황 포함 (웹사이트 표시용)
+        try:
+            sys.path.insert(0, os.path.dirname(__file__))
+            from utils.blacklist import load_blacklist
+            data["blacklist"] = load_blacklist()
+        except Exception:
+            pass
+
         with open(trades_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
