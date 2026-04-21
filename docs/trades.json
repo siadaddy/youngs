@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "FORT",
+    "buy_price": 29.0,
+    "qty": 3457.2776,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-21 11:30"
+  },
   "history": [
+    {
+      "time": "2026-04-21 11:30",
+      "action": "BUY",
+      "ticker": "FORT",
+      "price": 29.0,
+      "amount_krw": 99700.0,
+      "reason": "VB✅와 점수 +5 이상으로 BUY 최우선 조건을 만족하며, ADX 30.4로 추세가 있는 것으로 판단됩니다. 또한 현재가가 볼린저밴드 중하단에 위치해 있어 매수 기회로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 09:19",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 0.52,
       "pnl_krw": 0.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-11 03:10",
-      "action": "BUY",
-      "ticker": "A8",
-      "price": 15.35,
-      "amount_krw": 22170.0,
-      "reason": "변동성 돌파 신호와 VB✅가 확인되었습니다. 현재 RSI 20.6, MACD 하락, BB 중하단, 거래량 +2346%로 신호가 강력합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,5 +567,5 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-21 09:19"
+  "updated_at": "2026-04-21 11:30"
 }
