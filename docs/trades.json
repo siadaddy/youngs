@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "FORT",
-    "buy_price": 29.0,
-    "qty": 3457.2776,
-    "invest_krw": 99700.0,
-    "buy_time": "2026-04-21 11:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-21 12:49",
+      "action": "SELL",
+      "ticker": "FORT",
+      "price": 27.75,
+      "amount_krw": 99700.0,
+      "reason": "실시간 손절 -4.31% (기준 -4.0%)",
+      "pnl_pct": -4.31,
+      "pnl_krw": -4322.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 11:30",
       "action": "BUY",
@@ -545,27 +550,16 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-11 08:50",
-      "action": "SELL",
-      "ticker": "A8",
-      "price": 15.43,
-      "amount_krw": 22281.0,
-      "reason": "A8의 기술적 지표가 강한 매도 신호를 보이고 있습니다. RSI가 38.5로 상승 중이고, MACD가 데드크로스(강한 매도) 상태입니다.",
-      "pnl_pct": 0.52,
-      "pnl_krw": 0.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 29,
+    "total_trades": 30,
     "wins": 10,
-    "losses": 19,
-    "total_pnl_krw": -23455.0,
+    "losses": 20,
+    "total_pnl_krw": -27777.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-21 11:30"
+  "updated_at": "2026-04-21 12:49"
 }
