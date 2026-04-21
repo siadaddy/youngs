@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "CORE",
+    "buy_price": 56.31,
+    "qty": 885.2779,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-21 23:30"
+  },
   "history": [
+    {
+      "time": "2026-04-21 23:30",
+      "action": "BUY",
+      "ticker": "CORE",
+      "price": 56.4,
+      "amount_krw": 49850.0,
+      "reason": "CORE의 RSI는 48.7로 중립적인 수준이며, MACD는 하락세지만 볼린저밴드 중하단에 위치해 있어 반등의 가능성이 있습니다. 또한, VB 신호가 확인되며 점수는 +3으로 상대적으로 좋습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 23:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "현재 보유 종목 XRP의 수익률이 -100.00%로 매우 낮으며, 기술적 지표도 하락세를 보이고 있어 매도하는 것이 좋습니다.",
       "pnl_pct": -1.25,
       "pnl_krw": -2334.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-12 00:44",
-      "action": "BUY",
-      "ticker": "XRP",
-      "price": 2004.0,
-      "amount_krw": 133794.0,
-      "reason": "XRP의 기술 점수가 +4 이상이고, MACD 골든크로스(강한매수) 신호가 발생하였으며, ADX 28.6로 추세가 있는 것으로 판단되어 매수 신호가 발생하였다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
