@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "PIEVERSE",
+    "buy_price": 1340.0,
+    "qty": 37.2015,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-22 05:00"
+  },
   "history": [
+    {
+      "time": "2026-04-22 05:00",
+      "action": "BUY",
+      "ticker": "PIEVERSE",
+      "price": 1345.0,
+      "amount_krw": 49850.0,
+      "reason": "PIEVERSE의 RSI는 38.6으로 과매도 상태가 아니며, MACD는 상승하고 있습니다. 또한, 점수는 +4로 높은 편으로 볼린저밴드의 중하단에 위치하고 있어 매수 신호가 발생한 것으로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 00:42",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 0.45,
       "pnl_krw": -62.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-13 01:33",
-      "action": "BUY",
-      "ticker": "XRP",
-      "price": 1981.0,
-      "amount_krw": 132045.0,
-      "reason": "XRP의 RSI는 39.3으로 과매도 상태가 아니며, MACD 골든크로스(강한매수) 신호가 발생했습니다. 또한 ADX는 35.2로 추세가 있는 것으로 나타나며, 점수는 +5로 수익 가능성이 높은 신호입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-22 00:42",
+  "updated_at": "2026-04-22 05:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
