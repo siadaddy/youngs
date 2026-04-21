@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "USDT",
+    "buy_price": 1479.0,
+    "qty": 64.2809,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-21 16:00"
+  },
   "history": [
+    {
+      "time": "2026-04-21 16:00",
+      "action": "BUY",
+      "ticker": "USDT",
+      "price": 1479.0,
+      "amount_krw": 99700.0,
+      "reason": "USDT의 RSI가 28.6으로 과매도 상태이며, MACD 골든크로스 신호가 발생하여 강한 매수 신호를 보이고 있습니다. 또한, ADX가 57.6으로 추세가 확인되며, 점수가 +6으로 높아 매수에 유리한 조건입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 16:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "자동 손절 -4.0%",
       "pnl_pct": -4.86,
       "pnl_krw": -5180.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-11 14:15",
-      "action": "BUY",
-      "ticker": "FF",
-      "price": 144.0,
-      "amount_krw": 96832.0,
-      "reason": "VB✅이고 점수 +6로 수익 가능성이 높으며, RSI 35.7로 과매도 상태가 아님. 따라서 FF를 매수하는 것이 좋음",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
