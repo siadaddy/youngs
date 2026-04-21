@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "EDU",
+    "buy_price": 84.23,
+    "qty": 1123.9094,
+    "invest_krw": 99700.0,
+    "buy_time": "2026-04-21 19:30"
+  },
   "history": [
+    {
+      "time": "2026-04-21 19:30",
+      "action": "BUY",
+      "ticker": "EDU",
+      "price": 84.21,
+      "amount_krw": 99700.0,
+      "reason": "VB✅ + 점수 +5 이상으로 BUY 최우선 조건을 만족하며, ADX 24.1로 추세가 있는 것으로 판단되어 매수 신호가 발생했습니다. 또한 거래량과 기술적 지표를 고려하여 매수하는 것이 유리할 것으로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-21 19:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "자동 익절 +6.0%",
       "pnl_pct": 5.76,
       "pnl_krw": 6490.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-11 18:34",
-      "action": "BUY",
-      "ticker": "FF",
-      "price": 139.0,
-      "amount_krw": 123838.0,
-      "reason": "VB✅과 점수 +5로 변동성 돌파 신호가 나타나며, RSI 32.1로 과매도 상태이므로 매수 기회가 좋습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
