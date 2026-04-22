@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "CORE",
+    "buy_price": 64.03,
+    "qty": 778.5413,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-22 16:33"
+  },
   "history": [
+    {
+      "time": "2026-04-22 16:33",
+      "action": "BUY",
+      "ticker": "CORE",
+      "price": 64.13,
+      "amount_krw": 49850.0,
+      "reason": "CORE의 RSI는 44.1로 중립적인 수준이며, MACD는 하락하고 있지만 볼린저밴드 중하단에 위치해 있어 변동성 돌파의 가능성이 있습니다. 또한 점수는 +3으로 상대적으로 높은 편이며, 거래량은 50% 감소했지만 VB✅ 신호가 발동되어 매수 신호가 강합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 16:33",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "자동 익절 +6.0%",
       "pnl_pct": 6.16,
       "pnl_krw": 1782.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-15 07:15",
-      "action": "SELL",
-      "ticker": "BIOT",
-      "price": 0.4987,
-      "amount_krw": 128320.0,
-      "reason": "RSI 과매도 + MACD 하락, 기술 지표 악화로 손절",
-      "pnl_pct": -2.54,
-      "pnl_krw": -3972.0,
       "dry_run": false
     }
   ],
