@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 2137.0,
+    "qty": 23.327,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-23 04:30"
+  },
   "history": [
+    {
+      "time": "2026-04-23 04:30",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 2137.0,
+      "amount_krw": 49850.0,
+      "reason": "RSI 40.8로 저점에 근접해 있으며, MACD 하락세에도 불구하고 BB 중하단에서 반등의 기회를 찾을 수 있습니다. 점수 +2로 손익비가 유리한 신호이므로 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-23 04:11",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -4.03,
       "pnl_krw": -5216.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-15 23:15",
-      "action": "BUY",
-      "ticker": "IN",
-      "price": 125.0,
-      "amount_krw": 99700.0,
-      "reason": "VB✅와 점수 +5를 만족하여 변동성 돌파 신호가 발생하였고, ADX 25 이상으로 추세가 있는 종목입니다. 따라서 BUY 신호가 발생하여 진입합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-23 04:11",
+  "updated_at": "2026-04-23 04:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
