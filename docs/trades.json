@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "CORE",
+    "buy_price": 64.26,
+    "qty": 775.7547,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-22 13:30"
+  },
   "history": [
+    {
+      "time": "2026-04-22 13:30",
+      "action": "BUY",
+      "ticker": "CORE",
+      "price": 64.33,
+      "amount_krw": 49850.0,
+      "reason": "CORE의 RSI는 33.3으로 저조하고, MACD는 하락세이지만, 볼린저밴드 중하단에 위치하고 있으며, VB 신호가 확인되었습니다. 또한 점수는 +4로 높아 신호가 강합니다. 따라서 CORE를 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 09:25",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.87,
       "pnl_krw": -1811.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-14 04:00",
-      "action": "BUY",
-      "ticker": "USDT",
-      "price": 1486.0,
-      "amount_krw": 131932.0,
-      "reason": "USDT의 RSI가 16.7로 과매도 상태이며, ADX가 37.6로 추세가 유지되고 있어 매수 기회가 있는 것으로 판단됩니다. 또한, 점수가 +3으로 상대적으로 높은 수준입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-22 09:25",
+  "updated_at": "2026-04-22 13:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
