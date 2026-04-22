@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "CORE",
-    "buy_price": 64.26,
-    "qty": 775.7547,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-22 13:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-22 15:00",
+      "action": "SELL",
+      "ticker": "CORE",
+      "price": 63.99,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 CORE의 수익률이 -0.53%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한 다른 종목에서 강한 돌파 신호가 나타나 기회 교체의 여지가 있습니다.",
+      "pnl_pct": -0.42,
+      "pnl_krw": -209.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 13:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-14 08:29",
-      "action": "SELL",
-      "ticker": "USDT",
-      "price": 1473.0,
-      "amount_krw": 130778.0,
-      "reason": "현재 보유 종목 USDT의 수익률이 -100.00%로 매우 낮으며, 기술 점수도 낮은 편입니다. 또한, 현재 시장 상황을 분석해 보아 하락 추세가 지속되고 있어 매도하는 것이 좋을 것으로 판단됩니다.",
-      "pnl_pct": -0.87,
-      "pnl_krw": -1811.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 37,
+    "total_trades": 38,
     "wins": 11,
-    "losses": 26,
-    "total_pnl_krw": -39520.0,
+    "losses": 27,
+    "total_pnl_krw": -39729.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-22 13:30",
+  "updated_at": "2026-04-22 15:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
