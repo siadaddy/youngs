@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "GRACY",
-    "buy_price": 12.16,
-    "qty": 4099.5065,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-22 15:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-22 16:33",
+      "action": "SELL",
+      "ticker": "GRACY",
+      "price": 12.06,
+      "amount_krw": 49850.0,
+      "reason": "보유 수익률 -0.82%로 낮고, 기술 점수도 낮으며, 다른 종목에 비해 상대적으로 좋지 않은 상황이므로 매도하는 것이 좋다. 또한, 보유 시간이 93분으로 90분 이상이므로 교체를 고려할 수 있다. 기회 교체를 위해 다른 종목을 찾는 것이 좋다.",
+      "pnl_pct": -0.82,
+      "pnl_krw": -410.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 15:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": -2.54,
       "pnl_krw": -3972.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-15 06:15",
-      "action": "BUY",
-      "ticker": "D",
-      "price": 15.59,
-      "amount_krw": 31575.0,
-      "reason": "VB✅와 강한 매수 신호인 골든크로스(강한매수)가 발생하였으며, ADX 60.1로 추세가 명확하여 BUY 신호가 발생했습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 38,
+    "total_trades": 39,
     "wins": 11,
-    "losses": 27,
-    "total_pnl_krw": -39729.0,
+    "losses": 28,
+    "total_pnl_krw": -40139.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-22 15:00",
+  "updated_at": "2026-04-22 16:33",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
