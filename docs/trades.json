@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "HIGH",
+    "buy_price": 404.0,
+    "qty": 123.391,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-22 20:00"
+  },
   "history": [
+    {
+      "time": "2026-04-22 20:00",
+      "action": "BUY",
+      "ticker": "HIGH",
+      "price": 404.0,
+      "amount_krw": 49850.0,
+      "reason": "HIGH의 RSI가 26.7로 저점에 위치해 있으며, 거래량이 80% 증가한 것으로 나타나 변동성 돌파의 신호가 발생했습니다. 또한 ADX가 45.4로 추세가 유지되고 있어 매수 기회로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 19:57",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -4.58,
       "pnl_krw": -6570.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-15 12:05",
-      "action": "BUY",
-      "ticker": "HEMI",
-      "price": 11.56,
-      "amount_krw": 129603.0,
-      "reason": "VB✅ + 점수 +4 ADX 강한 추세, 즉시 재매수 신호",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-22 19:57",
+  "updated_at": "2026-04-22 20:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
