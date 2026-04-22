@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "HIGH",
-    "buy_price": 404.0,
-    "qty": 123.391,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-22 20:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-22 22:30",
+      "action": "SELL",
+      "ticker": "HIGH",
+      "price": 395.0,
+      "amount_krw": 49850.0,
+      "reason": "보유 시간 150분 경과, 수익률 -2.23%, 기술 점수 +3, RSI 20.3, MACD 하락, 기준에 부합하지 않아 매도 결정. 다른 종목의 매수 기회를 고려할 필요가 있음.",
+      "pnl_pct": -2.23,
+      "pnl_krw": -1111.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-22 20:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-15 18:22",
-      "action": "SELL",
-      "ticker": "HEMI",
-      "price": 11.03,
-      "amount_krw": 123667.0,
-      "reason": "RSI 과매수 + MACD 데드크로스 매도 신호",
-      "pnl_pct": -4.58,
-      "pnl_krw": -6570.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 40,
+    "total_trades": 41,
     "wins": 12,
-    "losses": 28,
-    "total_pnl_krw": -37570.0,
+    "losses": 29,
+    "total_pnl_krw": -38681.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-22 20:00",
+  "updated_at": "2026-04-22 22:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
