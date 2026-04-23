@@ -124,9 +124,10 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
     def _score(d: dict) -> int:
         s = 0
         rsi = d.get("rsi", 50)
-        # RSI 스코어링 — 극단적 과매도(< 20)는 급락 추세일 수 있어 중립 처리
-        if 20 <= rsi < 35:   s += 2   # 과매도 반등 구간 (매수 적합)
-        elif rsi < 20:       s += 0   # 극단적 과매도 = 급락 중일 수 있음 → 중립
+        # RSI 스코어링
+        # RSI < 20 = 급락 추세 → BUY 절대 금지 수준으로 강한 패널티
+        if rsi < 20:         s -= 5   # 극단적 과매도 = 급락 추세 중 → BUY 불가
+        elif 20 <= rsi < 35: s += 2   # 과매도 반등 구간 (매수 적합)
         elif rsi < 50:       s += 1   # 중립 하단
         elif rsi > 75:       s -= 2   # 과매수
         elif rsi > 65:       s -= 1   # 과매수 진입
@@ -143,11 +144,16 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
         # VB 보너스 — 거래량 증가 동반 시에만 신뢰
         vol = d.get("vol_change_pct", 0)
         if d.get("vb") and vol >= 20:   s += 2   # VB + 거래량 급증 → 강한 신호
-        elif d.get("vb"):               s += 1   # VB만 → 약한 신호 (이전 +2에서 약화)
+        elif d.get("vb"):               s += 1   # VB만 → 약한 신호
         return s
 
+    # 쿨다운 중인 종목은 점수 계산에서 완전 제외 (AI가 추천하지 못하도록)
+    cooldown_set = set(cooldown_tickers or [])
     scored = []
     for d in market_data[:15]:
+        coin = d.get("ticker", "")
+        if coin in cooldown_set or f"KRW-{coin}" in cooldown_set:
+            continue  # 쿨다운 종목 스킵 — cooldown_text에서 별도 명시
         score = _score(d)
         scored.append((score, d))
     scored.sort(key=lambda x: x[0], reverse=True)
@@ -162,7 +168,7 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
     rows = []
     for score, d in scored:
         adx = d.get("adx", 0)
-        trend = "추세O" if adx >= 15 else "횡보"
+        trend = "추세O" if adx >= 20 else "횡보"
         vol_str = f"거래량{d['vol_change_pct']:+.0f}%"
         vb_str = "VB✅" if d.get("vb") else "VB❌"
         rows.append(
@@ -171,7 +177,7 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
         )
     market_text = "\n".join(rows)
 
-    stop_loss = float(os.getenv("STOP_LOSS_PCT", "5.0"))
+    stop_loss = float(os.getenv("STOP_LOSS_PCT", "4.0"))
 
     # 최소 보유 시간 계산 (기회 교체 방지용)
     hold_minutes = 0

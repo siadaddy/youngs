@@ -28,9 +28,16 @@ def run(action: dict, holding: dict | None) -> dict:
         if not holding:
             print("  ⚠️  SELL 지시 but 보유 종목 없음 → 스킵")
             return None
+        # force=True: 손절/트레일링/강제청산 — 최소금액 체크 무시하고 반드시 매도
+        force = action.get("force", False)
         t = holding["ticker"]
-        # 실제 잔고 조회 (3회 재시도 포함)
-        qty = get_coin_balance(t)
+        # 실제 잔고 조회 (API 오류 시 최대 3회 재시도)
+        qty = -1.0
+        for _attempt in range(3):
+            qty = get_coin_balance(t)
+            if qty >= 0:
+                break
+            import time as _t; _t.sleep(2)
         if qty < 0:
             # API 오류(-1.0) — state.json qty 폴백으로 매도 시도
             fallback_qty = holding.get("qty", 0)
@@ -50,10 +57,13 @@ def run(action: dict, holding: dict | None) -> dict:
             print(f"  ⚠️  {t} 현재가 0원 (API 오류) — SELL 보류, holding 유지")
             return holding
         # 빗썸 시장가 매도 최소금액 체크 (qty × 현재가 >= 5000)
+        # force=True(손절/강제청산)면 최소금액 무시 — 가격이 충분히 떨어지면 영원히 못 파는 상황 방지
         sell_value = qty * price
-        if sell_value < 5000:
+        if sell_value < 5000 and not force:
             print(f"  ⚠️  매도 금액 {sell_value:,.0f}원 < 5,000원 최소 기준 — 매도 보류 (가격 회복 대기)")
             return holding
+        elif sell_value < 5000 and force:
+            print(f"  ⚠️  매도 금액 {sell_value:,.0f}원 < 5,000원 but force=True — 강제 매도 실행")
         result = sell_market_order(t, qty)
         pct = round((price / holding["buy_price"] - 1) * 100, 2) if holding.get("buy_price") else 0
         print(f"  ✅ 매도 완료: {t} | 수익률 {pct:+.2f}%")

@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from datetime import datetime
 from dotenv import load_dotenv
 from agents import analyzer, ai_advisor, executor
-from utils.blacklist import register_stop_loss, get_summary as blacklist_summary, init_from_history
+from utils.blacklist import register_stop_loss, add_successful_trade, get_summary as blacklist_summary, init_from_history
 
 load_dotenv()
 
@@ -500,18 +500,33 @@ def main():
 
         if exit_type in exit_labels:
             notif_title, sell_reason, priority = exit_labels[exit_type]
-            action = {"action": "SELL", "ticker": holding["ticker"], "reason": sell_reason}
+            # 손절/트레일링/강제청산 = force=True → executor에서 최소금액 체크 무시
+            force_sell = exit_type in ("stop_loss", "trailing_stop", "time_exit")
+            action = {"action": "SELL", "ticker": holding["ticker"], "reason": sell_reason, "force": force_sell}
+
+            # 손절 실제 PnL 미리 계산 (executor 실행 후엔 holding이 사라짐)
+            _pre_sell_price = None
+            if exit_type == "stop_loss":
+                try:
+                    from utils.bithumb_client import get_current_price as _gcp
+                    _pre_sell_price = _gcp(holding["ticker"])
+                except Exception:
+                    pass
+
             try:
                 new_holding = executor.run(action, holding)
                 save_state(new_holding)
                 notify(notif_title, f"{action['ticker']} 매도 완료\n이유: {sell_reason}", priority=priority)
                 _publish_trades("SELL", action, new_holding, holding)
                 if exit_type == "stop_loss":
-                    pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
+                    # ★ 실제 PnL 기반 기록 (추정값 버그 수정)
+                    if _pre_sell_price and holding.get("buy_price") and holding.get("qty"):
+                        pnl = round((_pre_sell_price - holding["buy_price"]) * holding["qty"], 0)
+                    else:
+                        pnl = -(holding.get("invest_krw", 0) * STOP_LOSS / 100)
                     record_loss(pnl)
                     add_cooldown(holding["ticker"])
                     bl_entry = register_stop_loss(holding["ticker"])  # 📚 학습: 손절 횟수 누적
-                    # 블랙리스트 등록 시 알림
                     if bl_entry.get("blacklisted_until"):
                         count = bl_entry["stop_loss_count"]
                         until = bl_entry["blacklisted_until"]
@@ -520,6 +535,9 @@ def main():
                             f"손절 {count}회 → 차단 (해제: {until})\n이 종목은 차단 기간 동안 매수하지 않습니다.",
                             priority="high"
                         )
+                elif exit_type in ("take_profit", "trailing_stop"):
+                    # 수익 매도 → 블랙리스트 복구 카운트
+                    add_successful_trade(holding["ticker"])
                 holding = None
                 log(f"  {exit_type} 처리 완료 — 즉시 매수 기회 탐색 계속")
             except Exception as e:

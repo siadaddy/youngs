@@ -114,6 +114,33 @@ def get_summary() -> list[str]:
     return lines
 
 
+def add_successful_trade(ticker: str) -> dict:
+    """
+    수익 거래 완료 시 호출. 복구 카운트 누적.
+    3회 수익 달성 시 손절 카운트 1 감소 (차단 기간 자체는 유지 — 리스크 보호).
+    """
+    data = load_blacklist()
+    coin = ticker.replace("KRW-", "").upper()
+
+    if coin not in data:
+        return {}  # 손절 이력 없는 종목은 기록 불필요
+
+    entry = data[coin]
+    entry["recovery_trades"] = entry.get("recovery_trades", 0) + 1
+
+    if entry["recovery_trades"] >= 3:
+        old_count = entry["stop_loss_count"]
+        if old_count > 1:
+            entry["stop_loss_count"] = max(1, old_count - 1)
+            print(f"  ✅ {coin}: 3회 수익 달성 → 손절 카운트 {old_count} → {entry['stop_loss_count']} 감소 (학습 개선)")
+        entry["recovery_trades"] = 0
+        print(f"  🔄 {coin}: 복구 카운터 리셋")
+
+    data[coin] = entry
+    save_blacklist(data)
+    return entry
+
+
 def init_from_history(trades_path: str):
     """
     trades.json 거래 기록에서 손절 이력을 읽어 블랙리스트 초기화.

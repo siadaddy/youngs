@@ -46,9 +46,10 @@ def _adx(df: pd.DataFrame, period: int = 14) -> float:
         (low - close.shift()).abs()
     ], axis=1).max(axis=1)
     atr = tr.ewm(span=period, adjust=False).mean()
-    plus_di = 100 * (plus_dm.ewm(span=period, adjust=False).mean() / atr)
-    minus_di = 100 * (minus_dm.ewm(span=period, adjust=False).mean() / atr)
-    dx = (100 * (plus_di - minus_di).abs() / (plus_di + minus_di)).fillna(0)
+    plus_di  = 100 * (plus_dm.ewm(span=period, adjust=False).mean() / atr.replace(0, np.nan))
+    minus_di = 100 * (minus_dm.ewm(span=period, adjust=False).mean() / atr.replace(0, np.nan))
+    denom = (plus_di + minus_di).replace(0, np.nan)  # divide-by-zero 방지
+    dx = (100 * (plus_di - minus_di).abs() / denom).fillna(0)
     val = float(dx.ewm(span=period, adjust=False).mean().iloc[-1])
     return round(val if np.isfinite(val) else 0.0, 1)  # NaN/Inf → 0 (추세 없음)
 
@@ -185,8 +186,9 @@ def run(top_n: int = 15) -> list:
     results = []
     with ThreadPoolExecutor(max_workers=5) as executor:
         future_to_ticker = {executor.submit(analyze_ticker, t): t for t in tickers}
+        futures_list = list(future_to_ticker.keys())
         try:
-            for future in as_completed(future_to_ticker, timeout=120):
+            for future in as_completed(futures_list, timeout=120):
                 try:
                     info = future.result(timeout=30)
                     if info:
@@ -194,9 +196,11 @@ def run(top_n: int = 15) -> list:
                 except Exception as e:
                     ticker = future_to_ticker[future]
                     print(f"  ⚠️  [{ticker}] 분석 오류: {e}")
-        except Exception:
-            # 120초 전체 타임아웃 — 지금까지 완료된 결과만 사용
-            print("  ⚠️  병렬 분석 120초 초과 — 완료된 종목만 사용")
+        except TimeoutError:
+            # 120초 전체 타임아웃 — 미완료 스레드 취소 요청 후 완료된 결과만 사용
+            for f in futures_list:
+                f.cancel()
+            print("  ⚠️  병렬 분석 120초 초과 — 미완료 스레드 취소, 완료된 종목만 사용")
 
     print(f"  ✅ {len(results)}개 종목 분석 완료")
     return results
