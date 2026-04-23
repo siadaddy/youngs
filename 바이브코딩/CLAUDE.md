@@ -1,6 +1,6 @@
 # 🤖 AI 자동화 시스템 — Claude Code 컨텍스트
 
-> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-21
+> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-23
 
 ---
 
@@ -130,6 +130,41 @@ for l in get_summary(): print(l)
 ---
 
 ## 🐛 최근 수정된 주요 버그 & 변경사항
+
+### 2026-04-23 — 전면 버그 수정 & 학습 강화
+
+**price_guard.py 핵심 버그 수정**
+- 실시간 손절 시 `register_stop_loss()` 누락 → 블랙리스트 학습 누락 수정
+- 실시간 손절 시 `record_loss()` 누락 → 일일 손실 한도 미작동 수정
+- TAKE_PROFIT 기본값 `8.0` → `5.0` 수정
+- **트레일링스탑 추가** — 30분 사이클에만 있던 트레일링스탑을 30초 감시에도 적용
+- 매도 3회 자동 재시도 추가
+
+**executor.py**
+- `force` 플래그 — 손절/강제청산 시 5,000원 최소금액 무시
+- 잔고 조회 3회 재시도 + state.json 폴백
+
+**analyzer.py**
+- ADX Inf/NaN 수정 (divide-by-zero)
+- 병렬 분석 120초 타임아웃 추가
+
+**ai_advisor.py**
+- RSI < 20 점수 `0` → `-5` (BUY 강차단 — VB로 우회하던 버그 수정)
+- 쿨다운 종목 스코어링 전 사전 필터링
+
+**utils/blacklist.py**
+- `add_successful_trade()` 추가 — 수익 3회 시 손절 카운트 감소 (점진적 복구)
+
+**main.py**
+- 실제 PnL 계산 (추정 → 실가 × 수량)
+- `force_sell`, `add_successful_trade()` 호출 추가
+
+**웹사이트 (docs/)**
+- 히어로 제목: "시아 아빠의 Claude 실험실"
+- AI 직원 수: 5명 → 8명 (실제 운용 기준)
+- about.html / index.html 전체 수치 실제 설정 기준으로 정확화
+
+---
 
 ### 2026-04-21 — 전면 개선
 

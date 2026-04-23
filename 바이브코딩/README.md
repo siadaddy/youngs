@@ -11,7 +11,7 @@
 | 프로젝트 | 설명 | 실행 주기 |
 |---------|------|---------|
 | [ai-crew](./ai-crew/) | AI 뉴스레터 자동 생성 (카드뉴스 5개 + 블로그 + 이미지 + 음악) | 매일 07:00 |
-| [coin-trader](./coin-trader/) | AI 코인 자동매매 (빗썸 KRW 마켓) | 5분마다 |
+| [coin-trader](./coin-trader/) | AI 코인 자동매매 (빗썸 KRW 마켓) | 30분마다 + 30초 감시 |
 | [뉴스레터](./뉴스레터/) | RSS 뉴스 자동 수집 & 카테고리 분류 | 매일 06:40 |
 | [docs](./docs/) | GitHub Pages 대시보드 | — |
 
@@ -38,13 +38,15 @@ RSS로 수집된 뉴스를 바탕으로 Gemini / Groq AI가 에디터픽 기사�
 
 빗썸 KRW 마켓 상위 20개 종목을 분석해 Groq AI가 매매를 자동 실행합니다.
 
-- **분석**: 30분봉 RSI · MACD · 볼린저밴드 · ADX · 변동성 돌파
-- **안전장치**: 손절 -4% / 익절 +8% / Daily Drawdown -15,000원 / 손절 후 전역 쿨다운 2h
+- **분석**: 30분봉 RSI · MACD · 볼린저밴드 · ADX · 변동성 돌파 (병렬 5개)
+- **안전장치**: 손절 -4% / 익절 +5% / 트레일링스탑 +3%/-2.5% / 8h 강제청산 / Daily Drawdown -7,500원
+- **학습 블랙리스트**: 반복 손절 종목 자동 차단 (2회→3일 / 5회+→30일)
 - **알림**: ntfy 실시간 푸시 알림
 - **대시보드**: 누적 손익 차트 · 봇 상태 · 매매 이력
 
 ```
-매 5분: 시장 분석 → AI 판단(BUY/SELL/HOLD) → 주문 실행 → 대시보드 업데이트
+매 :00/:30: 시장 분석 → AI 판단(BUY/SELL/HOLD) → 주문 실행 → 대시보드 업데이트
+상시(30초): price_guard → 손절/익절/트레일링스탑 실시간 감시
 ```
 
 → [자세히 보기](./coin-trader/README.md)
@@ -103,10 +105,10 @@ MacBook (항상 켜짐, pmset -c sleep 0)
 ├── 07:00  launchd → ai-crew/run_daily.sh              (AI 뉴스레터 생성 + 게시)
 │          07:15~20  GitHub Pages 자동 배포 완료
 ├── 08:30  launchd → coin-trader/main.py report        (일일 리포트)
-└── 매 5분  launchd → coin-trader/main.py              (코인 매매 실행)
-           상시    launchd → coin-trader/price_guard.py (30초 손절/익절 감시)
+├── 매 :00/:30 launchd → coin-trader/main.py          (코인 매매 실행, 30분마다)
+└── 상시    launchd → coin-trader/price_guard.py       (30초 손절/익절/트레일링 감시)
 ```
 
 ---
 
-*최종 업데이트: 2026-04-19*
+*최종 업데이트: 2026-04-23*

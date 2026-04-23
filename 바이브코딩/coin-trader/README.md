@@ -98,7 +98,7 @@ NTFY_TOPIC=siadad-aicrew
 
 | 지표 | 설정 | 매수 점수 | 매도 점수 |
 |------|------|----------|----------|
-| RSI | 14봉 (30분봉) | 20~35: +2 / 35~50: +1 / **<20: 0 (급락 중, 중립)** | >65: -1 / >75: -2 |
+| RSI | 14봉 (30분봉) | 20~35: +2 / 35~50: +1 / **<20: -5 (급락 중, BUY 강차단)** | >65: -1 / >75: -2 |
 | MACD | 12/26/9 | 골든크로스: +2 / 상승: +1 | 데드크로스: -2 / 하락: -1 |
 | 볼린저밴드 | 20/2σ | 하단: +2 / 중하단: +1 | 상단: -2 / 중상단: -1 |
 | ADX | 14봉 | **≥20** 추세 있음 (매수 허용) | <20 횡보 (매수 금지) |
@@ -144,8 +144,12 @@ NTFY_TOPIC=siadad-aicrew
 
 **3중 차단 구조**:
 1. `analyzer.py` — 분석 대상에서 제외 (AI가 아예 보지 못함)
-2. `ai_advisor.py` — 프롬프트에 블랙리스트 명시
+2. `ai_advisor.py` — 프롬프트에 블랙리스트 명시 + 쿨다운 종목 스코어링에서 필터
 3. `executor.py` — 하드코드 BUY 차단 (분석 통과해도 막힘)
+
+**수익 학습 복구 (add_successful_trade)**:
+- 블랙리스트 등록 종목이 수익 3회 달성 시 → 손절 카운트 1 감소
+- 반복 수익으로 신뢰 회복 시 점진적 차단 해제 가능
 
 ```bash
 # 블랙리스트 현황 확인
@@ -251,7 +255,38 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ## 📝 업데이트 로그
 
-### 2026-04-21 (현재)
+### 2026-04-23 (현재) — 전면 버그 수정 & 학습 강화
+
+**price_guard.py — 핵심 버그 3개 수정**
+- 실시간 손절 시 `register_stop_loss()` 누락 → 블랙리스트 학습이 30분 사이클에서만 동작하던 문제 수정
+- 실시간 손절 시 `record_loss()` 누락 → 일일 손실 한도(-7,500원)가 실시간 손절엔 작동 안 하던 문제 수정
+- TAKE_PROFIT 기본값 `8.0` → `5.0` 수정 (.env 없을 시 잘못된 값 사용)
+- **트레일링스탑 로직 추가** — 30분 main.py에만 있던 트레일링스탑을 30초 price_guard에도 적용
+- 매도 3회 자동 재시도 로직 추가
+
+**executor.py**
+- `force` 플래그 추가 — 손절/강제청산 시 5,000원 최소금액 체크 무시
+- 잔고 조회 3회 재시도 + state.json 폴백
+
+**analyzer.py**
+- ADX 계산 Inf/NaN 오류 수정 (평탄 가격 데이터 시 divide-by-zero)
+- 병렬 분석 120초 전체 타임아웃 추가 (미완료 스레드 취소 후 완료분만 사용)
+
+**ai_advisor.py**
+- RSI < 20 점수: `0 (중립)` → `-5 (BUY 강차단)` — 급락 중 VB 신호로 BUY 허용되던 버그 수정
+- 쿨다운 종목 스코어링 단계에서 사전 필터링 추가
+
+**utils/blacklist.py**
+- `add_successful_trade()` 신규 — 블랙리스트 종목 수익 3회 달성 시 손절 카운트 1 감소
+
+**main.py**
+- 실제 PnL 계산: 추정값(`invest_krw × STOP_LOSS%`) → 실가 × 수량으로 정확한 계산
+- `force_sell` 플래그: stop_loss / trailing_stop / time_exit 시 자동 적용
+- `add_successful_trade()` 호출: 익절 / 트레일링스탑 매도 시 수익 학습 기록
+
+---
+
+### 2026-04-21
 - **학습 블랙리스트**: `utils/blacklist.py` 신규 — 손절 횟수 누적 학습, 자동 차단
 - **투자금 축소**: 10만원 → 5만원 / 일일한도 -15,000원 → -7,500원
 - **buy_market_order 버그 수정**: amount_krw 파라미터 무시 버그 수정
@@ -290,4 +325,4 @@ pip install pybithumb pandas numpy python-dotenv requests
 
 ---
 
-*최종 업데이트: 2026-04-21 | Powered by Groq + Gemini + pybithumb + GitHub Pages*
+*최종 업데이트: 2026-04-23 | Powered by Groq + Gemini + pybithumb + GitHub Pages*
