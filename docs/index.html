@@ -1130,6 +1130,7 @@
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
   <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
+  <button class="tab-btn" onclick="switchTab('weekly')">📊 주간 트렌드</button>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
   <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
 </div>
@@ -1303,7 +1304,83 @@
 
 </div><!-- /tab-news -->
 
-<!-- ─── 탭3: Music Universe ──────────────────────────── -->
+<!-- ─── 탭3: 주간 트렌드 브리핑 ─────────────────────── -->
+<div class="tab-content" id="tab-weekly">
+<section class="section" id="weekly-section">
+  <div class="container">
+    <div class="section-eyebrow">📊 Weekly Trend · 매주 월요일 자동 분석</div>
+    <div class="section-title">주간 트렌드 브리핑</div>
+    <p class="section-sub">지난 7일간 AI가 분석한 뉴스 흐름 — 분야별 이슈 빈도 · 핵심 인사이트 · 다음 주 주목 포인트</p>
+
+    <!-- 로딩 상태 -->
+    <div id="weekly-loading" style="text-align:center;padding:60px 0;color:var(--muted)">
+      <div style="font-size:2rem;margin-bottom:12px">📊</div>
+      <div>주간 트렌드 데이터를 불러오는 중...</div>
+    </div>
+
+    <!-- 데이터 없음 -->
+    <div id="weekly-empty" style="display:none;text-align:center;padding:60px 0">
+      <div style="font-size:3rem;margin-bottom:16px">📅</div>
+      <div style="color:var(--muted2);font-size:1rem;font-weight:600">아직 분석 데이터가 없습니다</div>
+      <div style="color:var(--muted);font-size:.85rem;margin-top:8px">매주 월요일 07:00에 자동으로 생성됩니다</div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div id="weekly-content" style="display:none">
+
+      <!-- 헤더: 주차 + 요약 -->
+      <div style="background:linear-gradient(135deg,rgba(28,105,212,.15),rgba(167,139,250,.1));border:1px solid rgba(28,105,212,.25);border-radius:var(--r-lg);padding:28px 32px;margin-bottom:32px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+          <span id="weekly-label" style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bmw-lt);background:rgba(28,105,212,.15);padding:4px 12px;border-radius:99px;border:1px solid rgba(28,105,212,.3)"></span>
+          <span id="weekly-date" style="font-size:.75rem;color:var(--muted);margin-left:auto"></span>
+        </div>
+        <div id="weekly-summary" style="font-size:1.35rem;font-weight:800;color:var(--text);line-height:1.4;margin-bottom:8px"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+          <span style="font-size:.75rem;color:var(--muted)">이번 주 가장 핫한 분야</span>
+          <span id="weekly-hot" style="font-size:.82rem;font-weight:700;color:var(--gold);background:rgba(245,158,11,.1);padding:3px 10px;border-radius:99px;border:1px solid rgba(245,158,11,.25)"></span>
+        </div>
+      </div>
+
+      <!-- 분야별 빈도 바 차트 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:24px;margin-bottom:28px">
+        <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px">분야별 이슈 건수</div>
+        <div id="weekly-bars"></div>
+      </div>
+
+      <!-- 섹션 인사이트 카드 -->
+      <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">분야별 핵심 이슈</div>
+      <div id="weekly-sections" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:32px"></div>
+
+      <!-- 주간 인사이트 -->
+      <div style="background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(28,105,212,.06));border:1px solid rgba(167,139,250,.2);border-radius:var(--r-md);padding:24px 28px;margin-bottom:28px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:1.1rem">💡</span>
+          <span style="font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent2)">이번 주 인사이트</span>
+        </div>
+        <div id="weekly-insight" style="font-size:.92rem;line-height:1.8;color:var(--muted2)"></div>
+      </div>
+
+      <!-- 다음 주 주목 포인트 -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:24px 28px;margin-bottom:32px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <span style="font-size:1.1rem">📌</span>
+          <span style="font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2)">다음 주 주목 포인트</span>
+        </div>
+        <ul id="weekly-next" style="list-style:none;display:flex;flex-direction:column;gap:10px"></ul>
+      </div>
+
+      <!-- 히스토리 (이전 주) -->
+      <div id="weekly-history-wrap" style="display:none">
+        <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">이전 주 요약</div>
+        <div id="weekly-history" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+    </div><!-- /weekly-content -->
+  </div>
+</section>
+</div><!-- /tab-weekly -->
+
+<!-- ─── 탭4: Music Universe ──────────────────────────── -->
 <div class="tab-content" id="tab-music">
   <iframe id="music-iframe" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
 </div>
@@ -2327,10 +2404,11 @@
     }, 5 * 60 * 1000);
 
   function switchTab(tab) {
-    const tabs = ['news', 'coin', 'music'];
+    const tabs = ['news', 'coin', 'weekly', 'music'];
     document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
     tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
     if (tab === 'news') init();
+    if (tab === 'weekly') initWeekly();
     if (tab === 'music') {
       const fr = document.getElementById('music-iframe');
       if (!fr.getAttribute('src')) {
@@ -2344,6 +2422,106 @@
         if (rfs) rfs.call(fr).catch(() => {});
       };
       fr.getAttribute('src') ? goFull() : fr.addEventListener('load', goFull, { once: true });
+    }
+  }
+
+  // ── 주간 트렌드 브리핑 ──────────────────────────────────
+  let _weeklyLoaded = false;
+  async function initWeekly() {
+    if (_weeklyLoaded) return;
+    const loading = document.getElementById('weekly-loading');
+    const empty   = document.getElementById('weekly-empty');
+    const content = document.getElementById('weekly-content');
+    try {
+      const r = await fetch('weekly_trend.json?v=' + Date.now());
+      const d = await r.json();
+      loading.style.display = 'none';
+
+      if (!d.week_label || !d.week_summary) {
+        empty.style.display = 'block';
+        return;
+      }
+
+      // 헤더
+      document.getElementById('weekly-label').textContent   = `📅 ${d.week_label}`;
+      document.getElementById('weekly-date').textContent    = d.generated_at ? `${d.generated_at} 생성` : '';
+      document.getElementById('weekly-summary').textContent = d.week_summary;
+      document.getElementById('weekly-hot').textContent     = d.hot_category || '';
+
+      // 분야별 바 차트
+      const barsEl = document.getElementById('weekly-bars');
+      barsEl.innerHTML = '';
+      const cats = d.category_counts || [];
+      cats.forEach(cat => {
+        const pct = cat.pct || 0;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:12px';
+        row.innerHTML = `
+          <div style="width:140px;font-size:.82rem;color:var(--muted2);flex-shrink:0;text-align:right">${cat.name}</div>
+          <div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:10px">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--bmw),var(--accent2));border-radius:4px;transition:width 1s ease"></div>
+          </div>
+          <div style="width:36px;font-size:.78rem;font-weight:700;color:var(--bmw-lt)">${cat.count}</div>`;
+        barsEl.appendChild(row);
+      });
+
+      // 섹션 인사이트 카드
+      const sectionsEl = document.getElementById('weekly-sections');
+      sectionsEl.innerHTML = '';
+      (d.sections || []).forEach(sec => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:20px';
+        card.innerHTML = `
+          <div style="font-size:.8rem;color:var(--bmw-lt);font-weight:700;margin-bottom:8px">${sec.category}</div>
+          <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:10px;line-height:1.4">${sec.top_issue}</div>
+          <div style="font-size:.83rem;color:var(--muted2);line-height:1.7">${sec.insight}</div>`;
+        sectionsEl.appendChild(card);
+      });
+
+      // 주간 인사이트
+      document.getElementById('weekly-insight').textContent = d.weekly_insight || '';
+
+      // 다음 주 주목 포인트
+      const nextEl = document.getElementById('weekly-next');
+      nextEl.innerHTML = '';
+      (d.next_watch || []).forEach(item => {
+        const li = document.createElement('li');
+        li.style.cssText = 'display:flex;align-items:flex-start;gap:10px;font-size:.85rem;color:var(--muted2);line-height:1.6';
+        li.innerHTML = `<span style="color:var(--accent2);flex-shrink:0;margin-top:2px">▸</span><span>${item}</span>`;
+        nextEl.appendChild(li);
+      });
+
+      // 히스토리
+      const history = d.history || [];
+      if (history.length > 0) {
+        document.getElementById('weekly-history-wrap').style.display = 'block';
+        const histEl = document.getElementById('weekly-history');
+        histEl.innerHTML = '';
+        history.forEach(h => {
+          const row = document.createElement('div');
+          row.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap';
+          row.innerHTML = `
+            <span style="font-size:.75rem;font-weight:700;color:var(--bmw-lt);background:rgba(28,105,212,.12);padding:3px 10px;border-radius:99px;flex-shrink:0">${h.week_label||''}</span>
+            <span style="font-size:.82rem;color:var(--muted2);flex:1">${h.week_summary||''}</span>
+            <span style="font-size:.72rem;color:var(--muted)">${h.hot_category||''}</span>`;
+          histEl.appendChild(row);
+        });
+      }
+
+      content.style.display = 'block';
+      _weeklyLoaded = true;
+
+      // 바 애니메이션 (requestAnimationFrame으로 width 트랜지션 발동)
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#weekly-bars div div div').forEach(bar => {
+          bar.style.width = bar.style.width;
+        });
+      });
+
+    } catch(e) {
+      loading.style.display = 'none';
+      empty.style.display = 'block';
+      console.error('weekly_trend.json 로드 실패:', e);
     }
   }
 

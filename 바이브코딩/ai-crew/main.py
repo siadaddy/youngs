@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from datetime import date
 from utils.notion_reader import get_today_newsletter, NEWSLETTER_DIR
-from agents import planner, writer, designer, music_curator
+from agents import planner, writer, designer, music_curator, weekly_trend
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -151,8 +151,24 @@ def main():
     else:
         print("  ⏭  음악 수집 스킵 (마지막 수집 7일 미경과)")
 
+    # ── 주간 트렌드 브리핑 (월요일만) ───────────────────────
+    if _should_run_weekly_trend():
+        print("\n[6/6] 주간 트렌드 브리핑...")
+        try:
+            weekly_trend.run()
+        except Exception as e:
+            print(f"  ⚠️  주간 트렌드 실패 (무시): {e}")
+            notify("⚠️ 주간 트렌드 생성 실패", f"오류: {e}", priority="low")
+    else:
+        print("\n[6/6] 주간 트렌드 스킵 (월요일 아님)")
+
     # ── GitHub Pages용 content.json 저장 & push ──────────────
     _publish_to_github(today, brief, written, images, newsletter_data)
+
+
+def _should_run_weekly_trend() -> bool:
+    """월요일(weekday=0)에만 실행"""
+    return date.today().weekday() == 0
 
 
 def _should_run_music() -> bool:
