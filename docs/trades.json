@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "PIEVERSE",
+    "buy_price": 1344.0,
+    "qty": 37.0907,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-23 12:30"
+  },
   "history": [
+    {
+      "time": "2026-04-23 12:30",
+      "action": "BUY",
+      "ticker": "PIEVERSE",
+      "price": 1344.0,
+      "amount_krw": 49850.0,
+      "reason": "PIEVERSE의 RSI는 31.4로 과매도 상태이며, 거래량은 490% 증가하여 강한 변동성 돌파 신호를 보이고 있습니다. 또한 ADX는 37.1로 추세가 유지되고 있어 매수 신호가 발생했습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-23 12:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 익절 6.01% (기준 +6.0%)",
       "pnl_pct": 6.01,
       "pnl_krw": 7410.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-16 00:41",
-      "action": "BUY",
-      "ticker": "PYR",
-      "price": 384.0,
-      "amount_krw": 99700.0,
-      "reason": "VB✅이 아닌데도 점수 +3으로 높으며, MACD 상승과 거래량이 많이 증가한 것을 고려하여 매수 신호로 판단됩니다. 또한 ADX 값이 49.6로 추세가 있는 것으로 나타나서 매수에 적극적으로 고려합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
