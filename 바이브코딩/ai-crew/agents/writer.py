@@ -352,7 +352,7 @@ def _generate_with_quality(
     텍스트 생성 후 quality_check를 통과할 때까지 재생성.
     자동 교정(해시태그 위치, 에디터 구조)은 매 시도마다 적용.
 
-    Returns: (text: str, retry_count: int)
+    Returns: (text: str, retry_count: int, encountered_issues: list)
     """
     def _autofix(t: str) -> str:
         t = _fix_hashtag_position(t)
@@ -360,6 +360,8 @@ def _generate_with_quality(
         if is_blog:
             t = _enforce_editor_structure(t)
         return t
+
+    all_issues: list = []   # 학습용 — 모든 시도에서 발생한 이슈 누적
 
     # 초기 생성
     text = ask_gemini(prompt, system=SYSTEM, temperature=temperature, max_tokens=max_tokens)
@@ -369,7 +371,9 @@ def _generate_with_quality(
     result = quality_check(text, headline, check_repetition=check_repetition, prior_intros=prior_intros)
 
     if result["passed"]:
-        return text, 0
+        return text, 0, []
+
+    all_issues.extend(result["issues"])
 
     # 재생성 루프 (최대 max_retries회)
     for attempt in range(1, max_retries + 1):
@@ -388,10 +392,11 @@ def _generate_with_quality(
         result = quality_check(text, headline, check_repetition=check_repetition, prior_intros=prior_intros)
         if result["passed"]:
             print(f"  ✅ [{label}] {attempt}회 재생성 후 품질 통과")
-            return text, attempt
+            return text, attempt, all_issues   # 재시도했지만 통과 → 이슈는 학습용으로 반환
+        all_issues.extend(result["issues"])
 
     print(f"  ⚠️  [{label}] {max_retries}회 재생성 후에도 미통과 {result['issues']} — 그대로 사용")
-    return text, max_retries
+    return text, max_retries, all_issues
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -400,7 +405,14 @@ def _generate_with_quality(
 
 def run(brief: dict) -> dict:
     print("✍️  작가 에이전트 실행 중...")
-    quality_log = []  # (label, retry_count)
+    quality_log = []  # (label, retry_count, issues)
+
+    # 최근 7일 학습 힌트 로드
+    from utils.quality_tracker import get_adaptive_hints, record_run
+    adaptive_hints = get_adaptive_hints(days=7)
+    if adaptive_hints:
+        print("  📚 학습 힌트 적용 중 (최근 반복 실패 항목 주의)")
+
 
     # ── 카드뉴스 ───────────────────────────────────────────────
     captions = []
@@ -431,7 +443,7 @@ def run(brief: dict) -> dict:
 {facts_note}
 각도: {item['angle']}
 톤: {item['tone']}
-{prior_intro_note}
+{prior_intro_note}{adaptive_hints}
 [글 구조 — 레이블 없이 내용만 바로 써]
 ① 이모지 1개 + 스크롤 멈추게 하는 첫 문장 (한 줄). 이모지 없으면 실패.
   - 솔직한 반응·반전 사실·짧은 팩트로 시작. 질문으로만 시작하지 마.
@@ -458,12 +470,12 @@ def run(brief: dict) -> dict:
 
 본문(해시태그 제외) 120~200자. 글 다 쓴 뒤 빈 줄 두 개 → 해시태그 8개를 한 줄에. 해시태그는 반드시 #단어 형식 (빈 # 금지). 해시태그를 본문 사이에 넣으면 실패.
 """
-        caption, retries = _generate_with_quality(
+        caption, retries, issues = _generate_with_quality(
             prompt, item["headline"], label,
             max_tokens=1200, temperature=0.7,
             prior_intros=prior_intros if prior_intros else None,
         )
-        quality_log.append((label, retries))
+        quality_log.append((label, retries, issues))
 
         # 이 카드의 첫 문장을 누적 (다음 카드 비교용)
         first = _get_first_sentence(caption)
@@ -504,7 +516,7 @@ def run(brief: dict) -> dict:
     )
 
     blog_prompt = f"""오늘 뉴스 중에 "{b['title']}" 얘기가 있었어.
-{facts_block}
+{facts_block}{adaptive_hints}
 이걸 주제로 블로그 글 한 편 써줘.
 
 핵심 포인트: {', '.join(b['main_points'])}
@@ -532,23 +544,31 @@ def run(brief: dict) -> dict:
 """
     article = ""
     try:
-        article, retries = _generate_with_quality(
+        article, retries, issues = _generate_with_quality(
             blog_prompt, b["title"], "블로그",
             max_tokens=2000, temperature=0.88,
             is_blog=True, check_repetition=True,
         )
-        quality_log.append(("블로그", retries))
+        quality_log.append(("블로그", retries, issues))
         print(f"  ✅ 블로그 아티클 완성 ({len(article)}자, 재생성 {retries}회)")
     except Exception as e:
+        quality_log.append(("블로그", 0, []))
         print(f"  ⚠️  블로그 아티클 실패 (카드뉴스는 유지): {e}")
 
     # ── 품질 요약 로그 ─────────────────────────────────────────
-    total_retries = sum(r for _, r in quality_log)
-    regen_items = [(l, r) for l, r in quality_log if r > 0]
+    total_retries = sum(r for _, r, _ in quality_log)
+    regen_items = [(l, r) for l, r, _ in quality_log if r > 0]
     if regen_items:
         detail = ", ".join(f"{l}:{r}회" for l, r in regen_items)
         print(f"\n  📊 품질 요약: 총 재생성 {total_retries}회 — {detail}")
     else:
         print(f"\n  📊 품질 요약: 전체 품질 통과 (재생성 0회)")
+
+    # ── 품질 학습 기록 저장 ───────────────────────────────────
+    try:
+        from datetime import date as _date
+        record_run(_date.today().strftime("%Y-%m-%d"), quality_log)
+    except Exception as e:
+        print(f"  ⚠️  품질 학습 기록 실패 (무시): {e}")
 
     return {"captions": captions, "article": article, "blog_title": b["title"]}
