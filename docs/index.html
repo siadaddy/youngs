@@ -1023,52 +1023,42 @@
       border-bottom: 1px solid var(--border);
       padding: 56px 0;
     }
-    .story-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: center;
-    }
     .story-tag {
       font-size: .75rem; font-weight: 700; letter-spacing: .12em;
       color: var(--bmw-lt); text-transform: uppercase; margin-bottom: 16px;
+      text-align: center;
     }
     .story-title {
       font-size: clamp(1.5rem, 3vw, 2.2rem);
       font-weight: 800; line-height: 1.3;
-      letter-spacing: -.02em; margin-bottom: 20px;
+      letter-spacing: -.02em; margin-bottom: 8px;
+      text-align: center;
     }
-    .story-body {
-      font-size: .95rem; color: var(--muted2);
-      line-height: 1.9;
+    .story-subtitle {
+      font-size: .95rem; color: var(--muted2); text-align: center; margin-bottom: 40px;
     }
-    .story-milestones { display: flex; flex-direction: column; gap: 16px; }
-    .story-milestone {
-      display: flex; align-items: center; gap: 16px;
-      padding: 16px 20px;
+    .ai-team-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .ai-team-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: border-color .2s;
+      border-radius: 16px;
+      padding: 24px 16px 20px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px;
+      transition: border-color .2s, transform .2s;
     }
-    .story-milestone.active {
-      border-color: rgba(28,105,212,.4);
-      background: rgba(28,105,212,.06);
-    }
-    .ms-date {
-      font-size: .78rem; font-weight: 700; color: var(--bmw-lt);
-      min-width: 80px; flex-shrink: 0;
-    }
-    .story-milestone.active .ms-date { color: var(--green); }
-    .ms-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--border); flex-shrink: 0;
-    }
-    .story-milestone.active .ms-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-    .ms-text { font-size: .9rem; font-weight: 600; color: var(--text); }
-    @media (max-width: 720px) {
-      .story-inner { grid-template-columns: 1fr; gap: 32px; }
-    }
+    .ai-team-card:hover { border-color: rgba(28,105,212,.4); transform: translateY(-3px); }
+    .ai-team-emoji { font-size: 2rem; line-height: 1; }
+    .ai-team-name { font-size: .95rem; font-weight: 800; color: var(--text); }
+    .ai-team-role { font-size: .72rem; font-weight: 700; letter-spacing: .08em; color: var(--bmw-lt); text-transform: uppercase; }
+    .ai-team-desc { font-size: .8rem; color: var(--muted2); text-align: center; line-height: 1.6; }
+    @media (max-width: 900px) { .ai-team-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 580px) { .ai-team-grid { grid-template-columns: repeat(2, 1fr); } }
   </style>
 </head>
 <body class="wrap">
@@ -1085,10 +1075,6 @@
     <span class="line2">Claude 만나서<br>만든 것들</span>
   </h1>
   <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background · Built with Claude · Since March 2026</div>
-  <p class="hero-desc">
-    코딩을 한 줄도 못 썼습니다. 2026년 3월 말, Claude를 처음 열었습니다.<br>
-    그리고 한 달도 안 됐는데 이걸 다 만들었습니다.
-  </p>
   <div class="hero-stats">
     <div class="stat">
       <div class="stat-val">5명</div>
@@ -1182,42 +1168,42 @@
   </div>
 </div>
 
-<!-- ─── 나의 이야기 ──────────────────────────────────────── -->
+<!-- ─── AI 크리에이터 소개 ────────────────────────────────── -->
 <div class="story-banner">
   <div class="container">
-    <div class="story-inner">
-      <div class="story-left">
-        <div class="story-tag">✦ 이 사이트에 대해</div>
-        <h2 class="story-title">코딩 몰라도 됩니다.<br>Claude가 있으면.</h2>
-        <p class="story-body">
-          개발자가 아닌 평범한 직장인입니다.<br>
-          개발 배경 없음. 코딩 경험 없음.<br><br>
-          2026년 3월 말, 처음으로 Claude를 열었습니다.<br>
-          뭔가 만들어 보고 싶었고, 그냥 물어봤습니다.<br><br>
-          한 달도 안 됐는데 이 사이트가 생겼습니다.
-        </p>
+    <div class="story-tag">✦ AI 크리에이터 소개</div>
+    <h2 class="story-title">매일 일하는 AI 직원들</h2>
+    <p class="story-subtitle">코딩 한 줄 없이, Claude와 함께 만든 다섯 명의 팀원</p>
+    <div class="ai-team-grid">
+      <div class="ai-team-card">
+        <div class="ai-team-emoji">🎯</div>
+        <div class="ai-team-name">기획자</div>
+        <div class="ai-team-role">Content Planner</div>
+        <div class="ai-team-desc">매일 아침 뉴스를 분석해 오늘의 카드뉴스 주제와 브리프를 결정합니다</div>
       </div>
-      <div class="story-milestones">
-        <div class="story-milestone">
-          <span class="ms-date">2026.03 말</span>
-          <span class="ms-dot"></span>
-          <span class="ms-text">Claude 첫 대화</span>
-        </div>
-        <div class="story-milestone">
-          <span class="ms-date">2주 후</span>
-          <span class="ms-dot"></span>
-          <span class="ms-text">AI 뉴스레터 자동화 완성</span>
-        </div>
-        <div class="story-milestone">
-          <span class="ms-date">3주 후</span>
-          <span class="ms-dot"></span>
-          <span class="ms-text">코인 자동매매 봇 가동</span>
-        </div>
-        <div class="story-milestone active">
-          <span class="ms-date">지금</span>
-          <span class="ms-dot"></span>
-          <span class="ms-text">3D 뮤직 갤러리까지 — 아직 진행 중</span>
-        </div>
+      <div class="ai-team-card">
+        <div class="ai-team-emoji">✍️</div>
+        <div class="ai-team-name">작가</div>
+        <div class="ai-team-role">Content Writer</div>
+        <div class="ai-team-desc">시아아빠 말투로 글을 씁니다. 친구한테 카톡 보내듯, 내용은 진짜 있게.</div>
+      </div>
+      <div class="ai-team-card">
+        <div class="ai-team-emoji">🎨</div>
+        <div class="ai-team-name">디자이너</div>
+        <div class="ai-team-role">Visual Designer</div>
+        <div class="ai-team-desc">기사마다 카드뉴스 이미지를 생성해 GitHub Pages에 자동 업로드합니다</div>
+      </div>
+      <div class="ai-team-card">
+        <div class="ai-team-emoji">🎵</div>
+        <div class="ai-team-name">음악 큐레이터</div>
+        <div class="ai-team-role">Music Curator</div>
+        <div class="ai-team-desc">힙합·K-pop·발라드 등 7장르 × 10곡씩, 매주 70곡을 큐레이션합니다</div>
+      </div>
+      <div class="ai-team-card">
+        <div class="ai-team-emoji">📋</div>
+        <div class="ai-team-name">주간 브리퍼</div>
+        <div class="ai-team-role">Weekly Briefer</div>
+        <div class="ai-team-desc">한 주 뉴스레터를 돌아보며 매주 금요일 주간 요약 리포트를 작성합니다</div>
       </div>
     </div>
   </div>
