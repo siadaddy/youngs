@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ETH",
+    "buy_price": 3453000.0,
+    "qty": 0.0144,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-23 23:00"
+  },
   "history": [
+    {
+      "time": "2026-04-23 23:00",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 3453000.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 27.6으로 저점에 위치하고 있으며, MACD는 상승하고 있고, 볼린저밴드 중하단에 위치하고 있습니다. 또한, ADX는 34.3으로 추세가 있는 것으로 나타나며, 점수는 +5로 높은 편입니다. 이러한 신호들은 ETH에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-23 23:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 익절 8.44% (기준 +8.0%)",
       "pnl_pct": 8.44,
       "pnl_krw": 10796.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-17 18:00",
-      "action": "BUY",
-      "ticker": "IP",
-      "price": 902.0,
-      "amount_krw": 99700.0,
-      "reason": "VB✅와 점수 +5를 만족하여 변동성 돌파 신호가 확인되며, 추세도 강한 편으로 보입니다. 따라서 IP를 매수하는 것이 적절합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
