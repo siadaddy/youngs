@@ -13,6 +13,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from agents import analyzer, ai_advisor, executor
 from utils.blacklist import register_stop_loss, add_successful_trade, get_summary as blacklist_summary, init_from_history
+from utils.agent_memory import remember as mem_remember
 
 load_dotenv()
 
@@ -713,6 +714,31 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
                 data["stats"]["total_pnl_krw"] = round(
                     data["stats"].get("total_pnl_krw", 0) + (pnl_krw or 0), 0
                 )
+            # ── 거래 메모리 기록 ──────────────────────────────
+            if action == "SELL" and pnl_pct is not None:
+                exit_reason = advice.get("reason", "")
+                if "손절" in exit_reason or "stop_loss" in exit_reason.lower():
+                    exit_type = "stop_loss"
+                elif "익절" in exit_reason or "take_profit" in exit_reason.lower():
+                    exit_type = "take_profit"
+                elif "트레일링" in exit_reason:
+                    exit_type = "trailing_stop"
+                elif "시간" in exit_reason:
+                    exit_type = "time_exit"
+                else:
+                    exit_type = "ai_sell"
+                mem_remember("AI어드바이저", "trade_outcome", {
+                    "ticker":    ticker,
+                    "pnl_pct":   pnl_pct,
+                    "exit_type": exit_type,
+                })
+            elif action == "BUY" and new_holding:
+                mem_remember("AI어드바이저", "buy_signal", {
+                    "ticker": ticker,
+                    "price":  price,
+                    "reason": advice.get("reason", ""),
+                })
+
             entry = {
                 "time": now_str,
                 "action": action,

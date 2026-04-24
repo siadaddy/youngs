@@ -1,8 +1,9 @@
-import os, json, requests, time, subprocess
+import os, json, re as _re, requests, time, subprocess
 from datetime import date
 from urllib.parse import quote
 from dotenv import load_dotenv
 from utils.gemini_client import ask_gemini
+from utils.agent_memory import remember, get_hints
 
 FALLBACK_FILENAME = "fallback.png"
 
@@ -48,6 +49,7 @@ def run(brief: dict, writer_output: dict) -> list:
         f"{i+1}. headline: {it['headline']} | angle: {it['angle']} | tone: {it['tone']}"
         for i, it in enumerate(items)
     )
+    designer_hints = get_hints("최디자")
     batch_prompt = f"""Create {len(items)} image prompts for Korean SNS news card visuals.
 
 {batch_input}
@@ -57,7 +59,7 @@ Style rules (MUST follow):
 - Clean modern aesthetic (Bloomberg / Wired magazine style)
 - Use symbolic/conceptual visuals instead of literal war or disaster scenes
 - Cars → sleek studio or open road in daylight. Economy → glowing charts or cityscapes. AI/Tech → clean futuristic interfaces
-- No text, no logos, 70 words max per prompt
+- No text, no logos, 70 words max per prompt{designer_hints}
 
 Return ONLY a JSON array, no markdown:
 [{{"idx":1,"prompt":"..."}},{{"idx":2,"prompt":"..."}},...,{{"idx":{len(items)},"prompt":"..."}}]"""
@@ -99,6 +101,12 @@ Return ONLY a JSON array, no markdown:
             "path":     save_path,
             "url":      pages_url,
             "success":  success,
+        })
+        keywords = [w for w in _re.sub(r'[^\w\s]', '', img_prompt).split() if len(w) > 3][:6]
+        remember("최디자", "image_result", {
+            "headline":        item["headline"],
+            "prompt_keywords": keywords,
+            "success":         success,
         })
 
         # 이미지 사이 간격 — 첫 번째 실패 후엔 더 길게 대기

@@ -9,6 +9,7 @@
 import os, json, subprocess
 from datetime import date, timedelta
 from utils.gemini_client import ask_gemini
+from utils.agent_memory import remember, get_hints
 
 DOCS_CONTENT_DIR  = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "content")
 WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "weekly_trend.json")
@@ -99,6 +100,7 @@ def _aggregate(days_data: list[dict]) -> dict:
 
 def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
     """Gemini로 인사이트 분석 → JSON 반환"""
+    weekly_hints = get_hints("AI주간트렌드")
     cat_summary = "\n".join(
         f"  {o['name']}: {o['count']}건"
         for o in agg["category_counts"]
@@ -112,7 +114,7 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
         if titles:
             samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {t}" for t in titles[:4])
 
-    prompt = f"""아래는 지난 {days_analyzed}일간 AI 뉴스레터의 뉴스 데이터입니다.
+    prompt = f"""아래는 지난 {days_analyzed}일간 AI 뉴스레터의 뉴스 데이터입니다.{weekly_hints}
 
 === 분야별 기사 건수 ===
 {cat_summary}
@@ -182,6 +184,12 @@ def run():
     today = date.today()
     oldest = today - timedelta(days=len(days_data))
     week_label = f"{oldest.strftime('%m/%d')} ~ {(today - timedelta(days=1)).strftime('%m/%d')}"
+
+    remember("AI주간트렌드", "weekly_analysis", {
+        "week_label":   week_label,
+        "week_summary": ai.get("week_summary", ""),
+        "hot_category": ai.get("hot_category", ""),
+    })
 
     # 기존 history 불러오기 (최대 12주)
     history = []

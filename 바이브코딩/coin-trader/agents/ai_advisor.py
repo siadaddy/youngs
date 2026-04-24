@@ -1,5 +1,8 @@
 import os, re, json, time, requests
 from dotenv import load_dotenv
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+from utils.agent_memory import get_hints
 
 
 def _sanitize(text: str) -> str:
@@ -195,8 +198,10 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
     if cooldown_tickers:
         cooldown_text = f"\n【⛔ 재진입 금지 종목 (손절 후 쿨다운 중)】\n{', '.join(cooldown_tickers)}\n위 종목은 BUY 절대 금지 — 쿨다운 해제까지 진입 금지.\n"
 
+    memory_hints = get_hints("AI어드바이저")
+
     prompt = f"""【현재 포트폴리오】
-{holding_text} {hold_info}
+{holding_text} {hold_info}{memory_hints}
 
 【KRW 시장 상위 종목 분석 (30분봉 + 변동성돌파 기준)】
 {market_text}

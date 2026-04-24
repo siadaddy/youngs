@@ -301,10 +301,28 @@ def _publish_to_github(today, brief, written, images, newsletter_data):
             ["git", "commit", "-m", f"content: {today} 카드뉴스 자동 업데이트"],
             cwd=repo_root, check=True,
         )
-        subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
-        print("  ✅ GitHub Pages 업데이트 완료")
     except subprocess.CalledProcessError as e:
-        print(f"  ⚠️  GitHub push 실패 (무시): {e}")
+        print(f"  ⚠️  git commit 실패: {e}")
+        return
+
+    # push — 최대 2회 재시도 (네트워크 일시 불안정 대응)
+    for attempt in range(1, 3):
+        try:
+            subprocess.run(["git", "push", "origin", "main"], cwd=repo_root,
+                           check=True, timeout=45)
+            print("  ✅ GitHub Pages 업데이트 완료")
+            return
+        except Exception as e:
+            print(f"  ⚠️  GitHub push 실패 ({attempt}/2): {e}")
+            if attempt < 2:
+                time.sleep(15)
+
+    # 2회 모두 실패 → ntfy 긴급 알림
+    notify(
+        "⚠️ GitHub Pages push 실패",
+        f"{today} 콘텐츠 생성 완료, 사이트 미반영\n수동 push 필요:\ngit -C ~/바이브코딩 push origin main",
+        priority="high",
+    )
 
 
 if __name__ == "__main__":

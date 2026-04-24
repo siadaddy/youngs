@@ -1,6 +1,7 @@
 import os, json, re
 from datetime import date
 from utils.gemini_client import ask_gemini25_first
+from utils.agent_memory import remember, get_hints
 
 SYSTEM = """음악 큐레이터. JSON만 출력합니다."""
 
@@ -68,9 +69,12 @@ GENRE_PROMPTS = [
 ]
 
 
+_music_hints_cache: str | None = None  # run() 시작 시 1회만 조회
+
 def _fetch_genre(genre_name: str, genre_desc: str) -> list:
     """장르 1개 10곡 수집 (실패 시 빈 리스트)"""
-    prompt = f"""{genre_desc}
+    hints = _music_hints_cache or ""
+    prompt = f"""{genre_desc}{hints}
 
 조건:
 - 정확히 10곡, 한 아티스트당 최대 2곡
@@ -94,7 +98,9 @@ JSON 형식으로만 출력 (설명 없이):
 
 
 def run() -> list:
+    global _music_hints_cache
     print("🎵 음악 큐레이터 실행 중... (장르별 분리 수집)")
+    _music_hints_cache = get_hints("한뮤직")
 
     all_songs = []
     seen = set()
@@ -132,6 +138,11 @@ def save(songs: list):
     today = date.today().isoformat()
     out = {"updated": today, "songs": songs}
     os.makedirs(DOCS_PATH, exist_ok=True)
+
+    remember("한뮤직", "music_selection", {
+        "songs": [{"t": s["t"], "a": s["a"]} for s in songs]
+    })
+
     # music.json (현재)
     path = os.path.join(DOCS_PATH, "music.json")
     with open(path, "w", encoding="utf-8") as f:

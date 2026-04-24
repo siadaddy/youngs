@@ -1,5 +1,6 @@
 import json, re, html
 from utils.gemini_client import ask_gemini
+from utils.agent_memory import remember, get_hints
 
 _PLAN_STOP = {
     '의','을','를','이','가','은','는','에','도','와','과','로','으로',
@@ -64,7 +65,9 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
                 lines.append(f"[{cat}] {title}\n  URL: {link}")
         article_list_text = "\n\n".join(lines)
 
-    prompt = f"""아래 뉴스 데이터에서 오늘의 핵심 뉴스 5개를 골라 콘텐츠 브리프를 JSON으로 작성하세요.
+    memory_hints = get_hints("박기획")
+
+    prompt = f"""아래 뉴스 데이터에서 오늘의 핵심 뉴스 5개를 골라 콘텐츠 브리프를 JSON으로 작성하세요.{memory_hints}
 
 === 원문 뉴스 (제목 + 실제 내용 요약 + URL) ===
 {article_list_text if article_list_text else newsletter_text}
@@ -261,4 +264,9 @@ source_facts는 반드시 80자 이상의 구체적 내용으로 작성. "없음
     total = len(brief['instagram'])
     regen_note = f" (source_facts 재생성 {regenerated}건)" if regenerated else ""
     print(f"  ✅ 인스타 {total}개, 블로그 1개 브리프 완성{regen_note}")
+
+    remember("박기획", "topic_selection", {
+        "headlines": [item.get("headline", "") for item in brief.get("instagram", [])],
+        "blog_title": brief.get("blog", {}).get("title", ""),
+    })
     return brief
