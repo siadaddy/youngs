@@ -3268,7 +3268,6 @@
 
       // 캐릭터 Y-sort (원근감)
       [...chars].sort((a,b)=>a.y-b.y).forEach(c=>{drawChar(c);nameTag(c);});
-      bubbles(chars);
 
       // 회의 배너
       if(inMeet&&chars.every(c=>Math.abs(c.x-c.tx)<6&&Math.abs(c.y-c.ty)<6)){
@@ -3278,6 +3277,9 @@
         ctx.fillText('📋 일일 브리핑 회의 진행 중...', 450, 194);
         ctx.textAlign='left';
       }
+
+      // 말풍선은 항상 최상단
+      bubbles(chars);
     }
 
     // ── 루프 (≈15fps 레트로 감성) ────────────────────────────
