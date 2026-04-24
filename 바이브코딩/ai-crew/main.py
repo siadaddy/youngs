@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from datetime import date
 from utils.notion_reader import get_today_newsletter, NEWSLETTER_DIR
 from agents import planner, writer, designer, music_curator, weekly_trend
+from utils.office_export import export as office_export
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -161,6 +162,13 @@ def main():
             notify("⚠️ 주간 트렌드 생성 실패", f"오류: {e}", priority="low")
     else:
         print("\n[6/6] 주간 트렌드 스킵 (월요일 아님)")
+
+    # ── AI 사무실 학습 기록 갱신 ────────────────────────────────
+    try:
+        office_export()
+        print("  ✅ AI 사무실 학습 기록 갱신 완료")
+    except Exception as e:
+        print(f"  ⚠️  office_export 실패 (무시): {e}")
 
     # ── GitHub Pages용 content.json 저장 & push ──────────────
     _publish_to_github(today, brief, written, images, newsletter_data)

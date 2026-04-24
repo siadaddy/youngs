@@ -963,6 +963,56 @@
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     @media(max-width:600px){ .office-cards{ grid-template-columns:repeat(3,1fr); } }
 
+    /* ─── AI 학습 기록 패널 ─────────────────────── */
+    .office-mem {
+      margin-top: 28px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .office-mem-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-bottom: 1px solid var(--glass-border);
+      background: rgba(0,188,212,.06);
+    }
+    .office-mem-hdr h3 { font-size:.9rem; font-weight:800; margin:0; color:#00e5ff; }
+    .office-mem-hdr span { font-size:.68rem; color:var(--muted2); }
+    .office-hints {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 12px 18px; border-bottom: 1px solid var(--glass-border);
+    }
+    .ohint {
+      display: flex; align-items: flex-start; gap: 6px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px; padding: 7px 10px; flex: 1; min-width: 160px;
+    }
+    .ohint .ohi { font-size: 1rem; flex-shrink:0; }
+    .ohint .ohd { display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .ohint .ohn { font-size:.7rem; font-weight:800; }
+    .ohint .oht { font-size:.66rem; color:var(--muted2); line-height:1.4; word-break:break-all; }
+    .office-log-feed { max-height: 280px; overflow-y: auto; }
+    .olog-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 18px; border-bottom: 1px solid rgba(255,255,255,.04);
+      transition: background .15s;
+    }
+    .olog-row:hover { background: rgba(255,255,255,.03); }
+    .olog-time { font-size:.62rem; color:var(--muted2); white-space:nowrap; min-width:92px; }
+    .olog-badge {
+      font-size:.6rem; font-weight:700; padding:2px 6px;
+      border-radius:99px; white-space:nowrap; flex-shrink:0;
+    }
+    .olog-badge.win  { background:rgba(76,175,80,.2); color:#69f0ae; }
+    .olog-badge.loss { background:rgba(244,67,54,.2); color:#ff5252; }
+    .olog-badge.buy  { background:rgba(33,150,243,.2); color:#82b1ff; }
+    .olog-badge.exit { background:rgba(255,152,0,.2); color:#ffd740; }
+    .olog-badge.sell { background:rgba(156,39,176,.2); color:#ea80fc; }
+    .olog-badge.plan { background:rgba(66,165,245,.2); color:#80d8ff; }
+    .olog-badge.design{ background:rgba(206,147,216,.2); color:#ea80fc; }
+    .olog-badge.music { background:rgba(102,187,106,.2); color:#b9f6ca; }
+    .olog-badge.trend { background:rgba(176,190,197,.2); color:#cfd8dc; }
+    .olog-msg { font-size:.72rem; color:var(--text); line-height:1.35; }
+    .office-mem-empty { padding:18px; text-align:center; color:var(--muted2); font-size:.78rem; }
+
     /* ─── 히스토리 필터 탭 ──────────────────────── */
     .hist-filter-bar {
       display: flex; gap: 6px; flex-wrap: wrap;
@@ -1431,6 +1481,18 @@
   </div>
   <canvas id="officeCanvas" width="900" height="520"></canvas>
   <div class="office-cards" id="officeCards"></div>
+
+  <!-- AI 학습 기록 패널 -->
+  <div class="office-mem" id="officeMem" style="display:none">
+    <div class="office-mem-hdr">
+      <h3>🧠 AI 학습 기록 — 실시간 메모리</h3>
+      <span id="officeMemUpdated"></span>
+    </div>
+    <div class="office-hints" id="officeHints"></div>
+    <div class="office-log-feed" id="officeLogFeed">
+      <div class="office-mem-empty">학습 기록을 불러오는 중...</div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -2994,9 +3056,121 @@
     ['박기획','수고했어요, 내일도 화이팅! 💪'],
   ];
 
+  let _officeMem = null;
+
+  function _renderMemPanel(data) {
+    _officeMem = data;
+    const panel = document.getElementById('officeMem');
+    if (!panel) return;
+    panel.style.display = '';
+
+    // 마지막 업데이트
+    const updEl = document.getElementById('officeMemUpdated');
+    if (updEl) updEl.textContent = '업데이트: ' + (data.updated || '');
+
+    // 에이전트 힌트 카드
+    const hintsEl = document.getElementById('officeHints');
+    const agentOrder = ['박기획','최디자','한뮤직','AI주간트렌드','AI어드바이저'];
+    const icons = {'박기획':'📋','최디자':'🎨','한뮤직':'🎵','AI주간트렌드':'📊','AI어드바이저':'🤖'};
+    if (hintsEl && data.agents) {
+      hintsEl.innerHTML = agentOrder.map(id => {
+        const a = data.agents[id];
+        if (!a) return '';
+        const hint = a.hint || '';
+        const sub = a.holding || (a.last_summary ? a.last_summary.slice(0,30) : '') ||
+                    (a.recent_topics ? a.recent_topics[0]||'' : '') || '';
+        return `<div class="ohint">
+          <span class="ohi">${icons[id]||''}</span>
+          <div class="ohd">
+            <span class="ohn" style="color:${_CHARS[id]?.color||'#aaa'}">${id}</span>
+            <span class="oht">${hint}</span>
+            ${sub ? `<span class="oht" style="opacity:.65">${sub.slice(0,36)}</span>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // 로그 피드
+    const feedEl = document.getElementById('officeLogFeed');
+    const log = data.log || [];
+    if (feedEl) {
+      if (!log.length) {
+        feedEl.innerHTML = '<div class="office-mem-empty">아직 학습 기록이 없습니다</div>';
+        return;
+      }
+      const typeLabel = {win:'익절',loss:'손절',buy:'매수',exit:'강제청산',sell:'매도',
+                         plan:'기획',design:'디자인',music:'음악',trend:'트렌드'};
+      feedEl.innerHTML = log.map(e => {
+        const t = e.time||''; const disp = t.length>10 ? t.slice(5) : t;
+        const badge = e.type||'buy';
+        return `<div class="olog-row">
+          <span class="olog-time">${disp}</span>
+          <span class="olog-badge ${badge}">${e.icon||''} ${typeLabel[badge]||badge}</span>
+          <span class="olog-msg">${e.msg||''}</span>
+        </div>`;
+      }).join('');
+    }
+
+    // _LINES 실데이터로 보강
+    _injectMemLines(data);
+  }
+
+  function _injectMemLines(data) {
+    if (!data.agents) return;
+    const a = data.agents;
+
+    if (a['AI어드바이저']) {
+      const ad = a['AI어드바이저'];
+      const lines = [];
+      if (ad.win_rate !== undefined) lines.push(`현재 승률 ${ad.win_rate}% (${ad.wins}승 ${ad.losses}패) 📊`);
+      if (ad.holding) lines.push(ad.holding);
+      if (ad.blacklist && ad.blacklist.length) lines.push(`🚫 차단 종목: ${ad.blacklist[0]}`);
+      if (ad.recent && ad.recent[0]) {
+        const r = ad.recent[0];
+        if (r.pnl !== null && r.pnl !== undefined)
+          lines.push(`최근 ${r.ticker} ${r.pnl > 0 ? '+' : ''}${r.pnl}% ${r.pnl > 0 ? '🎯' : '📉'}`);
+      }
+      if (ad.hint && ad.hint.startsWith('⚠️')) lines.push(ad.hint.slice(0, 32));
+      if (lines.length) _LINES['AI어드바이저'] = [...lines, ..._LINES['AI어드바이저']].slice(0, 8);
+    }
+
+    if (a['박기획']) {
+      const pl = a['박기획'];
+      const lines = [];
+      if (pl.hint) lines.push(pl.hint.slice(0, 32));
+      if (pl.recent_topics && pl.recent_topics[0]) lines.push(`최근 주제: ${pl.recent_topics[0].slice(0,22)}`);
+      if (lines.length) _LINES['박기획'] = [...lines, ..._LINES['박기획']].slice(0, 8);
+    }
+
+    if (a['최디자']) {
+      const ds = a['최디자'];
+      if (ds.hint) _LINES['최디자'] = [ds.hint.slice(0,32), ..._LINES['최디자']].slice(0, 8);
+      if (ds.success_rate !== undefined && ds.success_rate > 0)
+        _LINES['최디자'] = [`이미지 성공률 ${ds.success_rate}% ✨`, ..._LINES['최디자']].slice(0, 8);
+    }
+
+    if (a['한뮤직']) {
+      const mu = a['한뮤직'];
+      if (mu.hint) _LINES['한뮤직'] = [mu.hint.slice(0,32), ..._LINES['한뮤직']].slice(0, 8);
+      if (mu.overused && mu.overused[0]) _LINES['한뮤직'] = [`${mu.overused[0]} 이번엔 제외! 🎵`, ..._LINES['한뮤직']].slice(0, 8);
+    }
+
+    if (a['AI주간트렌드']) {
+      const wt = a['AI주간트렌드'];
+      if (wt.last_summary) _LINES['AI주간트렌드'] = [wt.last_summary.slice(0,32), ..._LINES['AI주간트렌드']].slice(0, 8);
+      if (wt.hot) _LINES['AI주간트렌드'] = [`이번 주 핫: ${wt.hot}`, ..._LINES['AI주간트렌드']].slice(0, 8);
+    }
+  }
+
   function initOffice() {
     if (_officeActive) return;
     _officeActive = true;
+
+    // AI 학습 기록 fetch
+    fetch('office_memory.json?t=' + Date.now())
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) _renderMemPanel(data); })
+      .catch(() => {});
 
     const canvas = document.getElementById('officeCanvas');
     const ctx = canvas.getContext('2d');

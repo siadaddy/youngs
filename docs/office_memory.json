@@ -1,0 +1,200 @@
+{
+  "updated": "2026-04-24 20:40",
+  "agents": {
+    "AI어드바이저": {
+      "win_rate": 30,
+      "total": 44,
+      "wins": 13,
+      "losses": 31,
+      "holding": "📊 ETH 보유 중",
+      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 8회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
+      "blacklist": [
+        "NCT(3회 차단)",
+        "FORT(2회 차단)",
+        "SKL(2회)"
+      ],
+      "recent": [
+        {
+          "time": "23:00",
+          "date": "2026-04-23",
+          "ticker": "ETH",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "23:00",
+          "date": "2026-04-23",
+          "ticker": "PIEVERSE",
+          "pnl": -1.26,
+          "action": "SELL",
+          "type": "force_exit"
+        },
+        {
+          "time": "12:30",
+          "date": "2026-04-23",
+          "ticker": "PIEVERSE",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "12:30",
+          "date": "2026-04-23",
+          "ticker": "XRP",
+          "pnl": -1.54,
+          "action": "SELL",
+          "type": "force_exit"
+        },
+        {
+          "time": "04:30",
+          "date": "2026-04-23",
+          "ticker": "XRP",
+          "pnl": null,
+          "action": "BUY"
+        }
+      ],
+      "last_active": "2026-04-23 23:00"
+    }
+  },
+  "log": [
+    {
+      "time": "2026-04-23 23:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 매수 — RSI 27.6·ADX 34.3",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-23 23:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "PIEVERSE 강제청산 -1.3% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-04-23 12:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "PIEVERSE 매수 — RSI 31.4·ADX 37.1",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-23 12:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 강제청산 -1.5% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-04-23 04:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 매수 — RSI 40.8",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-23 04:11",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MET 익절 +5.17% 🎯",
+      "type": "win"
+    },
+    {
+      "time": "2026-04-22 22:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MET 매수 — RSI 31.8",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-22 22:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "HIGH 강제청산 -2.2% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-04-22 20:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "HIGH 매수 — 거래량+80%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-22 19:57",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "CORE 익절 +5.15% 🎯",
+      "type": "win"
+    },
+    {
+      "time": "2026-04-22 16:33",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "CORE 매수 — RSI 44.1·거래량+50%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-22 16:33",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "GRACY 강제청산 -0.8% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-04-22 15:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "GRACY 매수 — 진입",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-22 15:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "CORE 매도 -0.4%",
+      "type": "sell"
+    },
+    {
+      "time": "2026-04-22 13:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "CORE 매수 — RSI 33.3",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-22 09:25",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "PIEVERSE 손절 -7.84% → 학습 기록 🚫",
+      "type": "loss"
+    },
+    {
+      "time": "2026-04-22 05:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "PIEVERSE 매수 — RSI 38.6",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-22 00:42",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "CORE 손절 -4.1% → 학습 기록 🚫",
+      "type": "loss"
+    },
+    {
+      "time": "2026-04-21 23:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "CORE 매수 — RSI 48.7",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-21 23:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XAN 익절 +0.71% 🎯",
+      "type": "win"
+    }
+  ]
+}

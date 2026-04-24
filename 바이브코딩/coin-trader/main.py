@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from agents import analyzer, ai_advisor, executor
 from utils.blacklist import register_stop_loss, add_successful_trade, get_summary as blacklist_summary, init_from_history
 from utils.agent_memory import remember as mem_remember
+from utils.office_export import export as office_export
 
 load_dotenv()
 
@@ -767,11 +768,17 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
         with open(trades_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
+        # AI 사무실 학습 기록 갱신
+        try:
+            office_export()
+        except Exception as oe:
+            log(f"  ⚠️  office_export 실패 (무시): {oe}")
+
         # git push: 실제 체결된 경우(BUY 성공 or SELL 성공)만 커밋/푸시
         actually_executed = (action == "BUY" and new_holding) or (action == "SELL" and new_holding is None)
         ticker_str = advice.get("ticker") or (new_holding["ticker"] if new_holding else "")
         dry_str = " [DRY]" if DRY_RUN else ""
-        subprocess.run(["git", "add", "docs/trades.json"], cwd=repo_root, check=True)
+        subprocess.run(["git", "add", "docs/trades.json", "docs/office_memory.json"], cwd=repo_root, check=True)
         if actually_executed:
             subprocess.run(
                 ["git", "commit", "-m", f"trade: {now_str} {action} {ticker_str}{dry_str}"],
@@ -781,7 +788,7 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
             log("  ✅ trades.json GitHub 업데이트 완료")
         else:
             # 미체결(HOLD, SELL 차단 등): 로컬 파일만, git push 스킵
-            subprocess.run(["git", "restore", "--staged", "docs/trades.json"], cwd=repo_root, check=False)
+            subprocess.run(["git", "restore", "--staged", "docs/trades.json", "docs/office_memory.json"], cwd=repo_root, check=False)
             log("  ℹ️  미체결/HOLD — trades.json 로컬 갱신 (GitHub push 스킵)")
     except Exception as e:
         log(f"  ⚠️  trades.json 업데이트 실패 (무시): {e}")
