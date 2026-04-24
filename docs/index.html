@@ -2985,7 +2985,7 @@
     const MEET_POS=[{x:365,y:196},{x:418,y:196},{x:471,y:196},{x:365,y:318},{x:418,y:318},{x:471,y:318},{x:318,y:250},{x:512,y:250}];
     const BND={x1:22,y1:70,x2:876,y2:498};
     const COFFEE={x:855,y:445};
-    let meetTimer=350+Math.floor(Math.random()*200), inMeet=false, mStep=0, mLTick=0;
+    let meetTimer=1800+Math.floor(Math.random()*900), inMeet=false, mStep=0, mLTick=0;
 
     // ── 배경 그리기 ───────────────────────────────────────
     function bg() {
@@ -3177,67 +3177,84 @@
       return true;
     }
 
-    // ── 행동 대사 풀 ────────────────────────────────────────
-    const _COFFEE_L=['☕ 아메리카노 한 잔!','☕ 잠깐 충전 타임~','🍵 커피 없이 못 살아','☕ 오늘 3잔째...'];
-    const _STRETCH_L=['🙆 스트레칭 중~','💪 허리가 아파...','🙆‍♀️ 잠깐 기지개!','😤 집중력 회복 중!'];
-    const _RUSH_L=['🏃 급하다 급해!','⚡ 지금 당장!','🔥 긴급 업무!','💨 초고속 처리!'];
-    const _PHONE_L={'박기획':'📱 편집장 통화 중!','최디자':'📱 클라이언트!','한뮤직':'📱 아티스트 섭외','AI주간트렌드':'📊 데이터팀 컨펌','AI어드바이저':'📡 시장 데이터 수신','뉴스기자':'📱 특종 제보 입수!','이가드':'📡 긴급 알림 수신','리포터':'📱 편집장 보고 중'};
-    const _PEEK_L=['👀 뭐하는 거예요?','🤔 잠깐 구경~','오! 이거 뭐예요?','배울 점이 있어서...'];
-    const _WINDOW_L=['창밖이 맑네요 ☀️','잠깐 바람 쐬러~','오늘 날씨 좋은데 🌤️','환기 좀 시켜야...'];
-    const _THINK_L=['🤔 음... 고민 중','💭 어떻게 하지...','🧠 아이디어 구상 중','잠깐만, 생각해보면...'];
-    const _SNEAK_L=['🤫 몰래 살짝...','슬그머니~','📋 잠깐 슬쩍 봐도 될까?'];
-    const _DANCE_L=['🎵 신나는데?','🕺 잠깐 리듬 타기~','🎶 오늘 기분 좋아!'];
+    // ── 행동 대사 풀 (19가지 행동) ──────────────────────────
+    const _COFFEE_L =['☕ 아메리카노 한 잔!','☕ 잠깐 충전 타임~','🍵 커피 없이 못 살아','☕ 오늘 3잔째...','🫖 오늘은 라떼로!'];
+    const _STRETCH_L=['🙆 스트레칭 중~','💪 허리가 아파...','🙆‍♀️ 잠깐 기지개!','😤 집중력 회복 중!','🤸 몸 풀기 타임!'];
+    const _RUSH_L   =['🏃 급하다 급해!','⚡ 지금 당장!','🔥 긴급 업무!','💨 초고속 처리!','🚨 타임어택!'];
+    const _PHONE_L  ={'박기획':'📱 편집장 통화 중!','최디자':'📱 클라이언트!','한뮤직':'📱 아티스트 섭외','AI주간트렌드':'📊 데이터팀 컨펌','AI어드바이저':'📡 시장 데이터 수신','뉴스기자':'📱 특종 제보 입수!','이가드':'📡 긴급 알림 수신','리포터':'📱 편집장 보고 중'};
+    const _PEEK_L   =['👀 뭐하는 거예요?','🤔 잠깐 구경~','오! 이거 뭐예요?','배울 점이 있어서...'];
+    const _WINDOW_L =['창밖이 맑네요 ☀️','잠깐 바람 쐬러~','오늘 날씨 좋은데 🌤️','환기 좀 시켜야...','비 올 것 같은데? 🌧️'];
+    const _THINK_L  =['🤔 음... 고민 중','💭 어떻게 하지...','🧠 아이디어 구상 중','잠깐만, 생각해보면...','💡 잠깐, 이 방법은?'];
+    const _SNEAK_L  =['🤫 몰래 살짝...','슬그머니~','📋 잠깐 슬쩍 봐도 될까?','쉿! 아무도 몰라~'];
+    const _DANCE_L  =['🎵 신나는데?','🕺 잠깐 리듬 타기~','🎶 오늘 기분 좋아!','🎼 BGM이 머릿속에서!'];
+    // 신규 행동 대사
+    const _READ_L   =['📖 잠깐 독서 타임','📚 이 책 너무 좋아','🔖 여기까지 읽었어','📰 오늘 자료 정독 중','📕 레퍼런스 찾는 중'];
+    const _WBOARD_L =['✏️ 아이디어 정리!','📐 구조 시각화 중','🗒️ 흐름도 그리는 중','💡 이 방향으로 가자!','📊 데이터 정리 중'];
+    const _SNACK_L  =['🍩 간식 타임!','🍫 당 보충 중~','🥜 견과류 먹는 중','🍪 집중을 위해!','🍌 에너지 충전!'];
+    const _CHAT_L   =['💬 잠깐 얘기해요~','😄 오늘 어때요?','🗣️ 잠깐 여기 봐요!','👋 잠깐만요~','💡 아이디어 공유!'];
+    const _PRINTER_L=['🖨️ 출력 중...','📄 프린터 기다리는 중','🗃️ 자료 인쇄 완료!','⚙️ 프린터 잉크...'];
+    const _NAP_L    =['😴 잠깐 눈 감아야...','💤 5분만...','🛌 피곤하다...','😪 졸음이 밀려와...'];
+    const _PATROL_L =['👁️ 사무실 순찰 중','🔍 이상 없음!','🚶 한 바퀴 돌아볼게','🧐 현황 파악 중'];
+    const _REPORT_L =['📋 보고서 제출!','📊 결과 보고드려요','✅ 완료 보고!','📁 자료 공유드려요'];
+    const _WATER_L  =['💧 물 마시러~','🥤 수분 보충!','💦 잠깐 물 한 잔','🌊 물 없인 못 살아'];
+    const _EXERCISE_L=['🏃‍♂️ 자리 운동!','💪 어깨 근육 풀기','🤸 스쿼트 한 번!','🧘 집중력 훈련 중'];
+
+    // ── 위치 상수 ─────────────────────────────────────────────
+    const WBOARD_POS=[{x:130,y:78},{x:310,y:78},{x:480,y:78},{x:665,y:78}];
+    const PATROL_PTS=[{x:80,y:230},{x:200,y:230},{x:350,y:230},{x:500,y:230},{x:650,y:230},{x:780,y:230}];
+    const PRINTER_POS={x:448,y:490};
+    const WATER_POS={x:22,y:220};
 
     function wander(c){
       const r=Math.random();
-      if(r<0.20){
+      if(r<0.12){
         // 랜덤 산책
         c.tx=BND.x1+30+Math.random()*(BND.x2-BND.x1-60);
-        c.ty=BND.y1+20+Math.random()*(BND.y2-BND.y1-40);
+        c.ty=BND.y1+40+Math.random()*(BND.y2-BND.y1-80);
         c.state='walk'; c.sTick=80+Math.random()*120;
-      } else if(r<0.30){
+      } else if(r<0.20){
         // 자리로 복귀
         c.tx=c.def.homeX; c.ty=c.def.homeY;
         c.state='walk'; c.sTick=70+Math.random()*90;
-      } else if(r<0.40){
+      } else if(r<0.27){
         // 커피 타임
         c.tx=COFFEE.x; c.ty=COFFEE.y;
         c.state='coffee'; c.sTick=130+Math.random()*80;
         c.bubble=_COFFEE_L[Math.floor(Math.random()*_COFFEE_L.length)];
         c.bTick=160;
-      } else if(r<0.49){
+      } else if(r<0.34){
         // 창문 구경
         const wx=[97,262,432,602,767];
         c.tx=wx[Math.floor(Math.random()*wx.length)]+10; c.ty=BND.y1+22;
         c.state='window'; c.sTick=110+Math.random()*80;
         c.bubble=_WINDOW_L[Math.floor(Math.random()*_WINDOW_L.length)];
         c.bTick=140;
-      } else if(r<0.57){
+      } else if(r<0.40){
         // 스트레칭
         c.state='stretch'; c.sTick=70+Math.random()*50; c._sy=c.y;
         c.bubble=_STRETCH_L[Math.floor(Math.random()*_STRETCH_L.length)];
         c.bTick=110;
-      } else if(r<0.64){
+      } else if(r<0.46){
         // 고민하며 배회
         c.state='think'; c.sTick=90+Math.random()*70;
         c._thinkOrig=c.x; c._thinkDir=1;
         c.tx=c.x+28; c.ty=c.y;
         c.bubble=_THINK_L[Math.floor(Math.random()*_THINK_L.length)];
         c.bTick=130;
-      } else if(r<0.70){
+      } else if(r<0.51){
         // 급하게 달리기
         c.tx=BND.x1+30+Math.random()*(BND.x2-BND.x1-60);
-        c.ty=BND.y1+20+Math.random()*(BND.y2-BND.y1-40);
+        c.ty=BND.y1+40+Math.random()*(BND.y2-BND.y1-80);
         c._origSpd=c.spd; c.spd=c.spd*2.8;
         c.state='rush'; c.sTick=55+Math.random()*60;
         c.bubble=_RUSH_L[Math.floor(Math.random()*_RUSH_L.length)];
         c.bTick=90;
-      } else if(r<0.76){
+      } else if(r<0.56){
         // 전화 통화
         c.state='phone'; c.sTick=110+Math.random()*110;
         c.bubble=_PHONE_L[c.id]||'📱 통화 중...';
         c.bTick=200;
-      } else if(r<0.82){
+      } else if(r<0.61){
         // 다른 직원 몰래 훔쳐보기
         const others=chars.filter(x=>x!==c&&Math.abs(x.x-c.x)>40);
         if(others.length){
@@ -3248,11 +3265,77 @@
           c.bubble=_SNEAK_L[Math.floor(Math.random()*_SNEAK_L.length)];
           c.bTick=100;
         } else { c.state='idle'; c.sTick=40; }
-      } else if(r<0.88){
-        // 춤/리듬 타기
+      } else if(r<0.65){
+        // 춤/리듬
         c.state='dance'; c.sTick=65+Math.random()*55;
         c.bubble=_DANCE_L[Math.floor(Math.random()*_DANCE_L.length)];
         c.bTick=80;
+      } else if(r<0.69){
+        // 독서 📖
+        c.state='read'; c.sTick=120+Math.random()*120;
+        c.bubble=_READ_L[Math.floor(Math.random()*_READ_L.length)];
+        c.bTick=180;
+      } else if(r<0.73){
+        // 화이트보드 발표 ✏️
+        const wp=WBOARD_POS[Math.floor(Math.random()*WBOARD_POS.length)];
+        c.tx=wp.x; c.ty=wp.y;
+        c.state='wboard'; c.sTick=150+Math.random()*120;
+        c.bubble=_WBOARD_L[Math.floor(Math.random()*_WBOARD_L.length)];
+        c.bTick=200;
+      } else if(r<0.77){
+        // 간식 먹기 🍩
+        c.state='snack'; c.sTick=80+Math.random()*80;
+        c.bubble=_SNACK_L[Math.floor(Math.random()*_SNACK_L.length)];
+        c.bTick=140;
+      } else if(r<0.81){
+        // 동료에게 말 걸기 💬
+        const others=chars.filter(x=>x!==c);
+        if(others.length){
+          const tgt=others[Math.floor(Math.random()*others.length)];
+          c.tx=tgt.x+(tgt.x>c.x?-52:52); c.ty=tgt.y;
+          c.state='chat'; c.sTick=130+Math.random()*100;
+          c.bubble=_CHAT_L[Math.floor(Math.random()*_CHAT_L.length)];
+          c.bTick=190;
+        } else { c.state='idle'; c.sTick=40; }
+      } else if(r<0.84){
+        // 프린터 출력 🖨️
+        c.tx=PRINTER_POS.x; c.ty=PRINTER_POS.y;
+        c.state='printer'; c.sTick=90+Math.random()*80;
+        c.bubble=_PRINTER_L[Math.floor(Math.random()*_PRINTER_L.length)];
+        c.bTick=150;
+      } else if(r<0.87){
+        // 책상에서 졸기 😴
+        c.state='nap'; c.sTick=80+Math.random()*90; c._sy=c.y;
+        c.bubble=_NAP_L[Math.floor(Math.random()*_NAP_L.length)];
+        c.bTick=120;
+      } else if(r<0.90){
+        // 사무실 순찰 🚶
+        const pp=PATROL_PTS[Math.floor(Math.random()*PATROL_PTS.length)];
+        c.tx=pp.x; c.ty=pp.y;
+        c._origSpd=c.spd; c.spd=c.spd*0.55;
+        c.state='patrol'; c.sTick=180+Math.random()*140;
+        c.bubble=_PATROL_L[Math.floor(Math.random()*_PATROL_L.length)];
+        c.bTick=130;
+      } else if(r<0.93){
+        // 상사에게 보고 📋
+        const boss=chars.find(x=>x.id==='박기획')||chars[0];
+        if(boss&&boss!==c){
+          c.tx=boss.x+(boss.x>c.x?-52:52); c.ty=boss.y;
+          c.state='report'; c.sTick=110+Math.random()*80;
+          c.bubble=_REPORT_L[Math.floor(Math.random()*_REPORT_L.length)];
+          c.bTick=160;
+        } else { c.state='idle'; c.sTick=40; }
+      } else if(r<0.96){
+        // 물 마시러 💧
+        c.tx=WATER_POS.x; c.ty=WATER_POS.y+(Math.random()*80-40);
+        c.state='water'; c.sTick=70+Math.random()*70;
+        c.bubble=_WATER_L[Math.floor(Math.random()*_WATER_L.length)];
+        c.bTick=110;
+      } else if(r<0.98){
+        // 자리 운동 💪
+        c.state='exercise'; c.sTick=70+Math.random()*70; c._sy=c.y;
+        c.bubble=_EXERCISE_L[Math.floor(Math.random()*_EXERCISE_L.length)];
+        c.bTick=110;
       } else {
         // 업무 말풍선
         const pool=_LINES[c.id]||[];
@@ -3280,7 +3363,7 @@
               const ch=chars.find(c=>c.id===who);
               if(ch){ch.bubble=txt;ch.bTick=200;}
             }else{
-              inMeet=false; meetTimer=450+Math.floor(Math.random()*300);
+              inMeet=false; meetTimer=2700+Math.floor(Math.random()*1800);
               chars.forEach(c=>{c.tx=c.def.homeX;c.ty=c.def.homeY;c.state='home';});
             }
           }
@@ -3322,6 +3405,35 @@
         if(c.state==='dance'){
           if(--c.sTick<=0){c.state='idle';c.frame=0;c.sTick=40+Math.random()*60;}
           c.fTick++;if(c.fTick>5){c.fTick=0;c.frame=1-c.frame;}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        // ── 신규 상태 처리 ─────────────────────────────────
+        if(c.state==='read'||c.state==='snack'||c.state==='nap'||c.state==='exercise'){
+          if(c.state==='nap'||c.state==='exercise'){
+            c.y=c._sy+Math.round(Math.sin(Date.now()*0.008+(c.id.length*0.5))*2);
+          }
+          if(--c.sTick<=0){if(c._sy!==undefined)c.y=c._sy;c.state='idle';c.frame=0;c.sTick=50+Math.random()*80;}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        if(c.state==='wboard'||c.state==='chat'||c.state==='printer'||c.state==='report'||c.state==='water'){
+          if(--c.sTick<=0){c.state='idle';c.frame=0;c.sTick=50+Math.random()*80;}
+          const arr=!move(c,c.tx,c.ty);
+          if(arr&&c.sTick>30){/* 도착 후 대기 */}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        if(c.state==='patrol'){
+          if(--c.sTick<=0){
+            if(c._origSpd)c.spd=c._origSpd;
+            // 다음 순찰 포인트로 이동하거나 idle
+            if(Math.random()<0.6){
+              const pp=PATROL_PTS[Math.floor(Math.random()*PATROL_PTS.length)];
+              c.tx=pp.x;c.ty=pp.y;c.sTick=140+Math.random()*100;
+            }else{c.spd=c._origSpd||c.spd;c.state='idle';c.frame=0;c.sTick=50+Math.random()*70;}
+          }
+          move(c,c.tx,c.ty);
           if(c.bTick>0)c.bTick--;else c.bubble=null;
           return;
         }
@@ -3410,7 +3522,7 @@
         chars.forEach(c=>{
           const el=document.getElementById('ostat_'+c.id.replace(/\W/g,'_'));
           if(!el)return;
-          const st={idle:'💤 대기 중',walk:'🚶 이동 중',meet:'📋 회의 중',home:'🏠 자리로 복귀',coffee:'☕ 커피 타임',window:'🌤️ 창문 구경',stretch:'🙆 스트레칭',think:'🤔 고민 중',rush:'🏃 급하게!',phone:'📱 통화 중',sneak:'🤫 몰래 접근',dance:'🕺 춤추는 중'};
+          const st={idle:'💤 대기 중',walk:'🚶 이동 중',meet:'📋 회의 중',home:'🏠 자리로 복귀',coffee:'☕ 커피 타임',window:'🌤️ 창문 구경',stretch:'🙆 스트레칭',think:'🤔 고민 중',rush:'🏃 급하게!',phone:'📱 통화 중',sneak:'🤫 몰래 접근',dance:'🕺 춤추는 중',read:'📖 독서 중',wboard:'✏️ 화이트보드',snack:'🍩 간식 타임',chat:'💬 동료와 대화',printer:'🖨️ 출력 중',nap:'😴 잠깐 졸기',patrol:'👁️ 순찰 중',report:'📋 보고 중',water:'💧 물 마시러',exercise:'💪 자리 운동'};
           el.textContent=c.bubble?c.bubble.slice(0,22)+(c.bubble.length>22?'…':''):(st[c.state]||'💤 대기 중');
         });
       },1800);
