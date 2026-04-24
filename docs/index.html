@@ -2767,146 +2767,57 @@
   //  🏢  AI 사무실 시뮬레이션  v2
   // ══════════════════════════════════════════════════════════
   let _officeActive = false;
-  const _PX = 4; // 1 sprite-pixel = 4 canvas-pixels
+  const _PX = 3; // 1 sprite-pixel = 3 canvas-pixels (16×24 sprites)
 
-  // ── 스프라이트 정의 (10열 × 16행 정밀 픽셀아트) ─────────────
-  // 각 행 반드시 10자. 팔레트 키 또는 '.'(투명)
+  // ── 스프라이트 정의 (16열 × 24행 고화질 픽셀아트) ─────────────
   const _CHARS = {
-    // ── 10열 × 16행 정밀 픽셀아트. 각 행 정확히 10자 ────────────
-    '박기획': {
-      icon:'📋', role:'콘텐츠 기획자', color:'#42a5f5',
-      pal:{H:'#1a237e',S:'#fcd5b5',G:'#6d4c41',A:'#bbdefb',E:'#111827',
-           M:'#c07070',C:'#ffffff',B:'#1565c0',D:'#0d47a1',T:'#c62828',P:'#263238',F:'#111111'},
-      spr:[
-        ['..HHHHHH..','.HSSSSSH..','.HGAAGAAH.','.HGAEGAEH.',
-         '.HSSSSSH..','..SSMMSS..','..CCTTCC..', '.BBTTTBB..',
-         'BBBBBBBBB.','.BBBDBBBB.','..BBBBBB..', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['..HHHHHH..','.HSSSSSH..','.HGAAGAAH.','.HGAEGAEH.',
-         '.HSSSSSH..','..SSMMSS..','..CCTTCC..', '.BBTTTBB..',
-         'BBBBBBBBB.','.BBBDBBBB.','..BBBBBB..', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:52, homeY:145,
+    "박기획": {
+      icon:"📋", role:"콘텐츠 기획자", color:'#42a5f5',
+      pal:{'H':'#1a237e','I':'#3f51b5','S':'#fcd5b5','K':'#d4956a','W':'#ffffff','E':'#1a1a2e','G':'#bf8c00','B':'#1565c0','D':'#0d47a1','L':'#1e88e5','C':'#eceff1','T':'#b71c1c','P':'#263238','F':'#111111','M':'#c07070','R':'#37474f'},
+      spr:[['....HHHHHHHH....','...HIHHHHHHIH...','...HHHHHHHHHHH..','...HSSSSSSSSH...','...HSHH..HHSH...','...HGWESSEWGH...','...HSKSSSKS.H...','...HSSSMMSSSH...','.....SSSSSS.....','..LBCCTTTTCCBD..','..BBBBBBBBBBBB..','..LBBBTTTTBBBD..','..LBBBTTTBBBBD..','..LBBBTTBBBBBD..','..LBBBTBBBBDBD..','..BBBBBBBBBBBB..','..BBBBBBBBBRRB..','..RRRRRRRRRRRR..','....PP....PP....','....PP....PP....','.....PP..PP.....','.....PP..PP.....','.....FF..FF.....','....FFF..FFF....'],['....HHHHHHHH....','...HIHHHHHHIH...','...HHHHHHHHHHH..','...HSSSSSSSSH...','...HSHH..HHSH...','...HGWESSEWGH...','...HSKSSSKS.H...','...HSSSMMSSSH...','.....SSSSSS.....','..LBCCTTTTCCBD..','..BBBBBBBBBBBB..','..LBBBTTTTBBBD..','..LBBBTTTBBBBD..','..LBBBTTBBBBBD..','..LBBBTBBBBDBD..','..BBBBBBBBBBBB..','..BBBBBBBBBRRB..','..RRRRRRRRRRRR..','.....PP..PP.....','.....PP..PP.....','....PP....PP....','....PP....PP....','....FF....FF....','....FFF..FFF....']],
+      homeX:48, homeY:137,
     },
-
-    '최디자': {
-      icon:'🎨', role:'이미지 디자이너', color:'#ce93d8',
-      pal:{H:'#6a1b9a',A:'#9c27b0',S:'#fcd5b5',G:'#f9a825',E:'#111827',
-           M:'#e91e63',C:'#ffffff',B:'#f48fb1',D:'#c2185b',P:'#7e57c2',F:'#1a1a1a',R:'#ff80ab'},
-      spr:[
-        ['HAHAHAHAHA','HSSSSSSSH.','HSGGSSGGSH','HSGESSEGSH',
-         '.RSSSSSSR.','..SMMSSS..','..CCCCCC..', '.BBBBBBBB.',
-         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['HAHAHAHAHA','HSSSSSSSH.','HSGGSSGGSH','HSGESSEGSH',
-         '.RSSSSSSR.','..SMMSSS..','..CCCCCC..', '.BBBBBBBB.',
-         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:640, homeY:145,
+    "최디자": {
+      icon:"🎨", role:"이미지 디자이너", color:'#ce93d8',
+      pal:{'H':'#6a1b9a','A':'#ce93d8','S':'#fcd5b5','K':'#d4956a','W':'#ffffff','E':'#1a1a2e','R':'#f48fb1','D':'#c2185b','M':'#ff80ab','C':'#ffffff','B':'#fce4ec','P':'#7e57c2','F':'#212121','T':'#c07070'},
+      spr:[['...HAHAHAHAHH...','...HAHAHAHHHAH..','...HHHHAHHHHHH..','...HSSSSSSSSH...','...HSHH..HHSH...','...HSWESSEWSH...','...HSMSSSSMSH...','...HSSSMMSSSH...','.....SSSSSS.....','..RCCRRRRRRCCR..','..RRRRRRRRRRRR..','..DRRRRRRRRRD...','..DRRRMBRMRRD...','..DRRRRRRRRRD...','..RRRRRRRRRRRR..','..RRRRRRRRRRRR..','..PRRRRRRRRRRP..','..PPPPPPPPPPPP..','....PP....PP....','....PP....PP....','.....PP..PP.....','.....PP..PP.....','.....FF..FF.....','....FFF..FFF....'],['...HAHAHAHAHH...','...HAHAHAHHHAH..','...HHHHAHHHHHH..','...HSSSSSSSSH...','...HSHH..HHSH...','...HSWESSEWSH...','...HSMSSSSMSH...','...HSSSMMSSSH...','.....SSSSSS.....','..RCCRRRRRRCCR..','..RRRRRRRRRRRR..','..DRRRRRRRRRD...','..DRRRMBRMRRD...','..DRRRRRRRRRD...','..RRRRRRRRRRRR..','..RRRRRRRRRRRR..','..PRRRRRRRRRRP..','..PPPPPPPPPPPP..','.....PP..PP.....','.....PP..PP.....','....PP....PP....','....PP....PP....','....FF....FF....','....FFF..FFF....']],
+      homeX:636, homeY:137,
     },
-
-    '한뮤직': {
-      icon:'🎵', role:'음악 큐레이터', color:'#66bb6a',
-      pal:{O:'#1a1a1a',W:'#bdbdbd',H:'#4e342e',S:'#fcd5b5',E:'#111827',
-           M:'#c07070',B:'#43a047',D:'#2e7d32',K:'#1565c0',F:'#f5f5f5',Y:'#fdd835'},
-      spr:[
-        ['OOHHHHHHOO','.WSSSSSSW.','.WSSESSEW.','.WSSSSSSW.',
-         '..SSSSSS..','..SSMMSS..','..YBBBYY..', '.BBBBBBBB.',
-         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.KK...KKK.',
-         '.KK...KKK.','.KK...KKK.','.FF...FFF.','.FF...FFF.'],
-        ['OOHHHHHHOO','.WSSSSSSW.','.WSSESSEW.','.WSSSSSSW.',
-         '..SSSSSS..','..SSMMSS..','..YBBBYY..', '.BBBBBBBB.',
-         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.KKK..KK..',
-         '.KKK..KK..','.KKK..KK..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:52, homeY:390,
+    "한뮤직": {
+      icon:"🎵", role:"음악 큐레이터", color:'#66bb6a',
+      pal:{'H':'#212121','O':'#1a1a1a','S':'#fcd5b5','K':'#d4956a','W':'#ffffff','E':'#1a1a2e','Y':'#fdd835','G':'#388e3c','D':'#1b5e20','B':'#263238','F':'#111111','M':'#c07070'},
+      spr:[['...OOOOOOOOO....','..OHHHHHHHHHHO..','..OHHHHHHHHHHO..','...HSSSSSSSSH...','...HSHH..HHSH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..GGGGGGGGGGGG..','..GGGGGGGGGGGG..','..DGGGGGGGGGDD..','..DGGGYYGGGDDD..','..DGGGGGGGGGDD..','..GGGGGGGGGGGG..','..DGGGGGGGGGGD..','..GGGGGGGGGGGG..','..GGGGGGGGGGGG..','....BB....BB....','....BB....BB....','.....BB..BB.....','.....BB..BB.....','.....FF..FF.....','....FFF..FFF....'],['...OOOOOOOOO....','..OHHHHHHHHHHO..','..OHHHHHHHHHHO..','...HSSSSSSSSH...','...HSHH..HHSH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..GGGGGGGGGGGG..','..GGGGGGGGGGGG..','..DGGGGGGGGGDD..','..DGGGYYGGGDDD..','..DGGGGGGGGGDD..','..GGGGGGGGGGGG..','..DGGGGGGGGGGD..','..GGGGGGGGGGGG..','..GGGGGGGGGGGG..','.....BB..BB.....','.....BB..BB.....','....BB....BB....','....BB....BB....','....FF....FF....','....FFF..FFF....']],
+      homeX:48, homeY:382,
     },
-
-    'AI주간트렌드': {
-      icon:'📊', role:'주간 트렌드 분석가', color:'#b0bec5',
-      pal:{H:'#90a4ae',S:'#fcd5b5',G:'#546e7a',A:'#e3f2fd',E:'#111827',
-           M:'#c07070',C:'#ffffff',B:'#546e7a',D:'#37474f',T:'#00bcd4',P:'#1a237e',F:'#111111'},
-      spr:[
-        ['.HHHHHHHH.','HSSSSSSSH.','HSGAAGSAH.','HSGAEGASH.',
-         '.HSSSSSH..','..SSMMSS..','..CCTTTCC.', '.BBTTTBBB.',
-         'BBBTTBBBBB','.BBBDBBBB.','..BBBBBB..', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['.HHHHHHHH.','HSSSSSSSH.','HSGAAGSAH.','HSGAEGASH.',
-         '.HSSSSSH..','..SSMMSS..','..CCTTTCC.', '.BBTTTBBB.',
-         'BBBTTBBBBB','.BBBDBBBB.','..BBBBBB..', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:208, homeY:390,
+    "AI주간트렌드": {
+      icon:"📊", role:"주간 트렌드 분석가", color:'#b0bec5',
+      pal:{'S':'#cfd8dc','I':'#eceff1','W':'#fcd5b5','E':'#1a1a2e','H':'#546e7a','B':'#546e7a','D':'#37474f','L':'#78909c','C':'#eceff1','T':'#00bcd4','P':'#263238','F':'#111111','M':'#c07070','R':'#37474f'},
+      spr:[['....SSSSSSSS....','...SSSSSSSSSSS..','...SISISISISSI..','...SWWWWWWWWS...','...SWHH..HHWS...','...SWWESSEWWS...','...SWWWWWWWWS...','...SWWWMMWWWS...','.....WWWWWW.....','..TBCCTTTTTCBT..','..BBBBBBBBBBBB..','..DBBBTTTTTBBD..','..DBBBTTTTTBBD..','..DBBBTTTTTBBD..','..DBBBTTBBBBBD..','..BBBBBBBBBBBB..','..BBBBBBBBBRRB..','..RRRRRRRRRRRR..','....PP....PP....','....PP....PP....','.....PP..PP.....','.....PP..PP.....','.....FF..FF.....','....FFF..FFF....'],['....SSSSSSSS....','...SSSSSSSSSSS..','...SISISISISSI..','...SWWWWWWWWS...','...SWHH..HHWS...','...SWWESSEWWS...','...SWWWWWWWWS...','...SWWWMMWWWS...','.....WWWWWW.....','..TBCCTTTTTCBT..','..BBBBBBBBBBBB..','..DBBBTTTTTBBD..','..DBBBTTTTTBBD..','..DBBBTTTTTBBD..','..DBBBTTBBBBBD..','..BBBBBBBBBBBB..','..BBBBBBBBBRRB..','..RRRRRRRRRRRR..','.....PP..PP.....','.....PP..PP.....','....PP....PP....','....PP....PP....','....FF....FF....','....FFF..FFF....']],
+      homeX:204, homeY:382,
     },
-
-    'AI어드바이저': {
-      icon:'🤖', role:'AI 코인 어드바이저', color:'#00e5ff',
-      pal:{H:'#006064',S:'#e0f7fa',G:'#004d40',E:'#ff6d00',R:'#ff1744',
-           M:'#00acc1',C:'#00e5ff',B:'#00838f',D:'#006064',P:'#37474f',F:'#212121',L:'#ffd600',A:'#00bcd4'},
-      spr:[
-        ['.HHHHHHHH.','HSSSSSSSH.','HSGSSSSGH.','HSSESESSH.',
-         'HSSRSSSSH.','HSSLMLSSH.','..CCCCCC..', '..ABBABB..',
-         'BBBBBBBBBB','.BBBDBBBB.','..BDBDBB..', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['.HHHHHHHH.','HSSSSSSSH.','HSGSSSSGH.','HSSESESSH.',
-         'HSSRSSSSH.','HSSLMLSSH.','..CCCCCC..', '..ABBABB..',
-         'BBBBBBBBBB','.BBBDBBBB.','..BDBDBB..', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:782, homeY:390,
+    "AI어드바이저": {
+      icon:"🤖", role:"AI 코인 어드바이저", color:'#00e5ff',
+      pal:{'H':'#006064','M':'#004d40','S':'#e0f7fa','W':'#ffffff','E':'#ff6d00','C':'#00e5ff','L':'#ffd600','B':'#00838f','D':'#006064','A':'#00bcd4','T':'#ff1744','P':'#37474f','F':'#212121'},
+      spr:[['....HHHHHHHH....','...HHHHHHHHHH...','...HSSSSSSSSH...','...HMSSSSSSMH...','...HMHHHHHHMH...','...HMCESSECMH...','...HMSSSSSSMH...','...HMSSLLSSMH...','.....MSSSSM.....','..AMCCCAAACCMA..','..BBBBBBBBBBBB..','..DBBBAABBBBBD..','..DBBBBBBBBBD...','..DBBBTTBBBBBD..','..DBBBBBBBBBBD..','..BBBBBBBBBBBB..','..BBBBBBBBBABB..','..AAAAAAAAAAAA..','....PP....PP....','....PP....PP....','.....PP..PP.....','.....PP..PP.....','.....FF..FF.....','....FFF..FFF....'],['....HHHHHHHH....','...HHHHHHHHHH...','...HSSSSSSSSH...','...HMSSSSSSMH...','...HMHHHHHHMH...','...HMCESSECMH...','...HMSSSSSSMH...','...HMSSLLSSMH...','.....MSSSSM.....','..AMCCCAAACCMA..','..BBBBBBBBBBBB..','..DBBBAABBBBBD..','..DBBBBBBBBBD...','..DBBBTTBBBBBD..','..DBBBBBBBBBBD..','..BBBBBBBBBBBB..','..BBBBBBBBBABB..','..AAAAAAAAAAAA..','.....PP..PP.....','.....PP..PP.....','....PP....PP....','....PP....PP....','....FF....FF....','....FFF..FFF....']],
+      homeX:778, homeY:382,
     },
-
-    '뉴스기자': {
-      icon:'📰', role:'뉴스 수집가', color:'#ffcc02',
-      pal:{T:'#795548',U:'#5d4037',H:'#212121',S:'#fcd5b5',E:'#111827',
-           M:'#c07070',C:'#ffffff',B:'#795548',D:'#5d4037',P:'#263238',F:'#111111',Y:'#ffd600'},
-      spr:[
-        ['UUUUUUUUUU','.TTTTTTTT.','.HSSSSSH..','.HSSESSH..',
-         '.HSSSSSH..','..SSMMSS..','..YCCYCC..', '.BBYBBBBB.',
-         'BBBBBBBBB.','.BBBDBBB..','..BBBB....', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['UUUUUUUUUU','.TTTTTTTT.','.HSSSSSH..','.HSSESSH..',
-         '.HSSSSSH..','..SSMMSS..','..YCCYCC..', '.BBYBBBBB.',
-         'BBBBBBBBB.','.BBBDBBB..','..BBBB....', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:208, homeY:145,
+    "뉴스기자": {
+      icon:"📰", role:"뉴스 수집가", color:'#ffcc02',
+      pal:{'U':'#795548','T':'#5d4037','H':'#212121','S':'#fcd5b5','K':'#d4956a','W':'#ffffff','E':'#1a1a2e','C':'#ffffff','Y':'#ffd600','R':'#fafafa','D':'#4e342e','B':'#bcaaa4','P':'#263238','F':'#111111','M':'#c07070'},
+      spr:[['UUUUUUUUUUUUUUUU','...UUUUUUUUUUU..','...UTTTTTTTTU...','...USSSSSSSSU...','...HSHH..HHSH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..UBCCTTTTTCBU..','..UUUUUUUUUUUU..','..DUUUYUUUUUDD..','..DUUUUUUUUUDD..','..DUUUUUUUUUDD..','..UUUUUUUUUUUU..','..UUUUUUUUUUUU..','..UUURRRUUUUUU..','..RRRRRRRRRRRR..','....PP....PP....','....PP....PP....','.....PP..PP.....','.....PP..PP.....','.....FF..FF.....','....FFF..FFF....'],['UUUUUUUUUUUUUUUU','...UUUUUUUUUUU..','...UTTTTTTTTU...','...USSSSSSSSU...','...HSHH..HHSH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..UBCCTTTTTCBU..','..UUUUUUUUUUUU..','..DUUUYUUUUUDD..','..DUUUUUUUUUDD..','..DUUUUUUUUUDD..','..UUUUUUUUUUUU..','..UUUUUUUUUUUU..','..UUURRRUUUUUU..','..RRRRRRRRRRRR..','.....PP..PP.....','.....PP..PP.....','....PP....PP....','....PP....PP....','....FF....FF....','....FFF..FFF....']],
+      homeX:204, homeY:137,
     },
-
-    '이가드': {
-      icon:'🛡️', role:'시장 감시원', color:'#ef5350',
-      pal:{H:'#212121',S:'#fcd5b5',E:'#111827',M:'#8d6e63',
-           B:'#1a1a2e',D:'#0d0d1e',R:'#ff1744',Y:'#ffd600',C:'#b0bec5',P:'#212121',F:'#111111',G:'#90a4ae'},
-      spr:[
-        ['..HHHHHH..','.HSSSSSH..','.HSSEESSH.','.HSSSSSH..',
-         '..SSMMSS..','..GCCCGCC.', '.BBYBBBBB.','BBBRBBBBB.',
-         '.BBBBBBB..','..BBBBBB..','..BBBBBB..', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['..HHHHHH..','.HSSSSSH..','.HSSEESSH.','.HSSSSSH..',
-         '..SSMMSS..','..GCCCGCC.', '.BBYBBBBB.','BBBRBBBBB.',
-         '.BBBBBBB..','..BBBBBB..','..BBBBBB..', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:782, homeY:145,
+    "이가드": {
+      icon:"🛡️", role:"시장 감시원", color:'#ef5350',
+      pal:{'H':'#212121','S':'#fcd5b5','K':'#d4956a','W':'#ffffff','E':'#1a1a2e','N':'#1a1a2e','D':'#0d0d1e','B':'#b0bec5','C':'#eceff1','R':'#f44336','P':'#212121','F':'#111111','M':'#c07070'},
+      spr:[['....HHHHHHHH....','....HHHHHHHH....','...HHHHHHHHHH...','...HSSSSSSSSH...','...HEHH..HHEH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..NBCCRRCCCBN...','..NNNNNNNNNNNN..','..DNNNNNNRNDDN..','..DNNNNNNNNND...','..DNNNNNNNNND...','..NNNNNNNNNNNN..','..DNNNNNNNNND...','..NNNNNNNNNNNN..','..NNNNNNNNNNNN..','....NN....NN....','....NN....NN....','.....NN..NN.....','.....NN..NN.....','.....FF..FF.....','....FFF..FFF....'],['....HHHHHHHH....','....HHHHHHHH....','...HHHHHHHHHH...','...HSSSSSSSSH...','...HEHH..HHEH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..NBCCRRCCCBN...','..NNNNNNNNNNNN..','..DNNNNNNRNDDN..','..DNNNNNNNNND...','..DNNNNNNNNND...','..NNNNNNNNNNNN..','..DNNNNNNNNND...','..NNNNNNNNNNNN..','..NNNNNNNNNNNN..','.....NN..NN.....','.....NN..NN.....','....NN....NN....','....NN....NN....','....FF....FF....','....FFF..FFF....']],
+      homeX:778, homeY:137,
     },
-
-    '리포터': {
-      icon:'📝', role:'일일 리포트 작성자', color:'#ffb74d',
-      pal:{H:'#3e2723',N:'#6d4c41',S:'#fcd5b5',G:'#4e342e',A:'#ffe0b2',E:'#111827',
-           M:'#c07070',C:'#ffffff',B:'#ff8f00',D:'#e65100',P:'#4a148c',F:'#212121'},
-      spr:[
-        ['.HHNNHHH..','.HSSSSSH..','.HGGSSGH..','.HGAEGAEH.',
-         '.HSSSSSH..','..SMMMSS..','..CCCCCC..', '.BBCBCBBB.',
-         'BBBBBBBBBB','.BBBDBBBB.','..BBBDBB..', '.PP...PPP.',
-         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
-        ['.HHNNHHH..','.HSSSSSH..','.HGGSSGH..','.HGAEGAEH.',
-         '.HSSSSSH..','..SMMMSS..','..CCCCCC..', '.BBCBCBBB.',
-         'BBBBBBBBBB','.BBBDBBBB.','..BBBDBB..', '.PPP..PP..',
-         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
-      ],
-      homeX:640, homeY:390,
+    "리포터": {
+      icon:"📝", role:"일일 리포트 작성자", color:'#ffb74d',
+      pal:{'H':'#4e342e','N':'#8d6e63','S':'#fcd5b5','K':'#d4956a','W':'#ffffff','E':'#1a1a2e','O':'#ef6c00','D':'#e65100','Y':'#fff9c4','C':'#eceff1','T':'#37474f','R':'#eceff1','P':'#4a148c','F':'#212121','M':'#c07070'},
+      spr:[['...HHHHHHHHH....','..HHNHHHHHHNH...','..HHHHNHHHHHH...','...HSSSSSSSSH...','...HSHH..HHSH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..OCCTTTTTCCO...','..OOOOOOOOOOOO..','..DOOOYOOOOOOD..','..DOOOOOOOOODD..','..DOOOOOOOOODD..','..OOOOOOOOOOOO..','..DOOOOOOOOOOD..','..OOOOOOOOOOOR..','..RRRRRRRRRRRR..','....PP....PP....','....PP....PP....','.....PP..PP.....','.....PP..PP.....','.....FF..FF.....','....FFF..FFF....'],['...HHHHHHHHH....','..HHNHHHHHHNH...','..HHHHNHHHHHH...','...HSSSSSSSSH...','...HSHH..HHSH...','...HSWESSEWSH...','...HSSSSSSSSH...','...HSSSMMSSSH...','.....SSSSSS.....','..OCCTTTTTCCO...','..OOOOOOOOOOOO..','..DOOOYOOOOOOD..','..DOOOOOOOOODD..','..DOOOOOOOOODD..','..OOOOOOOOOOOO..','..DOOOOOOOOOOD..','..OOOOOOOOOOOR..','..RRRRRRRRRRRR..','.....PP..PP.....','.....PP..PP.....','....PP....PP....','....PP....PP....','....FF....FF....','....FFF..FFF....']],
+      homeX:636, homeY:382,
     },
   };
   // ── 대화 풀 ───────────────────────────────────────────────
