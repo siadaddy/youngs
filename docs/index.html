@@ -2702,57 +2702,278 @@
   window.addEventListener('resize', initWidgetSlider);
 
   // ══════════════════════════════════════════════════════════
-  //  🏢  AI 사무실 시뮬레이션
+  //  🏢  AI 사무실 시뮬레이션  v2
   // ══════════════════════════════════════════════════════════
   let _officeActive = false;
-  const _PX = 5; // 1 sprite-pixel = 5 canvas-pixels
+  const _PX = 4; // 1 sprite-pixel = 4 canvas-pixels
 
-  // ── 스프라이트 정의 (8열 × 10행 픽셀아트) ────────────────
+  // ── 스프라이트 정의 (8열 × 14행, 보다 정교한 픽셀아트) ─────
+  // 각 행 반드시 8자. 팔레트 키 또는 '.'(투명)
   const _CHARS = {
     '박기획': {
       icon:'📋', role:'콘텐츠 기획자', color:'#42a5f5',
-      pal:{H:'#1c1c2e',S:'#fcd5b5',G:'#90caf9',E:'#111',M:'#c07070',C:'#fff',B:'#1e88e5',D:'#1565c0',P:'#263238',F:'#111'},
+      pal:{
+        H:'#1a1a2e', // 짙은 네이비 머리카락
+        S:'#fcd5b5', // 피부
+        G:'#90caf9', // 안경 렌즈 하늘색
+        E:'#111827', // 눈동자
+        M:'#c07070', // 입
+        C:'#ffffff', // 흰 셔츠 칼라
+        B:'#1e88e5', // 파란 수트
+        D:'#1565c0', // 수트 음영
+        T:'#e53935', // 빨간 넥타이
+        P:'#263238', // 바지
+        F:'#111111', // 구두
+      },
+      // 14행 × 8열 스프라이트
       spr:[
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
+        [  // frame 0
+          '..HHHH..',  // 0 머리카락 윗부분
+          '.HSSSH..',  // 1 얼굴+머리 측면
+          '.HGGGSH.',  // 2 안경 (G=렌즈, 넓게)
+          '.HSEESH.',  // 3 눈
+          '.HSSSH..',  // 4 뺨/코
+          '..SMMS..',  // 5 입
+          '..CTTC..',  // 6 칼라+넥타이(T)
+          '.BBTBBB.',  // 7 수트 상단+넥타이
+          'BBBBBBBB',  // 8 수트 몸통
+          '.BBBDBB.',  // 9 수트 하단 음영
+          '..BB.BB.',  // 10 허리+팔
+          '.PP.PPP.',  // 11 바지
+          '.PP.PPP.',  // 12 바지 아래
+          '.FF.FFF.',  // 13 구두
+        ],
+        [  // frame 1 (걷기 — 다리 엇갈림)
+          '..HHHH..',
+          '.HSSSH..',
+          '.HGGGSH.',
+          '.HSEESH.',
+          '.HSSSH..',
+          '..SMMS..',
+          '..CTTC..',
+          '.BBTBBB.',
+          'BBBBBBBB',
+          '.BBBDBB.',
+          '..BB.BB.',
+          '.PPP.PP.',
+          '.PPP.PP.',
+          '.FFF.FF.',
+        ],
       ],
-      homeX:115, homeY:167,
+      homeX:115, homeY:155,
     },
+
     '최디자': {
       icon:'🎨', role:'이미지 디자이너', color:'#ce93d8',
-      pal:{H:'#7b1fa2',S:'#fcd5b5',G:'#fff176',E:'#111',M:'#c07070',C:'#fff',B:'#ce93d8',D:'#9c27b0',P:'#546e7a',F:'#111'},
+      pal:{
+        H:'#6a1b9a', // 보라색 긴 머리
+        A:'#9c27b0', // 머리 하이라이트
+        S:'#fcd5b5', // 피부
+        G:'#fff59d', // 노란 뿔테 안경
+        E:'#111827', // 눈
+        M:'#e57373', // 입술 (더 붉게)
+        C:'#ffffff', // 칼라
+        B:'#f48fb1', // 핑크 블라우스
+        D:'#c2185b', // 음영
+        P:'#7e57c2', // 보라 팬츠
+        F:'#1a1a1a', // 구두
+        R:'#ff80ab', // 악센트 리본/귀고리
+      },
       spr:[
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
+        [
+          'HHHHHHHH',  // 0 넓은 보라 머리
+          'HSSSSSH.',  // 1
+          'HSGGGSH.',  // 2 안경
+          'HSEEESH.',  // 3 눈 (더 넓은 눈)
+          'HSSSSSH.',  // 4
+          '.RSMMSR.',   // 5 입+귀고리
+          '.CCCCCC.',  // 6 칼라
+          '.BBBBBB.',  // 7 블라우스
+          'BBBBBBBB',  // 8
+          '.BBBBBB.',  // 9
+          '.BDDBDB.',  // 10 음영
+          '.PP.PPP.',  // 11 팬츠
+          '.PP.PPP.',  // 12
+          '.FF.FFF.',  // 13
+        ],
+        [
+          'HHHHHHHH',
+          'HSSSSSH.',
+          'HSGGGSH.',
+          'HSEEESH.',
+          'HSSSSSH.',
+          '.RSMMSR.',
+          '.CCCCCC.',
+          '.BBBBBB.',
+          'BBBBBBBB',
+          '.BBBBBB.',
+          '.BDDBDB.',
+          '.PPP.PP.',
+          '.PPP.PP.',
+          '.FFF.FF.',
+        ],
       ],
-      homeX:765, homeY:167,
+      homeX:755, homeY:155,
     },
+
     '한뮤직': {
       icon:'🎵', role:'음악 큐레이터', color:'#66bb6a',
-      pal:{O:'#212121',H:'#4e342e',S:'#fcd5b5',E:'#111',M:'#c07070',C:'#fff',B:'#388e3c',D:'#1b5e20',P:'#1565c0',F:'#111'},
+      pal:{
+        O:'#1a1a1a', // 헤드폰 (진한 검정)
+        W:'#e0e0e0', // 헤드폰 쿠션 (밝은 회색)
+        H:'#4e342e', // 갈색 머리
+        S:'#fcd5b5', // 피부
+        E:'#111827', // 눈
+        M:'#c07070', // 입
+        C:'#ffffff', // 칼라
+        B:'#43a047', // 초록 후디
+        D:'#2e7d32', // 음영
+        K:'#1565c0', // 청바지
+        F:'#1a1a1a', // 신발
+        Y:'#fdd835', // 헤드폰 포인트 노랑
+      },
       spr:[
-        ['OHHHHHO.','OSSSSO..','OSEGSO..','OSSSSO..','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['OHHHHHO.','OSSSSO..','OSEGSO..','OSSSSO..','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
+        [
+          'OOHHHHOO',  // 0 — 헤드폰 밴드+머리 (9자인데 잘라서 8로)
+          'OWSSSSWO',  // 1 헤드폰 쿠션
+          'OWSEESWO',  // 2 눈
+          'OWSSSSWO',  // 3 뺨
+          '.WSSSSW.',  // 4 아래얼굴
+          '..SMMS..',  // 5 입
+          '..CCCC..',  // 6 칼라
+          '.BBBBBB.',  // 7 후디
+          'BBBBBBBB',  // 8
+          '.BBBBBB.',  // 9
+          '.BDDBDB.',  // 10
+          '.KK.KKK.',  // 11 청바지
+          '.KK.KKK.',  // 12
+          '.FF.FFF.',  // 13
+        ],
+        [
+          'OOHHHHOO',
+          'OWSSSSWO',
+          'OWSEESWO',
+          'OWSSSSWO',
+          '.WSSSSW.',
+          '..SMMS..',
+          '..CCCC..',
+          '.BBBBBB.',
+          'BBBBBBBB',
+          '.BBBBBB.',
+          '.BDDBDB.',
+          '.KKK.KK.',
+          '.KKK.KK.',
+          '.FFF.FF.',
+        ],
       ],
-      homeX:115, homeY:417,
+      homeX:115, homeY:405,
     },
+
     'AI주간트렌드': {
-      icon:'📊', role:'주간 트렌드 분석가', color:'#90a4ae',
-      pal:{H:'#90a4ae',S:'#fcd5b5',G:'#546e7a',E:'#111',M:'#c07070',C:'#fff',B:'#607d8b',D:'#455a64',P:'#1a237e',F:'#111'},
+      icon:'📊', role:'주간 트렌드 분석가', color:'#b0bec5',
+      pal:{
+        H:'#b0bec5', // 회색 머리 (분석가 스타일)
+        S:'#fcd5b5', // 피부
+        G:'#78909c', // 테 안경 (진한 회색)
+        E:'#111827', // 눈
+        M:'#c07070', // 입
+        C:'#ffffff', // 셔츠
+        B:'#546e7a', // 청회색 수트
+        D:'#37474f', // 음영
+        T:'#00bcd4', // 청록 넥타이 (분석가 포인트)
+        P:'#1a237e', // 네이비 바지
+        F:'#111111', // 구두
+        N:'#263238', // 수트 어두운 부분
+      },
       spr:[
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
+        [
+          '.HHHHHH.',  // 0
+          'HSSSSSH.',  // 1
+          'HSGGGSH.',  // 2 안경 (넓은 프레임)
+          'HSEEESH.',  // 3
+          'HSSSSSH.',  // 4
+          '..SMMS..',  // 5
+          '..CTTC..',  // 6 칼라+넥타이
+          '.BBTBBB.',  // 7
+          'BBBBBBBB',  // 8
+          '.BBNBBB.',  // 9 N=어두운 재킷 라펠
+          '..BB.BB.',  // 10
+          '.PP.PPP.',  // 11
+          '.PP.PPP.',  // 12
+          '.FF.FFF.',  // 13
+        ],
+        [
+          '.HHHHHH.',
+          'HSSSSSH.',
+          'HSGGGSH.',
+          'HSEEESH.',
+          'HSSSSSH.',
+          '..SMMS..',
+          '..CTTC..',
+          '.BBTBBB.',
+          'BBBBBBBB',
+          '.BBNBBB.',
+          '..BB.BB.',
+          '.PPP.PP.',
+          '.PPP.PP.',
+          '.FFF.FF.',
+        ],
       ],
-      homeX:455, homeY:417,
+      homeX:448, homeY:405,
     },
+
     'AI어드바이저': {
-      icon:'🤖', role:'AI 코인 어드바이저', color:'#00bcd4',
-      pal:{H:'#00bcd4',S:'#b2ebf2',G:'#006064',E:'#ff6f00',M:'#00acc1',C:'#00e5ff',B:'#0097a7',D:'#006064',P:'#37474f',F:'#212121',L:'#ffd54f'},
+      icon:'🤖', role:'AI 코인 어드바이저', color:'#00e5ff',
+      pal:{
+        H:'#006064', // 헤드 외곽 (짙은 청록)
+        S:'#e0f7fa', // 얼굴 패널 (밝은 청록)
+        G:'#004d40', // 패널 음영
+        E:'#ff6d00', // 주황 발광 눈!
+        R:'#ff1744', // 경고등 빨강
+        M:'#00acc1', // 입 표시등
+        C:'#00e5ff', // 목 연결부 네온
+        B:'#00838f', // 몸통 청록
+        D:'#006064', // 음영
+        P:'#37474f', // 다리
+        F:'#212121', // 발
+        L:'#ffd600', // 금 코인 로고
+        A:'#00bcd4', // 몸 포인트 색
+      },
       spr:[
-        ['.HHHHHH.','HSSSSSH.','HSEGESH.','HSSSSSH.','.LMML...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSEGESH.','HSSSSSH.','.LMML...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
+        [
+          '.HHHHHH.',  // 0 로봇 헤드
+          'HSSSSSH.',  // 1 얼굴 패널
+          'HSEGESH.',  // 2 눈 (E=주황 발광)
+          'HSSRSSH.',  // 3 R=경고등
+          'HSSSSSH.',  // 4 하단 패널
+          '..LMLL..',  // 5 L=금 로고, M=입 LED
+          '..CCCC..',  // 6 목 연결
+          '.AABAA..',  // 7 몸통 상단
+          'BBBBBBBB',  // 8 몸통
+          '.BBABBB.',  // 9 몸통 포인트
+          '..BB.BB.',  // 10 하체
+          '.PP.PPP.',  // 11
+          '.PP.PPP.',  // 12
+          '.FF.FFF.',  // 13
+        ],
+        [
+          '.HHHHHH.',
+          'HSSSSSH.',
+          'HSEGESH.',
+          'HSSRSSH.',
+          'HSSSSSH.',
+          '..LMLL..',
+          '..CCCC..',
+          '.AABAA..',
+          'BBBBBBBB',
+          '.BBABBB.',
+          '..BB.BB.',
+          '.PPP.PP.',
+          '.PPP.PP.',
+          '.FFF.FF.',
+        ],
       ],
-      homeX:765, homeY:417,
+      homeX:755, homeY:405,
     },
   };
 
@@ -2905,12 +3126,15 @@
       const{x,y,frame,facing,def}=c;
       const rows=def.spr[frame]||def.spr[0];
       const px=_PX;
+      const cx=Math.round(x), cy=Math.round(y);
+      const W=rows[0].length*px;
       ctx.save();
-      if(facing<0){ctx.translate(Math.round(x)+rows[0].length*px,Math.round(y));ctx.scale(-1,1);ctx.translate(-Math.round(x),0);}
+      ctx.translate(cx,cy);
+      if(facing<0){ctx.translate(W,0);ctx.scale(-1,1);}
       rows.forEach((row,ry)=>{
         for(let col=0;col<row.length;col++){
           const k=row[col];
-          if(k!=='.'&&k!==' '&&def.pal[k]){ctx.fillStyle=def.pal[k];ctx.fillRect(Math.round(x)+col*px,Math.round(y)+ry*px,px,px);}
+          if(k!=='.'&&k!==' '&&def.pal[k]){ctx.fillStyle=def.pal[k];ctx.fillRect(col*px,ry*px,px,px);}
         }
       });
       ctx.restore();
@@ -2930,35 +3154,44 @@
       ctx.textAlign='left';
     }
 
-    function bubble(c){
-      if(!c.bubble||c.bTick<=0) return;
-      const rows=c.def.spr[0];
-      const cw=rows[0].length*_PX;
-      const bx=Math.round(c.x)+cw/2, by=Math.round(c.y)-4;
-      const alpha=Math.min(1,c.bTick/25,(200-c.bTick+25)/25);
-      ctx.save(); ctx.globalAlpha=alpha;
+    function bubbles(chars){
+      const active=chars.filter(c=>c.bubble&&c.bTick>0);
+      if(!active.length)return;
       ctx.font='9px sans-serif';
-      const txt=c.bubble; const maxW=150;
-      const lines=[]; let ln='';
-      for(const ch of txt){
-        if(ctx.measureText(ln+ch).width>maxW){if(ln)lines.push(ln);ln=ch;}else ln+=ch;
-      }
-      if(ln)lines.push(ln);
-      const lh=13,pad=7;
-      const bw=Math.max(...lines.map(l=>ctx.measureText(l).width))+pad*2;
-      const bh=lines.length*lh+pad*2;
-      let sx=bx-bw/2; sx=Math.max(8,Math.min(CW-bw-8,sx));
-      const sy=by-bh-10;
-      ctx.fillStyle='rgba(0,0,0,.28)'; ctx.fillRect(sx+3,sy+3,bw,bh);
-      ctx.fillStyle='rgba(8,18,40,.93)';
-      ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(sx,sy,bw,bh,6); else ctx.rect(sx,sy,bw,bh); ctx.fill();
-      ctx.strokeStyle=c.def.color+'99'; ctx.lineWidth=1;
-      ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(sx,sy,bw,bh,6); else ctx.rect(sx,sy,bw,bh); ctx.stroke();
-      ctx.fillStyle='rgba(8,18,40,.93)';
-      ctx.beginPath(); ctx.moveTo(bx-5,by-10); ctx.lineTo(bx+5,by-10); ctx.lineTo(bx,by-1); ctx.closePath(); ctx.fill();
-      ctx.fillStyle='#ddf0ff'; ctx.font='9px sans-serif';
-      lines.forEach((l,i)=>ctx.fillText(l,sx+pad,sy+pad+10+i*lh));
-      ctx.restore();
+      const placed=[];
+      active.forEach(c=>{
+        const rows=c.def.spr[0];
+        const cw=rows[0].length*_PX;
+        const bx=Math.round(c.x)+cw/2, by=Math.round(c.y)-4;
+        const alpha=Math.min(1,c.bTick/25,(200-c.bTick+25)/25);
+        const txt=c.bubble; const maxW=150;
+        const lines=[]; let ln='';
+        for(const ch of txt){
+          if(ctx.measureText(ln+ch).width>maxW){if(ln)lines.push(ln);ln=ch;}else ln+=ch;
+        }
+        if(ln)lines.push(ln);
+        const lh=13,pad=7;
+        const bw=Math.max(...lines.map(l=>ctx.measureText(l).width))+pad*2;
+        const bh=lines.length*lh+pad*2;
+        let sx=bx-bw/2; sx=Math.max(8,Math.min(CW-bw-8,sx));
+        let sy=by-bh-10;
+        for(let t=0;t<12;t++){
+          if(!placed.some(r=>sx<r.x+r.w&&sx+bw>r.x&&sy<r.y+r.h&&sy+bh>r.y))break;
+          sy-=bh+4;
+        }
+        placed.push({x:sx,y:sy,w:bw,h:bh});
+        ctx.save(); ctx.globalAlpha=alpha;
+        ctx.fillStyle='rgba(0,0,0,.28)'; ctx.fillRect(sx+3,sy+3,bw,bh);
+        ctx.fillStyle='rgba(8,18,40,.93)';
+        ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(sx,sy,bw,bh,6); else ctx.rect(sx,sy,bw,bh); ctx.fill();
+        ctx.strokeStyle=c.def.color+'99'; ctx.lineWidth=1;
+        ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(sx,sy,bw,bh,6); else ctx.rect(sx,sy,bw,bh); ctx.stroke();
+        ctx.fillStyle='rgba(8,18,40,.93)';
+        if(sy+bh>=by-12){ctx.beginPath();ctx.moveTo(bx-5,by-10);ctx.lineTo(bx+5,by-10);ctx.lineTo(bx,by-1);ctx.closePath();ctx.fill();}
+        ctx.fillStyle='#ddf0ff'; ctx.font='9px sans-serif';
+        lines.forEach((l,i)=>ctx.fillText(l,sx+pad,sy+pad+10+i*lh));
+        ctx.restore();
+      });
     }
 
     // ── 이동 ────────────────────────────────────────────────
@@ -3035,7 +3268,7 @@
 
       // 캐릭터 Y-sort (원근감)
       [...chars].sort((a,b)=>a.y-b.y).forEach(c=>{drawChar(c);nameTag(c);});
-      chars.forEach(c=>bubble(c));
+      bubbles(chars);
 
       // 회의 배너
       if(inMeet&&chars.every(c=>Math.abs(c.x-c.tx)<6&&Math.abs(c.y-c.ty)<6)){
