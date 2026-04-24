@@ -6,11 +6,11 @@
   <title>시아 아빠의 Claude 실험실</title>
 
   <!-- OG / SNS 공유 메타태그 -->
-  <meta name="description" content="AI가 매일 뉴스를 분석해 카드뉴스·블로그를 자동 생성하고, 코인봇이 24시간 자동매매하는 AI 자동화 허브입니다." />
+  <meta name="description" content="AI가 매일 뉴스를 분석해 카드뉴스.블로그를 자동 생성하고, 코인봇이 24시간 자동매매하는 AI 자동화 허브입니다." />
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://siadaddy.github.io/youngs/" />
   <meta property="og:title"       content="시아 아빠의 Claude 실험실" />
-  <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 3월 말 Claude를 만나 한 달 만에 만든 것들 — AI 뉴스레터 · 코인 자동매매 · 3D 뮤직 갤러리" />
+  <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 3월 말 Claude를 만나 한 달 만에 만든 것들 — AI 뉴스레터 . 코인 자동매매 . 3D 뮤직 갤러리" />
   <meta property="og:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
   <meta property="og:locale"      content="ko_KR" />
   <meta name="twitter:card"        content="summary_large_image" />
@@ -260,7 +260,7 @@
       box-shadow: 0 4px 16px rgba(28,105,212,.4);
     }
     .date-chip.today-chip::after {
-      content: ' · 오늘'; font-size: .67rem; opacity: .8;
+      content: ' . 오늘'; font-size: .67rem; opacity: .8;
     }
 
     /* ─── 섹션 공통 ──────────────────────────────── */
@@ -947,7 +947,7 @@
       image-rendering:pixelated; image-rendering:crisp-edges;
     }
     .office-cards {
-      display:grid; grid-template-columns:repeat(5,1fr);
+      display:grid; grid-template-columns:repeat(4,1fr);
       gap:10px; margin-top:16px;
     }
     .o-card {
@@ -961,7 +961,7 @@
     .o-card .oc-role { font-size:.62rem; color:var(--muted); margin-top:2px; }
     .o-card .oc-stat { font-size:.62rem; color:var(--muted2); margin-top:5px;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    @media(max-width:600px){ .office-cards{ grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:600px){ .office-cards{ grid-template-columns:repeat(2,1fr); } }
 
     /* ─── AI 학습 기록 패널 ─────────────────────── */
     .office-mem {
@@ -1112,13 +1112,13 @@
   <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.5;"></canvas>
   <div class="hero-eyebrow">
     <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-    &nbsp;2026년 3월 말 시작 · 코딩 비전공 · Claude와 함께
+    &nbsp;2026년 3월 말 시작 . 코딩 비전공 . Claude와 함께
   </div>
   <h1>
     <span class="sub">시아 아빠의</span>
     <span class="line2">Claude 실험실</span>
   </h1>
-  <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background · Built with Claude · Since March 2026</div>
+  <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background . Built with Claude . Since March 2026</div>
   <div class="hero-stats">
     <div class="stat">
       <div class="stat-val">8명</div>
@@ -1227,20 +1227,20 @@
 <!-- ─── 코인 트레이더 ────────────────────────────────── -->
 <section class="section" id="coin-section">
   <div class="container">
-    <div class="section-eyebrow">🪙 AI Coin Trader · 실전 운용 중</div>
+    <div class="section-eyebrow">🪙 AI Coin Trader . 실전 운용 중</div>
     <div class="section-title">AI가 코인을 직접 삽니다</div>
     <p class="section-sub">
-      RSI · MACD · 볼린저밴드 · ADX · 변동성돌파 스코어링 → Groq AI 최종 판단<br>
-      투자금 5만원 · 30분마다 실행 + 30초 실시간 감시 · 손절 -4% · 익절 +5% · 트레일링스탑 +3%/−2.5% · 8h 강제청산 · 일손실 -7,500원 한도
+      RSI . MACD . 볼린저밴드 . ADX . 변동성돌파 스코어링 → Groq AI 최종 판단<br>
+      투자금 5만원 . 30분마다 실행 + 30초 실시간 감시 . 손절 -4% . 익절 +5% . 트레일링스탑 +3%/−2.5% . 8h 강제청산 . 일손실 -7,500원 한도
       <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
     </p>
     <div class="tech-stack">
       <span class="tech-badge blue">🤖 Groq llama-3.3-70b</span>
       <span class="tech-badge red">🪙 Bithumb API</span>
-      <span class="tech-badge gold">📊 RSI · MACD · ADX · BB</span>
+      <span class="tech-badge gold">📊 RSI . MACD . ADX . BB</span>
       <span class="tech-badge green">⚡ 30분마다 자동 실행</span>
       <span class="tech-badge purple">🛡 일손실 -7,500원 한도</span>
-      <span class="tech-badge gold">🟠 트레일링스탑 +3%/−2.5% · 8h 강제청산</span>
+      <span class="tech-badge gold">🟠 트레일링스탑 +3%/−2.5% . 8h 강제청산</span>
       <span class="tech-badge" style="background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.25);">📚 학습 블랙리스트</span>
     </div>
 
@@ -1294,13 +1294,13 @@
 
     <!-- 누적손익 차트 -->
     <div id="pnl-chart-wrap" style="display:none;margin-top:40px;margin-bottom:40px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:28px 28px 24px;">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;">📈 누적손익 흐름 · 클릭 시 해당 거래로 이동</div>
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;">📈 누적손익 흐름 . 클릭 시 해당 거래로 이동</div>
       <canvas id="pnl-chart" style="width:100%;max-height:180px;"></canvas>
     </div>
 
     <!-- 종목별 성과 -->
     <div id="ticker-table-wrap" style="display:none;margin-top:24px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:24px 28px;">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;">📊 종목별 성과 요약 · 수익 높은 순</div>
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;">📊 종목별 성과 요약 . 수익 높은 순</div>
       <div id="ticker-table-inner"></div>
     </div>
 
@@ -1395,9 +1395,9 @@
 <div class="tab-content" id="tab-weekly">
 <section class="section" id="weekly-section">
   <div class="container">
-    <div class="section-eyebrow">📊 Weekly Trend · 매주 월요일 자동 분석</div>
+    <div class="section-eyebrow">📊 Weekly Trend . 매주 월요일 자동 분석</div>
     <div class="section-title">주간 트렌드 브리핑</div>
-    <p class="section-sub">지난 7일간 AI가 분석한 뉴스 흐름 — 분야별 이슈 빈도 · 핵심 인사이트 · 다음 주 주목 포인트</p>
+    <p class="section-sub">지난 7일간 AI가 분석한 뉴스 흐름 — 분야별 이슈 빈도 . 핵심 인사이트 . 다음 주 주목 포인트</p>
 
     <!-- 로딩 상태 -->
     <div id="weekly-loading" style="text-align:center;padding:60px 0;color:var(--muted)">
@@ -1500,7 +1500,7 @@
 <!-- ─── 내 제작물 ─────────────────────────────────────── -->
 <section class="section section-alt">
   <div class="container">
-    <div class="section-eyebrow">🛠 My Works · Portfolio</div>
+    <div class="section-eyebrow">🛠 My Works . Portfolio</div>
     <div class="section-title">내 제작물</div>
     <p class="section-sub">학습 프로젝트부터 실무 자동화까지 직접 만든 것들</p>
 
@@ -1519,7 +1519,7 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 뉴스레터 자동 생성</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          박기획·이작가·최디자·정퍼블·한뮤직 5명이 매일 07:00 협업. 뉴스 분석 → 카드뉴스 5개 + 블로그 아티클 자동 생성 → GitHub Pages 즉시 배포
+          박기획.이작가.최디자.정퍼블.한뮤직 5명이 매일 07:00 협업. 뉴스 분석 → 카드뉴스 5개 + 블로그 아티클 자동 생성 → GitHub Pages 즉시 배포
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Python</span>
@@ -1541,7 +1541,7 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 코인 자동매매 트레이더</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          김분석(기술지표) → AI 어드바이저(BUY/SELL/HOLD) → 가드(30초 감시). 투자금 5만원 · 손절 -4% · 익절 +5% · 트레일링스탑 +3%/−2.5% · 8h 강제청산 · <strong style="color:#f87171;">📚 학습 블랙리스트</strong> 자동 차단
+          김분석(기술지표) → AI 어드바이저(BUY/SELL/HOLD) → 가드(30초 감시). 투자금 5만원 . 손절 -4% . 익절 +5% . 트레일링스탑 +3%/−2.5% . 8h 강제청산 . <strong style="color:#f87171;">📚 학습 블랙리스트</strong> 자동 차단
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Python</span>
@@ -1563,7 +1563,7 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">뮤직 유니버스 3D 갤러리</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          AI가 큐레이션한 70+ 곡을 3D 우주 공간에 표현. 장르별 색상·클러스터링, 개별 공전 궤도, 호버 카드, iTunes 앨범아트 연동
+          AI가 큐레이션한 70+ 곡을 3D 우주 공간에 표현. 장르별 색상.클러스터링, 개별 공전 궤도, 호버 카드, iTunes 앨범아트 연동
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(167,139,250,.15);color:#c4b5fd;font-weight:600;">Three.js</span>
@@ -1575,7 +1575,7 @@
 
     </div><!-- /AI projects grid -->
 
-    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:4px;">📚 데이터 분석 · 학습 프로젝트</div>
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:4px;">📚 데이터 분석 . 학습 프로젝트</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:8px;">
 
       <!-- 1번째 제작물 -->
@@ -1590,8 +1590,8 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">저가 테이크아웃 커피 브랜드 입점 최적지 분석</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          패스트캠퍼스 이너서클 2기 팀 프로젝트. 서울열린데이터광장 유동인구·상권·임대료 데이터를 기반으로
-          메가커피·컴포즈 등 저가 커피 브랜드의 서울 내 최적 입점 후보지를
+          패스트캠퍼스 이너서클 2기 팀 프로젝트. 서울열린데이터광장 유동인구.상권.임대료 데이터를 기반으로
+          메가커피.컴포즈 등 저가 커피 브랜드의 서울 내 최적 입점 후보지를
           도출하고 Folium으로 지도 시각화한 발표 프로젝트
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
@@ -1658,10 +1658,10 @@
       <div class="footer-divider"></div>
       <div>
         <a href="about.html">👥 AI 직원 소개 &amp; 파이프라인</a>
-        &nbsp;·&nbsp;
+        &nbsp;.&nbsp;
         <a href="https://github.com/siadaddy/youngs" target="_blank">GitHub</a>
-        &nbsp;·&nbsp; Powered by Groq + Pollinations.ai + RSS
-        &nbsp;·&nbsp; © 2026 시아 아빠
+        &nbsp;.&nbsp; Powered by Groq + Pollinations.ai + RSS
+        &nbsp;.&nbsp; © 2026 시아 아빠
       </div>
       <div style="margin-top:10px;display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);">
         <img src="https://hits.sh/siadaddy.github.io/youngs.svg?style=flat&color=1c69d4&label=visits" alt="hits" style="height:18px;border-radius:4px;" onerror="this.style.display='none'">
@@ -1721,7 +1721,7 @@
       const desc = WMO_KR[code]  || '날씨정보';
       document.getElementById('w-weather').textContent = `${icon} ${Math.round(cur.temperature_2m)}°C`;
       document.getElementById('w-weather-desc').textContent =
-        `${desc} · 체감 ${Math.round(cur.apparent_temperature)}°C`;
+        `${desc} . 체감 ${Math.round(cur.apparent_temperature)}°C`;
     } catch {
       document.getElementById('w-weather').textContent = '--';
     }
@@ -1753,7 +1753,7 @@
       document.getElementById('w-pm').innerHTML =
         `<span class="${cls}">${pm25} ㎍/m³</span>`;
       document.getElementById('w-pm-sub').innerHTML =
-        `<span class="${cls}">${lbl}</span> · PM10 ${pm10}`;
+        `<span class="${cls}">${lbl}</span> . PM10 ${pm10}`;
     } catch {
       document.getElementById('w-pm').textContent = '--';
     }
@@ -1773,7 +1773,7 @@
     }
   }
 
-  // 공포탐욕지수 (alternative.me, 무료·무키·CORS 허용)
+  // 공포탐욕지수 (alternative.me, 무료.무키.CORS 허용)
   async function fetchFearGreed() {
     const LABELS = {
       'Extreme Fear':  '극도의 공포',
@@ -1798,7 +1798,7 @@
       const col  = fngColor(val);
       document.getElementById('w-fng').innerHTML =
         `<span style="color:${col}">${val}</span> <span style="font-size:.72rem;color:${col};font-weight:700;">${kr}</span>`;
-      document.getElementById('w-fng-sub').textContent = '0 공포 · 100 탐욕';
+      document.getElementById('w-fng-sub').textContent = '0 공포 . 100 탐욕';
     } catch {
       document.getElementById('w-fng').textContent = '--';
     }
@@ -1866,10 +1866,10 @@
         fc.innerHTML = `
           <div class="fc-image" style="position:relative;">
             ${imgHtml}
-            <div class="featured-badge">🚗 AUTO · CARD 01</div>
+            <div class="featured-badge">🚗 AUTO . CARD 01</div>
           </div>
           <div class="fc-body">
-            <div class="fc-num">FEATURED · 오늘의 자동차 뉴스</div>
+            <div class="fc-num">FEATURED . 오늘의 자동차 뉴스</div>
             <div class="fc-headline">${item.headline}</div>
             <div class="fc-caption">${highlight(item.caption)}</div>
             ${srcBtn}
@@ -1915,7 +1915,7 @@
       document.getElementById('news-raw-section').style.display = '';
       const collectedAt = data.news_collected_at || '';
       document.getElementById('news-raw-sub').textContent =
-        collectedAt ? `수집 시각: ${collectedAt} · 카테고리를 클릭하면 뉴스 목록이 펼쳐집니다` : '카테고리를 클릭하면 뉴스 목록이 펼쳐집니다';
+        collectedAt ? `수집 시각: ${collectedAt} . 카테고리를 클릭하면 뉴스 목록이 펼쳐집니다` : '카테고리를 클릭하면 뉴스 목록이 펼쳐집니다';
       const list = document.getElementById('news-raw-list');
       list.innerHTML = '';
       // 카테고리 필터 버튼
@@ -2108,14 +2108,14 @@
         const buyTrade = allHist.slice(origIdx + 1).find(h => h.action === 'BUY' && h.ticker === t.ticker);
         const holdStr = buyTrade ? fmtHoldTime(buyTrade.time, t.time) : '';
         const buyPriceStr = buyTrade ? `${fmtPrice(buyTrade.price)} → ` : '';
-        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">${buyPriceStr}${fmtPrice(t.price)}${holdStr ? ` · ⏱ ${holdStr}` : ''}</div>`;
+        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">${buyPriceStr}${fmtPrice(t.price)}${holdStr ? ` . ⏱ ${holdStr}` : ''}</div>`;
       }
 
       return `
         <div class="trade-item fade-in" id="trade-item-${origIdx}">
           <div class="trade-badge ${cls}">${icon}</div>
           <div class="trade-info">
-            <div class="trade-ticker">${t.action} · ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
+            <div class="trade-ticker">${t.action} . ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
             <div class="trade-time">${t.time || ''}</div>
             ${priceInfo}
             <div class="trade-reason">${t.reason || ''}</div>
@@ -2286,7 +2286,7 @@
       active.forEach(({ coin, count, until }) => {
         const el = document.createElement('div');
         el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);font-size:.75rem;';
-        el.innerHTML = `<span style="font-weight:800;color:#f87171;">🚫 ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 · ${until} 해제</span>`;
+        el.innerHTML = `<span style="font-weight:800;color:#f87171;">🚫 ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 . ${until} 해제</span>`;
         inner.appendChild(el);
       });
 
@@ -2383,7 +2383,7 @@
           </div>
           <div style="text-align:right;font-size:.78rem;color:var(--muted);line-height:1.7;">
             <div>총 ${s.total_trades ?? 0}회 매매</div>
-            <div>수익 <span style="color:#f87171">${s.wins ?? 0}</span> · 손실 <span style="color:#34d399">${s.losses ?? 0}</span></div>
+            <div>수익 <span style="color:#f87171">${s.wins ?? 0}</span> . 손실 <span style="color:#34d399">${s.losses ?? 0}</span></div>
           </div>`;
       }
 
@@ -2417,7 +2417,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div>
                 <div class="coin-ticker">🪙 ${h.ticker.replace('KRW-','')}</div>
-                <div class="coin-ticker-sub">보유 중 · 30초마다 갱신</div>
+                <div class="coin-ticker-sub">보유 중 . 30초마다 갱신</div>
               </div>
               <div style="text-align:right;">
                 <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;">현재 수익률</div>
@@ -2455,7 +2455,7 @@
             <div class="coin-watching-msg">
               <div style="font-size:2rem;margin-bottom:8px;">👀</div>
               <div style="font-weight:700;color:var(--text);margin-bottom:4px;">시장 관망 중</div>
-              <div style="font-size:.82rem;">AI가 매수 기회를 탐색하고 있습니다 · 다음 분석: 1시간 이내</div>
+              <div style="font-size:.82rem;">AI가 매수 기회를 탐색하고 있습니다 . 다음 분석: 1시간 이내</div>
             </div>
           </div>`;
       }
@@ -2673,7 +2673,7 @@
   init();
   loadCoinTrader();
   loadBlacklist();
-  // 30초마다 코인 현재가·봇 상태 갱신
+  // 30초마다 코인 현재가.봇 상태 갱신
   setInterval(loadCoinTrader, 30 * 1000);
   // 블랙리스트는 5분마다 갱신
   setInterval(loadBlacklist, 5 * 60 * 1000);
@@ -2769,291 +2769,167 @@
   let _officeActive = false;
   const _PX = 4; // 1 sprite-pixel = 4 canvas-pixels
 
-  // ── 스프라이트 정의 (8열 × 14행, 보다 정교한 픽셀아트) ─────
-  // 각 행 반드시 8자. 팔레트 키 또는 '.'(투명)
+  // ── 스프라이트 정의 (10열 × 16행 정밀 픽셀아트) ─────────────
+  // 각 행 반드시 10자. 팔레트 키 또는 '.'(투명)
   const _CHARS = {
+    // ── 10열 × 16행 정밀 픽셀아트. 각 행 정확히 10자 ────────────
     '박기획': {
       icon:'📋', role:'콘텐츠 기획자', color:'#42a5f5',
-      pal:{
-        H:'#1a1a2e', // 짙은 네이비 머리카락
-        S:'#fcd5b5', // 피부
-        G:'#90caf9', // 안경 렌즈 하늘색
-        E:'#111827', // 눈동자
-        M:'#c07070', // 입
-        C:'#ffffff', // 흰 셔츠 칼라
-        B:'#1e88e5', // 파란 수트
-        D:'#1565c0', // 수트 음영
-        T:'#e53935', // 빨간 넥타이
-        P:'#263238', // 바지
-        F:'#111111', // 구두
-      },
-      // 14행 × 8열 스프라이트
+      pal:{H:'#1a237e',S:'#fcd5b5',G:'#6d4c41',A:'#bbdefb',E:'#111827',
+           M:'#c07070',C:'#ffffff',B:'#1565c0',D:'#0d47a1',T:'#c62828',P:'#263238',F:'#111111'},
       spr:[
-        [  // frame 0
-          '..HHHH..',  // 0 머리카락 윗부분
-          '.HSSSH..',  // 1 얼굴+머리 측면
-          '.HGGGSH.',  // 2 안경 (G=렌즈, 넓게)
-          '.HSEESH.',  // 3 눈
-          '.HSSSH..',  // 4 뺨/코
-          '..SMMS..',  // 5 입
-          '..CTTC..',  // 6 칼라+넥타이(T)
-          '.BBTBBB.',  // 7 수트 상단+넥타이
-          'BBBBBBBB',  // 8 수트 몸통
-          '.BBBDBB.',  // 9 수트 하단 음영
-          '..BB.BB.',  // 10 허리+팔
-          '.PP.PPP.',  // 11 바지
-          '.PP.PPP.',  // 12 바지 아래
-          '.FF.FFF.',  // 13 구두
-        ],
-        [  // frame 1 (걷기 — 다리 엇갈림)
-          '..HHHH..',
-          '.HSSSH..',
-          '.HGGGSH.',
-          '.HSEESH.',
-          '.HSSSH..',
-          '..SMMS..',
-          '..CTTC..',
-          '.BBTBBB.',
-          'BBBBBBBB',
-          '.BBBDBB.',
-          '..BB.BB.',
-          '.PPP.PP.',
-          '.PPP.PP.',
-          '.FFF.FF.',
-        ],
+        ['..HHHHHH..','.HSSSSSH..','.HGAAGAAH.','.HGAEGAEH.',
+         '.HSSSSSH..','..SSMMSS..','..CCTTCC..', '.BBTTTBB..',
+         'BBBBBBBBB.','.BBBDBBBB.','..BBBBBB..', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['..HHHHHH..','.HSSSSSH..','.HGAAGAAH.','.HGAEGAEH.',
+         '.HSSSSSH..','..SSMMSS..','..CCTTCC..', '.BBTTTBB..',
+         'BBBBBBBBB.','.BBBDBBBB.','..BBBBBB..', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
       ],
-      homeX:115, homeY:155,
+      homeX:52, homeY:145,
     },
 
     '최디자': {
       icon:'🎨', role:'이미지 디자이너', color:'#ce93d8',
-      pal:{
-        H:'#6a1b9a', // 보라색 긴 머리
-        A:'#9c27b0', // 머리 하이라이트
-        S:'#fcd5b5', // 피부
-        G:'#fff59d', // 노란 뿔테 안경
-        E:'#111827', // 눈
-        M:'#e57373', // 입술 (더 붉게)
-        C:'#ffffff', // 칼라
-        B:'#f48fb1', // 핑크 블라우스
-        D:'#c2185b', // 음영
-        P:'#7e57c2', // 보라 팬츠
-        F:'#1a1a1a', // 구두
-        R:'#ff80ab', // 악센트 리본/귀고리
-      },
+      pal:{H:'#6a1b9a',A:'#9c27b0',S:'#fcd5b5',G:'#f9a825',E:'#111827',
+           M:'#e91e63',C:'#ffffff',B:'#f48fb1',D:'#c2185b',P:'#7e57c2',F:'#1a1a1a',R:'#ff80ab'},
       spr:[
-        [
-          'HHHHHHHH',  // 0 넓은 보라 머리
-          'HSSSSSH.',  // 1
-          'HSGGGSH.',  // 2 안경
-          'HSEEESH.',  // 3 눈 (더 넓은 눈)
-          'HSSSSSH.',  // 4
-          '.RSMMSR.',   // 5 입+귀고리
-          '.CCCCCC.',  // 6 칼라
-          '.BBBBBB.',  // 7 블라우스
-          'BBBBBBBB',  // 8
-          '.BBBBBB.',  // 9
-          '.BDDBDB.',  // 10 음영
-          '.PP.PPP.',  // 11 팬츠
-          '.PP.PPP.',  // 12
-          '.FF.FFF.',  // 13
-        ],
-        [
-          'HHHHHHHH',
-          'HSSSSSH.',
-          'HSGGGSH.',
-          'HSEEESH.',
-          'HSSSSSH.',
-          '.RSMMSR.',
-          '.CCCCCC.',
-          '.BBBBBB.',
-          'BBBBBBBB',
-          '.BBBBBB.',
-          '.BDDBDB.',
-          '.PPP.PP.',
-          '.PPP.PP.',
-          '.FFF.FF.',
-        ],
+        ['HAHAHAHAHA','HSSSSSSSH.','HSGGSSGGSH','HSGESSEGSH',
+         '.RSSSSSSR.','..SMMSSS..','..CCCCCC..', '.BBBBBBBB.',
+         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['HAHAHAHAHA','HSSSSSSSH.','HSGGSSGGSH','HSGESSEGSH',
+         '.RSSSSSSR.','..SMMSSS..','..CCCCCC..', '.BBBBBBBB.',
+         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
       ],
-      homeX:755, homeY:155,
+      homeX:640, homeY:145,
     },
 
     '한뮤직': {
       icon:'🎵', role:'음악 큐레이터', color:'#66bb6a',
-      pal:{
-        O:'#1a1a1a', // 헤드폰 (진한 검정)
-        W:'#e0e0e0', // 헤드폰 쿠션 (밝은 회색)
-        H:'#4e342e', // 갈색 머리
-        S:'#fcd5b5', // 피부
-        E:'#111827', // 눈
-        M:'#c07070', // 입
-        C:'#ffffff', // 칼라
-        B:'#43a047', // 초록 후디
-        D:'#2e7d32', // 음영
-        K:'#1565c0', // 청바지
-        F:'#1a1a1a', // 신발
-        Y:'#fdd835', // 헤드폰 포인트 노랑
-      },
+      pal:{O:'#1a1a1a',W:'#bdbdbd',H:'#4e342e',S:'#fcd5b5',E:'#111827',
+           M:'#c07070',B:'#43a047',D:'#2e7d32',K:'#1565c0',F:'#f5f5f5',Y:'#fdd835'},
       spr:[
-        [
-          'OOHHHHOO',  // 0 — 헤드폰 밴드+머리 (9자인데 잘라서 8로)
-          'OWSSSSWO',  // 1 헤드폰 쿠션
-          'OWSEESWO',  // 2 눈
-          'OWSSSSWO',  // 3 뺨
-          '.WSSSSW.',  // 4 아래얼굴
-          '..SMMS..',  // 5 입
-          '..CCCC..',  // 6 칼라
-          '.BBBBBB.',  // 7 후디
-          'BBBBBBBB',  // 8
-          '.BBBBBB.',  // 9
-          '.BDDBDB.',  // 10
-          '.KK.KKK.',  // 11 청바지
-          '.KK.KKK.',  // 12
-          '.FF.FFF.',  // 13
-        ],
-        [
-          'OOHHHHOO',
-          'OWSSSSWO',
-          'OWSEESWO',
-          'OWSSSSWO',
-          '.WSSSSW.',
-          '..SMMS..',
-          '..CCCC..',
-          '.BBBBBB.',
-          'BBBBBBBB',
-          '.BBBBBB.',
-          '.BDDBDB.',
-          '.KKK.KK.',
-          '.KKK.KK.',
-          '.FFF.FF.',
-        ],
+        ['OOHHHHHHOO','.WSSSSSSW.','.WSSESSEW.','.WSSSSSSW.',
+         '..SSSSSS..','..SSMMSS..','..YBBBYY..', '.BBBBBBBB.',
+         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.KK...KKK.',
+         '.KK...KKK.','.KK...KKK.','.FF...FFF.','.FF...FFF.'],
+        ['OOHHHHHHOO','.WSSSSSSW.','.WSSESSEW.','.WSSSSSSW.',
+         '..SSSSSS..','..SSMMSS..','..YBBBYY..', '.BBBBBBBB.',
+         'BBBBBBBBBB','.BDDBBDDB.','..BBBBBB..', '.KKK..KK..',
+         '.KKK..KK..','.KKK..KK..','.FFF..FF..','.FFF..FF..'],
       ],
-      homeX:115, homeY:405,
+      homeX:52, homeY:390,
     },
 
     'AI주간트렌드': {
       icon:'📊', role:'주간 트렌드 분석가', color:'#b0bec5',
-      pal:{
-        H:'#b0bec5', // 회색 머리 (분석가 스타일)
-        S:'#fcd5b5', // 피부
-        G:'#78909c', // 테 안경 (진한 회색)
-        E:'#111827', // 눈
-        M:'#c07070', // 입
-        C:'#ffffff', // 셔츠
-        B:'#546e7a', // 청회색 수트
-        D:'#37474f', // 음영
-        T:'#00bcd4', // 청록 넥타이 (분석가 포인트)
-        P:'#1a237e', // 네이비 바지
-        F:'#111111', // 구두
-        N:'#263238', // 수트 어두운 부분
-      },
+      pal:{H:'#90a4ae',S:'#fcd5b5',G:'#546e7a',A:'#e3f2fd',E:'#111827',
+           M:'#c07070',C:'#ffffff',B:'#546e7a',D:'#37474f',T:'#00bcd4',P:'#1a237e',F:'#111111'},
       spr:[
-        [
-          '.HHHHHH.',  // 0
-          'HSSSSSH.',  // 1
-          'HSGGGSH.',  // 2 안경 (넓은 프레임)
-          'HSEEESH.',  // 3
-          'HSSSSSH.',  // 4
-          '..SMMS..',  // 5
-          '..CTTC..',  // 6 칼라+넥타이
-          '.BBTBBB.',  // 7
-          'BBBBBBBB',  // 8
-          '.BBNBBB.',  // 9 N=어두운 재킷 라펠
-          '..BB.BB.',  // 10
-          '.PP.PPP.',  // 11
-          '.PP.PPP.',  // 12
-          '.FF.FFF.',  // 13
-        ],
-        [
-          '.HHHHHH.',
-          'HSSSSSH.',
-          'HSGGGSH.',
-          'HSEEESH.',
-          'HSSSSSH.',
-          '..SMMS..',
-          '..CTTC..',
-          '.BBTBBB.',
-          'BBBBBBBB',
-          '.BBNBBB.',
-          '..BB.BB.',
-          '.PPP.PP.',
-          '.PPP.PP.',
-          '.FFF.FF.',
-        ],
+        ['.HHHHHHHH.','HSSSSSSSH.','HSGAAGSAH.','HSGAEGASH.',
+         '.HSSSSSH..','..SSMMSS..','..CCTTTCC.', '.BBTTTBBB.',
+         'BBBTTBBBBB','.BBBDBBBB.','..BBBBBB..', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['.HHHHHHHH.','HSSSSSSSH.','HSGAAGSAH.','HSGAEGASH.',
+         '.HSSSSSH..','..SSMMSS..','..CCTTTCC.', '.BBTTTBBB.',
+         'BBBTTBBBBB','.BBBDBBBB.','..BBBBBB..', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
       ],
-      homeX:448, homeY:405,
+      homeX:208, homeY:390,
     },
 
     'AI어드바이저': {
       icon:'🤖', role:'AI 코인 어드바이저', color:'#00e5ff',
-      pal:{
-        H:'#006064', // 헤드 외곽 (짙은 청록)
-        S:'#e0f7fa', // 얼굴 패널 (밝은 청록)
-        G:'#004d40', // 패널 음영
-        E:'#ff6d00', // 주황 발광 눈!
-        R:'#ff1744', // 경고등 빨강
-        M:'#00acc1', // 입 표시등
-        C:'#00e5ff', // 목 연결부 네온
-        B:'#00838f', // 몸통 청록
-        D:'#006064', // 음영
-        P:'#37474f', // 다리
-        F:'#212121', // 발
-        L:'#ffd600', // 금 코인 로고
-        A:'#00bcd4', // 몸 포인트 색
-      },
+      pal:{H:'#006064',S:'#e0f7fa',G:'#004d40',E:'#ff6d00',R:'#ff1744',
+           M:'#00acc1',C:'#00e5ff',B:'#00838f',D:'#006064',P:'#37474f',F:'#212121',L:'#ffd600',A:'#00bcd4'},
       spr:[
-        [
-          '.HHHHHH.',  // 0 로봇 헤드
-          'HSSSSSH.',  // 1 얼굴 패널
-          'HSEGESH.',  // 2 눈 (E=주황 발광)
-          'HSSRSSH.',  // 3 R=경고등
-          'HSSSSSH.',  // 4 하단 패널
-          '..LMLL..',  // 5 L=금 로고, M=입 LED
-          '..CCCC..',  // 6 목 연결
-          '.AABAA..',  // 7 몸통 상단
-          'BBBBBBBB',  // 8 몸통
-          '.BBABBB.',  // 9 몸통 포인트
-          '..BB.BB.',  // 10 하체
-          '.PP.PPP.',  // 11
-          '.PP.PPP.',  // 12
-          '.FF.FFF.',  // 13
-        ],
-        [
-          '.HHHHHH.',
-          'HSSSSSH.',
-          'HSEGESH.',
-          'HSSRSSH.',
-          'HSSSSSH.',
-          '..LMLL..',
-          '..CCCC..',
-          '.AABAA..',
-          'BBBBBBBB',
-          '.BBABBB.',
-          '..BB.BB.',
-          '.PPP.PP.',
-          '.PPP.PP.',
-          '.FFF.FF.',
-        ],
+        ['.HHHHHHHH.','HSSSSSSSH.','HSGSSSSGH.','HSSESESSH.',
+         'HSSRSSSSH.','HSSLMLSSH.','..CCCCCC..', '..ABBABB..',
+         'BBBBBBBBBB','.BBBDBBBB.','..BDBDBB..', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['.HHHHHHHH.','HSSSSSSSH.','HSGSSSSGH.','HSSESESSH.',
+         'HSSRSSSSH.','HSSLMLSSH.','..CCCCCC..', '..ABBABB..',
+         'BBBBBBBBBB','.BBBDBBBB.','..BDBDBB..', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
       ],
-      homeX:755, homeY:405,
+      homeX:782, homeY:390,
+    },
+
+    '뉴스기자': {
+      icon:'📰', role:'뉴스 수집가', color:'#ffcc02',
+      pal:{T:'#795548',U:'#5d4037',H:'#212121',S:'#fcd5b5',E:'#111827',
+           M:'#c07070',C:'#ffffff',B:'#795548',D:'#5d4037',P:'#263238',F:'#111111',Y:'#ffd600'},
+      spr:[
+        ['UUUUUUUUUU','.TTTTTTTT.','.HSSSSSH..','.HSSESSH..',
+         '.HSSSSSH..','..SSMMSS..','..YCCYCC..', '.BBYBBBBB.',
+         'BBBBBBBBB.','.BBBDBBB..','..BBBB....', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['UUUUUUUUUU','.TTTTTTTT.','.HSSSSSH..','.HSSESSH..',
+         '.HSSSSSH..','..SSMMSS..','..YCCYCC..', '.BBYBBBBB.',
+         'BBBBBBBBB.','.BBBDBBB..','..BBBB....', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
+      ],
+      homeX:208, homeY:145,
+    },
+
+    '이가드': {
+      icon:'🛡️', role:'시장 감시원', color:'#ef5350',
+      pal:{H:'#212121',S:'#fcd5b5',E:'#111827',M:'#8d6e63',
+           B:'#1a1a2e',D:'#0d0d1e',R:'#ff1744',Y:'#ffd600',C:'#b0bec5',P:'#212121',F:'#111111',G:'#90a4ae'},
+      spr:[
+        ['..HHHHHH..','.HSSSSSH..','.HSSEESSH.','.HSSSSSH..',
+         '..SSMMSS..','..GCCCGCC.', '.BBYBBBBB.','BBBRBBBBB.',
+         '.BBBBBBB..','..BBBBBB..','..BBBBBB..', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['..HHHHHH..','.HSSSSSH..','.HSSEESSH.','.HSSSSSH..',
+         '..SSMMSS..','..GCCCGCC.', '.BBYBBBBB.','BBBRBBBBB.',
+         '.BBBBBBB..','..BBBBBB..','..BBBBBB..', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
+      ],
+      homeX:782, homeY:145,
+    },
+
+    '리포터': {
+      icon:'📝', role:'일일 리포트 작성자', color:'#ffb74d',
+      pal:{H:'#3e2723',N:'#6d4c41',S:'#fcd5b5',G:'#4e342e',A:'#ffe0b2',E:'#111827',
+           M:'#c07070',C:'#ffffff',B:'#ff8f00',D:'#e65100',P:'#4a148c',F:'#212121'},
+      spr:[
+        ['.HHNNHHH..','.HSSSSSH..','.HGGSSGH..','.HGAEGAEH.',
+         '.HSSSSSH..','..SMMMSS..','..CCCCCC..', '.BBCBCBBB.',
+         'BBBBBBBBBB','.BBBDBBBB.','..BBBDBB..', '.PP...PPP.',
+         '.PP...PPP.','.PP...PPP.','.FF...FFF.','.FF...FFF.'],
+        ['.HHNNHHH..','.HSSSSSH..','.HGGSSGH..','.HGAEGAEH.',
+         '.HSSSSSH..','..SMMMSS..','..CCCCCC..', '.BBCBCBBB.',
+         'BBBBBBBBBB','.BBBDBBBB.','..BBBDBB..', '.PPP..PP..',
+         '.PPP..PP..','.PPP..PP..','.FFF..FF..','.FFF..FF..'],
+      ],
+      homeX:640, homeY:390,
     },
   };
-
   // ── 대화 풀 ───────────────────────────────────────────────
   const _LINES = {
-    '박기획':['오늘 카드뉴스 주제 선정 완료! 📋','자동차 뉴스 1번 카드 확정!','중복 키워드 피해서 새 각도로 🔍','블로그 주제 고민 중이에요...','이 뉴스 임팩트 크겠는데? 💡','5개 모두 다른 주제 선정 완료!'],
-    '최디자':['이미지 5장 생성 시작! 🎨','Pollinations.ai 요청 중...','밝고 생동감 있게! 어둠은 NO 🚫','Bloomberg 스타일로 가볼게요','이번 이미지 완전 마음에 들어 ✨','프롬프트 최적화 완료!'],
-    '한뮤직':['이번 주 플레이리스트 큐레이션 🎵','Drake 또 넣으면 안 되는데 😅','2000s 힙합 명곡 탐색 중!','BPM 150+ 러닝곡 수집 중 🏃','걸그룹 최신곡 업데이트 완료! 💃','70곡 큐레이션 마무리! 🎶'],
-    'AI주간트렌드':['7일치 뉴스 데이터 집계 중 📊','이번 주 AI 뉴스 가장 많아요!','경제/금융 이슈 분석 완료','다음 주 주목 이슈 선정 중','저번 주 대비 변화 포인트 탐색 🔍','주간 인사이트 작성 완료! 💼'],
+    '박기획':  ['오늘 카드뉴스 주제 선정 완료! 📋','중복 키워드 피해서 새 각도로 🔍','블로그 주제 고민 중이에요...','이 뉴스 임팩트 크겠는데? 💡','5개 모두 다른 주제 선정!','독자 반응 좋을 것 같아요 👍'],
+    '최디자':  ['이미지 5장 생성 시작! 🎨','밝고 생동감 있게! 어둠은 NO 🚫','Bloomberg 스타일로 가볼게요','이번 이미지 완전 마음에 들어 ✨','프롬프트 최적화 완료!','색감이 너무 예쁜데? 🌈'],
+    '한뮤직':  ['이번 주 플레이리스트 큐레이션 🎵','같은 아티스트 반복은 NO 😤','2000s 힙합 명곡 탐색 중!','BPM 150+ 러닝곡 수집 중 🏃','걸그룹 최신곡 업데이트 완료! 💃','70곡 큐레이션 마무리! 🎶'],
+    'AI주간트렌드':['7일치 뉴스 데이터 집계 중 📊','이번 주 AI 뉴스가 제일 많아!','경제/금융 이슈 분석 완료','다음 주 주목 이슈 선정 중','전주 대비 변화 포인트 탐색 🔍','주간 인사이트 완성! 💼'],
     'AI어드바이저':['시장 상위 종목 분석 중 📈','RSI 과매도 구간 포착!','ADX 20 이하... 방향성 없음 ⚠️','MACD 골든크로스 신호!','손절 종목 블랙리스트 등록 🚫','현재 포지션 HOLD 유지 📊'],
+    '뉴스기자': ['RSS 1,200건 수집 완료! 📰','글로벌 뉴스 파이프라인 가동 중','속보 알림 대기 중 🚨','주요 5개 카테고리 분류 완료','오늘도 빠짐없이 다 긁었어요!','뉴스 품질 필터링 중... 🔎'],
+    '이가드':   ['30초마다 가격 모니터링 중 👁️','손절 라인 근접 종목 감지!','현재 포지션 안전권 ✅','트레일링스탑 활성화됨 📈','가격 급락 감지 → 긴급 대응!','24시간 무중단 감시 중 🛡️'],
+    '리포터':   ['어제 손익 집계 중... 📊','일일 리포트 초안 완성!','08:30 발송 준비 완료 ⏰','누적 수익률 계산 중...','이번 주 승률 집계 완료 📈','리포트 전송 완료! ✅'],
   };
   const _MEETING = [
-    ['박기획','오늘 브리핑 시작할게요! 📋'],
-    ['최디자','이미지 5장 준비됐어요 🎨'],
-    ['한뮤직','음악 큐레이션 완료! 🎵'],
-    ['AI주간트렌드','이번 주 AI 뉴스 최다 📊'],
+    ['박기획','일일 브리핑 시작합니다! 📋'],
+    ['뉴스기자','오늘 주요 뉴스 1,200건 완료 📰'],
+    ['최디자','이미지 5장 모두 생성 완료 🎨'],
+    ['한뮤직','이번 주 플레이리스트 갱신 🎵'],
+    ['AI주간트렌드','이번 주 AI 뉴스 1위 📊'],
+    ['이가드','현재 포지션 안전합니다 🛡️'],
     ['AI어드바이저','코인 분석 공유합니다 🤖'],
-    ['박기획','수고했어요, 내일도 화이팅! 💪'],
+    ['리포터','어제 손익 정리 완료! 📝'],
+    ['박기획','모두 수고했어요! 내일도 화이팅 💪'],
   ];
 
   let _officeMem = null;
@@ -3070,8 +2946,8 @@
 
     // 에이전트 힌트 카드
     const hintsEl = document.getElementById('officeHints');
-    const agentOrder = ['박기획','최디자','한뮤직','AI주간트렌드','AI어드바이저'];
-    const icons = {'박기획':'📋','최디자':'🎨','한뮤직':'🎵','AI주간트렌드':'📊','AI어드바이저':'🤖'};
+    const agentOrder = ['박기획','뉴스기자','최디자','이가드','한뮤직','AI주간트렌드','리포터','AI어드바이저'];
+    const icons = {'박기획':'📋','최디자':'🎨','한뮤직':'🎵','AI주간트렌드':'📊','AI어드바이저':'🤖','뉴스기자':'📰','이가드':'🛡️','리포터':'📝'};
     if (hintsEl && data.agents) {
       hintsEl.innerHTML = agentOrder.map(id => {
         const a = data.agents[id];
@@ -3192,11 +3068,12 @@
       frame:0, fTick:0, facing:1,
       state:'idle', sTick: 40+i*35+Math.random()*80,
       spd: 1.1+Math.random()*0.7,
-      bubble:null, bTick:0,
+      bubble:null, bTick:0, _sy:def.homeY, _origSpd:0,
     }));
 
-    const MEET_POS=[{x:372,y:208},{x:418,y:208},{x:464,y:208},{x:385,y:322},{x:458,y:322}];
-    const BND={x1:22,y1:68,x2:878,y2:500};
+    const MEET_POS=[{x:365,y:196},{x:418,y:196},{x:471,y:196},{x:365,y:318},{x:418,y:318},{x:471,y:318},{x:318,y:250},{x:512,y:250}];
+    const BND={x1:22,y1:70,x2:876,y2:498};
+    const COFFEE={x:855,y:445};
     let meetTimer=350+Math.floor(Math.random()*200), inMeet=false, mStep=0, mLTick=0;
 
     // ── 배경 그리기 ───────────────────────────────────────
@@ -3236,7 +3113,7 @@
       // 모니터
       const mx=x+w/2-14, my=y-35;
       ctx.fillStyle='#1a1a2e'; ctx.fillRect(mx,my,28,23);
-      const sc={'박기획':'#1e5080','최디자':'#5a1080','한뮤직':'#1a5020','AI주간트렌드':'#304050','AI어드바이저':'#006070'};
+      const sc={'박기획':'#1e5080','최디자':'#5a1080','한뮤직':'#1a5020','AI주간트렌드':'#304050','AI어드바이저':'#006070','뉴스기자':'#4a3800','이가드':'#1a0000','리포터':'#3a2000'};
       ctx.fillStyle=sc[owner]||'#1e4060'; ctx.fillRect(mx+2,my+2,24,18);
       ctx.fillStyle='rgba(255,255,255,.45)';
       [5,8,11,14].forEach(dy=>ctx.fillRect(mx+4,my+dy,12+Math.sin(dy)*3,1));
@@ -3282,6 +3159,17 @@
         ctx.fillStyle=['#66bb6a','#43a047'][i]; ctx.beginPath();
         ctx.ellipse(px+lx*s,py+ly*s,7*s,4*s,0.5*(lx>0?1:-1),0,Math.PI*2); ctx.fill();
       });
+    }
+
+    function coffeeMachine(x,y){
+      ctx.fillStyle='#37474f'; ctx.fillRect(x,y,22,30);
+      ctx.fillStyle='#455a64'; ctx.fillRect(x+2,y+2,18,10);
+      ctx.fillStyle='#00bcd4'; ctx.fillRect(x+4,y+4,6,6);
+      ctx.fillStyle='#ff8f00'; ctx.fillRect(x+12,y+4,6,6);
+      ctx.fillStyle='#263238'; ctx.fillRect(x+3,y+15,16,8);
+      ctx.fillStyle='#fff'; ctx.fillRect(x+8,y+17,6,4);
+      ctx.fillStyle='#6f4e37'; ctx.fillRect(x+9,y+18,4,3);
+      ctx.fillStyle='#37474f'; ctx.fillRect(x+4,y+26,14,4);
     }
 
     function bookshelf(x,y){
@@ -3378,10 +3266,89 @@
       return true;
     }
 
+    // ── 행동 대사 풀 ────────────────────────────────────────
+    const _COFFEE_L=['☕ 아메리카노 한 잔!','☕ 잠깐 충전 타임~','🍵 커피 없이 못 살아','☕ 오늘 3잔째...'];
+    const _STRETCH_L=['🙆 스트레칭 중~','💪 허리가 아파...','🙆‍♀️ 잠깐 기지개!','😤 집중력 회복 중!'];
+    const _RUSH_L=['🏃 급하다 급해!','⚡ 지금 당장!','🔥 긴급 업무!','💨 초고속 처리!'];
+    const _PHONE_L={'박기획':'📱 편집장 통화 중!','최디자':'📱 클라이언트!','한뮤직':'📱 아티스트 섭외','AI주간트렌드':'📊 데이터팀 컨펌','AI어드바이저':'📡 시장 데이터 수신','뉴스기자':'📱 특종 제보 입수!','이가드':'📡 긴급 알림 수신','리포터':'📱 편집장 보고 중'};
+    const _PEEK_L=['👀 뭐하는 거예요?','🤔 잠깐 구경~','오! 이거 뭐예요?','배울 점이 있어서...'];
+    const _WINDOW_L=['창밖이 맑네요 ☀️','잠깐 바람 쐬러~','오늘 날씨 좋은데 🌤️','환기 좀 시켜야...'];
+    const _THINK_L=['🤔 음... 고민 중','💭 어떻게 하지...','🧠 아이디어 구상 중','잠깐만, 생각해보면...'];
+    const _SNEAK_L=['🤫 몰래 살짝...','슬그머니~','📋 잠깐 슬쩍 봐도 될까?'];
+    const _DANCE_L=['🎵 신나는데?','🕺 잠깐 리듬 타기~','🎶 오늘 기분 좋아!'];
+
     function wander(c){
-      c.tx=BND.x1+30+Math.random()*(BND.x2-BND.x1-60);
-      c.ty=BND.y1+20+Math.random()*(BND.y2-BND.y1-40);
-      c.state='walk'; c.sTick=80+Math.random()*130;
+      const r=Math.random();
+      if(r<0.20){
+        // 랜덤 산책
+        c.tx=BND.x1+30+Math.random()*(BND.x2-BND.x1-60);
+        c.ty=BND.y1+20+Math.random()*(BND.y2-BND.y1-40);
+        c.state='walk'; c.sTick=80+Math.random()*120;
+      } else if(r<0.30){
+        // 자리로 복귀
+        c.tx=c.def.homeX; c.ty=c.def.homeY;
+        c.state='walk'; c.sTick=70+Math.random()*90;
+      } else if(r<0.40){
+        // 커피 타임
+        c.tx=COFFEE.x; c.ty=COFFEE.y;
+        c.state='coffee'; c.sTick=130+Math.random()*80;
+        c.bubble=_COFFEE_L[Math.floor(Math.random()*_COFFEE_L.length)];
+        c.bTick=160;
+      } else if(r<0.49){
+        // 창문 구경
+        const wx=[97,262,432,602,767];
+        c.tx=wx[Math.floor(Math.random()*wx.length)]+10; c.ty=BND.y1+22;
+        c.state='window'; c.sTick=110+Math.random()*80;
+        c.bubble=_WINDOW_L[Math.floor(Math.random()*_WINDOW_L.length)];
+        c.bTick=140;
+      } else if(r<0.57){
+        // 스트레칭
+        c.state='stretch'; c.sTick=70+Math.random()*50; c._sy=c.y;
+        c.bubble=_STRETCH_L[Math.floor(Math.random()*_STRETCH_L.length)];
+        c.bTick=110;
+      } else if(r<0.64){
+        // 고민하며 배회
+        c.state='think'; c.sTick=90+Math.random()*70;
+        c._thinkOrig=c.x; c._thinkDir=1;
+        c.tx=c.x+28; c.ty=c.y;
+        c.bubble=_THINK_L[Math.floor(Math.random()*_THINK_L.length)];
+        c.bTick=130;
+      } else if(r<0.70){
+        // 급하게 달리기
+        c.tx=BND.x1+30+Math.random()*(BND.x2-BND.x1-60);
+        c.ty=BND.y1+20+Math.random()*(BND.y2-BND.y1-40);
+        c._origSpd=c.spd; c.spd=c.spd*2.8;
+        c.state='rush'; c.sTick=55+Math.random()*60;
+        c.bubble=_RUSH_L[Math.floor(Math.random()*_RUSH_L.length)];
+        c.bTick=90;
+      } else if(r<0.76){
+        // 전화 통화
+        c.state='phone'; c.sTick=110+Math.random()*110;
+        c.bubble=_PHONE_L[c.id]||'📱 통화 중...';
+        c.bTick=200;
+      } else if(r<0.82){
+        // 다른 직원 몰래 훔쳐보기
+        const others=chars.filter(x=>x!==c&&Math.abs(x.x-c.x)>40);
+        if(others.length){
+          const tgt=others[Math.floor(Math.random()*others.length)];
+          c.tx=tgt.x+(tgt.x>c.x?-50:50); c.ty=tgt.y;
+          c._origSpd=c.spd; c.spd=c.spd*0.5;
+          c.state='sneak'; c.sTick=70+Math.random()*60;
+          c.bubble=_SNEAK_L[Math.floor(Math.random()*_SNEAK_L.length)];
+          c.bTick=100;
+        } else { c.state='idle'; c.sTick=40; }
+      } else if(r<0.88){
+        // 춤/리듬 타기
+        c.state='dance'; c.sTick=65+Math.random()*55;
+        c.bubble=_DANCE_L[Math.floor(Math.random()*_DANCE_L.length)];
+        c.bTick=80;
+      } else {
+        // 업무 말풍선
+        const pool=_LINES[c.id]||[];
+        c.bubble=pool[Math.floor(Math.random()*pool.length)];
+        c.bTick=180+Math.floor(Math.random()*60);
+        c.state='idle'; c.sTick=80+Math.random()*100;
+      }
     }
 
     // ── 업데이트 ─────────────────────────────────────────────
@@ -3395,14 +3362,14 @@
       if(inMeet){
         const ok=chars.every(c=>Math.abs(c.x-c.tx)<4&&Math.abs(c.y-c.ty)<4);
         if(ok){
-          if(++mLTick>85){
+          if(++mLTick>80){
             mLTick=0;
             if(mStep<_MEETING.length){
               const[who,txt]=_MEETING[mStep++];
               const ch=chars.find(c=>c.id===who);
-              if(ch){ch.bubble=txt;ch.bTick=210;}
+              if(ch){ch.bubble=txt;ch.bTick=200;}
             }else{
-              inMeet=false; meetTimer=480+Math.floor(Math.random()*280);
+              inMeet=false; meetTimer=450+Math.floor(Math.random()*300);
               chars.forEach(c=>{c.tx=c.def.homeX;c.ty=c.def.homeY;c.state='home';});
             }
           }
@@ -3412,16 +3379,52 @@
       chars.forEach(c=>{
         if(inMeet&&c.state==='meet'){if(c.bTick>0)c.bTick--;return;}
         if(c.state==='home'){const arr=!move(c,c.tx,c.ty);if(arr){c.state='idle';c.frame=0;}if(c.bTick>0)c.bTick--;return;}
+
+        // 특수 상태 처리
+        if(c.state==='coffee'||c.state==='window'||c.state==='rush'||c.state==='sneak'){
+          if(c.state==='rush'&&--c.sTick<=0){if(c._origSpd)c.spd=c._origSpd;c.state='idle';c.frame=0;c.sTick=50+Math.random()*80;}
+          else if(c.state==='sneak'&&--c.sTick<=0){if(c._origSpd)c.spd=c._origSpd;c.state='idle';c.frame=0;c.sTick=50+Math.random()*80;}
+          else if((c.state==='coffee'||c.state==='window')&&--c.sTick<=0){c.state='idle';c.frame=0;c.sTick=60+Math.random()*80;}
+          const arr=!move(c,c.tx,c.ty);
+          if(arr&&(c.state==='coffee'||c.state==='window')){c.state='idle';c.frame=0;c.sTick=80+Math.random()*80;}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        if(c.state==='stretch'){
+          if(--c.sTick<=0){c.y=c._sy;c.state='idle';c.frame=0;c.sTick=50+Math.random()*70;}
+          else{c.y=c._sy+Math.round(Math.sin(Date.now()*0.012)*2);}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        if(c.state==='think'){
+          const arr=!move(c,c.tx,c.ty);
+          if(arr){c._thinkDir*=-1;c.tx=c._thinkOrig+c._thinkDir*28;c.ty=c.y;}
+          if(--c.sTick<=0){c.state='idle';c.frame=0;c.sTick=50+Math.random()*70;}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        if(c.state==='phone'){
+          if(--c.sTick<=0){c.state='idle';c.frame=0;c.sTick=50+Math.random()*70;}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+        if(c.state==='dance'){
+          if(--c.sTick<=0){c.state='idle';c.frame=0;c.sTick=40+Math.random()*60;}
+          c.fTick++;if(c.fTick>5){c.fTick=0;c.frame=1-c.frame;}
+          if(c.bTick>0)c.bTick--;else c.bubble=null;
+          return;
+        }
+
         if(--c.sTick<=0){
           if(c.state==='walk'){
             c.state='idle';c.frame=0;c.sTick=55+Math.random()*110;
-            if(Math.random()<0.48){
+            if(Math.random()<0.45){
               const pool=_LINES[c.id]||[];
               c.bubble=pool[Math.floor(Math.random()*pool.length)];
-              c.bTick=185+Math.floor(Math.random()*55);
+              c.bTick=180+Math.floor(Math.random()*55);
             }
           }else{
-            Math.random()<0.45?wander(c):(()=>{c.tx=c.def.homeX;c.ty=c.def.homeY;c.state='walk';c.sTick=110+Math.random()*150;})();
+            Math.random()<0.5?wander(c):(()=>{c.tx=c.def.homeX;c.ty=c.def.homeY;c.state='walk';c.sTick=100+Math.random()*140;})();
           }
         }
         if(c.state==='walk'){const arr=!move(c,c.tx,c.ty);if(arr){c.state='idle';c.frame=0;c.sTick=50+Math.random()*90;}}
@@ -3434,11 +3437,14 @@
       ctx.clearRect(0,0,CW,CH);
       bg(); windows();
       bookshelf(843,64);
-      [{x:42,y:92,w:118,h:48,owner:'박기획'},{x:740,y:92,w:118,h:48,owner:'최디자'},
-       {x:42,y:368,w:118,h:48,owner:'한뮤직'},{x:380,y:368,w:118,h:48,owner:'AI주간트렌드'},
-       {x:740,y:368,w:118,h:48,owner:'AI어드바이저'}].forEach(d=>desk(d.x,d.y,d.w,d.h,d.owner));
+      [{x:22,y:82,w:105,h:40,owner:'박기획'},{x:178,y:82,w:105,h:40,owner:'뉴스기자'},
+       {x:615,y:82,w:105,h:40,owner:'최디자'},{x:773,y:82,w:105,h:40,owner:'이가드'},
+       {x:22,y:352,w:105,h:40,owner:'한뮤직'},{x:178,y:352,w:105,h:40,owner:'AI주간트렌드'},
+       {x:615,y:352,w:105,h:40,owner:'리포터'},{x:773,y:352,w:105,h:40,owner:'AI어드바이저'}
+      ].forEach(d=>desk(d.x,d.y,d.w,d.h,d.owner));
       meetTable();
       plant(882,432,.88); plant(18,432,.88); plant(882,138,.65); plant(18,138,.65);
+      coffeeMachine(848,420);
 
       // 캐릭터 Y-sort (원근감)
       [...chars].sort((a,b)=>a.y-b.y).forEach(c=>{drawChar(c);nameTag(c);});
@@ -3493,7 +3499,7 @@
         chars.forEach(c=>{
           const el=document.getElementById('ostat_'+c.id.replace(/\W/g,'_'));
           if(!el)return;
-          const st={idle:'💤 대기 중',walk:'🚶 이동 중',meet:'📋 회의 중',home:'🏠 자리로 복귀'};
+          const st={idle:'💤 대기 중',walk:'🚶 이동 중',meet:'📋 회의 중',home:'🏠 자리로 복귀',coffee:'☕ 커피 타임',window:'🌤️ 창문 구경',stretch:'🙆 스트레칭',think:'🤔 고민 중',rush:'🏃 급하게!',phone:'📱 통화 중',sneak:'🤫 몰래 접근',dance:'🕺 춤추는 중'};
           el.textContent=c.bubble?c.bubble.slice(0,22)+(c.bubble.length>22?'…':''):(st[c.state]||'💤 대기 중');
         });
       },1800);
