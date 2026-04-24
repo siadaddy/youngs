@@ -927,42 +927,6 @@
     .fade-in:nth-child(4){ animation-delay:.26s }
     .fade-in:nth-child(5){ animation-delay:.33s }
 
-    /* ─── AI 사무실 ──────────────────────────────────────── */
-    #tab-office { padding: 0; background: var(--bg); }
-    .office-shell {
-      max-width: 960px; margin: 0 auto;
-      padding: 28px 20px 40px;
-    }
-    .office-hdr { text-align: center; margin-bottom: 20px; }
-    .office-hdr h2 {
-      font-size: 1.55rem; font-weight: 900;
-      background: linear-gradient(135deg,#00bcd4,#1e88e5);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-    }
-    .office-hdr p { font-size:.82rem; color:var(--muted2); }
-    #officeCanvas {
-      display:block; width:100%; height:auto; border-radius:14px;
-      border:1px solid var(--glass-border); cursor:pointer;
-      image-rendering:pixelated; image-rendering:crisp-edges;
-    }
-    .office-cards {
-      display:grid; grid-template-columns:repeat(5,1fr);
-      gap:10px; margin-top:16px;
-    }
-    .o-card {
-      background:var(--glass); border:1px solid var(--glass-border);
-      border-radius:10px; padding:10px 6px; text-align:center;
-      transition:all .2s; cursor:default;
-    }
-    .o-card:hover { border-color:rgba(0,188,212,.45); transform:translateY(-2px); }
-    .o-card .oc-icon { font-size:1.5rem; }
-    .o-card .oc-name { font-size:.72rem; font-weight:800; margin-top:4px; }
-    .o-card .oc-role { font-size:.62rem; color:var(--muted); margin-top:2px; }
-    .o-card .oc-stat { font-size:.62rem; color:var(--muted2); margin-top:5px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    @media(max-width:600px){ .office-cards{ grid-template-columns:repeat(3,1fr); } }
-
     /* ─── 히스토리 필터 탭 ──────────────────────── */
     .hist-filter-bar {
       display: flex; gap: 6px; flex-wrap: wrap;
@@ -1053,6 +1017,58 @@
     }
 
     /* ─── 나의 이야기 ──────────────────────────────────── */
+    .story-banner {
+      background: linear-gradient(135deg, rgba(28,105,212,.08) 0%, rgba(167,139,250,.06) 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 0;
+    }
+    .story-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .story-tag {
+      font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+      color: var(--bmw-lt); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .story-title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800; line-height: 1.3;
+      letter-spacing: -.02em; margin-bottom: 20px;
+    }
+    .story-body {
+      font-size: .95rem; color: var(--muted2);
+      line-height: 1.9;
+    }
+    .story-milestones { display: flex; flex-direction: column; gap: 16px; }
+    .story-milestone {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color .2s;
+    }
+    .story-milestone.active {
+      border-color: rgba(28,105,212,.4);
+      background: rgba(28,105,212,.06);
+    }
+    .ms-date {
+      font-size: .78rem; font-weight: 700; color: var(--bmw-lt);
+      min-width: 80px; flex-shrink: 0;
+    }
+    .story-milestone.active .ms-date { color: var(--green); }
+    .ms-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); flex-shrink: 0;
+    }
+    .story-milestone.active .ms-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .ms-text { font-size: .9rem; font-weight: 600; color: var(--text); }
+    @media (max-width: 720px) {
+      .story-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
   </style>
 </head>
 <body class="wrap">
@@ -1065,13 +1081,17 @@
     &nbsp;2026년 3월 말 시작 · 코딩 비전공 · Claude와 함께
   </div>
   <h1>
-    <span class="sub">시아 아빠의</span>
-    <span class="line2">Claude 실험실</span>
+    <span class="sub">시아 아빠가</span>
+    <span class="line2">Claude 만나서<br>만든 것들</span>
   </h1>
   <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background · Built with Claude · Since March 2026</div>
+  <p class="hero-desc">
+    코딩을 한 줄도 못 썼습니다. 2026년 3월 말, Claude를 처음 열었습니다.<br>
+    그리고 한 달도 안 됐는데 이걸 다 만들었습니다.
+  </p>
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-val">8명</div>
+      <div class="stat-val">5명</div>
       <div class="stat-label">AI 직원</div>
     </div>
     <div class="stat">
@@ -1162,13 +1182,52 @@
   </div>
 </div>
 
+<!-- ─── 나의 이야기 ──────────────────────────────────────── -->
+<div class="story-banner">
+  <div class="container">
+    <div class="story-inner">
+      <div class="story-left">
+        <div class="story-tag">✦ 이 사이트에 대해</div>
+        <h2 class="story-title">코딩 몰라도 됩니다.<br>Claude가 있으면.</h2>
+        <p class="story-body">
+          딸 시아(2022년생)를 키우는 평범한 아빠입니다.<br>
+          개발 배경 없음. 코딩 경험 없음.<br><br>
+          2026년 3월 말, 처음으로 Claude를 열었습니다.<br>
+          뭔가 만들어 보고 싶었고, 그냥 물어봤습니다.<br><br>
+          한 달도 안 됐는데 이 사이트가 생겼습니다.
+        </p>
+      </div>
+      <div class="story-milestones">
+        <div class="story-milestone">
+          <span class="ms-date">2026.03 말</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">Claude 첫 대화</span>
+        </div>
+        <div class="story-milestone">
+          <span class="ms-date">2주 후</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">AI 뉴스레터 자동화 완성</span>
+        </div>
+        <div class="story-milestone">
+          <span class="ms-date">3주 후</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">코인 자동매매 봇 가동</span>
+        </div>
+        <div class="story-milestone active">
+          <span class="ms-date">지금</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">3D 뮤직 갤러리까지 — 아직 진행 중</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ─── 탭 바 ──────────────────────────────────────────── -->
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
-  <button class="tab-btn" onclick="switchTab('weekly')">📊 AI 주간 트렌드</button>
   <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
-  <button class="tab-btn" onclick="switchTab('office')">🏢 AI 사무실</button>
   <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
 </div>
 
@@ -1181,23 +1240,15 @@
     <div class="section-title">AI가 코인을 직접 삽니다</div>
     <p class="section-sub">
       RSI · MACD · 볼린저밴드 · ADX · 변동성돌파 스코어링 → Groq AI 최종 판단<br>
-      투자금 5만원 · 30분마다 실행 + 30초 실시간 감시 · 손절 -4% · 익절 +5% · 트레일링스탑 +3%/−2.5% · 8h 강제청산 · 일손실 -7,500원 한도
+      30분봉 분석 · 5분마다 실행 + 30초 실시간 감시 · 손절 -4% · 익절 +6%
       <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
     </p>
     <div class="tech-stack">
       <span class="tech-badge blue">🤖 Groq llama-3.3-70b</span>
       <span class="tech-badge red">🪙 Bithumb API</span>
       <span class="tech-badge gold">📊 RSI · MACD · ADX · BB</span>
-      <span class="tech-badge green">⚡ 30분마다 자동 실행</span>
-      <span class="tech-badge purple">🛡 일손실 -7,500원 한도</span>
-      <span class="tech-badge gold">🟠 트레일링스탑 +3%/−2.5% · 8h 강제청산</span>
-      <span class="tech-badge" style="background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.25);">📚 학습 블랙리스트</span>
-    </div>
-
-    <!-- 블랙리스트 현황 인포박스 -->
-    <div id="blacklist-box" style="display:none;margin-top:20px;padding:14px 20px;border-radius:12px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#f87171;text-transform:uppercase;margin-bottom:10px;">📚 학습 블랙리스트 — 반복 손절 종목 자동 차단</div>
-      <div id="blacklist-inner" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <span class="tech-badge green">⚡ 5분마다 자동 실행</span>
+      <span class="tech-badge purple">🛡 Daily Drawdown 보호</span>
     </div>
 
     <!-- 봇 상태 -->
@@ -1341,97 +1392,9 @@
 
 </div><!-- /tab-news -->
 
-<!-- ─── 탭3: 주간 트렌드 브리핑 ─────────────────────── -->
-<div class="tab-content" id="tab-weekly">
-<section class="section" id="weekly-section">
-  <div class="container">
-    <div class="section-eyebrow">📊 Weekly Trend · 매주 월요일 자동 분석</div>
-    <div class="section-title">주간 트렌드 브리핑</div>
-    <p class="section-sub">지난 7일간 AI가 분석한 뉴스 흐름 — 분야별 이슈 빈도 · 핵심 인사이트 · 다음 주 주목 포인트</p>
-
-    <!-- 로딩 상태 -->
-    <div id="weekly-loading" style="text-align:center;padding:60px 0;color:var(--muted)">
-      <div style="font-size:2rem;margin-bottom:12px">📊</div>
-      <div>주간 트렌드 데이터를 불러오는 중...</div>
-    </div>
-
-    <!-- 데이터 없음 -->
-    <div id="weekly-empty" style="display:none;text-align:center;padding:60px 0">
-      <div style="font-size:3rem;margin-bottom:16px">📅</div>
-      <div style="color:var(--muted2);font-size:1rem;font-weight:600">아직 분석 데이터가 없습니다</div>
-      <div style="color:var(--muted);font-size:.85rem;margin-top:8px">매주 월요일 07:00에 자동으로 생성됩니다</div>
-    </div>
-
-    <!-- 메인 콘텐츠 -->
-    <div id="weekly-content" style="display:none">
-
-      <!-- 헤더: 주차 + 요약 -->
-      <div style="background:linear-gradient(135deg,rgba(28,105,212,.15),rgba(167,139,250,.1));border:1px solid rgba(28,105,212,.25);border-radius:var(--r-lg);padding:28px 32px;margin-bottom:32px">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
-          <span id="weekly-label" style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bmw-lt);background:rgba(28,105,212,.15);padding:4px 12px;border-radius:99px;border:1px solid rgba(28,105,212,.3)"></span>
-          <span id="weekly-date" style="font-size:.75rem;color:var(--muted);margin-left:auto"></span>
-        </div>
-        <div id="weekly-summary" style="font-size:1.35rem;font-weight:800;color:var(--text);line-height:1.4;margin-bottom:8px"></div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
-          <span style="font-size:.75rem;color:var(--muted)">이번 주 가장 핫한 분야</span>
-          <span id="weekly-hot" style="font-size:.82rem;font-weight:700;color:var(--gold);background:rgba(245,158,11,.1);padding:3px 10px;border-radius:99px;border:1px solid rgba(245,158,11,.25)"></span>
-        </div>
-      </div>
-
-      <!-- 분야별 빈도 바 차트 -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:24px;margin-bottom:28px">
-        <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px">분야별 이슈 건수</div>
-        <div id="weekly-bars"></div>
-      </div>
-
-      <!-- 섹션 인사이트 카드 -->
-      <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px">분야별 핵심 이슈</div>
-      <div id="weekly-sections" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:32px"></div>
-
-      <!-- 주간 인사이트 -->
-      <div style="background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(28,105,212,.06));border:1px solid rgba(167,139,250,.2);border-radius:var(--r-md);padding:24px 28px;margin-bottom:28px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-          <span style="font-size:1.1rem">💡</span>
-          <span style="font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent2)">이번 주 인사이트</span>
-        </div>
-        <div id="weekly-insight" style="font-size:.92rem;line-height:1.8;color:var(--muted2)"></div>
-      </div>
-
-      <!-- 다음 주 주목 포인트 -->
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:24px 28px;margin-bottom:32px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-          <span style="font-size:1.1rem">📌</span>
-          <span style="font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2)">다음 주 주목 포인트</span>
-        </div>
-        <ul id="weekly-next" style="list-style:none;display:flex;flex-direction:column;gap:10px"></ul>
-      </div>
-
-      <!-- 히스토리 (이전 주) -->
-      <div id="weekly-history-wrap" style="display:none">
-        <div style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">이전 주 요약</div>
-        <div id="weekly-history" style="display:flex;flex-direction:column;gap:8px"></div>
-      </div>
-
-    </div><!-- /weekly-content -->
-  </div>
-</section>
-</div><!-- /tab-weekly -->
-
-<!-- ─── 탭4: Music Universe ──────────────────────────── -->
+<!-- ─── 탭3: Music Universe ──────────────────────────── -->
 <div class="tab-content" id="tab-music">
   <iframe id="music-iframe" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-</div>
-
-<!-- ─── 탭5: AI 사무실 ───────────────────────────────── -->
-<div class="tab-content" id="tab-office">
-<div class="office-shell">
-  <div class="office-hdr">
-    <h2>🏢 AI 직원 사무실</h2>
-    <p>AI 직원들이 오늘도 열심히 일하고 있어요 — 클릭하면 말을 걸 수 있어요!</p>
-  </div>
-  <canvas id="officeCanvas" width="900" height="520"></canvas>
-  <div class="office-cards" id="officeCards"></div>
-</div>
 </div>
 
 <!-- ─── 푸터 ───────────────────────────────────────────── -->
@@ -1457,7 +1420,7 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 뉴스레터 자동 생성</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          박기획·이작가·최디자·정퍼블·한뮤직 5명이 매일 07:00 협업. 뉴스 분석 → 카드뉴스 5개 + 블로그 아티클 자동 생성 → GitHub Pages 즉시 배포
+          5명의 AI 직원(기획자·작가·디자이너·음악큐레이터)이 매일 아침 뉴스를 분석해 카드뉴스 5개 + 블로그 아티클을 자동 생성하고 GitHub Pages에 배포
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Python</span>
@@ -1479,13 +1442,13 @@
         </div>
         <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 코인 자동매매 트레이더</div>
         <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          김분석(기술지표) → AI 어드바이저(BUY/SELL/HOLD) → 가드(30초 감시). 투자금 5만원 · 손절 -4% · 익절 +5% · 트레일링스탑 +3%/−2.5% · 8h 강제청산 · <strong style="color:#f87171;">📚 학습 블랙리스트</strong> 자동 차단
+          RSI·MACD·볼린저밴드·ADX 기술 지표 스코어링 + Groq AI 최종 판단. 30분봉 분석, 5분마다 실행, 30초 실시간 감시, 일일 손실 한도 보호
         </div>
         <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Python</span>
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Groq API</span>
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Bithumb API</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">pybithumb</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">TA-Lib</span>
         </div>
       </a>
 
@@ -2184,61 +2147,6 @@
     wrEl.style.color = 'var(--muted2)';
     document.getElementById('cs-holdtime').textContent = '-';
   }
-  // ─── 학습 블랙리스트 렌더링 ───────────────────────────
-  async function loadBlacklist() {
-    try {
-      // blacklist는 trades.json 안에 포함돼 있음
-      const res = await fetch(`trades.json?t=${Date.now()}`);
-      if (!res.ok) return;
-      const trades = await res.json();
-      const data = trades.blacklist || {};
-      const box   = document.getElementById('blacklist-box');
-      const inner = document.getElementById('blacklist-inner');
-      if (!box || !inner) return;
-
-      const now = Date.now();
-      const active = [];  // 차단 중
-      const warned = [];  // 경고
-
-      for (const [coin, info] of Object.entries(data)) {
-        const count = info.stop_loss_count || 0;
-        const until = info.blacklisted_until
-          ? new Date(info.blacklisted_until.replace(' ','T'))
-          : null;
-        const isActive = until && until > now;
-        if (isActive) {
-          active.push({ coin, count, until: info.blacklisted_until });
-        } else if (count >= 1) {
-          warned.push({ coin, count });
-        }
-      }
-
-      if (active.length === 0 && warned.length === 0) {
-        box.style.display = 'none';
-        return;
-      }
-
-      box.style.display = 'block';
-      inner.innerHTML = '';
-
-      active.forEach(({ coin, count, until }) => {
-        const el = document.createElement('div');
-        el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);font-size:.75rem;';
-        el.innerHTML = `<span style="font-weight:800;color:#f87171;">🚫 ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 · ${until} 해제</span>`;
-        inner.appendChild(el);
-      });
-
-      warned.forEach(({ coin, count }) => {
-        const el = document.createElement('div');
-        el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);font-size:.75rem;';
-        el.innerHTML = `<span style="font-weight:800;color:#f59e0b;">⚠️ ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 (${count >= 1 ? '다음 손절 시 차단' : ''})</span>`;
-        inner.appendChild(el);
-      });
-    } catch (e) {
-      // blacklist.json 없으면 조용히 무시
-    }
-  }
-
   async function loadCoinTrader() {
     try {
       const res = await fetch(`trades.json?t=${Date.now()}`);
@@ -2338,8 +2246,8 @@
           livePrice = priceData?.data?.closing_price ? parseFloat(priceData.data.closing_price) : null;
         } catch(e) {}
 
-        const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 4.0;
-        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 5.0;
+        const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 7.0;
+        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 6.0;
 
         // fmtPrice — 모듈 레벨에 정의됨
 
@@ -2453,12 +2361,10 @@
     }, 5 * 60 * 1000);
 
   function switchTab(tab) {
-    const tabs = ['news', 'weekly', 'coin', 'music', 'office'];
+    const tabs = ['news', 'coin', 'music'];
     document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
     tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
     if (tab === 'news') init();
-    if (tab === 'weekly') initWeekly();
-    if (tab === 'office') initOffice();
     if (tab === 'music') {
       const fr = document.getElementById('music-iframe');
       if (!fr.getAttribute('src')) {
@@ -2472,106 +2378,6 @@
         if (rfs) rfs.call(fr).catch(() => {});
       };
       fr.getAttribute('src') ? goFull() : fr.addEventListener('load', goFull, { once: true });
-    }
-  }
-
-  // ── 주간 트렌드 브리핑 ──────────────────────────────────
-  let _weeklyLoaded = false;
-  async function initWeekly() {
-    if (_weeklyLoaded) return;
-    const loading = document.getElementById('weekly-loading');
-    const empty   = document.getElementById('weekly-empty');
-    const content = document.getElementById('weekly-content');
-    try {
-      const r = await fetch('weekly_trend.json?v=' + Date.now());
-      const d = await r.json();
-      loading.style.display = 'none';
-
-      if (!d.week_label || !d.week_summary) {
-        empty.style.display = 'block';
-        return;
-      }
-
-      // 헤더
-      document.getElementById('weekly-label').textContent   = `📅 ${d.week_label}`;
-      document.getElementById('weekly-date').textContent    = d.generated_at ? `${d.generated_at} 생성` : '';
-      document.getElementById('weekly-summary').textContent = d.week_summary;
-      document.getElementById('weekly-hot').textContent     = d.hot_category || '';
-
-      // 분야별 바 차트
-      const barsEl = document.getElementById('weekly-bars');
-      barsEl.innerHTML = '';
-      const cats = d.category_counts || [];
-      cats.forEach(cat => {
-        const pct = cat.pct || 0;
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:12px';
-        row.innerHTML = `
-          <div style="width:140px;font-size:.82rem;color:var(--muted2);flex-shrink:0;text-align:right">${cat.name}</div>
-          <div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;height:10px">
-            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--bmw),var(--accent2));border-radius:4px;transition:width 1s ease"></div>
-          </div>
-          <div style="width:36px;font-size:.78rem;font-weight:700;color:var(--bmw-lt)">${cat.count}</div>`;
-        barsEl.appendChild(row);
-      });
-
-      // 섹션 인사이트 카드
-      const sectionsEl = document.getElementById('weekly-sections');
-      sectionsEl.innerHTML = '';
-      (d.sections || []).forEach(sec => {
-        const card = document.createElement('div');
-        card.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:20px';
-        card.innerHTML = `
-          <div style="font-size:.8rem;color:var(--bmw-lt);font-weight:700;margin-bottom:8px">${sec.category}</div>
-          <div style="font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:10px;line-height:1.4">${sec.top_issue}</div>
-          <div style="font-size:.83rem;color:var(--muted2);line-height:1.7">${sec.insight}</div>`;
-        sectionsEl.appendChild(card);
-      });
-
-      // 주간 인사이트
-      document.getElementById('weekly-insight').textContent = d.weekly_insight || '';
-
-      // 다음 주 주목 포인트
-      const nextEl = document.getElementById('weekly-next');
-      nextEl.innerHTML = '';
-      (d.next_watch || []).forEach(item => {
-        const li = document.createElement('li');
-        li.style.cssText = 'display:flex;align-items:flex-start;gap:10px;font-size:.85rem;color:var(--muted2);line-height:1.6';
-        li.innerHTML = `<span style="color:var(--accent2);flex-shrink:0;margin-top:2px">▸</span><span>${item}</span>`;
-        nextEl.appendChild(li);
-      });
-
-      // 히스토리
-      const history = d.history || [];
-      if (history.length > 0) {
-        document.getElementById('weekly-history-wrap').style.display = 'block';
-        const histEl = document.getElementById('weekly-history');
-        histEl.innerHTML = '';
-        history.forEach(h => {
-          const row = document.createElement('div');
-          row.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap';
-          row.innerHTML = `
-            <span style="font-size:.75rem;font-weight:700;color:var(--bmw-lt);background:rgba(28,105,212,.12);padding:3px 10px;border-radius:99px;flex-shrink:0">${h.week_label||''}</span>
-            <span style="font-size:.82rem;color:var(--muted2);flex:1">${h.week_summary||''}</span>
-            <span style="font-size:.72rem;color:var(--muted)">${h.hot_category||''}</span>`;
-          histEl.appendChild(row);
-        });
-      }
-
-      content.style.display = 'block';
-      _weeklyLoaded = true;
-
-      // 바 애니메이션 (requestAnimationFrame으로 width 트랜지션 발동)
-      requestAnimationFrame(() => {
-        document.querySelectorAll('#weekly-bars div div div').forEach(bar => {
-          bar.style.width = bar.style.width;
-        });
-      });
-
-    } catch(e) {
-      loading.style.display = 'none';
-      empty.style.display = 'block';
-      console.error('weekly_trend.json 로드 실패:', e);
     }
   }
 
@@ -2610,11 +2416,8 @@
 
   init();
   loadCoinTrader();
-  loadBlacklist();
   // 30초마다 코인 현재가·봇 상태 갱신
   setInterval(loadCoinTrader, 30 * 1000);
-  // 블랙리스트는 5분마다 갱신
-  setInterval(loadBlacklist, 5 * 60 * 1000);
 
   // ─── 히어로 별 canvas ─────────────────────────────────
   (function initHeroCanvas() {
@@ -2700,398 +2503,6 @@
 
   initWidgetSlider();
   window.addEventListener('resize', initWidgetSlider);
-
-  // ══════════════════════════════════════════════════════════
-  //  🏢  AI 사무실 시뮬레이션
-  // ══════════════════════════════════════════════════════════
-  let _officeActive = false;
-  const _PX = 5; // 1 sprite-pixel = 5 canvas-pixels
-
-  // ── 스프라이트 정의 (8열 × 10행 픽셀아트) ────────────────
-  const _CHARS = {
-    '박기획': {
-      icon:'📋', role:'콘텐츠 기획자', color:'#42a5f5',
-      pal:{H:'#1c1c2e',S:'#fcd5b5',G:'#90caf9',E:'#111',M:'#c07070',C:'#fff',B:'#1e88e5',D:'#1565c0',P:'#263238',F:'#111'},
-      spr:[
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
-      ],
-      homeX:115, homeY:167,
-    },
-    '최디자': {
-      icon:'🎨', role:'이미지 디자이너', color:'#ce93d8',
-      pal:{H:'#7b1fa2',S:'#fcd5b5',G:'#fff176',E:'#111',M:'#c07070',C:'#fff',B:'#ce93d8',D:'#9c27b0',P:'#546e7a',F:'#111'},
-      spr:[
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
-      ],
-      homeX:765, homeY:167,
-    },
-    '한뮤직': {
-      icon:'🎵', role:'음악 큐레이터', color:'#66bb6a',
-      pal:{O:'#212121',H:'#4e342e',S:'#fcd5b5',E:'#111',M:'#c07070',C:'#fff',B:'#388e3c',D:'#1b5e20',P:'#1565c0',F:'#111'},
-      spr:[
-        ['OHHHHHO.','OSSSSO..','OSEGSO..','OSSSSO..','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['OHHHHHO.','OSSSSO..','OSEGSO..','OSSSSO..','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
-      ],
-      homeX:115, homeY:417,
-    },
-    'AI주간트렌드': {
-      icon:'📊', role:'주간 트렌드 분석가', color:'#90a4ae',
-      pal:{H:'#90a4ae',S:'#fcd5b5',G:'#546e7a',E:'#111',M:'#c07070',C:'#fff',B:'#607d8b',D:'#455a64',P:'#1a237e',F:'#111'},
-      spr:[
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSGEGSH.','HSSSSSH.','.SMMS...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
-      ],
-      homeX:455, homeY:417,
-    },
-    'AI어드바이저': {
-      icon:'🤖', role:'AI 코인 어드바이저', color:'#00bcd4',
-      pal:{H:'#00bcd4',S:'#b2ebf2',G:'#006064',E:'#ff6f00',M:'#00acc1',C:'#00e5ff',B:'#0097a7',D:'#006064',P:'#37474f',F:'#212121',L:'#ffd54f'},
-      spr:[
-        ['.HHHHHH.','HSSSSSH.','HSEGESH.','HSSSSSH.','.LMML...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PP.PPP.','.FF.FFF.'],
-        ['.HHHHHH.','HSSSSSH.','HSEGESH.','HSSSSSH.','.LMML...', '.CBBBC..','BBBBBBBB','.DBBBDB.','.PPP.PP.','.FFF.FF.'],
-      ],
-      homeX:765, homeY:417,
-    },
-  };
-
-  // ── 대화 풀 ───────────────────────────────────────────────
-  const _LINES = {
-    '박기획':['오늘 카드뉴스 주제 선정 완료! 📋','자동차 뉴스 1번 카드 확정!','중복 키워드 피해서 새 각도로 🔍','블로그 주제 고민 중이에요...','이 뉴스 임팩트 크겠는데? 💡','5개 모두 다른 주제 선정 완료!'],
-    '최디자':['이미지 5장 생성 시작! 🎨','Pollinations.ai 요청 중...','밝고 생동감 있게! 어둠은 NO 🚫','Bloomberg 스타일로 가볼게요','이번 이미지 완전 마음에 들어 ✨','프롬프트 최적화 완료!'],
-    '한뮤직':['이번 주 플레이리스트 큐레이션 🎵','Drake 또 넣으면 안 되는데 😅','2000s 힙합 명곡 탐색 중!','BPM 150+ 러닝곡 수집 중 🏃','걸그룹 최신곡 업데이트 완료! 💃','70곡 큐레이션 마무리! 🎶'],
-    'AI주간트렌드':['7일치 뉴스 데이터 집계 중 📊','이번 주 AI 뉴스 가장 많아요!','경제/금융 이슈 분석 완료','다음 주 주목 이슈 선정 중','저번 주 대비 변화 포인트 탐색 🔍','주간 인사이트 작성 완료! 💼'],
-    'AI어드바이저':['시장 상위 종목 분석 중 📈','RSI 과매도 구간 포착!','ADX 20 이하... 방향성 없음 ⚠️','MACD 골든크로스 신호!','손절 종목 블랙리스트 등록 🚫','현재 포지션 HOLD 유지 📊'],
-  };
-  const _MEETING = [
-    ['박기획','오늘 브리핑 시작할게요! 📋'],
-    ['최디자','이미지 5장 준비됐어요 🎨'],
-    ['한뮤직','음악 큐레이션 완료! 🎵'],
-    ['AI주간트렌드','이번 주 AI 뉴스 최다 📊'],
-    ['AI어드바이저','코인 분석 공유합니다 🤖'],
-    ['박기획','수고했어요, 내일도 화이팅! 💪'],
-  ];
-
-  function initOffice() {
-    if (_officeActive) return;
-    _officeActive = true;
-
-    const canvas = document.getElementById('officeCanvas');
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    const CW = 900, CH = 520;
-
-    // ── 책장 책 색상 미리 계산 ──────────────────────────────
-    const BKCOLS = ['#c62828','#283593','#1b5e20','#f57f17','#6a1b9a','#00838f','#bf360c','#e65100'];
-    const BOOKS = Array.from({length:3}, (_,row) => {
-      const shelf=[]; let bx=0;
-      for(let b=0;b<7;b++){const w=7+(b%3); shelf.push({x:bx,w,c:BKCOLS[(row*7+b)%BKCOLS.length]}); bx+=w+2;}
-      return shelf;
-    });
-
-    // ── 캐릭터 초기 상태 ──────────────────────────────────
-    const chars = Object.entries(_CHARS).map(([id,def],i)=>({
-      id, def, x:def.homeX, y:def.homeY,
-      tx:def.homeX, ty:def.homeY,
-      frame:0, fTick:0, facing:1,
-      state:'idle', sTick: 40+i*35+Math.random()*80,
-      spd: 1.1+Math.random()*0.7,
-      bubble:null, bTick:0,
-    }));
-
-    const MEET_POS=[{x:372,y:208},{x:418,y:208},{x:464,y:208},{x:385,y:322},{x:458,y:322}];
-    const BND={x1:22,y1:68,x2:878,y2:500};
-    let meetTimer=350+Math.floor(Math.random()*200), inMeet=false, mStep=0, mLTick=0;
-
-    // ── 배경 그리기 ───────────────────────────────────────
-    function bg() {
-      // 바닥
-      ctx.fillStyle='#c8a86a'; ctx.fillRect(0,58,CW,CH-58);
-      ctx.strokeStyle='#b09050'; ctx.lineWidth=0.7;
-      for(let x=0;x<CW;x+=48){ctx.beginPath();ctx.moveTo(x,58);ctx.lineTo(x,CH);ctx.stroke();}
-      for(let y=58;y<CH;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}
-      // 벽
-      ctx.fillStyle='#f0e6d4'; ctx.fillRect(0,0,CW,60);
-      ctx.fillStyle='#d4b880'; ctx.fillRect(0,56,CW,5);
-      ctx.fillStyle='#e8d4b4'; ctx.fillRect(0,28,CW,2);
-    }
-
-    function windows() {
-      [55,220,390,560,725].forEach(wx=>{
-        ctx.fillStyle='#7a5c18'; ctx.fillRect(wx,3,84,46);
-        ctx.fillStyle='#87ceeb'; ctx.fillRect(wx+3,6,78,40);
-        // 구름
-        ctx.fillStyle='rgba(255,255,255,.75)';
-        [[wx+15,18,10,5],[wx+24,15,7,4],[wx+58,22,9,5]].forEach(([cx,cy,rx,ry])=>{
-          ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2); ctx.fill();
-        });
-        // 창문 살
-        ctx.fillStyle='#7a5c18';
-        ctx.fillRect(wx+42,6,2,40); ctx.fillRect(wx+3,26,78,2);
-        // 창턱
-        ctx.fillStyle='#9a7428'; ctx.fillRect(wx-2,46,88,5);
-      });
-    }
-
-    function desk(x,y,w,h,owner){
-      ctx.fillStyle='#8b6420'; ctx.fillRect(x,y,w,h);
-      ctx.fillStyle='#a07840'; ctx.fillRect(x+3,y+3,w-6,h-6);
-      ctx.fillStyle='#6b4f1a'; ctx.fillRect(x+4,y+h,10,13); ctx.fillRect(x+w-14,y+h,10,13);
-      // 모니터
-      const mx=x+w/2-14, my=y-35;
-      ctx.fillStyle='#1a1a2e'; ctx.fillRect(mx,my,28,23);
-      const sc={'박기획':'#1e5080','최디자':'#5a1080','한뮤직':'#1a5020','AI주간트렌드':'#304050','AI어드바이저':'#006070'};
-      ctx.fillStyle=sc[owner]||'#1e4060'; ctx.fillRect(mx+2,my+2,24,18);
-      ctx.fillStyle='rgba(255,255,255,.45)';
-      [5,8,11,14].forEach(dy=>ctx.fillRect(mx+4,my+dy,12+Math.sin(dy)*3,1));
-      ctx.fillStyle='#2a2a3e'; ctx.fillRect(mx+12,my+23,4,7); ctx.fillRect(mx+8,my+30,12,2);
-      // 서류
-      ctx.fillStyle='#f5f5dc'; ctx.fillRect(x+6,y+6,18,13);
-      ctx.fillStyle='#c0b890'; [9,12,15].forEach(dy=>ctx.fillRect(x+9,y+dy,12,1));
-    }
-
-    function meetTable(){
-      const{x,y,w,h}={x:352,y:222,w:196,h:76};
-      ctx.fillStyle='rgba(0,0,0,.18)'; ctx.fillRect(x+4,y+5,w,h);
-      ctx.fillStyle='#5c3d1a'; ctx.fillRect(x,y,w,h);
-      ctx.fillStyle='#7a5230'; ctx.fillRect(x+4,y+4,w-8,h-8);
-      ctx.strokeStyle='#6a4520'; ctx.lineWidth=0.8;
-      for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(x+8,y+13+i*13);ctx.lineTo(x+w-8,y+13+i*13);ctx.stroke();}
-      // 다리
-      ctx.fillStyle='#4a2e10';
-      [[x+8,y+h],[x+w-18,y+h],[x+8,y-13],[x+w-18,y-13]].forEach(([lx,ly])=>ctx.fillRect(lx,ly,10,14));
-      // 의자
-      ctx.fillStyle='#8b6420';
-      [[x+28,y-23],[x+w/2-11,y-23],[x+w-50,y-23],[x+28,y+h+4],[x+w/2-11,y+h+4],[x+w-50,y+h+4]].forEach(([cx,cy])=>{
-        ctx.fillRect(cx,cy,22,16); ctx.fillStyle='#a07840'; ctx.fillRect(cx+2,cy+2,18,12); ctx.fillStyle='#8b6420';
-      });
-      // 커피잔
-      ctx.fillStyle='#fff'; ctx.fillRect(x+w/2-6,y+h/2-7,12,14);
-      ctx.fillStyle='#6f4e37'; ctx.fillRect(x+w/2-4,y+h/2-4,8,8);
-    }
-
-    function plant(px,py,s=1){
-      ctx.fillStyle='#c0622f';
-      ctx.beginPath(); ctx.moveTo(px-11*s,py); ctx.lineTo(px+11*s,py);
-      ctx.lineTo(px+8*s,py+22*s); ctx.lineTo(px-8*s,py+22*s); ctx.closePath(); ctx.fill();
-      ctx.fillStyle='#3a1a00'; ctx.fillRect(px-9*s,py,18*s,5*s);
-      const leaves=[[-7,-22],[2,-30],[10,-22],[-13,-14],[13,-14],[0,-16]];
-      ['#2e7d32','#43a047','#66bb6a','#388e3c'].forEach((c,i)=>{
-        const[lx,ly]=leaves[i]||[0,-20];
-        ctx.fillStyle=c; ctx.beginPath();
-        ctx.ellipse(px+lx*s,py+ly*s,9*s,5*s,0.3*(lx>0?1:-1),0,Math.PI*2); ctx.fill();
-      });
-      // extra leaves
-      [[8,-12],[-6,-10]].forEach(([lx,ly],i)=>{
-        ctx.fillStyle=['#66bb6a','#43a047'][i]; ctx.beginPath();
-        ctx.ellipse(px+lx*s,py+ly*s,7*s,4*s,0.5*(lx>0?1:-1),0,Math.PI*2); ctx.fill();
-      });
-    }
-
-    function bookshelf(x,y){
-      ctx.fillStyle='#5c3d1a'; ctx.fillRect(x,y,52,92);
-      ctx.fillStyle='#3a2010'; ctx.fillRect(x,y,52,5); ctx.fillRect(x,y+87,52,5);
-      BOOKS.forEach((shelf,row)=>{
-        const sy=y+8+row*28;
-        ctx.fillStyle='#2a1010'; ctx.fillRect(x+3,sy+17,46,2);
-        shelf.forEach(b=>{ ctx.fillStyle=b.c; ctx.fillRect(x+4+b.x,sy,b.w,17);
-          ctx.fillStyle='rgba(0,0,0,.25)'; ctx.fillRect(x+4+b.x,sy,1,17); });
-      });
-    }
-
-    // ── 스프라이트 렌더링 ──────────────────────────────────
-    function drawChar(c){
-      const{x,y,frame,facing,def}=c;
-      const rows=def.spr[frame]||def.spr[0];
-      const px=_PX;
-      ctx.save();
-      if(facing<0){ctx.translate(Math.round(x)+rows[0].length*px,Math.round(y));ctx.scale(-1,1);ctx.translate(-Math.round(x),0);}
-      rows.forEach((row,ry)=>{
-        for(let col=0;col<row.length;col++){
-          const k=row[col];
-          if(k!=='.'&&k!==' '&&def.pal[k]){ctx.fillStyle=def.pal[k];ctx.fillRect(Math.round(x)+col*px,Math.round(y)+ry*px,px,px);}
-        }
-      });
-      ctx.restore();
-    }
-
-    function nameTag(c){
-      const rows=c.def.spr[0];
-      const tx=Math.round(c.x)+rows[0].length*_PX/2;
-      const ty=Math.round(c.y)+rows.length*_PX+8;
-      ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
-      const label=c.def.icon+' '+c.id;
-      const tw=ctx.measureText(label).width+8;
-      ctx.fillStyle='rgba(0,0,0,.6)';
-      ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(tx-tw/2,ty-8,tw,11,4); else ctx.rect(tx-tw/2,ty-8,tw,11);
-      ctx.fill();
-      ctx.fillStyle='#fff'; ctx.fillText(label,tx,ty);
-      ctx.textAlign='left';
-    }
-
-    function bubble(c){
-      if(!c.bubble||c.bTick<=0) return;
-      const rows=c.def.spr[0];
-      const cw=rows[0].length*_PX;
-      const bx=Math.round(c.x)+cw/2, by=Math.round(c.y)-4;
-      const alpha=Math.min(1,c.bTick/25,(200-c.bTick+25)/25);
-      ctx.save(); ctx.globalAlpha=alpha;
-      ctx.font='9px sans-serif';
-      const txt=c.bubble; const maxW=150;
-      const lines=[]; let ln='';
-      for(const ch of txt){
-        if(ctx.measureText(ln+ch).width>maxW){if(ln)lines.push(ln);ln=ch;}else ln+=ch;
-      }
-      if(ln)lines.push(ln);
-      const lh=13,pad=7;
-      const bw=Math.max(...lines.map(l=>ctx.measureText(l).width))+pad*2;
-      const bh=lines.length*lh+pad*2;
-      let sx=bx-bw/2; sx=Math.max(8,Math.min(CW-bw-8,sx));
-      const sy=by-bh-10;
-      ctx.fillStyle='rgba(0,0,0,.28)'; ctx.fillRect(sx+3,sy+3,bw,bh);
-      ctx.fillStyle='rgba(8,18,40,.93)';
-      ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(sx,sy,bw,bh,6); else ctx.rect(sx,sy,bw,bh); ctx.fill();
-      ctx.strokeStyle=c.def.color+'99'; ctx.lineWidth=1;
-      ctx.beginPath(); if(ctx.roundRect)ctx.roundRect(sx,sy,bw,bh,6); else ctx.rect(sx,sy,bw,bh); ctx.stroke();
-      ctx.fillStyle='rgba(8,18,40,.93)';
-      ctx.beginPath(); ctx.moveTo(bx-5,by-10); ctx.lineTo(bx+5,by-10); ctx.lineTo(bx,by-1); ctx.closePath(); ctx.fill();
-      ctx.fillStyle='#ddf0ff'; ctx.font='9px sans-serif';
-      lines.forEach((l,i)=>ctx.fillText(l,sx+pad,sy+pad+10+i*lh));
-      ctx.restore();
-    }
-
-    // ── 이동 ────────────────────────────────────────────────
-    function move(c,tx,ty){
-      const dx=tx-c.x, dy=ty-c.y, d=Math.sqrt(dx*dx+dy*dy);
-      if(d<1.5){c.x=tx;c.y=ty;return false;}
-      c.x+=dx/d*c.spd; c.y+=dy/d*c.spd;
-      c.facing=dx>0?1:-1;
-      c.fTick++; if(c.fTick>10){c.fTick=0;c.frame=1-c.frame;}
-      return true;
-    }
-
-    function wander(c){
-      c.tx=BND.x1+30+Math.random()*(BND.x2-BND.x1-60);
-      c.ty=BND.y1+20+Math.random()*(BND.y2-BND.y1-40);
-      c.state='walk'; c.sTick=80+Math.random()*130;
-    }
-
-    // ── 업데이트 ─────────────────────────────────────────────
-    function update(){
-      if(!inMeet){
-        if(--meetTimer<=0){
-          inMeet=true; mStep=0; mLTick=0;
-          chars.forEach((c,i)=>{c.tx=MEET_POS[i].x;c.ty=MEET_POS[i].y;c.state='meet';});
-        }
-      }
-      if(inMeet){
-        const ok=chars.every(c=>Math.abs(c.x-c.tx)<4&&Math.abs(c.y-c.ty)<4);
-        if(ok){
-          if(++mLTick>85){
-            mLTick=0;
-            if(mStep<_MEETING.length){
-              const[who,txt]=_MEETING[mStep++];
-              const ch=chars.find(c=>c.id===who);
-              if(ch){ch.bubble=txt;ch.bTick=210;}
-            }else{
-              inMeet=false; meetTimer=480+Math.floor(Math.random()*280);
-              chars.forEach(c=>{c.tx=c.def.homeX;c.ty=c.def.homeY;c.state='home';});
-            }
-          }
-        }else chars.forEach(c=>{if(c.state==='meet')move(c,c.tx,c.ty);});
-      }
-
-      chars.forEach(c=>{
-        if(inMeet&&c.state==='meet'){if(c.bTick>0)c.bTick--;return;}
-        if(c.state==='home'){const arr=!move(c,c.tx,c.ty);if(arr){c.state='idle';c.frame=0;}if(c.bTick>0)c.bTick--;return;}
-        if(--c.sTick<=0){
-          if(c.state==='walk'){
-            c.state='idle';c.frame=0;c.sTick=55+Math.random()*110;
-            if(Math.random()<0.48){
-              const pool=_LINES[c.id]||[];
-              c.bubble=pool[Math.floor(Math.random()*pool.length)];
-              c.bTick=185+Math.floor(Math.random()*55);
-            }
-          }else{
-            Math.random()<0.45?wander(c):(()=>{c.tx=c.def.homeX;c.ty=c.def.homeY;c.state='walk';c.sTick=110+Math.random()*150;})();
-          }
-        }
-        if(c.state==='walk'){const arr=!move(c,c.tx,c.ty);if(arr){c.state='idle';c.frame=0;c.sTick=50+Math.random()*90;}}
-        if(c.bTick>0)c.bTick--;else c.bubble=null;
-      });
-    }
-
-    // ── 렌더링 ───────────────────────────────────────────────
-    function render(){
-      ctx.clearRect(0,0,CW,CH);
-      bg(); windows();
-      bookshelf(843,64);
-      [{x:42,y:92,w:118,h:48,owner:'박기획'},{x:740,y:92,w:118,h:48,owner:'최디자'},
-       {x:42,y:368,w:118,h:48,owner:'한뮤직'},{x:380,y:368,w:118,h:48,owner:'AI주간트렌드'},
-       {x:740,y:368,w:118,h:48,owner:'AI어드바이저'}].forEach(d=>desk(d.x,d.y,d.w,d.h,d.owner));
-      meetTable();
-      plant(882,432,.88); plant(18,432,.88); plant(882,138,.65); plant(18,138,.65);
-
-      // 캐릭터 Y-sort (원근감)
-      [...chars].sort((a,b)=>a.y-b.y).forEach(c=>{drawChar(c);nameTag(c);});
-      chars.forEach(c=>bubble(c));
-
-      // 회의 배너
-      if(inMeet&&chars.every(c=>Math.abs(c.x-c.tx)<6&&Math.abs(c.y-c.ty)<6)){
-        ctx.fillStyle='rgba(8,18,40,.82)'; ctx.fillRect(305,178,290,24);
-        ctx.strokeStyle='rgba(0,229,255,.5)'; ctx.lineWidth=1; ctx.strokeRect(305,178,290,24);
-        ctx.fillStyle='#00e5ff'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
-        ctx.fillText('📋 일일 브리핑 회의 진행 중...', 450, 194);
-        ctx.textAlign='left';
-      }
-    }
-
-    // ── 루프 (≈15fps 레트로 감성) ────────────────────────────
-    let last=0;
-    (function loop(ts){
-      if(!_officeActive) return;
-      if(ts-last>=66){update();render();last=ts;}
-      requestAnimationFrame(loop);
-    })(0);
-
-    // ── 클릭으로 말 걸기 ─────────────────────────────────────
-    canvas.addEventListener('click',e=>{
-      const r=canvas.getBoundingClientRect();
-      const mx=(e.clientX-r.left)*(CW/r.width);
-      const my=(e.clientY-r.top)*(CH/r.height);
-      chars.forEach(c=>{
-        const cw=c.def.spr[0][0].length*_PX, ch=c.def.spr[0].length*_PX;
-        if(mx>=c.x&&mx<=c.x+cw&&my>=c.y&&my<=c.y+ch){
-          const pool=_LINES[c.id]||[];
-          c.bubble=pool[Math.floor(Math.random()*pool.length)];
-          c.bTick=240;
-        }
-      });
-    });
-
-    // ── 하단 캐릭터 카드 생성 ─────────────────────────────────
-    const cardsEl=document.getElementById('officeCards');
-    if(cardsEl){
-      cardsEl.innerHTML=Object.entries(_CHARS).map(([id,def])=>`
-        <div class="o-card" style="border-color:${def.color}33">
-          <div class="oc-icon">${def.icon}</div>
-          <div class="oc-name" style="color:${def.color}">${id}</div>
-          <div class="oc-role">${def.role}</div>
-          <div class="oc-stat" id="ostat_${id.replace(/\W/g,'_')}">💤 대기 중</div>
-        </div>`).join('');
-      setInterval(()=>{
-        chars.forEach(c=>{
-          const el=document.getElementById('ostat_'+c.id.replace(/\W/g,'_'));
-          if(!el)return;
-          const st={idle:'💤 대기 중',walk:'🚶 이동 중',meet:'📋 회의 중',home:'🏠 자리로 복귀'};
-          el.textContent=c.bubble?c.bubble.slice(0,22)+(c.bubble.length>22?'…':''):(st[c.state]||'💤 대기 중');
-        });
-      },1800);
-    }
-  }
-  // ══════════════════════════════════════════════════════════
-
 </script>
 </body>
 </html>
