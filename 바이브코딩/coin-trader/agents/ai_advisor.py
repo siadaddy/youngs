@@ -264,4 +264,37 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
 
     print(f"  ✅ AI 판단: {result['action']} {result.get('ticker') or ''}")
     print(f"  💬 이유: {result.get('reason', '')}")
+
+    # ── 자기 반성 (BUY/SELL 때만) ────────────────────────────────
+    if result["action"] in ("BUY", "SELL"):
+        try:
+            from utils.agent_memory import (add_diary, get_persona, get_diary,
+                                            should_update_persona, update_persona)
+            persona = get_persona("AI어드바이저")
+            recent  = " / ".join(e["lesson"][:25] for e in get_diary("AI어드바이저", 2)) or "첫 거래"
+            ctx = (f"{result['action']} {result.get('ticker','')} — {result.get('reason','')[:60]}")
+
+            lesson_raw = _ask_llm(
+                f"너는 코인 트레이더 'AI어드바이저'야.\n"
+                f"지금까지 나: {persona[:60]}\n최근 메모: {recent}\n오늘 판단: {ctx}\n\n"
+                "이 판단에서 배운 점이나 느낀 점 1문장. 1인칭 반말, 50자 이내."
+            )
+            lesson = lesson_raw.strip().split("\n")[0][:150]
+            if lesson and not lesson.startswith('{'):
+                add_diary("AI어드바이저", lesson, trigger=result["action"].lower())
+                print(f"  📝 AI어드바이저 학습 기록: {lesson[:45]}")
+
+            if should_update_persona("AI어드바이저"):
+                diary_str = "\n".join(f"- {e['lesson']}" for e in get_diary("AI어드바이저", 7))
+                new_p = _ask_llm(
+                    f"너는 코인 트레이더 'AI어드바이저'야.\n지금까지 나: {persona}\n"
+                    f"최근 학습 일기:\n{diary_str}\n\n"
+                    "이 경험을 바탕으로 지금의 나를 2문장으로. 1인칭 반말, 70자 이내."
+                ).strip().split("\n")[0][:300]
+                if new_p and not new_p.startswith('{'):
+                    update_persona("AI어드바이저", new_p)
+                    print("  ✨ AI어드바이저 페르소나 진화 완료")
+        except Exception as e:
+            print(f"  ⚠️  AI어드바이저 자기 반성 실패 (무시): {e}")
+
     return result

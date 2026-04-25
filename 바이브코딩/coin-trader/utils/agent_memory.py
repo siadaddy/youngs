@@ -101,3 +101,61 @@ def get_summary() -> list:
             latest = entries[0]["date"] if entries else "N/A"
             lines.append(f"  {agent} / {etype}: {len(entries)}건 (최신: {latest})")
     return lines
+
+
+# ── 자기 학습 — 페르소나 + 성장 일기 ─────────────────────────
+
+INIT_PERSONAS = {
+    "AI어드바이저": "나는 30분마다 시장을 분석하는 코인 트레이딩 AI야. 손절을 반복하며 어떤 종목과 패턴이 위험한지 배우고 있어. 빠른 판단보다 정확한 판단이 중요하다는 걸 깨닫는 중이야.",
+}
+
+
+def get_persona(agent: str) -> str:
+    mem = _load()
+    return mem.get(agent, {}).get("persona", INIT_PERSONAS.get(agent, ""))
+
+
+def get_diary(agent: str, limit: int = 5) -> list:
+    mem = _load()
+    return mem.get(agent, {}).get("diary", [])[:limit]
+
+
+def get_growth_score(agent: str) -> int:
+    mem = _load()
+    return mem.get(agent, {}).get("growth_score", 0)
+
+
+def add_diary(agent: str, lesson: str, trigger: str = ""):
+    mem = _load()
+    mem.setdefault(agent, {})
+    mem[agent].setdefault("diary", [])
+    entry = {
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "lesson": lesson[:200],
+        "trigger": trigger,
+    }
+    mem[agent]["diary"].insert(0, entry)
+    mem[agent]["diary"] = mem[agent]["diary"][:60]
+    mem[agent]["growth_score"] = mem[agent].get("growth_score", 0) + 1
+    _save(mem)
+
+
+def update_persona(agent: str, new_persona: str):
+    mem = _load()
+    mem.setdefault(agent, {})
+    mem[agent]["persona"] = new_persona[:300]
+    mem[agent]["persona_updated_at"] = datetime.now().strftime("%Y-%m-%d")
+    _save(mem)
+
+
+def should_update_persona(agent: str, min_diary: int = 5, min_days: int = 7) -> bool:
+    mem = _load()
+    data = mem.get(agent, {})
+    if len(data.get("diary", [])) < min_diary:
+        return False
+    last = data.get("persona_updated_at", "2026-01-01")
+    try:
+        days = (datetime.now() - datetime.strptime(last, "%Y-%m-%d")).days
+    except Exception:
+        return True
+    return days >= min_days

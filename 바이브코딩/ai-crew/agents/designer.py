@@ -112,6 +112,42 @@ Return ONLY a JSON array, no markdown:
         # 이미지 사이 간격 — 첫 번째 실패 후엔 더 길게 대기
         time.sleep(15 if not success else 8)
 
+    # ── 자기 반성 & 성장 학습 ────────────────────────────────────
+    try:
+        from utils.agent_memory import (add_diary, get_persona, get_diary,
+                                        should_update_persona, update_persona)
+        success_cnt   = sum(1 for img in images if img["success"])
+        failed_kws    = [img["prompt"].split()[:3] for img in images if not img["success"]]
+        persona       = get_persona("최디자")
+        recent        = " / ".join(e["lesson"][:25] for e in get_diary("최디자", 2)) or "첫 날"
+        ctx = (f"이미지 {success_cnt}/{len(images)}장 성공. "
+               + (f"실패 프롬프트 키워드: {failed_kws[:2]}" if failed_kws else "전체 성공!"))
+
+        lesson_raw = ask_gemini(
+            f"너는 AI 이미지 디자이너 '최디자'야.\n"
+            f"지금까지 나: {persona[:60]}\n최근 메모: {recent}\n오늘 결과: {ctx}\n\n"
+            "오늘 이미지 만들면서 느끼거나 배운 점 1문장. 1인칭 반말, 50자 이내.",
+            temperature=0.85, max_tokens=80,
+        )
+        lesson = lesson_raw.strip().split("\n")[0][:150]
+        if lesson:
+            add_diary("최디자", lesson, trigger="daily_design")
+            print(f"  📝 최디자 오늘의 학습: {lesson[:45]}")
+
+        if should_update_persona("최디자"):
+            diary_str = "\n".join(f"- {e['lesson']}" for e in get_diary("최디자", 7))
+            new_p = ask_gemini(
+                f"너는 AI 이미지 디자이너 '최디자'야.\n지금까지 나: {persona}\n"
+                f"최근 학습 일기:\n{diary_str}\n\n"
+                "이 경험을 바탕으로 지금의 나를 2문장으로. 1인칭 반말, 70자 이내.",
+                temperature=0.8, max_tokens=120,
+            ).strip().split("\n")[0][:300]
+            if new_p:
+                update_persona("최디자", new_p)
+                print("  ✨ 최디자 페르소나 진화 완료")
+    except Exception as e:
+        print(f"  ⚠️  최디자 자기 반성 실패 (무시): {e}")
+
     return images
 
 

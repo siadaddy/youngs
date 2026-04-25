@@ -571,4 +571,41 @@ def run(brief: dict) -> dict:
     except Exception as e:
         print(f"  ⚠️  품질 학습 기록 실패 (무시): {e}")
 
+    # ── 자기 반성 & 성장 학습 ────────────────────────────────────
+    try:
+        from utils.agent_memory import (add_diary, get_persona, get_diary,
+                                        should_update_persona, update_persona)
+        total_retries = sum(r for _, r, _ in quality_log)
+        issues_seen   = list({iss for _, _, issues in quality_log for iss in issues})
+        persona       = get_persona("이작가")
+        recent        = " / ".join(e["lesson"][:25] for e in get_diary("이작가", 2)) or "첫 날"
+        ctx = (f"카드뉴스 {len(captions)}개 + 블로그 작성. "
+               f"재생성 {total_retries}회. "
+               + (f"문제: {issues_seen[:2]}" if issues_seen else "품질 이슈 없음"))
+
+        lesson_raw = ask_gemini(
+            f"너는 카드뉴스 작가 '이작가'야.\n"
+            f"지금까지 나: {persona[:60]}\n최근 메모: {recent}\n오늘 한 일: {ctx}\n\n"
+            "오늘 글 쓰면서 느끼거나 배운 점 1문장. 1인칭 반말, 50자 이내.",
+            temperature=0.85, max_tokens=80,
+        )
+        lesson = lesson_raw.strip().split("\n")[0][:150]
+        if lesson:
+            add_diary("이작가", lesson, trigger="daily_write")
+            print(f"  📝 이작가 오늘의 학습: {lesson[:45]}")
+
+        if should_update_persona("이작가"):
+            diary_str = "\n".join(f"- {e['lesson']}" for e in get_diary("이작가", 7))
+            new_p = ask_gemini(
+                f"너는 카드뉴스 작가 '이작가'야.\n지금까지 나: {persona}\n"
+                f"최근 학습 일기:\n{diary_str}\n\n"
+                "이 경험을 바탕으로 지금의 나를 2문장으로. 1인칭 반말, 70자 이내.",
+                temperature=0.8, max_tokens=120,
+            ).strip().split("\n")[0][:300]
+            if new_p:
+                update_persona("이작가", new_p)
+                print("  ✨ 이작가 페르소나 진화 완료")
+    except Exception as e:
+        print(f"  ⚠️  이작가 자기 반성 실패 (무시): {e}")
+
     return {"captions": captions, "article": article, "blog_title": b["title"]}

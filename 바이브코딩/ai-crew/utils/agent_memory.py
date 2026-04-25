@@ -175,3 +175,70 @@ def _weekly_hints() -> str:
         )
     lines.append("  → 위 주차 대비 이번 주에 새롭게 부상하거나 사라진 이슈를 분석에 포함.")
     return "\n".join(lines)
+
+
+# ── 자기 학습 — 페르소나 + 성장 일기 ─────────────────────────
+
+INIT_PERSONAS = {
+    "박기획": "나는 AI 뉴스레터 팀의 기획자야. 매일 수백 개 뉴스 중 핵심 5개를 고른다. 처음엔 지역명 키워드에 편향됐지만, 점점 이슈의 임팩트 자체를 보는 눈이 생기고 있어.",
+    "이작가": "나는 카드뉴스를 쓰는 작가야. 처음엔 상투적인 표현이 많았는데, 품질 검사를 거치면서 내 문체가 조금씩 다듬어지고 있어.",
+    "최디자": "나는 AI 이미지 디자이너야. Pollinations.ai가 어떤 프롬프트에 잘 반응하는지 배워가고 있어. 밝고 구체적인 묘사일수록 성공률이 높더라.",
+    "한뮤직": "나는 매주 70곡을 큐레이션하는 음악 담당이야. 처음엔 유명 아티스트에 너무 의존했는데, 이제는 의식적으로 다양성을 챙기려고 해.",
+    "AI주간트렌드": "나는 주간 트렌드를 분석하는 애널리스트야. 매주 어떤 뉴스가 실제로 흐름을 만드는지 패턴을 찾아가고 있어.",
+}
+
+
+def get_persona(agent: str) -> str:
+    """현재 페르소나 반환. 없으면 초기값."""
+    mem = _load()
+    return mem.get(agent, {}).get("persona", INIT_PERSONAS.get(agent, ""))
+
+
+def get_diary(agent: str, limit: int = 5) -> list:
+    """최근 성장 일기 반환."""
+    mem = _load()
+    return mem.get(agent, {}).get("diary", [])[:limit]
+
+
+def get_growth_score(agent: str) -> int:
+    mem = _load()
+    return mem.get(agent, {}).get("growth_score", 0)
+
+
+def add_diary(agent: str, lesson: str, trigger: str = ""):
+    """성장 일기 추가 + growth_score 증가."""
+    mem = _load()
+    mem.setdefault(agent, {})
+    mem[agent].setdefault("diary", [])
+    entry = {
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "lesson": lesson[:200],
+        "trigger": trigger,
+    }
+    mem[agent]["diary"].insert(0, entry)
+    mem[agent]["diary"] = mem[agent]["diary"][:60]
+    mem[agent]["growth_score"] = mem[agent].get("growth_score", 0) + 1
+    _save(mem)
+
+
+def update_persona(agent: str, new_persona: str):
+    """AI가 스스로 페르소나를 업데이트."""
+    mem = _load()
+    mem.setdefault(agent, {})
+    mem[agent]["persona"] = new_persona[:300]
+    mem[agent]["persona_updated_at"] = datetime.now().strftime("%Y-%m-%d")
+    _save(mem)
+
+
+def should_update_persona(agent: str, min_diary: int = 5, min_days: int = 7) -> bool:
+    """페르소나 재작성 시점 여부 (일기 5개 이상 + 7일 이상 경과)."""
+    mem = _load()
+    data = mem.get(agent, {})
+    if len(data.get("diary", [])) < min_diary:
+        return False
+    last = data.get("persona_updated_at", "2026-01-01")
+    try:
+        days = (datetime.now() - datetime.strptime(last, "%Y-%m-%d")).days
+    except Exception:
+        return True
+    return days >= min_days

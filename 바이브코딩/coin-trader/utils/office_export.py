@@ -20,6 +20,17 @@ def _load(path):
         return {}
 
 
+def _advisor_diary():
+    """advisor_memory.json에서 AI어드바이저 diary/persona 로드"""
+    try:
+        from utils.agent_memory import get_diary, get_persona, get_growth_score
+        return (get_diary("AI어드바이저", 3),
+                get_persona("AI어드바이저")[:60],
+                get_growth_score("AI어드바이저"))
+    except Exception:
+        return [], "", 0
+
+
 def _advisor_data():
     trades    = _load(TRADES_FILE)
     blacklist = _load(BLACKLIST_FILE)
@@ -81,17 +92,21 @@ def _advisor_data():
     holding_txt = f"📊 {holding['ticker']} 보유 중" if holding else "💤 현재 보유 없음"
 
     last_active = history[0]["time"] if history else ""
+    diary, persona, score = _advisor_diary()
 
     return {
-        "win_rate":   win_rate,
-        "total":      total,
-        "wins":       wins,
-        "losses":     losses,
-        "holding":    holding_txt,
-        "hint":       " | ".join(hints) if hints else f"✅ 승률 {win_rate}% 유지 중",
-        "blacklist":  bl_list[:4],
-        "recent":     recent[:5],
+        "win_rate":    win_rate,
+        "total":       total,
+        "wins":        wins,
+        "losses":      losses,
+        "holding":     holding_txt,
+        "hint":        " | ".join(hints) if hints else f"✅ 승률 {win_rate}% 유지 중",
+        "blacklist":   bl_list[:4],
+        "recent":      recent[:5],
         "last_active": last_active,
+        "diary":       diary,
+        "persona":     persona,
+        "growth_score": score,
     }
 
 

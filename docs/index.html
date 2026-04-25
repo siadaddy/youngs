@@ -1010,6 +1010,8 @@
     .olog-badge.design{ background:rgba(206,147,216,.2); color:#ea80fc; }
     .olog-badge.music { background:rgba(102,187,106,.2); color:#b9f6ca; }
     .olog-badge.trend { background:rgba(176,190,197,.2); color:#cfd8dc; }
+    .olog-badge.diary { background:rgba(129,212,250,.15); color:#81d4fa; }
+    .olog-badge.grow  { background:rgba(255,215,0,.15); color:#ffd740; }
     .olog-msg { font-size:.72rem; color:var(--text); line-height:1.35; }
     .office-mem-empty { padding:18px; text-align:center; color:var(--muted2); font-size:.78rem; }
 
@@ -2866,12 +2868,22 @@
         const hint = a.hint || '';
         const sub = a.holding || (a.last_summary ? a.last_summary.slice(0,30) : '') ||
                     (a.recent_topics ? a.recent_topics[0]||'' : '') || '';
+        const score = a.growth_score || 0;
+        const persona = a.persona || '';
+        const latestDiary = (a.diary && a.diary[0]) ? a.diary[0].lesson : '';
+        const scoreBar = score > 0
+          ? `<span style="font-size:.7rem;opacity:.5;margin-left:4px">Lv.${score} ${'▪'.repeat(Math.min(score,10))}</span>`
+          : '';
         return `<div class="ohint">
           <span class="ohi">${icons[id]||''}</span>
-          <div class="ohd">
-            <span class="ohn" style="color:${_CHARS[id]?.color||'#aaa'}">${id}</span>
+          <div class="ohd" style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:4px">
+              <span class="ohn" style="color:${_CHARS[id]?.color||'#aaa'}">${id}</span>
+              ${scoreBar}
+            </div>
             <span class="oht">${hint}</span>
-            ${sub ? `<span class="oht" style="opacity:.65">${sub.slice(0,36)}</span>` : ''}
+            ${persona ? `<span class="oht" style="opacity:.55;font-style:italic">${persona.slice(0,38)}</span>` : (sub ? `<span class="oht" style="opacity:.65">${sub.slice(0,36)}</span>` : '')}
+            ${latestDiary ? `<span class="oht" style="opacity:.7;color:#81d4fa">📖 ${latestDiary.slice(0,40)}</span>` : ''}
           </div>
         </div>`;
       }).join('');
@@ -2886,7 +2898,8 @@
         return;
       }
       const typeLabel = {win:'익절',loss:'손절',buy:'매수',exit:'강제청산',sell:'매도',
-                         plan:'기획',design:'디자인',music:'음악',trend:'트렌드'};
+                         plan:'기획',design:'디자인',music:'음악',trend:'트렌드',
+                         diary:'학습일기',grow:'성장'};
       feedEl.innerHTML = log.map(e => {
         const t = e.time||''; const disp = t.length>10 ? t.slice(5) : t;
         const badge = e.type||'buy';
@@ -2906,6 +2919,15 @@
     if (!data.agents) return;
     const a = data.agents;
 
+    // 공통 헬퍼: diary 최신 2건을 말풍선 풀에 주입
+    function _addDiary(id, agent) {
+      if (!agent.diary || !agent.diary.length) return;
+      const diaryLines = agent.diary.slice(0,2)
+        .filter(d => d.lesson && d.lesson.length > 5)
+        .map(d => d.lesson.slice(0,30) + ' 📖');
+      if (diaryLines.length) _LINES[id] = [...diaryLines, ...(_LINES[id]||[])].slice(0, 10);
+    }
+
     if (a['AI어드바이저']) {
       const ad = a['AI어드바이저'];
       const lines = [];
@@ -2919,6 +2941,7 @@
       }
       if (ad.hint && ad.hint.startsWith('⚠️')) lines.push(ad.hint.slice(0, 32));
       if (lines.length) _LINES['AI어드바이저'] = [...lines, ..._LINES['AI어드바이저']].slice(0, 8);
+      _addDiary('AI어드바이저', ad);
     }
 
     if (a['박기획']) {
@@ -2927,6 +2950,7 @@
       if (pl.hint) lines.push(pl.hint.slice(0, 32));
       if (pl.recent_topics && pl.recent_topics[0]) lines.push(`최근 주제: ${pl.recent_topics[0].slice(0,22)}`);
       if (lines.length) _LINES['박기획'] = [...lines, ..._LINES['박기획']].slice(0, 8);
+      _addDiary('박기획', pl);
     }
 
     if (a['최디자']) {
@@ -2934,18 +2958,21 @@
       if (ds.hint) _LINES['최디자'] = [ds.hint.slice(0,32), ..._LINES['최디자']].slice(0, 8);
       if (ds.success_rate !== undefined && ds.success_rate > 0)
         _LINES['최디자'] = [`이미지 성공률 ${ds.success_rate}% ✨`, ..._LINES['최디자']].slice(0, 8);
+      _addDiary('최디자', ds);
     }
 
     if (a['한뮤직']) {
       const mu = a['한뮤직'];
       if (mu.hint) _LINES['한뮤직'] = [mu.hint.slice(0,32), ..._LINES['한뮤직']].slice(0, 8);
       if (mu.overused && mu.overused[0]) _LINES['한뮤직'] = [`${mu.overused[0]} 이번엔 제외! 🎵`, ..._LINES['한뮤직']].slice(0, 8);
+      _addDiary('한뮤직', mu);
     }
 
     if (a['AI주간트렌드']) {
       const wt = a['AI주간트렌드'];
       if (wt.last_summary) _LINES['AI주간트렌드'] = [wt.last_summary.slice(0,32), ..._LINES['AI주간트렌드']].slice(0, 8);
       if (wt.hot) _LINES['AI주간트렌드'] = [`이번 주 핫: ${wt.hot}`, ..._LINES['AI주간트렌드']].slice(0, 8);
+      _addDiary('AI주간트렌드', wt);
     }
   }
 

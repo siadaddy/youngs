@@ -269,4 +269,40 @@ source_facts는 반드시 80자 이상의 구체적 내용으로 작성. "없음
         "headlines": [item.get("headline", "") for item in brief.get("instagram", [])],
         "blog_title": brief.get("blog", {}).get("title", ""),
     })
+
+    # ── 자기 반성 & 성장 학습 ────────────────────────────────────
+    try:
+        from utils.agent_memory import (add_diary, get_persona, get_diary,
+                                        should_update_persona, update_persona)
+        headlines = [it.get("headline", "") for it in brief.get("instagram", [])]
+        persona   = get_persona("박기획")
+        recent    = " / ".join(e["lesson"][:25] for e in get_diary("박기획", 2)) or "첫 날"
+
+        lesson_raw = ask_gemini(
+            f"너는 AI 뉴스 기획자 '박기획'이야.\n"
+            f"지금까지 나: {persona[:60]}\n"
+            f"최근 메모: {recent}\n"
+            f"오늘 선정 헤드라인: {', '.join(headlines[:3])}\n\n"
+            "오늘 기획하면서 새롭게 느끼거나 배운 점을 1문장으로. 1인칭 반말, 50자 이내.",
+            temperature=0.85, max_tokens=80,
+        )
+        lesson = lesson_raw.strip().split("\n")[0][:150]
+        if lesson:
+            add_diary("박기획", lesson, trigger="daily_plan")
+            print(f"  📝 박기획 오늘의 학습: {lesson[:45]}")
+
+        if should_update_persona("박기획"):
+            diary_str = "\n".join(f"- {e['lesson']}" for e in get_diary("박기획", 7))
+            new_p = ask_gemini(
+                f"너는 AI 기획자 '박기획'이야.\n지금까지 나: {persona}\n"
+                f"최근 학습 일기:\n{diary_str}\n\n"
+                "이 경험을 바탕으로 지금의 나를 2문장으로. 1인칭 반말, 70자 이내.",
+                temperature=0.8, max_tokens=120,
+            ).strip().split("\n")[0][:300]
+            if new_p:
+                update_persona("박기획", new_p)
+                print("  ✨ 박기획 페르소나 진화 완료")
+    except Exception as e:
+        print(f"  ⚠️  박기획 자기 반성 실패 (무시): {e}")
+
     return brief
