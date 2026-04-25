@@ -1,6 +1,6 @@
 # 🤖 AI 자동화 시스템 — Claude Code 컨텍스트
 
-> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-23
+> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-25
 
 ---
 
@@ -11,6 +11,7 @@
 ├── docs/                      ← GitHub Pages (siadaddy.github.io/youngs)
 │   ├── index.html             ← 메인 대시보드
 │   ├── trades.json            ← 코인 매매 기록 + 블랙리스트 현황
+│   ├── office_memory.json     ← AI 직원 학습 기록 (ai-crew + coin-trader 병합)
 │   ├── content.json / archive.json / music.json
 │   └── images/
 └── 바이브코딩/
@@ -79,6 +80,7 @@ launchctl load   ~/Library/LaunchAgents/com.siadad.cointrader.plist
 | `coin-trader/agents/executor.py` | 시장가 주문 + 스테이블코인·블랙리스트 하드차단 |
 | `coin-trader/utils/bithumb_client.py` | pybithumb 래퍼 |
 | `coin-trader/utils/blacklist.py` | 📚 학습 블랙리스트 엔진 |
+| `coin-trader/utils/office_export.py` | AI어드바이저 학습 기록 → docs/office_memory.json |
 
 ### 핵심 상태 파일
 
@@ -107,7 +109,7 @@ launchctl load   ~/Library/LaunchAgents/com.siadad.cointrader.plist
 - `is_blacklisted(ticker)` — executor.py에서 하드차단
 
 ```bash
-# 블랙리스트 현황 (현재)
+# 블랙리스트 현황
 python3 -c "
 import sys; sys.path.insert(0,'.')
 from utils.blacklist import get_summary
@@ -129,75 +131,62 @@ for l in get_summary(): print(l)
 
 ---
 
-## 🐛 최근 수정된 주요 버그 & 변경사항
+## 🎭 AI 사무실 탭 (index.html)
 
-### 2026-04-23 — 전면 버그 수정 & 학습 강화
+Canvas 픽셀아트 사무실. AI 직원 8명이 실시간으로 돌아다니며 학습 내용을 말풍선으로 표시.
 
-**price_guard.py 핵심 버그 수정**
-- 실시간 손절 시 `register_stop_loss()` 누락 → 블랙리스트 학습 누락 수정
-- 실시간 손절 시 `record_loss()` 누락 → 일일 손실 한도 미작동 수정
-- TAKE_PROFIT 기본값 `8.0` → `5.0` 수정
-- **트레일링스탑 추가** — 30분 사이클에만 있던 트레일링스탑을 30초 감시에도 적용
-- 매도 3회 자동 재시도 추가
+### 직원 8명
 
-**executor.py**
-- `force` 플래그 — 손절/강제청산 시 5,000원 최소금액 무시
-- 잔고 조회 3회 재시도 + state.json 폴백
+| 직원 | 역할 | 특징 |
+|------|------|------|
+| 박기획 | 콘텐츠 기획자 | 네이비 정장, 금테 안경 |
+| 최디자 | 이미지 디자이너 | 보라 머리, 핑크 의상 |
+| 한뮤직 | 음악 큐레이터 | 헤드폰, 초록 후디 |
+| AI주간트렌드 | 주간 분석가 | 은발, 청록 타이 |
+| AI어드바이저 | 코인 어드바이저 | 로봇 발광 눈, 청록 밴드 |
+| 뉴스기자 | 뉴스 수집가 | 중절모, 갈색 정장 |
+| 이가드 | 시장 감시원 | 다크 유니폼, 레드 배지 |
+| 리포터 | 일일 리포트 작성자 | 웨이브 머리, 오렌지 자켓 |
 
-**analyzer.py**
-- ADX Inf/NaN 수정 (divide-by-zero)
-- 병렬 분석 120초 타임아웃 추가
+### 스프라이트 스펙
+- 크기: **16열 × 24행** 픽셀아트 (`_PX=3`, 화면 48×72px)
+- 2프레임 걷기 애니메이션
+- 각 캐릭터 고유 팔레트 (16~18색)
 
-**ai_advisor.py**
-- RSI < 20 점수 `0` → `-5` (BUY 강차단 — VB로 우회하던 버그 수정)
-- 쿨다운 종목 스코어링 전 사전 필터링
+### 행동 패턴 19가지
+walk · home · coffee · window · stretch · think · rush · phone · sneak · dance ·  
+read · wboard · snack · chat · printer · nap · patrol · report · water · exercise
 
-**utils/blacklist.py**
-- `add_successful_trade()` 추가 — 수익 3회 시 손절 카운트 감소 (점진적 복구)
+- **회의 간격**: 2~3분 (meetTimer=1800~2700 @15fps)
+- **말풍선**: office_memory.json 실데이터 반영
 
-**main.py**
-- 실제 PnL 계산 (추정 → 실가 × 수량)
-- `force_sell`, `add_successful_trade()` 호출 추가
-
-**웹사이트 (docs/)**
-- 히어로 제목: "시아 아빠의 Claude 실험실"
-- AI 직원 수: 5명 → 8명 (실제 운용 기준)
-- about.html / index.html 전체 수치 실제 설정 기준으로 정확화
+### office_memory.json
+- `coin-trader/utils/office_export.py` → AI어드바이저 데이터
+- `ai-crew/utils/office_export.py` → ai-crew 4명 데이터
 
 ---
 
+## 🐛 최근 수정 이력
+
+### 2026-04-25 — AI 사무실 고도화
+- 스프라이트: 10×16 @ _PX=4 → **16×24 @ _PX=3**
+- 행동 패턴: 11가지 → **19가지** 확장
+- 회의 빈도: 23초 → **2~3분**으로 완화
+
+### 2026-04-23 — AI 사무실 탭 & 전면 버그 수정
+- Canvas 픽셀아트 AI 사무실 탭 신규 추가 (8명, 10가지 행동)
+- office_memory.json 실데이터 연동
+- price_guard.py: register_stop_loss, record_loss, trailing_stop 누락 수정
+- executor.py: force 플래그, 잔고 3회 재시도
+- analyzer.py: ADX NaN 수정, 120초 타임아웃
+- ai_advisor.py: RSI<20 점수 0→-5
+- blacklist.py: add_successful_trade() 추가
+- 웹사이트: AI 직원 5명→8명
+
 ### 2026-04-21 — 전면 개선
-
-**버그 수정**
-- `bithumb_client.buy_market_order()`: `amount_krw` 파라미터 무시 버그 수정
-  (avail_krw × 0.75로 재계산하던 것 → 전달받은 금액 그대로 사용)
-- 기회교체 SELL 후 쿨다운 미등록 버그 수정 (`_add_switch_cooldown()` 추가)
-- 즉시 재판단 시 동일 데이터 재사용 문제 수정 (재판단 전 `analyzer.run()` 재호출)
-
-**신규 기능**
-- `utils/blacklist.py`: 손절 횟수 누적 학습, 자동 블랙리스트 등록
-- 시작 시 블랙리스트 현황 로그 출력
-- trades.json에 blacklist 필드 포함 (웹사이트 표시용)
-
-**투자 파라미터**
-- MAX_INVEST_KRW: 100000 → **50000**
-- TAKE_PROFIT_PCT: 8.0 → **5.0**
-- DAILY_LOSS_LIMIT_KRW: -15000 → **-7500**
-
-**전략 강화**
-- RSI < 20 → 중립 0점 (급락 추세, 반등 신호 아님)
-- VB: 거래량+20% 동반 시 +2 / 미동반 +1
-- ADX 기준: 15 → 20 이상
-- 기회교체: -2% → -3%, 60분 → 90분, 조건 강화
-- 스테이블코인 executor 하드차단
-
-### 2026-04-21 (이전)
-- 트레일링스탑 +3% 활성 / -2.5% 트리거
-- 8시간 강제청산 (MAX_HOLD_HOURS=8)
-- 쿨다운 강화: 종목 3h→6h / 전역 2h→4h
-
-### 2026-04-19
-- stale cooldown 버그 수정 (손절 직후 재매수 방지)
+- buy_market_order 버그 수정
+- 학습 블랙리스트 신규 구축
+- MAX_INVEST 10만→5만, TAKE_PROFIT 8%→5%
 
 ---
 
@@ -259,9 +248,12 @@ python3 -c "import json; d=json.load(open('docs/music.json')); print(d['updated'
 |------|------|
 | `ai-crew/utils/gemini_client.py` | Gemini/Groq 통합 클라이언트 |
 | `ai-crew/agents/music_curator.py` | 음악 큐레이터 (7장르×10곡, 주1회) |
+| `ai-crew/utils/office_export.py` | ai-crew 4명 학습 기록 → office_memory.json |
 | `coin-trader/price_guard.py` | 손절/익절 30초 감시 데몬 |
 | `coin-trader/main.py` | 코인 AI 매매 오케스트레이터 |
 | `coin-trader/agents/ai_advisor.py` | 코인 AI 판단 (Groq→Gemini) |
 | `coin-trader/utils/blacklist.py` | 📚 학습 블랙리스트 엔진 |
+| `coin-trader/utils/office_export.py` | AI어드바이저 학습 기록 → office_memory.json |
 | `coin-trader/blacklist.json` | 손절 학습 데이터 영구 저장소 |
 | `docs/trades.json` | 코인 매매 기록 + 블랙리스트 (GitHub Pages 서빙) |
+| `docs/office_memory.json` | AI 직원 학습 기록 통합 (GitHub Pages 서빙) |
