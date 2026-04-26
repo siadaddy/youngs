@@ -440,10 +440,11 @@ def run(brief: dict) -> dict:
             )
 
         reader_insight = item.get("reader_insight", "")
-        insight_note = (
-            f"\n독자 인사이트 (반드시 반영): {reader_insight}\n"
-            if reader_insight.strip() else ""
-        )
+        # reader_insight가 없어도 항상 힌트 포함 — 없으면 직접 뽑도록 지시
+        if reader_insight.strip():
+            insight_note = f"\n독자 인사이트 (반드시 반영): {reader_insight}\n"
+        else:
+            insight_note = "\n💡 시아아빠 한 줄은 반드시 직접 뽑을 것 — 독자가 이 뉴스를 읽고 당장 뭘 해야 하거나 어떻게 생각이 바뀌어야 하는지 날카롭게 1문장.\n"
 
         prompt = f"""인스타그램 카드뉴스 캡션 써줘. 주제: "{item['headline']}"
 {facts_note}{insight_note}
@@ -456,15 +457,16 @@ def run(brief: dict) -> dict:
   - "와 이거 실화야" 절대 금지. 카드마다 도입부 표현이 달라야 함 — 앞 카드와 같은 패턴 반복 금지.
   - 예시: "솔직히 이 수치 보고 좀 놀랐어." / "이거 생각보다 진짜 큰 변화야." / "오늘 이 뉴스 보고 좀 멈칫했어." / "이 숫자 보고 두 번 읽었어." / "솔직히 이게 이렇게 빠를 줄 몰랐어."
 ② 배경 1~2문장 + 핵심 사실 2~3줄. 구체적 수치·이름·날짜 포함. 추상적 묘사 금지.
-③ 💡 시아아빠 한 줄 — "그래서 나한테 뭔 의미야?"에 답하는 문장. 반드시 포함.
+③ 💡 시아아빠 한 줄: [내용] — ⚠️ 이 줄은 반드시 출력. 없으면 실패.
+  - "그래서 나한테 뭔 의미야?"에 답하는 문장.
   - 독자가 이 카드를 읽고 얻어가야 할 핵심 관점 or 행동 포인트.
   - "~해야겠다", "~를 생각해봐야 할 것 같아" 같은 공허한 마무리 금지.
   - 구체적이고 날카롭게. 예: "지금 변동금리 대출 있으면 이번 주 안에 한 번 확인해봐."
-  마침표로 끝내기.
+  - 반드시 "💡 시아아빠 한 줄: " 접두어로 시작하고 마침표로 끝낼 것.
 
 ⛔ 절대 금지 — 아래 중 하나라도 쓰면 실패:
 - "와 이거 실화야", "와 이 ~는", "와 이거" 로 시작하는 모든 문장
-- 구조 레이블 출력: "첫 줄:", "그 다음:", "마지막:", "💡 시아아빠 한 줄:" 등 레이블 직접 출력
+- 구조 레이블 출력: "첫 줄:", "그 다음:", "마지막:" 등 ①②③ 구조 레이블 직접 출력 (단, "💡 시아아빠 한 줄:" 접두어는 반드시 출력해야 함 — 이건 예외)
 - 물음표(?) 2개 이상. 글 전체에서 ? 는 딱 1개만 허용.
 - "중요한 뉴스를 공유", "함께 알아봐요", "주목할 필요가 있", "~로 보입니다", "~겠습니다"
 - "이러한", "이처럼", "이를 통해", "~에 큰 영향을 미칠", "~에 대해 살펴보"
@@ -478,7 +480,7 @@ def run(brief: dict) -> dict:
 - 없는 수치·사실 창작
 - 제목에 등장한 기업명·인물명·주제가 본문에 전혀 없는 경우 (제목과 본문 주제 일치 필수)
 
-본문(해시태그 제외) 150~230자. 글 다 쓴 뒤 빈 줄 두 개 → 해시태그 8개를 한 줄에. 해시태그는 반드시 #단어 형식 (빈 # 금지). 해시태그를 본문 사이에 넣으면 실패.
+본문(해시태그 제외) 150~260자. 글 다 쓴 뒤 빈 줄 두 개 → 해시태그 8개를 한 줄에. 해시태그는 반드시 #단어 형식 (빈 # 금지). 해시태그를 본문 사이에 넣으면 실패.
 """
         caption, retries, issues = _generate_with_quality(
             prompt, item["headline"], label,
@@ -486,6 +488,27 @@ def run(brief: dict) -> dict:
             prior_intros=prior_intros if prior_intros else None,
         )
         quality_log.append((label, retries, issues))
+
+        # ── 💡 시아아빠 한 줄 누락 자동 보완 ──────────────────
+        if "시아아빠 한 줄" not in caption and "💡" not in caption:
+            print(f"  ⚠️  [{label}] 💡 시아아빠 한 줄 누락 — 자동 보완 시도")
+            patch_prompt = f"""아래 카드뉴스 캡션에 "💡 시아아빠 한 줄"이 빠져 있어.
+캡션:
+{caption}
+
+이 캡션에 맞는 "💡 시아아빠 한 줄"을 딱 한 줄만 써줘.
+반드시 "💡 시아아빠 한 줄: " 으로 시작하고 마침표로 끝낼 것.
+공허한 마무리("~해야겠다", "~바뀔 것 같다") 금지. 구체적이고 날카롭게."""
+            patch = ask_gemini(patch_prompt, system=SYSTEM, temperature=0.7, max_tokens=150)
+            if patch and "💡" in patch:
+                patch = patch.strip().split("\n")[0]  # 첫 줄만
+                # 해시태그 앞에 삽입
+                tag_idx = caption.find("\n#")
+                if tag_idx >= 0:
+                    caption = caption[:tag_idx].rstrip() + "\n\n" + patch + "\n" + caption[tag_idx:].lstrip("\n")
+                else:
+                    caption = caption.rstrip() + "\n\n" + patch
+                print(f"  ✅  [{label}] 자동 보완 완료")
 
         # 이 카드의 첫 문장을 누적 (다음 카드 비교용)
         first = _get_first_sentence(caption)
@@ -589,6 +612,16 @@ def run(brief: dict) -> dict:
                                         should_update_persona, update_persona)
         total_retries = sum(r for _, r, _ in quality_log)
         issues_seen   = list({iss for _, _, issues in quality_log for iss in issues})
+
+        # ── 출력 품질 자동 점검 (💡 시아아빠 한 줄 누락 감지) ──────
+        missing_insight = [
+            c["headline"][:20] for c in captions
+            if "시아아빠 한 줄" not in c.get("caption","") and "💡" not in c.get("caption","")
+        ]
+        if missing_insight:
+            issues_seen.append(f"💡누락:{len(missing_insight)}건")
+            print(f"  ⚠️  품질 점검: 💡 시아아빠 한 줄 누락 {len(missing_insight)}건 — {missing_insight}")
+
         persona       = get_persona("이작가")
         recent        = " / ".join(e["lesson"][:25] for e in get_diary("이작가", 2)) or "첫 날"
         ctx = (f"카드뉴스 {len(captions)}개 + 블로그 작성. "
