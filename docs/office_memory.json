@@ -1,12 +1,12 @@
 {
-  "updated": "2026-04-27 05:30",
+  "updated": "2026-04-27 06:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 30,
-      "total": 46,
-      "wins": 14,
+      "win_rate": 32,
+      "total": 47,
+      "wins": 15,
       "losses": 32,
-      "holding": "📊 TRAC 보유 중",
+      "holding": "📊 AMP 보유 중",
       "hint": "⚠️ 강제청산 9회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,21 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "06:00",
+          "date": "2026-04-27",
+          "ticker": "AMP",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "05:33",
+          "date": "2026-04-27",
+          "ticker": "TRAC",
+          "pnl": 6.01,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "05:30",
           "date": "2026-04-27",
@@ -35,25 +50,15 @@
           "ticker": "KAT",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "21:30",
-          "date": "2026-04-26",
-          "ticker": "ETH",
-          "pnl": 0.41,
-          "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "23:00",
-          "date": "2026-04-23",
-          "ticker": "ETH",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-04-27 05:30",
+      "last_active": "2026-04-27 06:00",
       "diary": [
+        {
+          "date": "2026-04-27 06:00",
+          "lesson": "나: 오늘은 BUY가 좋았어. ",
+          "trigger": "buy"
+        },
         {
           "date": "2026-04-27 05:30",
           "lesson": "나: 오늘은 BUY가 좋았어.",
@@ -63,15 +68,10 @@
           "date": "2026-04-27 05:01",
           "lesson": "손절이 중요해. ",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-04-27 04:31",
-          "lesson": "나: 손절이 중요해. ",
-          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 13
+      "growth_score": 14
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '한국'(2회) — 새 각도 필요",
@@ -127,6 +127,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-27 06:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "AMP 매수 — RSI 52.2·ADX 44.4",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-27 05:33",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "TRAC 익절 +6.01% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-04-27 05:30",
       "agent": "AI어드바이저",
@@ -329,20 +343,6 @@
       "icon": "🤖",
       "msg": "CORE 매도 -0.4%",
       "type": "sell"
-    },
-    {
-      "time": "2026-04-22 13:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "CORE 매수 — RSI 33.3",
-      "type": "buy"
-    },
-    {
-      "time": "2026-04-22 09:25",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "PIEVERSE 손절 -7.84% → 학습 기록 🚫",
-      "type": "loss"
     }
   ]
 }
