@@ -3158,16 +3158,16 @@
     function bg() {
       if (_NIGHT) {
         // 🌙 밤 모드 — 야근 사무실 (다크 네이비)
-        ctx.fillStyle='#0e1b2e'; ctx.fillRect(0,58,CW,CH-58);
+        ctx.fillStyle='#132540'; ctx.fillRect(0,58,CW,CH-58);
         ctx.strokeStyle='rgba(0,180,255,0.10)'; ctx.lineWidth=0.5;
         for(let x=0;x<CW;x+=48){ctx.beginPath();ctx.moveTo(x,58);ctx.lineTo(x,CH);ctx.stroke();}
         for(let y=58;y<CH;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}
         ctx.strokeStyle='rgba(0,229,255,0.08)'; ctx.lineWidth=1;
         for(let x=0;x<CW;x+=240){ctx.beginPath();ctx.moveTo(x,58);ctx.lineTo(x,CH);ctx.stroke();}
         const wg=ctx.createLinearGradient(0,0,0,62);
-        wg.addColorStop(0,'#0b1628'); wg.addColorStop(1,'#111e35');
+        wg.addColorStop(0,'#0f1e38'); wg.addColorStop(1,'#172a4a');
         ctx.fillStyle=wg; ctx.fillRect(0,0,CW,62);
-        ctx.fillStyle='#152035'; ctx.fillRect(0,54,CW,7);
+        ctx.fillStyle='#1d2c4a'; ctx.fillRect(0,54,CW,7);
         ctx.shadowColor='#00e5ff'; ctx.shadowBlur=8;
         ctx.strokeStyle='rgba(0,229,255,0.4)'; ctx.lineWidth=1;
         ctx.beginPath();ctx.moveTo(0,58);ctx.lineTo(CW,58);ctx.stroke();
@@ -3201,11 +3201,11 @@
       [55,220,390,560,725].forEach(wx=>{
         if (_NIGHT) {
           // 🌙 밤 창문 — 도시 야경
-          ctx.fillStyle='#0f1c30'; ctx.fillRect(wx,3,84,46);
+          ctx.fillStyle='#152743'; ctx.fillRect(wx,3,84,46);
           const ng=ctx.createLinearGradient(wx+3,6,wx+3,46);
-          ng.addColorStop(0,'#080f1e'); ng.addColorStop(1,'#0c1628');
+          ng.addColorStop(0,'#080f1e'); ng.addColorStop(1,'#101e38');
           ctx.fillStyle=ng; ctx.fillRect(wx+3,6,78,40);
-          ctx.fillStyle='#0c1525';
+          ctx.fillStyle='#101d33';
           [[wx+5,32,12,14],[wx+20,28,8,18],[wx+30,35,10,11],[wx+44,26,14,20],[wx+60,30,8,16],[wx+70,37,10,9]].forEach(([bx,by,bw,bh])=>ctx.fillRect(bx,by,bw,bh));
           const lc=['#ff9900','#00e5ff','#ff3366','#ffcc00','#00ff88','#4488ff','#ff6600'];
           [[wx+8,35],[wx+14,31],[wx+21,29],[wx+26,38],[wx+35,34],[wx+47,27],[wx+53,33],[wx+63,31],[wx+71,37],[wx+75,32]].forEach(([lx,ly],i)=>{
@@ -3214,8 +3214,8 @@
             lg.addColorStop(0,lc[i%lc.length]+'55'); lg.addColorStop(1,'transparent');
             ctx.fillStyle=lg; ctx.fillRect(lx-2,ly-2,6,6);
           });
-          ctx.fillStyle='#162035'; ctx.fillRect(wx+42,6,2,40); ctx.fillRect(wx+3,26,78,2);
-          ctx.fillStyle='#0f1c30'; ctx.fillRect(wx-2,46,88,5);
+          ctx.fillStyle='#1e2c4a'; ctx.fillRect(wx+42,6,2,40); ctx.fillRect(wx+3,26,78,2);
+          ctx.fillStyle='#152743'; ctx.fillRect(wx-2,46,88,5);
           ctx.strokeStyle='rgba(0,229,255,0.15)'; ctx.lineWidth=0.5; ctx.strokeRect(wx-2,46,88,5);
         } else {
           // ☀️ 낮 창문 — 맑은 하늘
@@ -3242,21 +3242,21 @@
       if (_NIGHT) {
         // 🌙 밤 책상 — 다크 네이비
         ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.fillRect(x+4,y+h+1,w,8);
-        ctx.fillStyle='#12203a'; ctx.fillRect(x,y,w,h);
-        ctx.fillStyle='#172840'; ctx.fillRect(x+2,y+2,w-4,h-4);
+        ctx.fillStyle='#192c51'; ctx.fillRect(x,y,w,h);
+        ctx.fillStyle='#203859'; ctx.fillRect(x+2,y+2,w-4,h-4);
         ctx.strokeStyle=ec+'55'; ctx.lineWidth=0.8; ctx.strokeRect(x,y,w,h);
-        ctx.fillStyle='#0e1830'; ctx.fillRect(x+4,y+h,10,12); ctx.fillRect(x+w-14,y+h,10,12);
+        ctx.fillStyle='#132143'; ctx.fillRect(x+4,y+h,10,12); ctx.fillRect(x+w-14,y+h,10,12);
         const mx=x+w/2-14,my=y-38;
-        ctx.fillStyle='#0e1a2e'; ctx.fillRect(mx,my,28,25);
-        const sc={'박기획':'#0d2548','최디자':'#220d42','한뮤직':'#0d2535','AI주간트렌드':'#0d2438','AI어드바이저':'#003448','뉴스기자':'#251a00','이가드':'#250010','리포터':'#251800'}[owner]||'#0d2040';
+        ctx.fillStyle='#132440'; ctx.fillRect(mx,my,28,25);
+        const sc={'박기획':'#123364','최디자':'#2f125c','한뮤직':'#12334a','AI주간트렌드':'#12324e','AI어드바이저':'#004864','뉴스기자':'#332400','이가드':'#330016','리포터':'#332100'}[owner]||'#0d2040';
         ctx.fillStyle=sc; ctx.fillRect(mx+2,my+2,24,20);
         ctx.fillStyle=ec+'cc';
         [4,7,10,13,16].forEach(dy=>{ctx.fillRect(mx+3,my+dy,6+Math.abs(Math.sin(dy*0.9))*9,1);});
         const sg=ctx.createRadialGradient(mx+14,my+11,0,mx+14,my+11,22);
         sg.addColorStop(0,ec+'2a'); sg.addColorStop(1,'transparent');
         ctx.fillStyle=sg; ctx.fillRect(mx-8,my-8,44,44);
-        ctx.fillStyle='#0e1a2e'; ctx.fillRect(mx+12,my+25,4,7); ctx.fillRect(mx+8,my+32,12,2);
-        ctx.fillStyle='#152030'; ctx.fillRect(x+5,y+4,18,13);
+        ctx.fillStyle='#132440'; ctx.fillRect(mx+12,my+25,4,7); ctx.fillRect(mx+8,my+32,12,2);
+        ctx.fillStyle='#1d2c43'; ctx.fillRect(x+5,y+4,18,13);
         ctx.fillStyle=ec+'44'; [6,9,12].forEach(dy=>ctx.fillRect(x+7,y+dy,12,1));
       } else {
         // ☀️ 낮 책상 — 따뜻한 원목
@@ -3338,9 +3338,9 @@
     }
 
     function plant(px,py,s=1){
-      const potCol=_NIGHT?'#1a2d45':'#c0622f';
-      const soilCol=_NIGHT?'#0e1c2e':'#3a1a00';
-      const leafCols=_NIGHT?['#14431a','#1a5220','#1e6028','#164a14']:['#2e7d32','#43a047','#66bb6a','#388e3c'];
+      const potCol=_NIGHT?'#243e60':'#c0622f';
+      const soilCol=_NIGHT?'#132740':'#3a1a00';
+      const leafCols=_NIGHT?['#1c5d24','#24722c','#2a8638','#1e671c']:['#2e7d32','#43a047','#66bb6a','#388e3c'];
       ctx.fillStyle=potCol;
       ctx.beginPath();ctx.moveTo(px-11*s,py);ctx.lineTo(px+11*s,py);ctx.lineTo(px+8*s,py+22*s);ctx.lineTo(px-8*s,py+22*s);ctx.closePath();ctx.fill();
       ctx.fillStyle=soilCol; ctx.fillRect(px-9*s,py,18*s,5*s);
