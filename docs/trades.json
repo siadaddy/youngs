@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "AMP",
-    "buy_price": 1.35,
-    "qty": 36925.9259,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-27 06:00",
-    "high_price": 1.367
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-27 08:30",
+      "action": "SELL",
+      "ticker": "AMP",
+      "price": 1.349,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 AMP의 수익률이 -0.07%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한, 다른 종목들의 기술 점수가 더 높아 기회 교체를 고려해야 합니다.",
+      "pnl_pct": -0.07,
+      "pnl_krw": -37.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-27 06:00",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-18 20:37",
-      "action": "SELL",
-      "ticker": "NCT",
-      "price": 12.42,
-      "amount_krw": 99700.0,
-      "reason": "실시간 손절 -4.75% (기준 -4.0%)",
-      "pnl_pct": -4.75,
-      "pnl_krw": -5999.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 47,
+    "total_trades": 48,
     "wins": 15,
-    "losses": 32,
-    "total_pnl_krw": -34888.0,
+    "losses": 33,
+    "total_pnl_krw": -34925.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-27 08:00",
+  "updated_at": "2026-04-27 08:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
