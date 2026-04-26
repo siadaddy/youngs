@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "KAT",
+    "buy_price": 18.9,
+    "qty": 2637.5661,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-26 21:30"
+  },
   "history": [
+    {
+      "time": "2026-04-26 21:30",
+      "action": "BUY",
+      "ticker": "KAT",
+      "price": 18.91,
+      "amount_krw": 49850.0,
+      "reason": "VB✅이 아니지만 점수 +4로 높고, RSI 43.0으로 중립적인 위치에 있으며, MACD 상승으로 상승 추세를 보이고 있습니다. 또한 거래량이 많이 감소하지 않아 매수 기회로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-26 21:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -4.15% (기준 -4.0%)",
       "pnl_pct": -4.15,
       "pnl_krw": -5621.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-18 10:00",
-      "action": "BUY",
-      "ticker": "SKL",
-      "price": 11.6,
-      "amount_krw": 99700.0,
-      "reason": "VB✅와 점수 +4를 만족하여 최우선 매수 신호가 발생하였으며, 현재가가 볼린저밴드 중하단에 위치하여 매수 기회가 있는 것으로 판단됩니다. 또한, ADX 값이 32.1로 추세가 있는 것으로 나타나며, 거래량이 감소한 것으로 나타나 있으나, 다른 조건들이 우수하여 매수을 내렸습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],

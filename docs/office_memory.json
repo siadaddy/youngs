@@ -6,7 +6,7 @@
       "total": 45,
       "wins": 14,
       "losses": 31,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 KAT 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 9회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,13 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "21:30",
+          "date": "2026-04-26",
+          "ticker": "KAT",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "21:30",
           "date": "2026-04-26",
@@ -43,18 +50,15 @@
           "ticker": "PIEVERSE",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "12:30",
-          "date": "2026-04-23",
-          "ticker": "XRP",
-          "pnl": -1.54,
-          "action": "SELL",
-          "type": "force_exit"
         }
       ],
       "last_active": "2026-04-26 21:30",
       "diary": [
+        {
+          "date": "2026-04-26 21:30",
+          "lesson": "나: 손절 중요해. ",
+          "trigger": "buy"
+        },
         {
           "date": "2026-04-26 21:30",
           "lesson": "나: 손절이 중요해.",
@@ -67,7 +71,7 @@
         }
       ],
       "persona": "나는 30분마다 시장을 분석하는 코인 트레이딩 AI야. 손절을 반복하며 어떤 종목과 패턴이 위험한지 배우고 ",
-      "growth_score": 2
+      "growth_score": 3
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '한국'(2회) — 새 각도 필요",
@@ -123,6 +127,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-26 21:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "KAT 매수 — RSI 43.0",
+      "type": "buy"
+    },
     {
       "time": "2026-04-26 21:30",
       "agent": "AI어드바이저",
@@ -332,13 +343,6 @@
       "icon": "🤖",
       "msg": "CORE 손절 -4.1% → 학습 기록 🚫",
       "type": "loss"
-    },
-    {
-      "time": "2026-04-21 23:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "CORE 매수 — RSI 48.7",
-      "type": "buy"
     }
   ]
 }
