@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BTC",
+    "buy_price": 116000000.0,
+    "qty": 0.0004,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-27 08:30"
+  },
   "history": [
+    {
+      "time": "2026-04-27 08:30",
+      "action": "BUY",
+      "ticker": "BTC",
+      "price": 116000000.0,
+      "amount_krw": 49850.0,
+      "reason": "BTC의 RSI는 51.6으로 중립적인 수준이며, MACD는 상승하고 있습니다. 또한 ADX는 26.2로 추세가 있는 것으로 나타나며, 거래량도 증가하고 있습니다. 이러한 신호들이 긍정적인 매매 기회를 제공하는 것으로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-27 08:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -4.06% (기준 -4.0%)",
       "pnl_pct": -4.06,
       "pnl_krw": -4913.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-18 21:00",
-      "action": "BUY",
-      "ticker": "NCT",
-      "price": 13.04,
-      "amount_krw": 99700.0,
-      "reason": "VB✅ 및 점수 +4로 변동성 돌파 신호가 확인되며, RSI 35.6으로 과매도 상태가 아님을 확인하여 매수 신호로 판단됩니다. 또한 ADX 32.4로 추세가 확인되며, 거래량 변화가 큰 편은 아니지만 매수 조건을 충족합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
