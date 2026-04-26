@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "TRAC",
+    "buy_price": 499.0,
+    "qty": 99.8997,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-27 05:30"
+  },
   "history": [
+    {
+      "time": "2026-04-27 05:30",
+      "action": "BUY",
+      "ticker": "TRAC",
+      "price": 500.0,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화가 105482%로 상승하여 강한 돌파 신호가 나타났으며, RSI와 MACD도 상승세를 보이고 있습니다. 또한 ADX가 38.7로 추세가 있는 것으로 나타나매매 진입의 기회로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-27 05:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -4.07% (기준 -4.0%)",
       "pnl_pct": -4.07,
       "pnl_krw": -5315.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-18 14:00",
-      "action": "BUY",
-      "ticker": "SKL",
-      "price": 11.09,
-      "amount_krw": 99700.0,
-      "reason": "VB✅과 점수 +4로 변동성 돌파 신호가 확인되며, 추세가 유지되고 있어 매수 기회로 판단됩니다. 또한, 다른 종목에 비해 상대적으로 저렴한 가격으로 매수할 수 있는 기회입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],

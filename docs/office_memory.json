@@ -6,7 +6,7 @@
       "total": 46,
       "wins": 14,
       "losses": 32,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 TRAC 보유 중",
       "hint": "⚠️ 강제청산 9회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,13 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "05:30",
+          "date": "2026-04-27",
+          "ticker": "TRAC",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "05:30",
           "date": "2026-04-27",
@@ -43,18 +50,15 @@
           "ticker": "ETH",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "23:00",
-          "date": "2026-04-23",
-          "ticker": "PIEVERSE",
-          "pnl": -1.26,
-          "action": "SELL",
-          "type": "force_exit"
         }
       ],
       "last_active": "2026-04-27 05:30",
       "diary": [
+        {
+          "date": "2026-04-27 05:30",
+          "lesson": "나: 오늘은 BUY가 좋았어.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-04-27 05:01",
           "lesson": "손절이 중요해. ",
@@ -64,15 +68,10 @@
           "date": "2026-04-27 04:31",
           "lesson": "나: 손절이 중요해. ",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-04-27 04:01",
-          "lesson": "손절이 중요해.",
-          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 12
+      "growth_score": 13
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '한국'(2회) — 새 각도 필요",
@@ -128,6 +127,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-27 05:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "TRAC 매수 — 거래량+105482%",
+      "type": "buy"
+    },
     {
       "time": "2026-04-27 05:30",
       "agent": "AI어드바이저",
@@ -337,13 +343,6 @@
       "icon": "🤖",
       "msg": "PIEVERSE 손절 -7.84% → 학습 기록 🚫",
       "type": "loss"
-    },
-    {
-      "time": "2026-04-22 05:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "PIEVERSE 매수 — RSI 38.6",
-      "type": "buy"
     }
   ]
 }
