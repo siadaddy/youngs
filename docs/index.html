@@ -4041,24 +4041,20 @@
       const _isoBg=document.getElementById('office-iso-bg');
       if(_isoBg)_isoBg.className=_NIGHT?'iso-night':'iso-day';
 
-      // 바닥 반사 (캐릭터 그림자 반사)
+      // 발 아래 타원 그림자
       const sorted=[...chars].sort((a,b)=>a.y-b.y);
       sorted.forEach(c=>{
         const rows=c.def.spr[0];
         const cH=rows.length*_PX, cW2=rows[0].length*_PX;
-        const reflY=Math.round(c.y)+cH;
-        if(reflY>CH-10)return;
+        const cx=Math.round(c.x)+cW2/2;
+        const cy=Math.round(c.y)+cH+1;
+        if(cy>CH-2)return;
         ctx.save();
-        ctx.globalAlpha=0.06;
-        ctx.translate(Math.round(c.x),reflY*2);
-        ctx.scale(1,-0.22);
-        if(c.facing<0){ctx.translate(cW2,0);ctx.scale(-1,1);}
-        rows.forEach((row,ry)=>{
-          for(let col=0;col<row.length;col++){
-            const k=row[col];
-            if(k!=='.'&&k!==' '&&c.def.pal[k]){ctx.fillStyle=c.def.pal[k];ctx.fillRect(col*_PX,ry*_PX,_PX,_PX);}
-          }
-        });
+        ctx.globalAlpha=0.28;
+        ctx.fillStyle='#000';
+        ctx.beginPath();
+        ctx.ellipse(cx,cy,cW2*0.38,3,0,0,Math.PI*2);
+        ctx.fill();
         ctx.restore();
       });
 
