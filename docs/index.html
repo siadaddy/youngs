@@ -1060,6 +1060,142 @@
     .olog-msg { font-size:.72rem; color:var(--text); line-height:1.35; }
     .office-mem-empty { padding:18px; text-align:center; color:var(--muted2); font-size:.78rem; }
 
+    /* ─── AI 사무실 아이소메트릭 배경 ─────────────────────── */
+    #office-iso-bg {
+      position: absolute; inset: 0; border-radius: 13px;
+      overflow: hidden; z-index: 0; pointer-events: none;
+      transition: background .5s ease;
+    }
+    #office-iso-bg.iso-night { background: #080f23; }
+    #office-iso-bg.iso-day   { background: #f0e0c0; }
+
+    .iso-ceiling {
+      position: absolute; top: 0; left: 0; right: 0; height: 13%; z-index: 1;
+    }
+    .iso-night .iso-ceiling {
+      background: linear-gradient(180deg,#0a1628,#0d1e36);
+      border-bottom: 1px solid rgba(0,229,255,.22);
+      box-shadow: 0 4px 20px rgba(0,229,255,.06);
+    }
+    .iso-day .iso-ceiling {
+      background: linear-gradient(180deg,#ede0c8,#e0d0b0);
+      border-bottom: 2px solid rgba(160,120,60,.35);
+    }
+
+    .iso-floor-area {
+      position: absolute; inset: 13% 0 0 0; overflow: hidden; z-index: 1;
+    }
+    .iso-night .iso-floor-area { background: #0c1a30; }
+    .iso-day   .iso-floor-area { background: #c8a86a; }
+
+    /* 아이소메트릭 바닥 그리드 — CSS skew 활용 */
+    .iso-floor-grid {
+      position: absolute; width: 150%; height: 160%; left: -25%; top: -30%;
+      transform: skewX(-8deg) perspective(500px) rotateX(38deg);
+      transform-origin: 50% 0%;
+    }
+    .iso-night .iso-floor-grid {
+      background-image:
+        linear-gradient(rgba(0,229,255,.1) 1px, transparent 1px),
+        linear-gradient(90deg,rgba(0,229,255,.1) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    .iso-day .iso-floor-grid {
+      background-image:
+        linear-gradient(rgba(120,80,20,.18) 1px, transparent 1px),
+        linear-gradient(90deg,rgba(120,80,20,.18) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    /* 책상 2행 4열 */
+    .desks-row {
+      position: absolute; left: 0; right: 0;
+      display: flex; justify-content: space-around; padding: 0 1%; z-index: 3;
+    }
+    .desks-top    { top: 14.5%; }
+    .desks-bottom { top: 64%; }
+
+    .desk {
+      position: relative; width: 9.5%; aspect-ratio: 2.5/1;
+      border-radius: 3px 3px 2px 2px;
+      display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5%;
+    }
+    .iso-night .desk {
+      background: linear-gradient(160deg,#1c3a5e 60%,#152b47);
+      box-shadow: 3px 4px 0 #0c1e36, 3px 7px 0 #091525, 0 14px 22px rgba(0,0,0,.55);
+    }
+    .iso-day .desk {
+      background: linear-gradient(160deg,#c49050 60%,#a87a38);
+      box-shadow: 3px 4px 0 #8a6028, 3px 7px 0 #6a4818, 0 14px 22px rgba(0,0,0,.25);
+    }
+
+    /* 모니터 파란빛 glow */
+    .desk-monitor {
+      width: 34%; aspect-ratio: 4/3; border-radius: 3px 3px 1px 1px;
+    }
+    .iso-night .desk-monitor {
+      background: #060e1e;
+      border: 1px solid rgba(0,229,255,.5);
+      box-shadow: 0 0 8px rgba(0,229,255,.6), 0 0 18px rgba(0,180,255,.3),
+                  inset 0 0 6px rgba(0,160,255,.25);
+    }
+    .iso-day .desk-monitor {
+      background: #0e1e34;
+      border: 1px solid rgba(60,140,255,.55);
+      box-shadow: 0 0 7px rgba(40,120,255,.5), 0 0 14px rgba(20,90,220,.25),
+                  inset 0 0 5px rgba(30,100,220,.2);
+    }
+
+    /* 브리핑 보드 */
+    .briefing-board {
+      position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+      width: 22%; z-index: 4; border-radius: 5px; padding: 6px 10px 8px;
+    }
+    .iso-night .briefing-board {
+      background: linear-gradient(180deg,#061424,#0a1e38);
+      border: 1px solid rgba(0,229,255,.38);
+      box-shadow: 0 0 18px rgba(0,229,255,.14), 0 0 40px rgba(0,229,255,.06),
+                  inset 0 0 10px rgba(0,100,200,.1);
+    }
+    .iso-day .briefing-board {
+      background: linear-gradient(180deg,#253560,#1c2a50);
+      border: 1px solid rgba(80,130,220,.45);
+      box-shadow: 0 0 14px rgba(60,100,200,.2), inset 0 0 8px rgba(0,60,160,.12);
+    }
+    .bb-header {
+      display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 5px;
+    }
+    .bb-title {
+      font-size: .48rem; font-weight: 900; letter-spacing: .14em;
+      color: #00e5ff; text-shadow: 0 0 8px rgba(0,229,255,.9); white-space: nowrap;
+    }
+    .bb-lines { display: flex; flex-direction: column; gap: 3px; padding: 0 4px; }
+    .bb-line { height: 2px; border-radius: 1px; opacity: .45; }
+    .iso-night .bb-line { background: rgba(0,229,255,.5); }
+    .iso-day   .bb-line { background: rgba(120,180,255,.55); }
+    .bb-line:nth-child(1) { width: 100%; }
+    .bb-line:nth-child(2) { width: 80%; }
+    .bb-line:nth-child(3) { width: 65%; }
+
+    /* ON AIR 네온 사인 — 빨간 깜빡임 */
+    .on-air {
+      font-size: .4rem; font-weight: 900; letter-spacing: .12em;
+      color: #ff1744; padding: 2px 5px;
+      border: 1px solid rgba(255,23,68,.55); border-radius: 3px;
+      background: rgba(255,23,68,.12);
+      text-shadow: 0 0 6px rgba(255,23,68,1);
+      box-shadow: 0 0 7px rgba(255,23,68,.4), inset 0 0 3px rgba(255,23,68,.1);
+      white-space: nowrap; flex-shrink: 0;
+      animation: isoOnAir 1.4s ease-in-out infinite;
+    }
+    @keyframes isoOnAir {
+      0%,100% { opacity:1; box-shadow:0 0 7px rgba(255,23,68,.4),inset 0 0 3px rgba(255,23,68,.1); }
+      50%      { opacity:.2; box-shadow:none; text-shadow:none; }
+    }
+
+    /* canvas는 iso-bg 위에 */
+    .office-canvas-wrap > #officeCanvas { position: relative; z-index: 2; }
+
     /* ─── 히스토리 필터 탭 ──────────────────────── */
     .hist-filter-bar {
       display: flex; gap: 6px; flex-wrap: wrap;
@@ -1538,6 +1674,34 @@
   <div class="office-layout">
     <!-- 캔버스 -->
     <div class="office-canvas-wrap">
+      <!-- 아이소메트릭 오피스 배경 (CSS) -->
+      <div id="office-iso-bg" class="iso-night">
+        <div class="iso-ceiling"></div>
+        <div class="iso-floor-area"><div class="iso-floor-grid"></div></div>
+        <div class="briefing-board">
+          <div class="bb-header">
+            <span class="on-air">● ON AIR</span>
+            <span class="bb-title">AI BRIEFING LIVE</span>
+          </div>
+          <div class="bb-lines">
+            <div class="bb-line"></div>
+            <div class="bb-line"></div>
+            <div class="bb-line"></div>
+          </div>
+        </div>
+        <div class="desks-row desks-top">
+          <div class="desk"><div class="desk-monitor"></div></div>
+          <div class="desk"><div class="desk-monitor"></div></div>
+          <div class="desk"><div class="desk-monitor"></div></div>
+          <div class="desk"><div class="desk-monitor"></div></div>
+        </div>
+        <div class="desks-row desks-bottom">
+          <div class="desk"><div class="desk-monitor"></div></div>
+          <div class="desk"><div class="desk-monitor"></div></div>
+          <div class="desk"><div class="desk-monitor"></div></div>
+          <div class="desk"><div class="desk-monitor"></div></div>
+        </div>
+      </div>
       <canvas id="officeCanvas" width="900" height="520"></canvas>
     </div>
 
@@ -3802,16 +3966,9 @@
       _NIGHT = _h >= 19 || _h < 7;
 
       ctx.clearRect(0,0,CW,CH);
-      bg(); windows();
-      bookshelf(843,64);
-      const DESKS=[{x:22,y:82,w:105,h:40,owner:'박기획'},{x:178,y:82,w:105,h:40,owner:'뉴스기자'},
-       {x:615,y:82,w:105,h:40,owner:'최디자'},{x:773,y:82,w:105,h:40,owner:'이가드'},
-       {x:22,y:352,w:105,h:40,owner:'한뮤직'},{x:178,y:352,w:105,h:40,owner:'AI주간트렌드'},
-       {x:615,y:352,w:105,h:40,owner:'리포터'},{x:773,y:352,w:105,h:40,owner:'AI어드바이저'}];
-      DESKS.forEach(d=>desk(d.x,d.y,d.w,d.h,d.owner));
-      meetTable();
-      plant(882,432,.88); plant(18,432,.88); plant(882,138,.65); plant(18,138,.65);
-      coffeeMachine(848,420);
+      // CSS 아이소메트릭 배경 낮/밤 동기화
+      const _isoBg=document.getElementById('office-iso-bg');
+      if(_isoBg)_isoBg.className=_NIGHT?'iso-night':'iso-day';
 
       // 바닥 반사 (캐릭터 그림자 반사)
       const sorted=[...chars].sort((a,b)=>a.y-b.y);
