@@ -1066,16 +1066,16 @@
       overflow: hidden; z-index: 0; pointer-events: none;
       transition: background .5s ease;
     }
-    #office-iso-bg.iso-night { background: #080f23; }
+    #office-iso-bg.iso-night { background: #30374b; }
     #office-iso-bg.iso-day   { background: #f0e0c0; }
 
     .iso-ceiling {
       position: absolute; top: 0; left: 0; right: 0; height: 13%; z-index: 1;
     }
     .iso-night .iso-ceiling {
-      background: linear-gradient(180deg,#0a1628,#0d1e36);
-      border-bottom: 1px solid rgba(0,229,255,.22);
-      box-shadow: 0 4px 20px rgba(0,229,255,.06);
+      background: linear-gradient(180deg,#323e50,#35465e);
+      border-bottom: 1px solid rgba(0,229,255,.28);
+      box-shadow: 0 4px 20px rgba(0,229,255,.09);
     }
     .iso-day .iso-ceiling {
       background: linear-gradient(180deg,#ede0c8,#e0d0b0);
@@ -1085,7 +1085,7 @@
     .iso-floor-area {
       position: absolute; inset: 13% 0 0 0; overflow: hidden; z-index: 1;
     }
-    .iso-night .iso-floor-area { background: #0c1a30; }
+    .iso-night .iso-floor-area { background: #344258; }
     .iso-day   .iso-floor-area { background: #c8a86a; }
 
     /* 아이소메트릭 바닥 그리드 — CSS skew 활용 */
@@ -1096,8 +1096,8 @@
     }
     .iso-night .iso-floor-grid {
       background-image:
-        linear-gradient(rgba(0,229,255,.1) 1px, transparent 1px),
-        linear-gradient(90deg,rgba(0,229,255,.1) 1px, transparent 1px);
+        linear-gradient(rgba(0,229,255,.15) 1px, transparent 1px),
+        linear-gradient(90deg,rgba(0,229,255,.15) 1px, transparent 1px);
       background-size: 52px 52px;
     }
     .iso-day .iso-floor-grid {
@@ -1121,8 +1121,8 @@
       display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5%;
     }
     .iso-night .desk {
-      background: linear-gradient(160deg,#1c3a5e 60%,#152b47);
-      box-shadow: 3px 4px 0 #0c1e36, 3px 7px 0 #091525, 0 14px 22px rgba(0,0,0,.55);
+      background: linear-gradient(160deg,#446286 60%,#3d536f);
+      box-shadow: 3px 4px 0 #34465e, 3px 7px 0 #313d4d, 0 14px 22px rgba(0,0,0,.45);
     }
     .iso-day .desk {
       background: linear-gradient(160deg,#c49050 60%,#a87a38);
@@ -1134,10 +1134,10 @@
       width: 34%; aspect-ratio: 4/3; border-radius: 3px 3px 1px 1px;
     }
     .iso-night .desk-monitor {
-      background: #060e1e;
-      border: 1px solid rgba(0,229,255,.5);
-      box-shadow: 0 0 8px rgba(0,229,255,.6), 0 0 18px rgba(0,180,255,.3),
-                  inset 0 0 6px rgba(0,160,255,.25);
+      background: #2e3646;
+      border: 1px solid rgba(0,229,255,.6);
+      box-shadow: 0 0 10px rgba(0,229,255,.7), 0 0 22px rgba(0,180,255,.35),
+                  inset 0 0 8px rgba(0,160,255,.3);
     }
     .iso-day .desk-monitor {
       background: #0e1e34;
@@ -1152,10 +1152,10 @@
       width: 22%; z-index: 4; border-radius: 5px; padding: 6px 10px 8px;
     }
     .iso-night .briefing-board {
-      background: linear-gradient(180deg,#061424,#0a1e38);
-      border: 1px solid rgba(0,229,255,.38);
-      box-shadow: 0 0 18px rgba(0,229,255,.14), 0 0 40px rgba(0,229,255,.06),
-                  inset 0 0 10px rgba(0,100,200,.1);
+      background: linear-gradient(180deg,#2e3c4c,#324660);
+      border: 1px solid rgba(0,229,255,.45);
+      box-shadow: 0 0 20px rgba(0,229,255,.2), 0 0 44px rgba(0,229,255,.09),
+                  inset 0 0 12px rgba(0,100,200,.15);
     }
     .iso-day .briefing-board {
       background: linear-gradient(180deg,#253560,#1c2a50);
