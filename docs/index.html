@@ -1177,6 +1177,22 @@
     .bb-line:nth-child(2) { width: 80%; }
     .bb-line:nth-child(3) { width: 65%; }
 
+    /* 브리핑 보드 동적 데이터 */
+    .bb-data { display:flex; flex-direction:column; gap:2px; }
+    .bb-date-row {
+      font-weight:800 !important;
+      padding-bottom:3px !important; margin-bottom:1px;
+    }
+    .bb-divider { height:1px; opacity:.35; margin-bottom:1px; }
+    .iso-night .bb-divider { background:rgba(0,229,255,.5); }
+    .iso-day   .bb-divider { background:rgba(120,180,255,.55); }
+    .bb-row {
+      font-size:.42rem; font-weight:600; line-height:1.4;
+      padding:0 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .iso-night .bb-row { color:#b8e0f8; }
+    .iso-day   .bb-row { color:#ddeeff; }
+
     /* ON AIR 네온 사인 — 빨간 깜빡임 */
     .on-air {
       font-size: .4rem; font-weight: 900; letter-spacing: .12em;
@@ -1683,10 +1699,12 @@
             <span class="on-air">● ON AIR</span>
             <span class="bb-title">AI BRIEFING LIVE</span>
           </div>
-          <div class="bb-lines">
-            <div class="bb-line"></div>
-            <div class="bb-line"></div>
-            <div class="bb-line"></div>
+          <div class="bb-data">
+            <div class="bb-row bb-date-row" id="bb-date">📅 --</div>
+            <div class="bb-divider"></div>
+            <div class="bb-row" id="bb-trade">🤖 --</div>
+            <div class="bb-row" id="bb-news">📰 --</div>
+            <div class="bb-row" id="bb-top">🏆 --</div>
           </div>
         </div>
         <div class="desks-row desks-top">
@@ -3280,15 +3298,68 @@
     }
   }
 
+  // ── 브리핑 보드 동적 업데이트 ─────────────────────────────
+  function updateBriefingBoard(data) {
+    const days = ['일','월','화','수','목','금','토'];
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}(${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    const el = id => document.getElementById(id);
+    if (el('bb-date')) el('bb-date').textContent = '📅 ' + dateStr;
+    if (!data) return;
+
+    // 🤖 AI어드바이저 현황
+    const adv = data.agents?.['AI어드바이저'];
+    if (adv && el('bb-trade')) {
+      const hold = (adv.holding || '대기 중').replace(/🔴|🟢|📊/g,'').trim();
+      const wr = adv.win_rate !== undefined ? adv.win_rate + '%' : '--';
+      el('bb-trade').textContent = `🤖 ${hold} | 승률 ${wr}`;
+    }
+
+    // 📰 박기획 최신 토픽
+    const news = data.agents?.['박기획'];
+    if (news?.recent_topics?.[0] && el('bb-news')) {
+      const t = news.recent_topics[0].trim().replace(/\s+/g,' ');
+      el('bb-news').textContent = '📰 ' + (t.length > 18 ? t.slice(0,17)+'…' : t);
+    }
+
+    // 🏆 성장 점수 1위
+    if (el('bb-top') && data.agents) {
+      let topName = '', topScore = -1;
+      Object.entries(data.agents).forEach(([name, d]) => {
+        if ((d.growth_score || 0) > topScore) { topScore = d.growth_score; topName = name; }
+      });
+      if (topName) el('bb-top').textContent = `🏆 ${topName} Lv.${topScore} 리드`;
+    }
+  }
+
+  // 실시간 시계 (1분마다 날짜 갱신)
+  setInterval(() => {
+    const el = document.getElementById('bb-date');
+    if (!el) return;
+    const days = ['일','월','화','수','목','금','토'];
+    const now = new Date();
+    el.textContent = `📅 ${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}(${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }, 60000);
+
   function initOffice() {
     if (_officeActive) return;
     _officeActive = true;
 
-    // AI 학습 기록 fetch
+    // AI 학습 기록 fetch + 브리핑 보드 초기화
+    updateBriefingBoard(null);
     fetch('office_memory.json?t=' + Date.now())
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data) _renderMemPanel(data); })
+      .then(data => { if (data) { _renderMemPanel(data); updateBriefingBoard(data); } })
       .catch(() => {});
+
+    // 브리핑 보드 30초마다 갱신
+    setInterval(() => {
+      fetch('office_memory.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(data => { if (data) updateBriefingBoard(data); })
+        .catch(() => {});
+    }, 30000);
 
     const canvas = document.getElementById('officeCanvas');
     const ctx = canvas.getContext('2d');
