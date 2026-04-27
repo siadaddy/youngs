@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BTC",
+    "buy_price": 114787000.0,
+    "qty": 0.0004,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-28 06:30"
+  },
   "history": [
+    {
+      "time": "2026-04-28 06:30",
+      "action": "BUY",
+      "ticker": "BTC",
+      "price": 114787000.0,
+      "amount_krw": 49850.0,
+      "reason": "BTC의 RSI는 33.7로 저조, MACD는 상승, ADX는 34.2로 추세가 있는 것으로 나타나며, 점수는 +5로 높은 편입니다. 이러한 신호들은 BTC에 대한 매수를 적극적으로 고려해야 함을 나타냅니다. 또한, 최근 4건의 거래 메모리에서 시간초과 청산이 3회 발생한 점을 고려하여, 추세 없는 횡보 구간 진입을 피하는 것이 중요합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-28 06:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -6.58% (기준 -4.0%)",
       "pnl_pct": -6.58,
       "pnl_krw": -7678.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-18 21:30",
-      "action": "BUY",
-      "ticker": "NCT",
-      "price": 12.31,
-      "amount_krw": 99700.0,
-      "reason": "VB✅와 점수 +5를 만족하여 최우선 매수 신호가 발생하였습니다. 또한 ADX 30.9로 추세가 존재하며, RSI 33.4로 과매도 상태입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],

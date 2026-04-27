@@ -6,7 +6,7 @@
       "total": 49,
       "wins": 15,
       "losses": 34,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 BTC 보유 중",
       "hint": "⚠️ 강제청산 9회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,13 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "06:30",
+          "date": "2026-04-28",
+          "ticker": "BTC",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "06:30",
           "date": "2026-04-28",
@@ -43,18 +50,15 @@
           "ticker": "AMP",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "05:33",
-          "date": "2026-04-27",
-          "ticker": "TRAC",
-          "pnl": 6.01,
-          "action": "SELL",
-          "type": "take_profit"
         }
       ],
       "last_active": "2026-04-28 06:30",
       "diary": [
+        {
+          "date": "2026-04-28 06:30",
+          "lesson": "나: 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-04-27 08:30",
           "lesson": "나: 데이터 믿어야지.",
@@ -64,15 +68,10 @@
           "date": "2026-04-27 08:30",
           "lesson": "손절이 중요하더라.",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-04-27 06:00",
-          "lesson": "나: 오늘은 BUY가 좋았어. ",
-          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 16
+      "growth_score": 17
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '전기차'(2회), 'AI'(2회), '한국'(2회) — 새 각도 필요",
@@ -140,6 +139,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-28 06:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 매수 — RSI 33.7·ADX 34.2",
+      "type": "buy"
+    },
     {
       "time": "2026-04-28 06:30",
       "agent": "AI어드바이저",
@@ -391,13 +397,6 @@
       "icon": "🤖",
       "msg": "CORE 익절 +5.15% 🎯",
       "type": "win"
-    },
-    {
-      "time": "2026-04-22 16:33",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "CORE 매수 — RSI 44.1·거래량+50%",
-      "type": "buy"
     }
   ]
 }
