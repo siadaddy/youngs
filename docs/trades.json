@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "BTC",
-    "buy_price": 116000000.0,
-    "qty": 0.0004,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-27 08:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-28 06:30",
+      "action": "SELL",
+      "ticker": "BTC",
+      "price": 114750000.0,
+      "amount_krw": 49850.0,
+      "reason": "8시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.08,
+      "pnl_krw": -500.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-27 08:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-18 21:15",
-      "action": "SELL",
-      "ticker": "NCT",
-      "price": 12.51,
-      "amount_krw": 99700.0,
-      "reason": "실시간 손절 -4.06% (기준 -4.0%)",
-      "pnl_pct": -4.06,
-      "pnl_krw": -4913.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 48,
+    "total_trades": 49,
     "wins": 15,
-    "losses": 33,
-    "total_pnl_krw": -34925.0,
+    "losses": 34,
+    "total_pnl_krw": -35425.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-27 08:30",
+  "updated_at": "2026-04-28 06:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,

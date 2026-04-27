@@ -1,12 +1,12 @@
 {
-  "updated": "2026-04-27 08:30",
+  "updated": "2026-04-28 06:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 31,
-      "total": 48,
+      "total": 49,
       "wins": 15,
-      "losses": 33,
-      "holding": "📊 BTC 보유 중",
+      "losses": 34,
+      "holding": "💤 현재 보유 없음",
       "hint": "⚠️ 강제청산 9회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,14 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "06:30",
+          "date": "2026-04-28",
+          "ticker": "BTC",
+          "pnl": -1.08,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "08:30",
           "date": "2026-04-27",
@@ -43,16 +51,9 @@
           "pnl": 6.01,
           "action": "SELL",
           "type": "take_profit"
-        },
-        {
-          "time": "05:30",
-          "date": "2026-04-27",
-          "ticker": "TRAC",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-04-27 08:30",
+      "last_active": "2026-04-28 06:30",
       "diary": [
         {
           "date": "2026-04-27 08:30",
@@ -139,6 +140,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-28 06:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.1% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-04-27 08:30",
       "agent": "AI어드바이저",
@@ -390,13 +398,6 @@
       "icon": "🤖",
       "msg": "CORE 매수 — RSI 44.1·거래량+50%",
       "type": "buy"
-    },
-    {
-      "time": "2026-04-22 16:33",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "GRACY 강제청산 -0.8% (8시간)",
-      "type": "exit"
     }
   ]
 }
