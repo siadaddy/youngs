@@ -1,6 +1,6 @@
 # 🤖 AI 자동화 시스템 — Claude Code 컨텍스트
 
-> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-28
+> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-29
 
 ---
 
@@ -156,24 +156,29 @@ for l in get_summary(): print(l)
 CSS 아이소메트릭 배경 + Canvas 픽셀아트 캐릭터 레이어 구조.  
 AI 직원 8명이 실시간으로 돌아다니며 학습 내용을 말풍선으로 표시.
 
-### 렌더링 구조 (2026-04-27 개편)
+### 렌더링 구조 (2026-04-29 최종)
 
 ```
 [#office-iso-bg]  ← CSS 아이소메트릭 배경 (z-index:0)
   - iso-night / iso-day 클래스로 낮/밤 전환
   - .iso-floor-grid : CSS skew + perspective 바닥 타일
+  - .meeting-table : 가운데 타원형 회의 테이블 (낮/밤 스타일)
   - .desks-row.desks-top / .desks-bottom : 책상 2행 4열
-  - .briefing-board : 중앙 상단 AI BRIEFING LIVE 보드
-  - .on-air : 빨간 네온 깜빡임
+    └ 절대위치 2+2 클러스터: left 3.25% / 20.6% / 68.6% / 84.4%
 
 [#officeCanvas]   ← Canvas 캐릭터 레이어 (z-index:2, 투명 배경)
   - bg() 제거 → 캔버스는 스프라이트·말풍선·시계만 담당
   - 발 아래 타원 그림자 (ellipse, alpha 0.28)
+
+[#briefing-board-outer]  ← 브리핑보드 래퍼 (z-index:3, canvas 위)
+  - iso-night / iso-day 클래스 render()에서 동기화
+  - .briefing-board : AI BRIEFING LIVE 보드 (캐릭터에 가려지지 않음)
+  - .on-air : 빨간 네온 깜빡임
 ```
 
 ### 낮/밤 전환 방식
 - `render()` 매 프레임: `_NIGHT = hours >= 19 || hours < 7`
-- `#office-iso-bg.className = _NIGHT ? 'iso-night' : 'iso-day'`
+- `#office-iso-bg` + `#briefing-board-outer` 동시에 className 토글
 - ☀️ 낮(07~19시): 웜 우드톤 + 갈색 그리드
 - 🌙 밤(19~07시): 다크 네이비(#30374b) + 시안 그리드 (밝기 20% 향상)
 
@@ -183,18 +188,19 @@ AI 직원 8명이 실시간으로 돌아다니며 학습 내용을 말풍선으�
 
 ### 직원 8명
 
-| 직원 | 역할 | homeX(상단/하단) | homeY |
-|------|------|-----------------|-------|
-| 박기획 | 콘텐츠 기획자 | 95 | 125 |
-| 뉴스기자 | 뉴스 수집가 | 316 | 125 |
-| 최디자 | 이미지 디자이너 | 536 | 125 |
-| 이가드 | 시장 감시원 | 757 | 125 |
-| 한뮤직 | 음악 큐레이터 | 95 | 382 |
-| AI주간트렌드 | 주간 분석가 | 316 | 382 |
-| 리포터 | 일일 리포트 작성자 | 536 | 382 |
-| AI어드바이저 | 코인 어드바이저 | 757 | 382 |
+| 직원 | 역할 | homeX | homeY |
+|------|------|-------|-------|
+| 박기획 | 콘텐츠 기획자 | 48 | 125 |
+| 뉴스기자 | 뉴스 수집가 | 204 | 125 |
+| 최디자 | 이미지 디자이너 | 636 | 125 |
+| 이가드 | 시장 감시원 | 778 | 125 |
+| 한뮤직 | 음악 큐레이터 | 48 | 382 |
+| AI주간트렌드 | 주간 분석가 | 204 | 382 |
+| 리포터 | 일일 리포트 작성자 | 636 | 382 |
+| AI어드바이저 | 코인 어드바이저 | 778 | 382 |
 
-> homeX/homeY는 CSS 책상 위치와 정렬됨 (space-around 기준 계산)
+> homeX는 스프라이트 좌단 기준. 중심 = homeX+24. CSS 책상 left % = (homeX+24)/900 - 4.75%
+> 좌클러스터(박기획·뉴스기자 / 한뮤직·AI주간트렌드) ↔ 우클러스터(최디자·이가드 / 리포터·AI어드바이저)
 
 ### 스프라이트 스펙
 - 크기: **16열 × 24행** 픽셀아트 (`_PX=3`, 화면 48×72px)
@@ -216,19 +222,25 @@ read · wboard · snack · chat · printer · nap · patrol · report · water �
 
 ## 🐛 최근 수정 이력
 
+### 2026-04-29 — AI 사무실 레이아웃 최종 정비
+- **책상 2+2 클러스터**: flex → 절대위치(3.25%/20.6%/68.6%/84.4%). 가운데 공간으로 브리핑보드 노출
+- **브리핑보드 z-index 분리**: `#office-iso-bg` 내부 → `#briefing-board-outer`(z:3) 독립 래퍼
+  - canvas(z:2) 위에 렌더링 → 캐릭터가 보드를 가리지 않음
+  - render()에서 iso-bg와 동시에 iso-night/iso-day 클래스 토글
+- **회의 테이블 추가**: 가운데 타원형 `.meeting-table` (left:33.8%, top:43.8%, 30%×25%)
+  - 밤 모드: 다크 네이비 + 시안 테두리, 낮 모드: 원목 갈색
+- **homeX 원복**: 48/204/636/778 (CSS 책상 절대위치와 픽셀 단위 정렬)
+
 ### 2026-04-27~28 — AI 사무실 전면 개편
 - **배경 구조 교체**: Canvas bg() 제거 → `#office-iso-bg` CSS 아이소메트릭 레이어
   - `iso-night` / `iso-day` 클래스, CSS skew+perspective 바닥 그리드
-  - 책상 2행 4열 (.desk), 모니터 파란빛 glow, 브리핑 보드(.briefing-board), ON AIR 네온
+  - 책상 2행 4열 (.desk), 모니터 파란빛 glow, 브리핑 보드, ON AIR 네온
 - **밤 모드 밝기 20% 상향**: 배경 #080f23→#30374b, 전체 iso-night 색상 RGB+40
 - **AI BRIEFING LIVE 보드 동적 데이터 연동**:
   - `updateBriefingBoard()` 함수, office_memory.json 30초 자동 갱신
   - 📅 날짜·시간 / 🤖 코인 현황+승률 / 📰 뉴스 토픽 / 🏆 성장 랭킹
   - 보드 크기 확대(38%, min 180px) + 폰트 .42→.64rem + 모바일 대응(72%, 줄바꿈)
 - **캐릭터 그림자**: 바닥 반사(reflY*2) → 발 아래 타원 ellipse(alpha 0.28)
-- **캐릭터 homeX/homeY**: CSS 책상 space-around 기준으로 전체 재정렬
-  - 상단열 homeX: 48/204/636/778 → 95/316/536/757, homeY: 137→125
-  - 하단열 homeX: 48/204/636/778 → 95/316/536/757, homeY: 382 유지
 
 ### 2026-04-25 (2차) — AI 사무실 낮/밤 자동 전환
 - **낮/밤 자동 전환**: `render()`에서 매 프레임 `new Date().getHours()` 체크
