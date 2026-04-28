@@ -1,6 +1,6 @@
 # 🤖 AI 자동화 시스템 — Claude Code 컨텍스트
 
-> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-25 (2차)
+> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-04-28
 
 ---
 
@@ -23,6 +23,26 @@
 
 > ⚠️ git root는 `/Users/youngchulyu/` 이고 바이브코딩/이 아님.
 > `git -C /Users/youngchulyu/ add docs/index.html` 처럼 절대경로 사용.
+
+---
+
+## 🛠 Claude Code 환경
+
+### MCP 서버
+| 서버 | 용도 | 실행 |
+|------|------|------|
+| sequential-thinking | 복잡한 문제 단계별 사고 | 자동 (node 직접 경로) |
+| claude.ai Gmail | Gmail 연동 | ✓ Connected |
+| claude.ai Notion | Notion 연동 | ✓ Connected |
+
+```bash
+# MCP 상태 확인
+claude mcp list
+```
+
+### 플러그인
+- `/simplify` — 변경 코드 재사용성·품질·효율성 3단계 리뷰 + 자동 수정
+- Context7 — 최신 라이브러리 문서 실시간 참조
 
 ---
 
@@ -133,25 +153,52 @@ for l in get_summary(): print(l)
 
 ## 🎭 AI 사무실 탭 (index.html)
 
-Canvas 픽셀아트 사무실. AI 직원 8명이 실시간으로 돌아다니며 학습 내용을 말풍선으로 표시.
+CSS 아이소메트릭 배경 + Canvas 픽셀아트 캐릭터 레이어 구조.  
+AI 직원 8명이 실시간으로 돌아다니며 학습 내용을 말풍선으로 표시.
+
+### 렌더링 구조 (2026-04-27 개편)
+
+```
+[#office-iso-bg]  ← CSS 아이소메트릭 배경 (z-index:0)
+  - iso-night / iso-day 클래스로 낮/밤 전환
+  - .iso-floor-grid : CSS skew + perspective 바닥 타일
+  - .desks-row.desks-top / .desks-bottom : 책상 2행 4열
+  - .briefing-board : 중앙 상단 AI BRIEFING LIVE 보드
+  - .on-air : 빨간 네온 깜빡임
+
+[#officeCanvas]   ← Canvas 캐릭터 레이어 (z-index:2, 투명 배경)
+  - bg() 제거 → 캔버스는 스프라이트·말풍선·시계만 담당
+  - 발 아래 타원 그림자 (ellipse, alpha 0.28)
+```
+
+### 낮/밤 전환 방식
+- `render()` 매 프레임: `_NIGHT = hours >= 19 || hours < 7`
+- `#office-iso-bg.className = _NIGHT ? 'iso-night' : 'iso-day'`
+- ☀️ 낮(07~19시): 웜 우드톤 + 갈색 그리드
+- 🌙 밤(19~07시): 다크 네이비(#30374b) + 시안 그리드 (밝기 20% 향상)
+
+### AI BRIEFING LIVE 보드 (동적 데이터)
+- `updateBriefingBoard(data)` 함수 — `initOffice()` fetch 완료 시 호출 + 30초 자동 갱신
+- 표시 내용: 📅 날짜·시간(1분 갱신) / 🤖 코인 현황+승률 / 📰 최신 뉴스 토픽 / 🏆 성장 1위
 
 ### 직원 8명
 
-| 직원 | 역할 | 특징 |
-|------|------|------|
-| 박기획 | 콘텐츠 기획자 | 네이비 정장, 금테 안경 |
-| 최디자 | 이미지 디자이너 | 보라 머리, 핑크 의상 |
-| 한뮤직 | 음악 큐레이터 | 헤드폰, 초록 후디 |
-| AI주간트렌드 | 주간 분석가 | 은발, 청록 타이 |
-| AI어드바이저 | 코인 어드바이저 | 로봇 발광 눈, 청록 밴드 |
-| 뉴스기자 | 뉴스 수집가 | 중절모, 갈색 정장 |
-| 이가드 | 시장 감시원 | 다크 유니폼, 레드 배지 |
-| 리포터 | 일일 리포트 작성자 | 웨이브 머리, 오렌지 자켓 |
+| 직원 | 역할 | homeX(상단/하단) | homeY |
+|------|------|-----------------|-------|
+| 박기획 | 콘텐츠 기획자 | 95 | 125 |
+| 뉴스기자 | 뉴스 수집가 | 316 | 125 |
+| 최디자 | 이미지 디자이너 | 536 | 125 |
+| 이가드 | 시장 감시원 | 757 | 125 |
+| 한뮤직 | 음악 큐레이터 | 95 | 382 |
+| AI주간트렌드 | 주간 분석가 | 316 | 382 |
+| 리포터 | 일일 리포트 작성자 | 536 | 382 |
+| AI어드바이저 | 코인 어드바이저 | 757 | 382 |
+
+> homeX/homeY는 CSS 책상 위치와 정렬됨 (space-around 기준 계산)
 
 ### 스프라이트 스펙
 - 크기: **16열 × 24행** 픽셀아트 (`_PX=3`, 화면 48×72px)
-- 2프레임 걷기 애니메이션
-- 각 캐릭터 고유 팔레트 (16~18색)
+- 2프레임 걷기 애니메이션, 각 캐릭터 고유 팔레트 (16~18색)
 
 ### 행동 패턴 19가지
 walk · home · coffee · window · stretch · think · rush · phone · sneak · dance ·  
@@ -163,10 +210,25 @@ read · wboard · snack · chat · printer · nap · patrol · report · water �
 ### office_memory.json
 - `coin-trader/utils/office_export.py` → AI어드바이저 데이터
 - `ai-crew/utils/office_export.py` → ai-crew 4명 데이터
+- 에이전트: AI어드바이저 / 박기획 / 최디자 / 한뮤직 / AI주간트렌드
 
 ---
 
 ## 🐛 최근 수정 이력
+
+### 2026-04-27~28 — AI 사무실 전면 개편
+- **배경 구조 교체**: Canvas bg() 제거 → `#office-iso-bg` CSS 아이소메트릭 레이어
+  - `iso-night` / `iso-day` 클래스, CSS skew+perspective 바닥 그리드
+  - 책상 2행 4열 (.desk), 모니터 파란빛 glow, 브리핑 보드(.briefing-board), ON AIR 네온
+- **밤 모드 밝기 20% 상향**: 배경 #080f23→#30374b, 전체 iso-night 색상 RGB+40
+- **AI BRIEFING LIVE 보드 동적 데이터 연동**:
+  - `updateBriefingBoard()` 함수, office_memory.json 30초 자동 갱신
+  - 📅 날짜·시간 / 🤖 코인 현황+승률 / 📰 뉴스 토픽 / 🏆 성장 랭킹
+  - 보드 크기 확대(38%, min 180px) + 폰트 .42→.64rem + 모바일 대응(72%, 줄바꿈)
+- **캐릭터 그림자**: 바닥 반사(reflY*2) → 발 아래 타원 ellipse(alpha 0.28)
+- **캐릭터 homeX/homeY**: CSS 책상 space-around 기준으로 전체 재정렬
+  - 상단열 homeX: 48/204/636/778 → 95/316/536/757, homeY: 137→125
+  - 하단열 homeX: 48/204/636/778 → 95/316/536/757, homeY: 382 유지
 
 ### 2026-04-25 (2차) — AI 사무실 낮/밤 자동 전환
 - **낮/밤 자동 전환**: `render()`에서 매 프레임 `new Date().getHours()` 체크
@@ -203,6 +265,23 @@ read · wboard · snack · chat · printer · nap · patrol · report · water �
 - ai_advisor.py: RSI<20 점수 0→-5
 - blacklist.py: add_successful_trade() 추가
 - 웹사이트: AI 직원 5명→8명
+
+### 2026-04-26 — Claude Code 환경 개선
+- Sequential Thinking MCP 서버 설치 (`/opt/homebrew/Cellar/node/24.1.0/bin/node` 직접 경로)
+- Code Simplifier 플러그인 설치 (`/simplify` 명령으로 코드 리뷰)
+- Context7 플러그인 설치
+- AI 사무실 밤 모드 순수 블랙 → 다크 네이비 (야근 사무실 느낌, 추가 20% 밝기)
+- AI 사무실 자기학습 소개 배너 추가
+- 오늘 콘텐츠 미준비 시 전날 데이터 → "준비중" 메시지로 변경
+- AI 주간 트렌드 첫 실행 시뮬레이션 완료 (04/19~04/25 7일치 분석)
+- ROOT README.md 전면 최신화
+
+### 2026-04-25 (2차) — AI 사무실 낮/밤 자동 전환
+- 낮/밤 자동 전환: 07~19시 ☀️ 원목 오피스, 19~07시 🌙 사이버펑크
+- 우측 실데이터 패널: AI어드바이저 현황 + 뉴스 + 성장 랭킹
+- AI 직원 자기학습 시스템: diary + persona + growth_score
+- 💡 시아아빠 한 줄 누락 버그 수정 (2차 패치 안전망 추가)
+- AI주간트렌드 에이전트 추가 (매주 월요일 [6/6] 단계)
 
 ### 2026-04-21 — 전면 개선
 - buy_market_order 버그 수정
