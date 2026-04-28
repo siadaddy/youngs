@@ -1148,8 +1148,9 @@
 
     /* 브리핑 보드 */
     .briefing-board {
-      position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
-      width: 22%; z-index: 4; border-radius: 5px; padding: 6px 10px 8px;
+      position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+      width: 38%; min-width: 180px; max-width: 340px;
+      z-index: 4; border-radius: 7px; padding: 10px 14px 12px;
     }
     .iso-night .briefing-board {
       background: linear-gradient(180deg,#2e3c4c,#324660);
@@ -1163,10 +1164,10 @@
       box-shadow: 0 0 14px rgba(60,100,200,.2), inset 0 0 8px rgba(0,60,160,.12);
     }
     .bb-header {
-      display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 5px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 7px;
     }
     .bb-title {
-      font-size: .48rem; font-weight: 900; letter-spacing: .14em;
+      font-size: .72rem; font-weight: 900; letter-spacing: .12em;
       color: #00e5ff; text-shadow: 0 0 8px rgba(0,229,255,.9); white-space: nowrap;
     }
     .bb-lines { display: flex; flex-direction: column; gap: 3px; padding: 0 4px; }
@@ -1178,24 +1179,31 @@
     .bb-line:nth-child(3) { width: 65%; }
 
     /* 브리핑 보드 동적 데이터 */
-    .bb-data { display:flex; flex-direction:column; gap:2px; }
+    .bb-data { display:flex; flex-direction:column; gap:4px; }
     .bb-date-row {
-      font-weight:800 !important;
-      padding-bottom:3px !important; margin-bottom:1px;
+      font-weight:800 !important; font-size:.68rem !important;
+      padding-bottom:4px !important; margin-bottom:1px;
     }
-    .bb-divider { height:1px; opacity:.35; margin-bottom:1px; }
+    .bb-divider { height:1px; opacity:.4; margin-bottom:2px; }
     .iso-night .bb-divider { background:rgba(0,229,255,.5); }
     .iso-day   .bb-divider { background:rgba(120,180,255,.55); }
     .bb-row {
-      font-size:.42rem; font-weight:600; line-height:1.4;
+      font-size:.64rem; font-weight:600; line-height:1.45;
       padding:0 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
     .iso-night .bb-row { color:#b8e0f8; }
     .iso-day   .bb-row { color:#ddeeff; }
+    /* 모바일 대응 */
+    @media(max-width:700px){
+      .briefing-board { width:72%; max-width:none; top:8%; padding:8px 12px 10px; }
+      .bb-title { font-size:.64rem; }
+      .bb-date-row { font-size:.6rem !important; }
+      .bb-row { font-size:.58rem; white-space:normal; }
+    }
 
     /* ON AIR 네온 사인 — 빨간 깜빡임 */
     .on-air {
-      font-size: .4rem; font-weight: 900; letter-spacing: .12em;
+      font-size: .6rem; font-weight: 900; letter-spacing: .12em;
       color: #ff1744; padding: 2px 5px;
       border: 1px solid rgba(255,23,68,.55); border-radius: 3px;
       background: rgba(255,23,68,.12);
