@@ -6,7 +6,7 @@
       "total": 50,
       "wins": 15,
       "losses": 35,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 WNCG 보유 중",
       "hint": "⚠️ 강제청산 8회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,13 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "13:30",
+          "date": "2026-04-28",
+          "ticker": "WNCG",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "13:30",
           "date": "2026-04-28",
@@ -43,18 +50,15 @@
           "ticker": "BTC",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "08:30",
-          "date": "2026-04-27",
-          "ticker": "AMP",
-          "pnl": -0.07,
-          "action": "SELL",
-          "type": "force_exit"
         }
       ],
       "last_active": "2026-04-28 13:30",
       "diary": [
+        {
+          "date": "2026-04-28 13:30",
+          "lesson": "나: 데이터 믿자.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-04-28 13:30",
           "lesson": "나: 데이터 믿어야지. ",
@@ -64,15 +68,10 @@
           "date": "2026-04-28 06:30",
           "lesson": "나: 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-04-27 08:30",
-          "lesson": "나: 데이터 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 18
+      "growth_score": 19
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '전기차'(3회), '사상'(3회), '한국'(3회) — 새 각도 필요",
@@ -150,6 +149,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-28 13:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "WNCG 매수 — 진입",
+      "type": "buy"
+    },
     {
       "time": "2026-04-28 13:30",
       "agent": "AI어드바이저",
@@ -422,13 +428,6 @@
       "icon": "🤖",
       "msg": "HIGH 강제청산 -2.2% (8시간)",
       "type": "exit"
-    },
-    {
-      "time": "2026-04-22 20:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "HIGH 매수 — 거래량+80%",
-      "type": "buy"
     }
   ]
 }

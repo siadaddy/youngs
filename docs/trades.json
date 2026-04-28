@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "WNCG",
+    "buy_price": 8.34,
+    "qty": 5977.2182,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-28 13:30"
+  },
   "history": [
+    {
+      "time": "2026-04-28 13:30",
+      "action": "BUY",
+      "ticker": "WNCG",
+      "price": 8.362,
+      "amount_krw": 49850.0,
+      "reason": "WNCG의 RSI가 31.6으로 저점에 위치하고 있으며, MACD가 하락하고 있지만 볼린저밴드 중하단에 위치하고 있습니다. 또한, ADX가 40.0으로 추세가 있는 것으로 나타나며, VB가 확인되었습니다. 이러한 신호들은 WNCG에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-28 13:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "8시간 보유 + 수익률 -1% 미만",
       "pnl_pct": -1.51,
       "pnl_krw": -1665.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-19 00:00",
-      "action": "BUY",
-      "ticker": "LINK",
-      "price": 13940.0,
-      "amount_krw": 99700.0,
-      "reason": "LINK의 RSI는 28.1로 과매도 상태이며, MACD는 골든크로스를 형성하여 강한 매수 신호를 보이고 있습니다. 또한 ADX는 41.7로 추세가 유지되고 있어 매수 기회로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
