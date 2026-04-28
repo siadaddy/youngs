@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "WNCG",
-    "buy_price": 8.34,
-    "qty": 5977.2182,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-28 13:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-29 00:30",
+      "action": "SELL",
+      "ticker": "WNCG",
+      "price": 8.158,
+      "amount_krw": 49850.0,
+      "reason": "8시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -2.18,
+      "pnl_krw": -1088.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-28 13:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-20 21:30",
-      "action": "SELL",
-      "ticker": "LINK",
-      "price": 13730.0,
-      "amount_krw": 99700.0,
-      "reason": "8시간 보유 + 수익률 -1% 미만",
-      "pnl_pct": -1.51,
-      "pnl_krw": -1665.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 50,
+    "total_trades": 51,
     "wins": 15,
-    "losses": 35,
-    "total_pnl_krw": -35687.0,
+    "losses": 36,
+    "total_pnl_krw": -36775.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-28 13:30",
+  "updated_at": "2026-04-29 00:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
