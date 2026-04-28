@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "BTC",
-    "buy_price": 114787000.0,
-    "qty": 0.0004,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-28 06:30",
-    "high_price": 114821000.0
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-28 13:30",
+      "action": "SELL",
+      "ticker": "BTC",
+      "price": 114131000.0,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목인 BTC의 수익률이 -0.57%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한, 다른 종목들 중에서 더 좋은 매수 기회가 있는 것으로 판단되므로 기회 교체를 위해 매도하는 것이 좋을 것으로 판단됩니다.",
+      "pnl_pct": -0.57,
+      "pnl_krw": -262.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-28 06:30",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-18 23:55",
-      "action": "SELL",
-      "ticker": "NCT",
-      "price": 11.5,
-      "amount_krw": 99700.0,
-      "reason": "실시간 손절 -6.58% (기준 -4.0%)",
-      "pnl_pct": -6.58,
-      "pnl_krw": -7678.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 49,
+    "total_trades": 50,
     "wins": 15,
-    "losses": 34,
-    "total_pnl_krw": -35425.0,
+    "losses": 35,
+    "total_pnl_krw": -35687.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-28 07:30",
+  "updated_at": "2026-04-28 13:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,
