@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "ETH",
-    "buy_price": 3438000.0,
-    "qty": 0.0144,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-29 21:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-29 22:30",
+      "action": "SELL",
+      "ticker": "ETH",
+      "price": 3430000.0,
+      "amount_krw": 49850.0,
+      "reason": "보유 시간 60분 경과, 기술 점수 +3, RSI 39.6, MACD 하락, 수익률 -0.23%로 뚜렷한 반등 신호가 없으며, 다른 종목에 비해 상대적으로 좋지 않은 상황이므로 매도 결정.",
+      "pnl_pct": -0.23,
+      "pnl_krw": -115.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-29 21:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 09:19",
-      "action": "SELL",
-      "ticker": "FORT",
-      "price": 28.85,
-      "amount_krw": 99700.0,
-      "reason": "실시간 손절 -4.09% (기준 -4.0%)",
-      "pnl_pct": -4.09,
-      "pnl_krw": -4281.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 53,
+    "total_trades": 54,
     "wins": 16,
-    "losses": 37,
-    "total_pnl_krw": -36061.0,
+    "losses": 38,
+    "total_pnl_krw": -36176.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-29 21:30",
+  "updated_at": "2026-04-29 22:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
