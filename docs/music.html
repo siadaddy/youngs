@@ -1264,44 +1264,41 @@ function animate(now = 0) {
   _projMat.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
   _frustum.setFromProjectionMatrix(_projMat);
 
-  // ── 2: 호버 raycasting 2프레임마다 ──
-  // newHov 판정을 raycast 블록 안에서만 수행 — 홀수 프레임에 null이 되어 깜빡이는 버그 수정
-  if (tick % 2 === 0) {
-    ray.setFromCamera(mouse, camera);
-    const hits = ray.intersectObjects(sprites);
-    const newHov = hits.length ? hits[0].object : null;
-    if (newHov !== hovered) {
-      if (hovered) {
-        hovered.scale.setScalar(hovered.userData.base);
-        tip.style.opacity = '0';
-        cur.classList.remove('hover');
-      }
-      hovered = newHov;
-      if (hovered) {
-        cur.classList.add('hover');
-        const ud = hovered.userData;
-        const gInfo = GENRE[ud.g] || GENRE['기타'];
-        document.getElementById('tip-t').textContent = ud.t;
-        document.getElementById('tip-a').textContent = ud.a;
-        const gEl = document.getElementById('tip-genre');
-        gEl.textContent = ud.g || '기타';
-        gEl.style.background = gInfo.color + '33';
-        gEl.style.color = gInfo.color;
-        gEl.style.border = `1px solid ${gInfo.color}55`;
-        document.getElementById('tip-mood').textContent = ud.d || '';
-        document.getElementById('tip-art-bg').style.background =
-          `radial-gradient(circle at 40% 40%, ${gInfo.color}99, ${gInfo.color}22 60%, transparent)`;
-        const artEl = document.getElementById('tip-art');
-        const existing = artEl.querySelector('img');
-        if (existing) existing.remove();
-        fetchArt({ t: ud.t, a: ud.a }).then(url => {
-          if (!url || hovered?.userData.t !== ud.t) return;
-          const img = document.createElement('img');
-          img.src = url;
-          img.onerror = () => img.remove();
-          artEl.insertBefore(img, artEl.firstChild);
-        });
-      }
+  // ── 2: 호버 raycasting (매 프레임) ──
+  ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(sprites);
+  const newHov = hits.length ? hits[0].object : null;
+  if (newHov !== hovered) {
+    if (hovered) {
+      hovered.scale.setScalar(hovered.userData.base);
+      tip.style.opacity = '0';
+      cur.classList.remove('hover');
+    }
+    hovered = newHov;
+    if (hovered) {
+      cur.classList.add('hover');
+      const ud = hovered.userData;
+      const gInfo = GENRE[ud.g] || GENRE['기타'];
+      document.getElementById('tip-t').textContent = ud.t;
+      document.getElementById('tip-a').textContent = ud.a;
+      const gEl = document.getElementById('tip-genre');
+      gEl.textContent = ud.g || '기타';
+      gEl.style.background = gInfo.color + '33';
+      gEl.style.color = gInfo.color;
+      gEl.style.border = `1px solid ${gInfo.color}55`;
+      document.getElementById('tip-mood').textContent = ud.d || '';
+      document.getElementById('tip-art-bg').style.background =
+        `radial-gradient(circle at 40% 40%, ${gInfo.color}99, ${gInfo.color}22 60%, transparent)`;
+      const artEl = document.getElementById('tip-art');
+      const existing = artEl.querySelector('img');
+      if (existing) existing.remove();
+      fetchArt({ t: ud.t, a: ud.a }).then(url => {
+        if (!url || hovered?.userData.t !== ud.t) return;
+        const img = document.createElement('img');
+        img.src = url;
+        img.onerror = () => img.remove();
+        artEl.insertBefore(img, artEl.firstChild);
+      });
     }
   }
 
