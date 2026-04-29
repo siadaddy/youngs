@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "A8",
+    "buy_price": 16.27,
+    "qty": 3063.9213,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-30 03:30"
+  },
   "history": [
+    {
+      "time": "2026-04-30 03:30",
+      "action": "BUY",
+      "ticker": "A8",
+      "price": 16.27,
+      "amount_krw": 49850.0,
+      "reason": "RSI 값이 높지만, MACD 상승과 거래량의 급증, 볼린저밴드 중상단에 위치하여 상승 추세가 예상되며, 점수도 양호하여 매수 신호가 발생했습니다. 또한, VB✅과 거래량 변화가 20% 이상 증가하여 BUY 최우선 조건을 만족합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-29 23:14",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.97,
       "pnl_krw": -937.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 15:00",
-      "action": "BUY",
-      "ticker": "FORT",
-      "price": 26.72,
-      "amount_krw": 99700.0,
-      "reason": "현재가가 과매도 상태에 있고, RSI가 24.0으로 과매도 상태이며, ADX가 30.8로 추세가 있는 상황입니다. 또한 VB가 ✅로 변동성 돌파 신호가 확인되었습니다. 하지만 FORT는 재진입 금지 종목으로 BUY 절대 금지입니다. 대신 다른 종목을 살펴보면, EDU의 RSI가 45.7로 과매도 상태가 아니며, ADX가 29.7로 추세가 있고, VB가 ✅로 변동성 돌파 신호가 확인됩니다. 따라서 EDU를 BUY하는 것이 적절합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-29 23:14",
+  "updated_at": "2026-04-30 03:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,

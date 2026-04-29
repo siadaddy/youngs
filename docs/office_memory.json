@@ -1,12 +1,12 @@
 {
-  "updated": "2026-04-29 22:30",
+  "updated": "2026-04-30 03:30",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 30,
-      "total": 54,
+      "win_rate": 29,
+      "total": 55,
       "wins": 16,
-      "losses": 38,
-      "holding": "📊 MVC 보유 중",
+      "losses": 39,
+      "holding": "📊 A8 보유 중",
       "hint": "⚠️ 강제청산 7회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "03:30",
+          "date": "2026-04-30",
+          "ticker": "A8",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "23:14",
+          "date": "2026-04-29",
+          "ticker": "MVC",
+          "pnl": -4.91,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
         {
           "time": "22:30",
           "date": "2026-04-29",
@@ -36,43 +51,28 @@
           "ticker": "ETH",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "21:30",
-          "date": "2026-04-29",
-          "ticker": "LIT",
-          "pnl": -0.52,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "19:00",
-          "date": "2026-04-29",
-          "ticker": "LIT",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-04-29 22:30",
+      "last_active": "2026-04-30 03:30",
       "diary": [
         {
-          "date": "2026-04-29 22:30",
+          "date": "2026-04-30 03:30",
           "lesson": "나, 기술적 지표 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-04-29 22:30",
-          "lesson": "나, 손절 중요해.",
-          "trigger": "sell"
+          "date": "2026-04-30 03:00",
+          "lesson": "나, 기술적 지표 믿어야지.",
+          "trigger": "buy"
         },
         {
-          "date": "2026-04-29 21:30",
-          "lesson": "나: 기술적 지표 중요하네",
+          "date": "2026-04-30 02:30",
+          "lesson": "나, 기술적 지표 믿어야지.",
           "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 33
+      "growth_score": 41
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '한국'(4회), '전기차'(3회), '사상'(3회) — 새 각도 필요",
@@ -150,6 +150,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-30 03:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "A8 매수 — 거래량+20%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-04-29 23:14",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MVC 손절 -4.91% → 학습 기록 🚫",
+      "type": "loss"
+    },
     {
       "time": "2026-04-29 22:30",
       "agent": "AI어드바이저",
@@ -387,20 +401,6 @@
       "icon": "🎨",
       "msg": "📖 역시 Pollinations.ai는 간단한 프롬프트에 제일 잘 ",
       "type": "diary"
-    },
-    {
-      "time": "2026-04-26 21:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "KAT 매수 — RSI 43.0",
-      "type": "buy"
-    },
-    {
-      "time": "2026-04-26 21:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ETH 익절 +0.41% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-04-26",
