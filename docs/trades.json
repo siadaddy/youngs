@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "MVC",
+    "buy_price": 2.65,
+    "qty": 18811.3207,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-29 22:30"
+  },
   "history": [
+    {
+      "time": "2026-04-29 22:30",
+      "action": "BUY",
+      "ticker": "MVC",
+      "price": 2.649,
+      "amount_krw": 49850.0,
+      "reason": "MVC의 RSI는 26.1로 과매도 상태이며, MACD는 하락하고 있지만 BB 중하단에 위치해 있어 반등의 가능성이 있다. 또한 VB✅와 거래량 변화가 양호하여 BUY 신호가 발생했다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-29 22:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -4.31% (기준 -4.0%)",
       "pnl_pct": -4.31,
       "pnl_krw": -4322.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-21 11:30",
-      "action": "BUY",
-      "ticker": "FORT",
-      "price": 29.0,
-      "amount_krw": 99700.0,
-      "reason": "VB✅와 점수 +5 이상으로 BUY 최우선 조건을 만족하며, ADX 30.4로 추세가 있는 것으로 판단됩니다. 또한 현재가가 볼린저밴드 중하단에 위치해 있어 매수 기회로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
