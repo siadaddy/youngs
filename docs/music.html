@@ -943,9 +943,9 @@ function buildGalaxy(songs) {
     const z = Math.sin(theta) * diskR + gauss() * 8;
     const y = gauss() * (8 + diskR * 0.04);
 
-    // 인기도 기반 노드 크기 (1~10px, 원근감 편차 확대)
+    // 인기도 기반 노드 크기 (0.2~2px, 원근감 편차 확대)
     const score = song.s || 7;
-    const base  = 1 + (score - 1) / 9 * 9;   // score 1 → 1px, score 10 → 10px
+    const base  = 0.2 + (score - 1) / 9 * 1.8;   // score 1 → 0.2px, score 10 → 2px
 
     const spr = new THREE.Sprite(new THREE.SpriteMaterial({
       map: getNodeTex(hue),
