@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ETH",
+    "buy_price": 3438000.0,
+    "qty": 0.0144,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-29 21:30"
+  },
   "history": [
+    {
+      "time": "2026-04-29 21:30",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 3438000.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 39.8로 과매도 상태가 아니며, MACD는 하락하지만 ADX는 40.5로 추세가 있는 것으로 나타납니다. 또한 거래량이 88% 증가하여 강한 매수 신호를 보이고 있습니다. 따라서 ETH를 매수하는 것이 좋습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-29 21:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -4.09% (기준 -4.0%)",
       "pnl_pct": -4.09,
       "pnl_krw": -4281.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-21 07:30",
-      "action": "BUY",
-      "ticker": "FORT",
-      "price": 30.11,
-      "amount_krw": 99700.0,
-      "reason": "VB✅와 점수가 양호하여 BUY 신호가 발생하였으며, 빠른 진입과 청산을 목표로 하는 30분봉 단기 매매 봇에 적합한 종목입니다. 또한, 현재가와 거래량 변화가 매수 규칙에 위배되지 않아 진입이 가능합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
