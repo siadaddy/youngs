@@ -104,7 +104,7 @@ JSON 형식으로만 출력 (설명 없이):
     def _try_fetch() -> list:
         try:
             raw = ask_gemini25_first(prompt, system=SYSTEM, temperature=0.85,
-                                    json_mode=True, max_tokens=2000)
+                                    json_mode=False, max_tokens=2000)
             songs = _extract_songs(raw)
             for s in songs:
                 s["g"] = genre_name
