@@ -89,7 +89,7 @@ def _load_existing_songs() -> list:
 
 
 def _fetch_genre(genre_name: str, genre_desc: str) -> list:
-    """장르 1개 10곡 수집 (실패 시 빈 리스트)"""
+    """장르 1개 10곡 수집. 5곡 미만이면 1회 재시도."""
     hints = _music_hints_cache or ""
     prompt = f"""{genre_desc}{hints}
 
@@ -101,16 +101,28 @@ def _fetch_genre(genre_name: str, genre_desc: str) -> list:
 JSON 형식으로만 출력 (설명 없이):
 {{"songs":[{{"t":"곡제목","a":"아티스트명","g":"{genre_name}","s":인기도1~10,"d":"분위기15자이내"}},...]}}"""
 
-    try:
-        raw = ask_gemini25_first(prompt, system=SYSTEM, temperature=0.85,
-                                json_mode=True, max_tokens=1500)
-        songs = _extract_songs(raw)
-        for s in songs:
-            s["g"] = genre_name
-        return songs
-    except Exception as e:
-        print(f"  ⚠️  [{genre_name}] 수집 실패: {e}")
-        return []
+    def _try_fetch() -> list:
+        try:
+            raw = ask_gemini25_first(prompt, system=SYSTEM, temperature=0.85,
+                                    json_mode=True, max_tokens=2000)
+            songs = _extract_songs(raw)
+            for s in songs:
+                s["g"] = genre_name
+            return songs
+        except Exception as e:
+            print(f"  ⚠️  [{genre_name}] API 실패: {e}")
+            return []
+
+    songs = _try_fetch()
+
+    # 5곡 미만이면 1회 재시도
+    if len(songs) < 5:
+        print(f"  🔄 [{genre_name}] {len(songs)}곡 부족 → 재시도...", end=" ", flush=True)
+        retry = _try_fetch()
+        if len(retry) > len(songs):
+            songs = retry
+
+    return songs
 
 
 def run() -> list:
