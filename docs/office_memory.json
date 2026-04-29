@@ -1,19 +1,28 @@
 {
-  "updated": "2026-04-29 19:00",
+  "updated": "2026-04-29 21:30",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 31,
-      "total": 52,
+      "win_rate": 30,
+      "total": 53,
       "wins": 16,
-      "losses": 36,
-      "holding": "📊 LIT 보유 중",
-      "hint": "⚠️ 강제청산 8회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
+      "losses": 37,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 강제청산 7회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
-        "NCT(3회 차단)",
-        "FORT(2회 차단)",
-        "SKL(2회)"
+        "FORT(5회 차단)",
+        "EDU(5회 차단)",
+        "PIEVERSE(5회 차단)",
+        "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "21:30",
+          "date": "2026-04-29",
+          "ticker": "LIT",
+          "pnl": -0.52,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "19:00",
           "date": "2026-04-29",
@@ -43,17 +52,15 @@
           "pnl": -2.18,
           "action": "SELL",
           "type": "force_exit"
-        },
-        {
-          "time": "13:30",
-          "date": "2026-04-28",
-          "ticker": "WNCG",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-04-29 19:00",
+      "last_active": "2026-04-29 21:30",
       "diary": [
+        {
+          "date": "2026-04-29 21:30",
+          "lesson": "손절이 중요해. ",
+          "trigger": "sell"
+        },
         {
           "date": "2026-04-29 19:00",
           "lesson": "나: 손절 중요해",
@@ -63,15 +70,10 @@
           "date": "2026-04-29 19:00",
           "lesson": "나: 손절 중요해",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-04-29 11:31",
-          "lesson": "나: 손절이 중요해.",
-          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 29
+      "growth_score": 30
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '한국'(4회), '전기차'(3회), '사상'(3회) — 새 각도 필요",
@@ -149,6 +151,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-29 21:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "LIT 매도 -0.5%",
+      "type": "sell"
+    },
     {
       "time": "2026-04-29 19:00",
       "agent": "AI어드바이저",
@@ -428,13 +437,6 @@
       "icon": "🤖",
       "msg": "PIEVERSE 매수 — RSI 31.4·ADX 37.1",
       "type": "buy"
-    },
-    {
-      "time": "2026-04-23 12:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 강제청산 -1.5% (8시간)",
-      "type": "exit"
     }
   ]
 }

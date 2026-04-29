@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "LIT",
-    "buy_price": 1335.0,
-    "qty": 37.3408,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-29 19:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-29 21:30",
+      "action": "SELL",
+      "ticker": "LIT",
+      "price": 1328.0,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 LIT의 수익률이 -0.52%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한, 다른 종목 중 ETH와 PRL의 기술 점수가 높고, VB✅ 및 거래량 증가로 BUY 신호가 강합니다. 따라서 기회 교체를 통해 수익성을 높이는 것이 좋습니다.",
+      "pnl_pct": -0.52,
+      "pnl_krw": -261.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-29 19:00",
       "action": "BUY",
@@ -545,45 +550,44 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 07:30",
-      "action": "SELL",
-      "ticker": "MERL",
-      "price": 55.72,
-      "amount_krw": 99700.0,
-      "reason": "트레일링 스탑 (고점 대비 -2.5%)",
-      "pnl_pct": 0.25,
-      "pnl_krw": 264.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 52,
+    "total_trades": 53,
     "wins": 16,
-    "losses": 36,
-    "total_pnl_krw": -35800.0,
+    "losses": 37,
+    "total_pnl_krw": -36061.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-29 19:00",
+  "updated_at": "2026-04-29 21:30",
   "blacklist": {
     "FORT": {
-      "stop_loss_count": 2,
-      "last_stop_loss": "2026-04-21 12:49",
-      "blacklisted_until": "2026-04-24 12:49",
+      "stop_loss_count": 5,
+      "last_stop_loss": "2026-04-29 00:00",
+      "blacklisted_until": "2026-05-29 00:00",
       "history": [
         "2026-04-21 09:19",
-        "2026-04-21 12:49"
+        "2026-04-21 12:49",
+        "2026-04-29 00:00"
+      ]
+    },
+    "EDU": {
+      "stop_loss_count": 5,
+      "last_stop_loss": "2026-04-29 00:00",
+      "blacklisted_until": "2026-05-29 00:00",
+      "history": [
+        "2026-04-29 00:00"
       ]
     },
     "PIEVERSE": {
-      "stop_loss_count": 1,
-      "last_stop_loss": "2026-04-20 23:46",
-      "blacklisted_until": null,
+      "stop_loss_count": 5,
+      "last_stop_loss": "2026-04-29 00:00",
+      "blacklisted_until": "2026-05-29 00:00",
       "history": [
-        "2026-04-20 23:46"
+        "2026-04-20 23:46",
+        "2026-04-29 00:00"
       ]
     },
     "NCT": {
