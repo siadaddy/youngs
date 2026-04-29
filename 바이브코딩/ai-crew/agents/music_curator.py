@@ -5,7 +5,7 @@ from utils.agent_memory import remember, get_hints
 
 SYSTEM = """음악 큐레이터. JSON만 출력합니다."""
 
-DOCS_PATH = os.path.join(os.path.dirname(__file__), '../../docs')
+DOCS_PATH = os.path.join(os.path.dirname(__file__), '../../../docs')
 
 
 def _extract_songs(raw: str) -> list:
