@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "XRP",
-    "buy_price": 2045.0,
-    "qty": 24.3765,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-29 01:00",
-    "high_price": 2058.0
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-04-29 19:00",
+      "action": "SELL",
+      "ticker": "XRP",
+      "price": 2085.0,
+      "amount_krw": 49850.0,
+      "reason": "보유 시간과 무관하게 RSI 75+ + MACD 데드크로스에 가까운 상황이므로 매도하는 것이 좋으며, 현재 수익률도 1.96%로 낮아 교체를 고려할 수 있습니다.",
+      "pnl_pct": 1.96,
+      "pnl_krw": 975.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-29 01:00",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-20 23:46",
-      "action": "SELL",
-      "ticker": "PIEVERSE",
-      "price": 1400.0,
-      "amount_krw": 99700.0,
-      "reason": "실시간 손절 -4.24% (기준 -4.0%)",
-      "pnl_pct": -4.24,
-      "pnl_krw": -4611.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 51,
-    "wins": 15,
+    "total_trades": 52,
+    "wins": 16,
     "losses": 36,
-    "total_pnl_krw": -36775.0,
+    "total_pnl_krw": -35800.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-29 07:30",
+  "updated_at": "2026-04-29 19:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 2,

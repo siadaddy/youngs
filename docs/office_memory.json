@@ -1,12 +1,12 @@
 {
-  "updated": "2026-04-29 07:43",
+  "updated": "2026-04-29 19:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 29,
-      "total": 51,
-      "wins": 15,
+      "win_rate": 31,
+      "total": 52,
+      "wins": 16,
       "losses": 36,
-      "holding": "📊 XRP 보유 중",
+      "holding": "💤 현재 보유 없음",
       "hint": "⚠️ 강제청산 8회 — 횡보 구간 진입 자제 | 🚫 차단 종목: NCT(3회 차단), FORT(2회 차단)",
       "blacklist": [
         "NCT(3회 차단)",
@@ -14,6 +14,14 @@
         "SKL(2회)"
       ],
       "recent": [
+        {
+          "time": "19:00",
+          "date": "2026-04-29",
+          "ticker": "XRP",
+          "pnl": 1.96,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "01:00",
           "date": "2026-04-29",
@@ -43,35 +51,28 @@
           "pnl": -0.57,
           "action": "SELL",
           "type": "force_exit"
-        },
-        {
-          "time": "06:30",
-          "date": "2026-04-28",
-          "ticker": "BTC",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-04-29 01:00",
+      "last_active": "2026-04-29 19:00",
       "diary": [
         {
-          "date": "2026-04-29 06:31",
-          "lesson": "나: 손절 빨리 해야겠다.",
+          "date": "2026-04-29 19:00",
+          "lesson": "나: 손절 중요해",
           "trigger": "sell"
         },
         {
-          "date": "2026-04-29 01:00",
-          "lesson": "나: 데이터 믿자.",
-          "trigger": "buy"
+          "date": "2026-04-29 11:31",
+          "lesson": "나: 손절이 중요해.",
+          "trigger": "sell"
         },
         {
-          "date": "2026-04-28 23:30",
-          "lesson": "나: 손절은 중요해.",
+          "date": "2026-04-29 11:01",
+          "lesson": "손절이 중요해. ",
           "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 24
+      "growth_score": 28
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: '한국'(4회), '전기차'(3회), '사상'(3회) — 새 각도 필요",
@@ -149,6 +150,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-04-29 19:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 익절 +1.96% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-04-29 01:00",
       "agent": "AI어드바이저",
@@ -428,13 +436,6 @@
       "icon": "🤖",
       "msg": "XRP 매수 — RSI 40.8",
       "type": "buy"
-    },
-    {
-      "time": "2026-04-23 04:11",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "MET 익절 +5.17% 🎯",
-      "type": "win"
     }
   ]
 }
