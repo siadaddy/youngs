@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ETH",
+    "buy_price": 3372000.0,
+    "qty": 0.0147,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-04-30 09:00"
+  },
   "history": [
+    {
+      "time": "2026-04-30 09:00",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 3372000.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 42.9로 상대적으로 낮은 수준이며, MACD는 상승하고 있습니다. 또한, 볼린저밴드의 중하단에 위치해 있기 때문에 매수 신호가 발생한 것으로 판단됩니다. 따라서 ETH를 매수하는 것이 적절한 것으로 보입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-04-30 04:44",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.07,
       "pnl_krw": -64.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 16:00",
-      "action": "BUY",
-      "ticker": "USDT",
-      "price": 1479.0,
-      "amount_krw": 99700.0,
-      "reason": "USDT의 RSI가 28.6으로 과매도 상태이며, MACD 골든크로스 신호가 발생하여 강한 매수 신호를 보이고 있습니다. 또한, ADX가 57.6으로 추세가 확인되며, 점수가 +6으로 높아 매수에 유리한 조건입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-04-30 04:44",
+  "updated_at": "2026-04-30 09:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
