@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-30 09:00",
+  "updated": "2026-04-30 09:38",
   "agents": {
     "AI어드바이저": {
       "win_rate": 29,
@@ -75,15 +75,20 @@
       "growth_score": 50
     },
     "박기획": {
-      "hint": "⚠️ 반복 키워드: '한국'(4회), '전기차'(3회), '사상'(3회) — 새 각도 필요",
+      "hint": "⚠️ 반복 키워드: 'AI'(4회), '한국'(4회), '증시'(3회) — 새 각도 필요",
       "recent_topics": [
-        "혼다, 한국 시장 철수? 🚗💨",
-        "🚨총리, 의회 수사 면제!",
-        "화물연대-BGF로지스, 잠정 합의! ✅",
-        "오픈AI 쇼크에 반도체주 급락! 📉"
+        "GM, 소형 SUV 허브로 우뚝 🚀",
+        "국제유가, 6.95% 급등 마감 📈",
+        "삼성, 4나노 수율 80% 돌파! 🚀",
+        "AI 반도체 덕에 신흥국 증시 '활활' 🔥"
       ],
-      "last_active": "2026-04-29",
+      "last_active": "2026-04-30",
       "diary": [
+        {
+          "date": "2026-04-30",
+          "lesson": "글로벌 기술 경제 아우르니 역시 핵심이 콕 집혀.",
+          "trigger": "daily_plan"
+        },
         {
           "date": "2026-04-29",
           "lesson": "글로벌 국내 아우르니 역시 핵심 5개 콕 집히네.",
@@ -93,21 +98,21 @@
           "date": "2026-04-28",
           "lesson": "글로벌 기술, 경제 흐름을 짚으니 시야가 확 트이네.",
           "trigger": "daily_plan"
-        },
-        {
-          "date": "2026-04-27",
-          "lesson": "지역 넘어 글로벌, 국내를 아우르니 시야가 정말 넓어졌어.",
-          "trigger": "daily_plan"
         }
       ],
-      "persona": "",
-      "growth_score": 4
+      "persona": "나는 뉴스레터 기획자야.",
+      "growth_score": 5
     },
     "최디자": {
       "hint": "✅ 이미지 성공률 100%",
       "success_rate": 100,
-      "last_active": "2026-04-29",
+      "last_active": "2026-04-30",
       "diary": [
+        {
+          "date": "2026-04-30",
+          "lesson": "오늘도 Pollinations.ai랑 잘 맞았다.",
+          "trigger": "daily_design"
+        },
         {
           "date": "2026-04-29",
           "lesson": "역시 Pollinations.ai는 간단한 프롬프트가 최고야!",
@@ -117,27 +122,28 @@
           "date": "2026-04-28",
           "lesson": "Pollinations.ai는 역시 간단한 프롬프트에 강한 것 같아. 오늘 완전 성공!",
           "trigger": "daily_design"
-        },
+        }
+      ],
+      "persona": "나는 AI 이미지 디자이너 최디자야. Pollinations.ai는 간단한 프롬프트에 제일 잘 반응하더라.",
+      "growth_score": 5
+    },
+    "한뮤직": {
+      "hint": "⚠️ Stray Kids(2회), BLACKPINK(2회) 반복 — 다양화 필요",
+      "overused": [
+        "Stray Kids(2회)",
+        "BLACKPINK(2회)",
+        "NewJeans(2회)"
+      ],
+      "last_active": "2026-04-29",
+      "diary": [
         {
-          "date": "2026-04-27",
-          "lesson": "역시 Pollinations.ai는 간단한 프롬프트에 제일 잘 반응하네!",
-          "trigger": "daily_design"
+          "date": "2026-04-29",
+          "lesson": "내가 정말 다양한 음악을 많이 듣는구나.",
+          "trigger": "weekly_music"
         }
       ],
       "persona": "",
-      "growth_score": 4
-    },
-    "한뮤직": {
-      "hint": "⚠️ Eminem(2회), Jay-Z(2회) 반복 — 다양화 필요",
-      "overused": [
-        "Eminem(2회)",
-        "Jay-Z(2회)",
-        "Jungkook(2회)"
-      ],
-      "last_active": "2026-04-25",
-      "diary": [],
-      "persona": "",
-      "growth_score": 0
+      "growth_score": 1
     },
     "AI주간트렌드": {
       "hint": "📊 AI 혁신과 경제 성장 속 자동차 격변 🤖💰🚗",
@@ -170,6 +176,62 @@
       "icon": "🤖",
       "msg": "A8 매수 — 거래량+20%",
       "type": "buy"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "박기획",
+      "icon": "📋",
+      "msg": "카드뉴스 주제 확정: GM, 소형 SUV 허브로 우뚝 🚀",
+      "type": "plan"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "최디자",
+      "icon": "🎨",
+      "msg": "✅ 올해도 무더위? 폭염 대비 비상! ☀️ 이미지 성공",
+      "type": "design"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "최디자",
+      "icon": "🎨",
+      "msg": "✅ AI 반도체 덕에 신흥국 증시 '활활'  이미지 성공",
+      "type": "design"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "최디자",
+      "icon": "🎨",
+      "msg": "✅ 삼성, 4나노 수율 80% 돌파! 🚀 이미지 성공",
+      "type": "design"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "최디자",
+      "icon": "🎨",
+      "msg": "✅ 국제유가, 6.95% 급등 마감 📈 이미지 성공",
+      "type": "design"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "최디자",
+      "icon": "🎨",
+      "msg": "✅ GM, 소형 SUV 허브로 우뚝 🚀 이미지 성공",
+      "type": "design"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "박기획",
+      "icon": "📋",
+      "msg": "📖 글로벌 기술 경제 아우르니 역시 핵심이 콕 집혀.",
+      "type": "diary"
+    },
+    {
+      "time": "2026-04-30",
+      "agent": "최디자",
+      "icon": "🎨",
+      "msg": "📖 오늘도 Pollinations.ai랑 잘 맞았다.",
+      "type": "diary"
     },
     {
       "time": "2026-04-29 23:14",
@@ -250,31 +312,10 @@
     },
     {
       "time": "2026-04-29",
-      "agent": "최디자",
-      "icon": "🎨",
-      "msg": "✅ 오픈AI 쇼크에 반도체주 급락! 📉 이미지 성공",
-      "type": "design"
-    },
-    {
-      "time": "2026-04-29",
-      "agent": "최디자",
-      "icon": "🎨",
-      "msg": "✅ 화물연대-BGF로지스, 잠정 합의! ✅ 이미지 성공",
-      "type": "design"
-    },
-    {
-      "time": "2026-04-29",
-      "agent": "최디자",
-      "icon": "🎨",
-      "msg": "✅ 🚨총리, 의회 수사 면제! 이미지 성공",
-      "type": "design"
-    },
-    {
-      "time": "2026-04-29",
-      "agent": "최디자",
-      "icon": "🎨",
-      "msg": "✅ 혼다, 한국 시장 철수? 🚗💨 이미지 성공",
-      "type": "design"
+      "agent": "한뮤직",
+      "icon": "🎵",
+      "msg": "플레이리스트 58곡 큐레이션 완료",
+      "type": "music"
     },
     {
       "time": "2026-04-29",
@@ -288,6 +329,13 @@
       "agent": "최디자",
       "icon": "🎨",
       "msg": "📖 역시 Pollinations.ai는 간단한 프롬프트가 최고야!",
+      "type": "diary"
+    },
+    {
+      "time": "2026-04-29",
+      "agent": "한뮤직",
+      "icon": "🎵",
+      "msg": "📖 내가 정말 다양한 음악을 많이 듣는구나.",
       "type": "diary"
     },
     {
@@ -324,13 +372,6 @@
       "icon": "📋",
       "msg": "카드뉴스 주제 확정: ⚡️중국 전기차, 기술 패권 노린다!",
       "type": "plan"
-    },
-    {
-      "time": "2026-04-28",
-      "agent": "최디자",
-      "icon": "🎨",
-      "msg": "✅ 🤖 AI 도입, 노조와 합의해야! 이미지 성공",
-      "type": "design"
     },
     {
       "time": "2026-04-28",
@@ -387,20 +428,6 @@
       "icon": "📊",
       "msg": "주간 트렌드: AI 혁신과 경제 성장 속 자동차 격변 🤖💰🚗",
       "type": "trend"
-    },
-    {
-      "time": "2026-04-27",
-      "agent": "박기획",
-      "icon": "📋",
-      "msg": "📖 지역 넘어 글로벌, 국내를 아우르니 시야가 정말 넓어졌어.",
-      "type": "diary"
-    },
-    {
-      "time": "2026-04-27",
-      "agent": "최디자",
-      "icon": "🎨",
-      "msg": "📖 역시 Pollinations.ai는 간단한 프롬프트에 제일 잘 ",
-      "type": "diary"
     },
     {
       "time": "2026-04-26",
