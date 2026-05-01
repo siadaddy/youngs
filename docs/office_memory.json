@@ -6,7 +6,7 @@
       "total": 57,
       "wins": 17,
       "losses": 40,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 MANTRA 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,13 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "01:30",
+          "date": "2026-05-02",
+          "ticker": "MANTRA",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "01:30",
           "date": "2026-05-02",
@@ -44,18 +51,15 @@
           "ticker": "A8",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "23:14",
-          "date": "2026-04-29",
-          "ticker": "MVC",
-          "pnl": -4.91,
-          "action": "SELL",
-          "type": "stop_loss"
         }
       ],
       "last_active": "2026-05-02 01:30",
       "diary": [
+        {
+          "date": "2026-05-02 01:30",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-02 01:30",
           "lesson": "나, 감정 없이 데이터만 봐야지.",
@@ -65,15 +69,10 @@
           "date": "2026-05-01 21:30",
           "lesson": "나도 기술 지표 믿어야지.",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-04-30 09:00",
-          "lesson": "나, 기술적 지표 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 52
+      "growth_score": 53
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '1분기'(3회) — 새 각도 필요",
@@ -157,6 +156,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-02 01:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MANTRA 매수 — RSI 67.1·거래량+6096%",
+      "type": "buy"
+    },
     {
       "time": "2026-05-02 01:30",
       "agent": "AI어드바이저",
@@ -415,13 +421,6 @@
       "icon": "🤖",
       "msg": "AMP 매도 -0.1%",
       "type": "sell"
-    },
-    {
-      "time": "2026-04-27 06:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "AMP 매수 — RSI 52.2·ADX 44.4",
-      "type": "buy"
     },
     {
       "time": "2026-04-27",
