@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "ETH",
-    "buy_price": 3372000.0,
-    "qty": 0.0147,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-04-30 09:00",
-    "high_price": 3398000.0
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-02 01:30",
+      "action": "SELL",
+      "ticker": "ETH",
+      "price": 3413000.0,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목인 ETH의 RSI가 63.2로 상승세를 보이고 있으나, MACD 데드크로스(강한매도) 신호가 발생하였으며, 기술 점수도 -4로 낮은 수준입니다. 따라서 보유 종목을 매도하고 새로운 기회를 찾는 것이 좋을 것으로 판단됩니다.",
+      "pnl_pct": 1.22,
+      "pnl_krw": 603.0,
+      "dry_run": false
+    },
     {
       "time": "2026-04-30 09:00",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 19:30",
-      "action": "SELL",
-      "ticker": "USDT",
-      "price": 1478.0,
-      "amount_krw": 99700.0,
-      "reason": "보유 시간이 210분으로 비교적 짧으며, 수익률이 -0.07%로 낮아 죽은 포지션으로 판단됩니다. 또한, 다른 종목에서 더 좋은 매수 기회가 있는 것으로 판단되어 기회 교체를 위해 매도합니다.",
-      "pnl_pct": -0.07,
-      "pnl_krw": -64.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 56,
-    "wins": 16,
+    "total_trades": 57,
+    "wins": 17,
     "losses": 40,
-    "total_pnl_krw": -40643.0,
+    "total_pnl_krw": -40040.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-01 08:00",
+  "updated_at": "2026-05-02 01:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
