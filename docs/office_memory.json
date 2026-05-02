@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-02 22:30",
+  "updated": "2026-05-03 03:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 31,
-      "total": 64,
+      "total": 65,
       "wins": 20,
-      "losses": 44,
-      "holding": "📊 MBX 보유 중",
+      "losses": 45,
+      "holding": "📊 RSS3 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "03:30",
+          "date": "2026-05-03",
+          "ticker": "RSS3",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "23:11",
+          "date": "2026-05-02",
+          "ticker": "MBX",
+          "pnl": -4.13,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
         {
           "time": "22:30",
           "date": "2026-05-02",
@@ -36,43 +51,28 @@
           "ticker": "KNC",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "20:30",
-          "date": "2026-05-02",
-          "ticker": "IRYS",
-          "pnl": -0.9,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "19:00",
-          "date": "2026-05-02",
-          "ticker": "IRYS",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-02 22:30",
+      "last_active": "2026-05-03 03:30",
       "diary": [
         {
-          "date": "2026-05-02 22:30",
-          "lesson": "나, 손절 중요해. ",
+          "date": "2026-05-03 03:30",
+          "lesson": "나, 데이터 신뢰해야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-02 20:30",
-          "lesson": "나, 손절은 중요해.",
+          "date": "2026-05-03 03:00",
+          "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-02 20:30",
-          "lesson": "나, 손절해야지.",
-          "trigger": "sell"
+          "date": "2026-05-03 02:30",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 68
+      "growth_score": 76
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -156,6 +156,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-03 03:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "RSS3 매수 — RSI 84.1·거래량+20426%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-02 23:11",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MBX 손절 -4.13% → 학습 기록 🚫",
+      "type": "loss"
+    },
     {
       "time": "2026-05-02 22:30",
       "agent": "AI어드바이저",
@@ -367,13 +381,6 @@
       "type": "loss"
     },
     {
-      "time": "2026-04-30 03:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "A8 매수 — 거래량+20%",
-      "type": "buy"
-    },
-    {
       "time": "2026-04-30",
       "agent": "박기획",
       "icon": "📋",
@@ -393,13 +400,6 @@
       "icon": "🎨",
       "msg": "📖 오늘도 Pollinations.ai랑 잘 맞았다.",
       "type": "diary"
-    },
-    {
-      "time": "2026-04-29 23:14",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "MVC 손절 -4.91% → 학습 기록 🚫",
-      "type": "loss"
     },
     {
       "time": "2026-04-29",

@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "RSS3",
+    "buy_price": 10.93,
+    "qty": 4560.8417,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 03:30"
+  },
   "history": [
+    {
+      "time": "2026-05-03 03:30",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 10.99,
+      "amount_krw": 49850.0,
+      "reason": "RSI 84.1로 상승세를 보이고 있으며, MACD도 상승하고 있습니다. 또한, 거래량 변화가 20426%로 매우 높아 돌파 신호를 보이고 있습니다. VB✅와 점수 -1로 BUY 신호가 발생하였습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 23:11",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -2.23,
       "pnl_krw": -1111.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-22 20:00",
-      "action": "BUY",
-      "ticker": "HIGH",
-      "price": 404.0,
-      "amount_krw": 49850.0,
-      "reason": "HIGH의 RSI가 26.7로 저점에 위치해 있으며, 거래량이 80% 증가한 것으로 나타나 변동성 돌파의 신호가 발생했습니다. 또한 ADX가 45.4로 추세가 유지되고 있어 매수 기회로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-02 23:11",
+  "updated_at": "2026-05-03 03:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
