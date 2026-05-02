@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "IRYS",
-    "buy_price": 64.49,
-    "qty": 772.988,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-02 19:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-02 20:30",
+      "action": "SELL",
+      "ticker": "IRYS",
+      "price": 63.91,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 IRYS의 기술 점수는 -3으로 낮고, RSI도 57.6으로 높은 편이며, MACD 데드크로스 신호도 나타나고 있습니다. 또한, 보유 시간이 90분을 넘었으며, 수익률은 -0.90%로 낮습니다. 이러한 신호들은 매도 신호로 판단되므로, IRYS를 매도합니다.",
+      "pnl_pct": -0.9,
+      "pnl_krw": -448.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 19:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-22 15:00",
-      "action": "SELL",
-      "ticker": "CORE",
-      "price": 63.99,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목 CORE의 수익률이 -0.53%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한 다른 종목에서 강한 돌파 신호가 나타나 기회 교체의 여지가 있습니다.",
-      "pnl_pct": -0.42,
-      "pnl_krw": -209.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 62,
+    "total_trades": 63,
     "wins": 19,
-    "losses": 43,
-    "total_pnl_krw": -40420.0,
+    "losses": 44,
+    "total_pnl_krw": -40868.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-02 19:00",
+  "updated_at": "2026-05-02 20:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,

@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-02 19:00",
+  "updated": "2026-05-02 20:30",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 31,
-      "total": 62,
+      "win_rate": 30,
+      "total": 63,
       "wins": 19,
-      "losses": 43,
-      "holding": "📊 IRYS 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 5회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 44,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "20:30",
+          "date": "2026-05-02",
+          "ticker": "IRYS",
+          "pnl": -0.9,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "19:00",
           "date": "2026-05-02",
@@ -44,17 +52,15 @@
           "pnl": 0.59,
           "action": "SELL",
           "type": "take_profit"
-        },
-        {
-          "time": "12:30",
-          "date": "2026-05-02",
-          "ticker": "ORCA",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-02 19:00",
+      "last_active": "2026-05-02 20:30",
       "diary": [
+        {
+          "date": "2026-05-02 20:30",
+          "lesson": "나, 손절해야지.",
+          "trigger": "sell"
+        },
         {
           "date": "2026-05-02 19:00",
           "lesson": "나, 오늘은야겠다. ",
@@ -64,15 +70,10 @@
           "date": "2026-05-02 19:00",
           "lesson": "나, 손절 빨리야.",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-05-02 18:00",
-          "lesson": "나, 손절 중요해. ",
-          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 65
+      "growth_score": 66
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -156,6 +157,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-02 20:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "IRYS 강제청산 -0.9% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-02 19:00",
       "agent": "AI어드바이저",
@@ -393,13 +401,6 @@
       "icon": "🤖",
       "msg": "ETH 매수 — RSI 39.8·ADX 40.5",
       "type": "buy"
-    },
-    {
-      "time": "2026-04-29 21:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "LIT 매도 -0.5%",
-      "type": "sell"
     },
     {
       "time": "2026-04-29",
