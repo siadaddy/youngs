@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-02 18:00",
+  "updated": "2026-05-02 19:00",
   "agents": {
     "AI어드바이저": {
       "win_rate": 31,
-      "total": 61,
+      "total": 62,
       "wins": 19,
-      "losses": 42,
-      "holding": "📊 MBX 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 43,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 5회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "19:00",
+          "date": "2026-05-02",
+          "ticker": "MBX",
+          "pnl": -1.11,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "18:00",
           "date": "2026-05-02",
@@ -44,17 +52,15 @@
           "pnl": -0.57,
           "action": "SELL",
           "type": "force_exit"
-        },
-        {
-          "time": "11:00",
-          "date": "2026-05-02",
-          "ticker": "WLD",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-02 18:00",
+      "last_active": "2026-05-02 19:00",
       "diary": [
+        {
+          "date": "2026-05-02 19:00",
+          "lesson": "나, 손절 빨리야.",
+          "trigger": "sell"
+        },
         {
           "date": "2026-05-02 18:00",
           "lesson": "나, 손절 중요해. ",
@@ -64,15 +70,10 @@
           "date": "2026-05-02 16:00",
           "lesson": "나, 손절 빨리야.",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-05-02 15:00",
-          "lesson": "손절이 중요해.",
-          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 63
+      "growth_score": 64
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -156,6 +157,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-02 19:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MBX 매도 -1.1%",
+      "type": "sell"
+    },
     {
       "time": "2026-05-02 18:00",
       "agent": "AI어드바이저",
@@ -393,13 +401,6 @@
       "icon": "🤖",
       "msg": "LIT 매수 — RSI 34.9·ADX 53.2",
       "type": "buy"
-    },
-    {
-      "time": "2026-04-29 19:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 익절 +1.96% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-04-29",
