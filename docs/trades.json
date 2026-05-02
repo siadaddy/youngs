@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "KNC",
-    "buy_price": 238.0,
-    "qty": 209.4537,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-02 20:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-02 22:07",
+      "action": "SELL",
+      "ticker": "KNC",
+      "price": 240.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 247원 대비 -2.83%)",
+      "pnl_pct": 0.84,
+      "pnl_krw": 419.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 20:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-22 16:33",
-      "action": "SELL",
-      "ticker": "GRACY",
-      "price": 12.06,
-      "amount_krw": 49850.0,
-      "reason": "보유 수익률 -0.82%로 낮고, 기술 점수도 낮으며, 다른 종목에 비해 상대적으로 좋지 않은 상황이므로 매도하는 것이 좋다. 또한, 보유 시간이 93분으로 90분 이상이므로 교체를 고려할 수 있다. 기회 교체를 위해 다른 종목을 찾는 것이 좋다.",
-      "pnl_pct": -0.82,
-      "pnl_krw": -410.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 63,
-    "wins": 19,
+    "total_trades": 64,
+    "wins": 20,
     "losses": 44,
-    "total_pnl_krw": -40868.0,
+    "total_pnl_krw": -40449.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-02 20:30",
+  "updated_at": "2026-05-02 22:07",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
