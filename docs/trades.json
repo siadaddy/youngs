@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ORCA",
+    "buy_price": 2901.0,
+    "qty": 17.1837,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-02 12:30"
+  },
   "history": [
+    {
+      "time": "2026-05-02 12:30",
+      "action": "BUY",
+      "ticker": "ORCA",
+      "price": 2903.0,
+      "amount_krw": 49850.0,
+      "reason": "ORCA의 RSI는 42.0으로 저조한 수준이며, MACD는 하락세를 보이고 있습니다. 그러나 ADX는 25.0으로 추세가 있는 것으로 판단되며, 거래량도 증가하고 있어 매수 신호가 발생한 것으로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 12:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 손절 -4.10% (기준 -4.0%)",
       "pnl_pct": -4.1,
       "pnl_krw": -2045.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-21 23:30",
-      "action": "BUY",
-      "ticker": "CORE",
-      "price": 56.4,
-      "amount_krw": 49850.0,
-      "reason": "CORE의 RSI는 48.7로 중립적인 수준이며, MACD는 하락세지만 볼린저밴드 중하단에 위치해 있어 반등의 가능성이 있습니다. 또한, VB 신호가 확인되며 점수는 +3으로 상대적으로 좋습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],

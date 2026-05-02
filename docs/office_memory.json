@@ -6,7 +6,7 @@
       "total": 60,
       "wins": 18,
       "losses": 42,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 ORCA 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,13 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "12:30",
+          "date": "2026-05-02",
+          "ticker": "ORCA",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "12:30",
           "date": "2026-05-02",
@@ -44,18 +51,15 @@
           "ticker": "MANTRA",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "10:02",
-          "date": "2026-05-02",
-          "ticker": "MANTRA",
-          "pnl": 0.67,
-          "action": "SELL",
-          "type": "take_profit"
         }
       ],
       "last_active": "2026-05-02 12:30",
       "diary": [
+        {
+          "date": "2026-05-02 12:30",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-02 12:30",
           "lesson": "나, 데이터 믿어야지.",
@@ -65,15 +69,10 @@
           "date": "2026-05-02 11:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-02 11:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 57
+      "growth_score": 58
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -157,6 +156,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-02 12:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ORCA 매수 — RSI 42.0·ADX 25.0",
+      "type": "buy"
+    },
     {
       "time": "2026-05-02 12:30",
       "agent": "AI어드바이저",
@@ -415,13 +421,6 @@
       "icon": "🎵",
       "msg": "📖 내가 정말 다양한 음악을 많이 듣는구나.",
       "type": "diary"
-    },
-    {
-      "time": "2026-04-28 13:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "WNCG 매수 — 진입",
-      "type": "buy"
     },
     {
       "time": "2026-04-28",
