@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "MANTRA",
-    "buy_price": 15.01,
-    "qty": 3321.1192,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-02 01:30",
-    "high_price": 15.29
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-02 10:02",
+      "action": "SELL",
+      "ticker": "MANTRA",
+      "price": 15.11,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 16원 대비 -2.52%)",
+      "pnl_pct": 0.67,
+      "pnl_krw": 332.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 01:30",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 20:30",
-      "action": "SELL",
-      "ticker": "EDU",
-      "price": 82.18,
-      "amount_krw": 99700.0,
-      "reason": "기회 교체: 현재 보유 종목 EDU의 수익률이 -2.42%로 낮고, 다른 종목인 FORT의 점수가 +4로 높아 기회 교체를 결정했습니다. 또한 EDU의 기술적 지표가 하락하고 있어 매도 후 새로운 기회를 찾는 것이 좋을 것으로 판단됩니다.",
-      "pnl_pct": -2.43,
-      "pnl_krw": -2304.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 57,
-    "wins": 17,
+    "total_trades": 58,
+    "wins": 18,
     "losses": 40,
-    "total_pnl_krw": -40040.0,
+    "total_pnl_krw": -39708.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-02 07:30",
+  "updated_at": "2026-05-02 10:02",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
