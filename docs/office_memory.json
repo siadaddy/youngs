@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-02 12:30",
+  "updated": "2026-05-02 18:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 30,
-      "total": 60,
-      "wins": 18,
+      "win_rate": 31,
+      "total": 61,
+      "wins": 19,
       "losses": 42,
-      "holding": "📊 ORCA 보유 중",
+      "holding": "📊 MBX 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "18:00",
+          "date": "2026-05-02",
+          "ticker": "MBX",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "17:51",
+          "date": "2026-05-02",
+          "ticker": "ORCA",
+          "pnl": 0.59,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "12:30",
           "date": "2026-05-02",
@@ -36,43 +51,28 @@
           "ticker": "WLD",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "11:00",
-          "date": "2026-05-02",
-          "ticker": "MANTRA",
-          "pnl": -0.33,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "10:30",
-          "date": "2026-05-02",
-          "ticker": "MANTRA",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-02 12:30",
+      "last_active": "2026-05-02 18:00",
       "diary": [
         {
-          "date": "2026-05-02 12:30",
-          "lesson": "나, 데이터 믿어야지.",
+          "date": "2026-05-02 18:00",
+          "lesson": "나, 손절 중요해. ",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-02 12:30",
-          "lesson": "나, 데이터 믿어야지.",
+          "date": "2026-05-02 16:00",
+          "lesson": "나, 손절 빨리야.",
           "trigger": "sell"
         },
         {
-          "date": "2026-05-02 11:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
+          "date": "2026-05-02 15:00",
+          "lesson": "손절이 중요해.",
+          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 58
+      "growth_score": 63
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -156,6 +156,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-02 18:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MBX 매수 — RSI 35.9·ADX 29.5",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-02 17:51",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ORCA 익절 +0.59% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-05-02 12:30",
       "agent": "AI어드바이저",
@@ -386,20 +400,6 @@
       "icon": "🤖",
       "msg": "XRP 익절 +1.96% 🎯",
       "type": "win"
-    },
-    {
-      "time": "2026-04-29 01:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 매수 — 진입",
-      "type": "buy"
-    },
-    {
-      "time": "2026-04-29 00:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "WNCG 강제청산 -2.2% (8시간)",
-      "type": "exit"
     },
     {
       "time": "2026-04-29",
