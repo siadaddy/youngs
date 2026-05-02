@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "IRYS",
+    "buy_price": 64.49,
+    "qty": 772.988,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-02 19:00"
+  },
   "history": [
+    {
+      "time": "2026-05-02 19:00",
+      "action": "BUY",
+      "ticker": "IRYS",
+      "price": 64.6,
+      "amount_krw": 49850.0,
+      "reason": "IRYS의 RSI는 56.0으로 상승 중이며, MACD도 상승하고 있습니다. 또한, 거래량이 147% 증가하여 강한 상승 신호를 보이고 있습니다. 이러한 신호에 따라 IRYS를 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 19:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "현재 보유 종목 CORE의 수익률이 -0.53%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한 다른 종목에서 강한 돌파 신호가 나타나 기회 교체의 여지가 있습니다.",
       "pnl_pct": -0.42,
       "pnl_krw": -209.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-22 13:30",
-      "action": "BUY",
-      "ticker": "CORE",
-      "price": 64.33,
-      "amount_krw": 49850.0,
-      "reason": "CORE의 RSI는 33.3으로 저조하고, MACD는 하락세이지만, 볼린저밴드 중하단에 위치하고 있으며, VB 신호가 확인되었습니다. 또한 점수는 +4로 높아 신호가 강합니다. 따라서 CORE를 매수합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
