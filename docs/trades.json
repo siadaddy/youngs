@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "POLA",
+    "buy_price": 12.7,
+    "qty": 3925.1968,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 04:00"
+  },
   "history": [
+    {
+      "time": "2026-05-03 04:00",
+      "action": "BUY",
+      "ticker": "POLA",
+      "price": 12.76,
+      "amount_krw": 49850.0,
+      "reason": "VB✅과 높은 거래량 증가율, MACD 상승으로 강한 상승 신호가 나타나고 있습니다. 또한 ADX 값이 25 이상으로 추세가 있는 것으로 판단되며, 점수도 양호한 수준입니다. 따라서 POLA를 매수하는 것이 적절하다고 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 04:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "실시간 익절 5.17% (기준 +5.0%)",
       "pnl_pct": 5.17,
       "pnl_krw": 2575.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-22 22:30",
-      "action": "BUY",
-      "ticker": "MET",
-      "price": 271.0,
-      "amount_krw": 49850.0,
-      "reason": "MET의 RSI는 31.8로 저조하고, MACD는 하락세이지만 볼린저밴드 중하단에 위치하고 있어 반등의 가능성이 있다. 또한 VB 신호가 확인되고, 점수는 +4로 높은 편이다. 따라서 MET를 매수하는 것이 좋다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],

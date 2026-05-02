@@ -6,7 +6,7 @@
       "total": 66,
       "wins": 20,
       "losses": 46,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 POLA 보유 중",
       "hint": "⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,13 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "04:00",
+          "date": "2026-05-03",
+          "ticker": "POLA",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "04:00",
           "date": "2026-05-03",
@@ -44,18 +51,15 @@
           "ticker": "MBX",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "22:07",
-          "date": "2026-05-02",
-          "ticker": "KNC",
-          "pnl": 0.84,
-          "action": "SELL",
-          "type": "take_profit"
         }
       ],
       "last_active": "2026-05-03 04:00",
       "diary": [
+        {
+          "date": "2026-05-03 04:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-03 04:00",
           "lesson": "나, 데이터 믿어야지.",
@@ -65,15 +69,10 @@
           "date": "2026-05-03 03:30",
           "lesson": "나, 데이터 신뢰해야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-03 03:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 77
+      "growth_score": 78
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -157,6 +156,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-03 04:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "POLA 매수 — 진입",
+      "type": "buy"
+    },
     {
       "time": "2026-05-03 04:00",
       "agent": "AI어드바이저",
@@ -373,13 +379,6 @@
       "icon": "🎨",
       "msg": "📖 간단한 프롬프트로 Pollinations.ai에서 완벽한 결과!",
       "type": "diary"
-    },
-    {
-      "time": "2026-04-30 09:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ETH 매수 — RSI 42.9",
-      "type": "buy"
     },
     {
       "time": "2026-04-30",
