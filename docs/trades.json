@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "RSS3",
-    "buy_price": 10.93,
-    "qty": 4560.8417,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-03 03:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-03 04:00",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 10.84,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 RSS3의 RSI가 82.2로 높으며, MACD도 상승 중이지만 기술 점수가 -1로 낮고, 보유 시간이 30분으로 짧아 기술 점수에 따라 판단할 때 매도 신호가 발생합니다. 또한, 최근 14건의 거래에서 시간초과 청산이 7회 발생하여 추세 없는 횡보 구간 진입을 자제해야 하므로 매도하는 것이 좋습니다.",
+      "pnl_pct": -0.82,
+      "pnl_krw": -410.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 03:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-22 22:30",
-      "action": "SELL",
-      "ticker": "HIGH",
-      "price": 395.0,
-      "amount_krw": 49850.0,
-      "reason": "보유 시간 150분 경과, 수익률 -2.23%, 기술 점수 +3, RSI 20.3, MACD 하락, 기준에 부합하지 않아 매도 결정. 다른 종목의 매수 기회를 고려할 필요가 있음.",
-      "pnl_pct": -2.23,
-      "pnl_krw": -1111.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 65,
+    "total_trades": 66,
     "wins": 20,
-    "losses": 45,
-    "total_pnl_krw": -42506.0,
+    "losses": 46,
+    "total_pnl_krw": -42916.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 03:30",
+  "updated_at": "2026-05-03 04:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
