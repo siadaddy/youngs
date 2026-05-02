@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "WLD",
-    "buy_price": 349.0,
-    "qty": 142.8366,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-02 11:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-02 12:30",
+      "action": "SELL",
+      "ticker": "WLD",
+      "price": 347.0,
+      "amount_krw": 49850.0,
+      "reason": "보유 수익률 -0.57%로 낮고, 기술 점수도 낮은 편입니다. 또한 다른 종목에서 더 좋은 매수 기회가 있는 것으로 판단되므로 기회 교체를 위해 매도합니다.",
+      "pnl_pct": -0.57,
+      "pnl_krw": -286.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 11:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 23:30",
-      "action": "SELL",
-      "ticker": "XAN",
-      "price": 12.73,
-      "amount_krw": 49850.0,
-      "reason": "보유 수익률 +0.71%이지만, RSI 61.4와 MACD 데드크로스(강한매도)로 매도 신호가 발생하였으며, 기회 교체의 여지가 있습니다. 따라서 보유 종목을 청산하고 새로운 기회를 탐색합니다.",
-      "pnl_pct": 0.71,
-      "pnl_krw": 355.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 59,
+    "total_trades": 60,
     "wins": 18,
-    "losses": 41,
-    "total_pnl_krw": -39873.0,
+    "losses": 42,
+    "total_pnl_krw": -40159.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-02 11:00",
+  "updated_at": "2026-05-02 12:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
