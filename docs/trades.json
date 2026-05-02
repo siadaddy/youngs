@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "KNC",
+    "buy_price": 238.0,
+    "qty": 209.4537,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-02 20:30"
+  },
   "history": [
+    {
+      "time": "2026-05-02 20:30",
+      "action": "BUY",
+      "ticker": "KNC",
+      "price": 239.0,
+      "amount_krw": 49850.0,
+      "reason": "KNC의 RSI는 29.8로 저점에 위치하고 있으며, MACD는 하락세지만 볼린저밴드 중하단에 위치해 있어 반등 가능성이 높습니다. 또한 ADX가 36.0으로 추세가 확인되며, VB 신호도 확인되어 매수 신호가 활성화되었습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 20:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "보유 수익률 -0.82%로 낮고, 기술 점수도 낮으며, 다른 종목에 비해 상대적으로 좋지 않은 상황이므로 매도하는 것이 좋다. 또한, 보유 시간이 93분으로 90분 이상이므로 교체를 고려할 수 있다. 기회 교체를 위해 다른 종목을 찾는 것이 좋다.",
       "pnl_pct": -0.82,
       "pnl_krw": -410.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-22 15:00",
-      "action": "BUY",
-      "ticker": "GRACY",
-      "price": 12.16,
-      "amount_krw": 49850.0,
-      "reason": "VB✅ 및 거래량 변화가 양호하고, 점수가 +4로 높아 강한 돌파 신호가 나타나 매수 신호가 발생했습니다. 또한 RSI가 33.3으로 과매도 상태이므로 반등 가능성이 있습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
