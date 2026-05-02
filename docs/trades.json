@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "WLD",
+    "buy_price": 349.0,
+    "qty": 142.8366,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-02 11:00"
+  },
   "history": [
+    {
+      "time": "2026-05-02 11:00",
+      "action": "BUY",
+      "ticker": "WLD",
+      "price": 350.0,
+      "amount_krw": 49850.0,
+      "reason": "WLD의 RSI는 33.3으로 저점에 위치하고 있으며, MACD는 상승하고 있고, BB 중하단에 위치하고 있습니다. 또한, 거래량이 30% 증가하였고, ADX는 43.6으로 추세가 있는 것으로 나타나며, 점수는 +5로 높은 신호를 보이고 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 11:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "보유 수익률 +0.71%이지만, RSI 61.4와 MACD 데드크로스(강한매도)로 매도 신호가 발생하였으며, 기회 교체의 여지가 있습니다. 따라서 보유 종목을 청산하고 새로운 기회를 탐색합니다.",
       "pnl_pct": 0.71,
       "pnl_krw": 355.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-21 22:00",
-      "action": "BUY",
-      "ticker": "XAN",
-      "price": 12.64,
-      "amount_krw": 49850.0,
-      "reason": "XAN의 RSI는 61.2로 상승세를 보이고 있으며, MACD도 상승하고 있습니다. 또한, 거래량이 23432% 증가하여 강한 상승 신호를 보이고 있습니다. 이러한 신호에 따라 BUY를 결정했습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
