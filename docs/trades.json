@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "MANTRA",
-    "buy_price": 15.12,
-    "qty": 3296.9576,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-02 10:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-02 11:00",
+      "action": "SELL",
+      "ticker": "MANTRA",
+      "price": 15.07,
+      "amount_krw": 49850.0,
+      "reason": "보유 30분 미만이지만 기술 점수가 낮고, MACD 데드크로스와 RSI 52.9로 매도 신호가 발생하였으며, 수익률도 -0.33%로 낮아 매도하는 것이 좋습니다.",
+      "pnl_pct": -0.33,
+      "pnl_krw": -165.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-02 10:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-21 22:00",
-      "action": "SELL",
-      "ticker": "EDU",
-      "price": 79.57,
-      "amount_krw": 99700.0,
-      "reason": "보유 수익률 -3.08%로 손실이 발생하고, 기술적 지표도 좋지 않아 기회 교체를 고려해야 한다. 다른 종목의 점수가 더 높고, ADX와 MACD도 더 좋은 신호를 보이고 있으므로 기회 교체를 한다.",
-      "pnl_pct": -3.07,
-      "pnl_krw": -2842.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 58,
+    "total_trades": 59,
     "wins": 18,
-    "losses": 40,
-    "total_pnl_krw": -39708.0,
+    "losses": 41,
+    "total_pnl_krw": -39873.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-02 10:30",
+  "updated_at": "2026-05-02 11:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,

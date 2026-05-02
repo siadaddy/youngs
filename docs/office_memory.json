@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-02 10:30",
+  "updated": "2026-05-02 11:00",
   "agents": {
     "AI어드바이저": {
       "win_rate": 31,
-      "total": 58,
+      "total": 59,
       "wins": 18,
-      "losses": 40,
-      "holding": "📊 MANTRA 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 7회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 41,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 6회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "11:00",
+          "date": "2026-05-02",
+          "ticker": "MANTRA",
+          "pnl": -0.33,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "10:30",
           "date": "2026-05-02",
@@ -44,17 +52,15 @@
           "pnl": 1.22,
           "action": "SELL",
           "type": "take_profit"
-        },
-        {
-          "time": "09:00",
-          "date": "2026-04-30",
-          "ticker": "ETH",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-02 10:30",
+      "last_active": "2026-05-02 11:00",
       "diary": [
+        {
+          "date": "2026-05-02 11:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "sell"
+        },
         {
           "date": "2026-05-02 10:30",
           "lesson": "나, 데이터 믿어야지.",
@@ -64,15 +70,10 @@
           "date": "2026-05-02 01:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-02 01:30",
-          "lesson": "나, 감정 없이 데이터만 봐야지.",
-          "trigger": "sell"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 54
+      "growth_score": 55
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(5회), '한국'(4회), '시장'(3회) — 새 각도 필요",
@@ -156,6 +157,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-02 11:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "MANTRA 매도 -0.3%",
+      "type": "sell"
+    },
     {
       "time": "2026-05-02 10:30",
       "agent": "AI어드바이저",
@@ -414,13 +422,6 @@
       "icon": "🤖",
       "msg": "BTC 매수 — RSI 33.7·ADX 34.2",
       "type": "buy"
-    },
-    {
-      "time": "2026-04-28 06:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "BTC 강제청산 -1.1% (8시간)",
-      "type": "exit"
     },
     {
       "time": "2026-04-28",
