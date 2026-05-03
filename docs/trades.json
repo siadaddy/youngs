@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "GNO",
+    "buy_price": 199000.0,
+    "qty": 0.2505,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 17:30"
+  },
   "history": [
+    {
+      "time": "2026-05-03 17:30",
+      "action": "BUY",
+      "ticker": "GNO",
+      "price": 199700.0,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화가 양호하여 강한 돌파 신호가 나타났으며, 점수도 +4로 높아 BUY 신호가 발생했습니다. 또한 RSI와 MACD도 하락 추세이므로 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 17:20",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -1.16,
       "pnl_krw": -580.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-26 21:30",
-      "action": "BUY",
-      "ticker": "KAT",
-      "price": 18.91,
-      "amount_krw": 49850.0,
-      "reason": "VB✅이 아니지만 점수 +4로 높고, RSI 43.0으로 중립적인 위치에 있으며, MACD 상승으로 상승 추세를 보이고 있습니다. 또한 거래량이 많이 감소하지 않아 매수 기회로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 17:20",
+  "updated_at": "2026-05-03 17:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,

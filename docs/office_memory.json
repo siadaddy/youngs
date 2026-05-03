@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-03 17:00",
+  "updated": "2026-05-03 17:30",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 32,
-      "total": 69,
+      "win_rate": 31,
+      "total": 70,
       "wins": 22,
-      "losses": 47,
-      "holding": "📊 RSS3 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 8회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 48,
+      "holding": "📊 GNO 보유 중",
+      "hint": "⚠️ 최근 손절 3회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 9회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "17:30",
+          "date": "2026-05-03",
+          "ticker": "GNO",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "17:20",
+          "date": "2026-05-03",
+          "ticker": "RSS3",
+          "pnl": -4.38,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
         {
           "time": "17:00",
           "date": "2026-05-03",
@@ -36,25 +51,15 @@
           "ticker": "POLA",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "09:24",
-          "date": "2026-05-03",
-          "ticker": "MEGA",
-          "pnl": -4.41,
-          "action": "SELL",
-          "type": "stop_loss"
-        },
-        {
-          "time": "06:00",
-          "date": "2026-05-03",
-          "ticker": "MEGA",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-03 17:00",
+      "last_active": "2026-05-03 17:30",
       "diary": [
+        {
+          "date": "2026-05-03 17:30",
+          "lesson": "나, 데이터 믿어야지. ",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-03 17:00",
           "lesson": "나, 데이터 신뢰해야지.",
@@ -64,15 +69,10 @@
           "date": "2026-05-03 13:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-03 13:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나: 손절 중요해",
-      "growth_score": 89
+      "growth_score": 90
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '한국'(5회), '시장'(4회) — 새 각도 필요",
@@ -156,6 +156,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-03 17:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "GNO 매수 — 진입",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-03 17:20",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "RSS3 손절 -4.38% → 학습 기록 🚫",
+      "type": "loss"
+    },
     {
       "time": "2026-05-03 17:00",
       "agent": "AI어드바이저",
@@ -337,20 +351,6 @@
       "icon": "🤖",
       "msg": "ORCA 익절 +0.59% 🎯",
       "type": "win"
-    },
-    {
-      "time": "2026-05-02 12:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ORCA 매수 — RSI 42.0·ADX 25.0",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-02 12:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "WLD 매도 -0.6%",
-      "type": "sell"
     },
     {
       "time": "2026-05-02",
