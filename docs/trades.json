@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "MEGA",
-    "buy_price": 204.0,
-    "qty": 244.3627,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-03 06:00",
-    "high_price": 208.0
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-03 09:24",
+      "action": "SELL",
+      "ticker": "MEGA",
+      "price": 195.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.41% (기준 -4.0%)",
+      "pnl_pct": -4.41,
+      "pnl_krw": -2199.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 06:00",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-23 12:30",
-      "action": "SELL",
-      "ticker": "XRP",
-      "price": 2104.0,
-      "amount_krw": 49850.0,
-      "reason": "8시간 보유 + 수익률 -1% 미만",
-      "pnl_pct": -1.54,
-      "pnl_krw": -770.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 67,
+    "total_trades": 68,
     "wins": 21,
-    "losses": 46,
-    "total_pnl_krw": -41974.0,
+    "losses": 47,
+    "total_pnl_krw": -44173.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 07:30",
+  "updated_at": "2026-05-03 09:24",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
@@ -662,6 +655,14 @@
       "blacklisted_until": null,
       "history": [
         "2026-05-02 23:11"
+      ]
+    },
+    "MEGA": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-03 09:24",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-03 09:24"
       ]
     }
   }
