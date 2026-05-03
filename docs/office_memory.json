@@ -6,7 +6,7 @@
       "total": 75,
       "wins": 24,
       "losses": 51,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 RSS3 보유 중",
       "hint": "⚠️ 최근 손절 3회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,13 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "08:00",
+          "date": "2026-05-04",
+          "ticker": "RSS3",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "08:00",
           "date": "2026-05-04",
@@ -44,18 +51,15 @@
           "ticker": "RSS3",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "00:02",
-          "date": "2026-05-04",
-          "ticker": "RSS3",
-          "pnl": 5.42,
-          "action": "SELL",
-          "type": "take_profit"
         }
       ],
       "last_active": "2026-05-04 08:00",
       "diary": [
+        {
+          "date": "2026-05-04 08:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-04 08:00",
           "lesson": "나, 손절 빨리야.",
@@ -65,15 +69,10 @@
           "date": "2026-05-04 07:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "sell"
-        },
-        {
-          "date": "2026-05-04 06:30",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "sell"
         }
       ],
       "persona": "나, 데이터 믿어. 손절 중요해.",
-      "growth_score": 107
+      "growth_score": 108
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(7회), '한국'(5회), '전기차'(4회) — 새 각도 필요",
@@ -157,6 +156,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-04 08:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "RSS3 매수 — RSI 45.7·ADX 25.2",
+      "type": "buy"
+    },
     {
       "time": "2026-05-04 08:00",
       "agent": "AI어드바이저",
@@ -352,13 +358,6 @@
       "icon": "🤖",
       "msg": "RSS3 강제청산 -0.8% (8시간)",
       "type": "exit"
-    },
-    {
-      "time": "2026-05-03 03:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 매수 — RSI 84.1·거래량+20426%",
-      "type": "buy"
     },
     {
       "time": "2026-05-03",

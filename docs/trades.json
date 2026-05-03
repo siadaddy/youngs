@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "RSS3",
+    "buy_price": 9.338,
+    "qty": 5338.4022,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-04 08:00"
+  },
   "history": [
+    {
+      "time": "2026-05-04 08:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 9.339,
+      "amount_krw": 49850.0,
+      "reason": "RSI 45.7, MACD 상승, BB 중하단, 거래량-45%, ADX 25.2로 추세가 있는 상황에서 점수 +4로 BUY 신호가 발생하였습니다. 또한, 최근 17건의 거래 메모리에서 시간초과 청산이 10회 발생하였으므로, 추세 없는 횡보 구간 진입을 피하는 것이 좋습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 08:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "8시간 보유 + 수익률 -1% 미만",
       "pnl_pct": -2.18,
       "pnl_krw": -1088.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-28 13:30",
-      "action": "BUY",
-      "ticker": "WNCG",
-      "price": 8.362,
-      "amount_krw": 49850.0,
-      "reason": "WNCG의 RSI가 31.6으로 저점에 위치하고 있으며, MACD가 하락하고 있지만 볼린저밴드 중하단에 위치하고 있습니다. 또한, ADX가 40.0으로 추세가 있는 것으로 나타나며, VB가 확인되었습니다. 이러한 신호들은 WNCG에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
