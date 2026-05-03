@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ORCA",
+    "buy_price": 3085.0,
+    "qty": 16.1588,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 21:30"
+  },
   "history": [
+    {
+      "time": "2026-05-03 21:30",
+      "action": "BUY",
+      "ticker": "ORCA",
+      "price": 3085.0,
+      "amount_krw": 49850.0,
+      "reason": "ORCA의 RSI는 43.0으로 중립적인 수준이며, MACD 골든크로스와 BB 중하단을 보이고 있습니다. 또한 ADX 25.2로 추세가 있는 것으로 나타나며, 점수 +5로 높은 매수 신호를 보이고 있습니다. 이러한 신호들이 강한 매수 신호로 판단되어 매수 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 21:28",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 6.01,
       "pnl_krw": 2997.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-27 05:30",
-      "action": "BUY",
-      "ticker": "TRAC",
-      "price": 500.0,
-      "amount_krw": 49850.0,
-      "reason": "VB✅와 거래량 변화가 105482%로 상승하여 강한 돌파 신호가 나타났으며, RSI와 MACD도 상승세를 보이고 있습니다. 또한 ADX가 38.7로 추세가 있는 것으로 나타나매매 진입의 기회로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 21:28",
+  "updated_at": "2026-05-03 21:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
