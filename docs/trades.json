@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "GNO",
-    "buy_price": 199000.0,
-    "qty": 0.2505,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-03 17:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-03 21:28",
+      "action": "SELL",
+      "ticker": "GNO",
+      "price": 209600.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.33% (기준 +5.0%)",
+      "pnl_pct": 5.33,
+      "pnl_krw": 2655.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 17:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-27 05:30",
-      "action": "SELL",
-      "ticker": "KAT",
-      "price": 18.68,
-      "amount_krw": 49850.0,
-      "reason": "8시간 보유 + 수익률 -1% 미만",
-      "pnl_pct": -1.16,
-      "pnl_krw": -580.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 70,
-    "wins": 22,
+    "total_trades": 71,
+    "wins": 23,
     "losses": 48,
-    "total_pnl_krw": -43867.0,
+    "total_pnl_krw": -41212.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 17:30",
+  "updated_at": "2026-05-03 21:28",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
