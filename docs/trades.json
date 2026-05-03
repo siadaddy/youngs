@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "RSS3",
-    "buy_price": 10.52,
-    "qty": 4738.5931,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-03 22:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-04 00:02",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 11.09,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.42% (기준 +5.0%)",
+      "pnl_pct": 5.42,
+      "pnl_krw": 2701.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 22:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-27 08:30",
-      "action": "SELL",
-      "ticker": "AMP",
-      "price": 1.349,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목 AMP의 수익률이 -0.07%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한, 다른 종목들의 기술 점수가 더 높아 기회 교체를 고려해야 합니다.",
-      "pnl_pct": -0.07,
-      "pnl_krw": -37.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 72,
-    "wins": 23,
+    "total_trades": 73,
+    "wins": 24,
     "losses": 49,
-    "total_pnl_krw": -41842.0,
+    "total_pnl_krw": -39141.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 22:30",
+  "updated_at": "2026-05-04 00:02",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
