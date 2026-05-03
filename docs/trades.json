@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "POLA",
+    "buy_price": 12.2,
+    "qty": 4086.0655,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 13:30"
+  },
   "history": [
+    {
+      "time": "2026-05-03 13:30",
+      "action": "BUY",
+      "ticker": "POLA",
+      "price": 12.22,
+      "amount_krw": 49850.0,
+      "reason": "RSI 19.6으로 과매도 상태이며, VB✅와 거래량 변화가 적극적으로 증가하지는 않았지만, 점수 -3으로 매수 신호가 발생하였습니다. 또한, 다른 종목에 비해 상대적으로 저렴한 가격으로 매수 기회가 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 09:24",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -1.26,
       "pnl_krw": -631.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-23 12:30",
-      "action": "BUY",
-      "ticker": "PIEVERSE",
-      "price": 1344.0,
-      "amount_krw": 49850.0,
-      "reason": "PIEVERSE의 RSI는 31.4로 과매도 상태이며, 거래량은 490% 증가하여 강한 변동성 돌파 신호를 보이고 있습니다. 또한 ADX는 37.1로 추세가 유지되고 있어 매수 신호가 발생했습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 09:24",
+  "updated_at": "2026-05-03 13:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
