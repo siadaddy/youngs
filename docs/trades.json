@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BABY",
+    "buy_price": 30.08,
+    "qty": 1653.9482,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-04 05:30"
+  },
   "history": [
+    {
+      "time": "2026-05-04 05:30",
+      "action": "BUY",
+      "ticker": "BABY",
+      "price": 30.12,
+      "amount_krw": 49850.0,
+      "reason": "BABY의 RSI가 28.3으로 저조하고, BB 중하단에 위치해 있어 반등 가능성이 높으며, ADX 44.4로 추세가 있는 것으로 나타나서 매수 신호가 발생했습니다. 또한, 최근 16건의 거래 메모리에서 시간초과 청산이 9회 발생했으므로, 추세 없는 횡보 구간 진입을 피하기 위해 BABY의 추세를 따라가며 매매를 진행할 계획입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 01:28",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.57,
       "pnl_krw": -262.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-28 06:30",
-      "action": "BUY",
-      "ticker": "BTC",
-      "price": 114787000.0,
-      "amount_krw": 49850.0,
-      "reason": "BTC의 RSI는 33.7로 저조, MACD는 상승, ADX는 34.2로 추세가 있는 것으로 나타나며, 점수는 +5로 높은 편입니다. 이러한 신호들은 BTC에 대한 매수를 적극적으로 고려해야 함을 나타냅니다. 또한, 최근 4건의 거래 메모리에서 시간초과 청산이 3회 발생한 점을 고려하여, 추세 없는 횡보 구간 진입을 피하는 것이 중요합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 01:28",
+  "updated_at": "2026-05-04 05:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
