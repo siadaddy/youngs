@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "RSS3",
+    "buy_price": 10.0,
+    "qty": 4985.0,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-04 01:00"
+  },
   "history": [
+    {
+      "time": "2026-05-04 01:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 10.0,
+      "amount_krw": 49850.0,
+      "reason": "RSI 33.0으로 저점에 위치해 있으며, MACD 하락세에도 불구하고 ADX 35.2로 추세가 유지되고 있어 반등 가능성이 높다. 또한 거래량이 65% 증가하여 시장 참여자들이 관심을 보이고 있다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 00:02",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -1.08,
       "pnl_krw": -500.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-27 08:30",
-      "action": "BUY",
-      "ticker": "BTC",
-      "price": 116000000.0,
-      "amount_krw": 49850.0,
-      "reason": "BTC의 RSI는 51.6으로 중립적인 수준이며, MACD는 상승하고 있습니다. 또한 ADX는 26.2로 추세가 있는 것으로 나타나며, 거래량도 증가하고 있습니다. 이러한 신호들이 긍정적인 매매 기회를 제공하는 것으로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 00:02",
+  "updated_at": "2026-05-04 01:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
