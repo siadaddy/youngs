@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "RSS3",
-    "buy_price": 11.86,
-    "qty": 4203.204,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-03 17:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-03 17:20",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 11.34,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절: -4.38% ≤ -4.0%",
+      "pnl_pct": -4.38,
+      "pnl_krw": -2186.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 17:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-26 21:30",
-      "action": "SELL",
-      "ticker": "ETH",
-      "price": 3467000.0,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목인 ETH의 RSI가 57.1로 높고, MACD 데드크로스(강한매도) 신호가 발생하였으며, 보유 시간은 4230분으로 6시간 이상이므로 뚜렷한 반등 신호가 없으면 매도하는 것이 좋습니다. 또한, 현재 수익률은 +0.41%로 낮아 교체를 고려할 수 있지만, 다른 종목의 신호를 확인하여야 합니다.",
-      "pnl_pct": 0.41,
-      "pnl_krw": 202.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 69,
+    "total_trades": 70,
     "wins": 22,
-    "losses": 47,
-    "total_pnl_krw": -41681.0,
+    "losses": 48,
+    "total_pnl_krw": -43867.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 17:00",
+  "updated_at": "2026-05-03 17:20",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
