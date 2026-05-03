@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "RSS3",
+    "buy_price": 10.52,
+    "qty": 4738.5931,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 22:30"
+  },
   "history": [
+    {
+      "time": "2026-05-03 22:30",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 10.53,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화가 양호하며, 점수가 +4로 높은 편입니다. 또한 RSI가 32.3으로 과매도 상태이므로, 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 22:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "현재 보유 종목 AMP의 수익률이 -0.07%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한, 다른 종목들의 기술 점수가 더 높아 기회 교체를 고려해야 합니다.",
       "pnl_pct": -0.07,
       "pnl_krw": -37.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-27 06:00",
-      "action": "BUY",
-      "ticker": "AMP",
-      "price": 1.359,
-      "amount_krw": 49850.0,
-      "reason": "현재 RSI 52.2로 과매도 상태는 아니며, MACD 상승과 BB 중하단을 고려하면 매수 신호가 발생했다. 또한 ADX 44.4로 추세가 있는 상황에서 거래량이적으로 증가한 점을 고려하면 매수에 적극적으로 고려할 수 있다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
