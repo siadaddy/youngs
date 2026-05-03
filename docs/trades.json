@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "RSS3",
+    "buy_price": 11.86,
+    "qty": 4203.204,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-03 17:00"
+  },
   "history": [
+    {
+      "time": "2026-05-03 17:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 11.86,
+      "amount_krw": 49850.0,
+      "reason": "VB✅과 거래량 변화가 양호하며, 점수도 +4로 높아 신호가 강한 돌파 신호를 보이고 있습니다. 또한 RSI 값이 21.9로 저점에 위치해 있어 매수 기회로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-03 16:59",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 0.41,
       "pnl_krw": 202.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-23 23:00",
-      "action": "BUY",
-      "ticker": "ETH",
-      "price": 3453000.0,
-      "amount_krw": 49850.0,
-      "reason": "ETH의 RSI는 27.6으로 저점에 위치하고 있으며, MACD는 상승하고 있고, 볼린저밴드 중하단에 위치하고 있습니다. 또한, ADX는 34.3으로 추세가 있는 것으로 나타나며, 점수는 +5로 높은 편입니다. 이러한 신호들은 ETH에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-03 16:59",
+  "updated_at": "2026-05-03 17:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
