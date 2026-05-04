@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BABY",
+    "buy_price": 29.53,
+    "qty": 1688.1137,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-04 11:00"
+  },
   "history": [
+    {
+      "time": "2026-05-04 11:00",
+      "action": "BUY",
+      "ticker": "BABY",
+      "price": 29.56,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화 +58% 이상이면서 점수 +4 이상으로 BUY 최우선 신호가 발생하였습니다. 또한 RSI 38.5로 과매도 상태가 아니며, MACD 상승으로 추세가 좋습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 10:42",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.52,
       "pnl_krw": -261.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-29 19:00",
-      "action": "BUY",
-      "ticker": "LIT",
-      "price": 1337.0,
-      "amount_krw": 49850.0,
-      "reason": "LIT의 RSI는 34.9로 저점에 위치해 있으며, MACD는 하락 중이지만 볼린저밴드의 중하단에 위치해 있어 반등의 가능성이 있다. 또한, ADX는 53.2로 추세가 있는 것으로 나타나며, VB도 ✅로 확인되어 매수 신호가 강하다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 10:42",
+  "updated_at": "2026-05-04 11:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,

@@ -1,10 +1,10 @@
 {
-  "updated": "2026-05-04 10:00",
+  "updated": "2026-05-04 11:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 33,
-      "total": 76,
-      "wins": 25,
+      "win_rate": 34,
+      "total": 77,
+      "wins": 26,
       "losses": 51,
       "holding": "📊 BABY 보유 중",
       "hint": "⚠️ 최근 손절 3회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "11:00",
+          "date": "2026-05-04",
+          "ticker": "BABY",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "10:42",
+          "date": "2026-05-04",
+          "ticker": "BABY",
+          "pnl": 0.83,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "10:00",
           "date": "2026-05-04",
@@ -36,25 +51,15 @@
           "ticker": "RSS3",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "08:00",
-          "date": "2026-05-04",
-          "ticker": "BABY",
-          "pnl": -2.53,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "05:30",
-          "date": "2026-05-04",
-          "ticker": "BABY",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-04 10:00",
+      "last_active": "2026-05-04 11:00",
       "diary": [
+        {
+          "date": "2026-05-04 11:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-04 10:00",
           "lesson": "나, 데이터 믿어야지.",
@@ -64,15 +69,10 @@
           "date": "2026-05-04 08:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-04 08:00",
-          "lesson": "나, 손절 빨리야.",
-          "trigger": "sell"
         }
       ],
       "persona": "나, 데이터 믿어. 손절 중요해.",
-      "growth_score": 109
+      "growth_score": 110
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(7회), '한국'(5회), '전기차'(4회) — 새 각도 필요",
@@ -156,6 +156,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-04 11:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BABY 매수 — RSI 38.5·거래량+58%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-04 10:42",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BABY 익절 +0.83% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-05-04 10:00",
       "agent": "AI어드바이저",
@@ -344,20 +358,6 @@
       "icon": "🤖",
       "msg": "MEGA 손절 -4.41% → 학습 기록 🚫",
       "type": "loss"
-    },
-    {
-      "time": "2026-05-03 06:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "MEGA 매수 — RSI 36.4·ADX 53.1",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-03 05:32",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "POLA 익절 +1.89% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-03",
