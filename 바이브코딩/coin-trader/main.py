@@ -36,6 +36,19 @@ SWITCH_COOLDOWN_HOURS = 2  # 기회 교체 후 해당 종목 재진입 금지 �
 
 # ── 유틸리티 ─────────────────────────────────────────────
 
+def _rotate_log(path: str, max_mb: float = 5.0):
+    """로그 파일이 max_mb 초과 시 앞부분 잘라내기 (최근 2MB 유지)"""
+    try:
+        if os.path.exists(path) and os.path.getsize(path) > max_mb * 1024 * 1024:
+            with open(path, 'rb') as f:
+                f.seek(-2 * 1024 * 1024, 2)
+                tail = f.read()
+            with open(path, 'wb') as f:
+                f.write(tail)
+    except Exception:
+        pass
+
+
 def log(msg: str):
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     line = f"[{ts}] {msg}"
@@ -417,6 +430,8 @@ def _timeout_handler(signum, frame):
 
 
 def main():
+    _rotate_log(LOG_FILE)  # 5MB 초과 시 최근 2MB만 유지
+
     # 전체 실행 타임아웃 10분 (네트워크 hang 방지)
     signal.signal(signal.SIGALRM, _timeout_handler)
     signal.alarm(600)
