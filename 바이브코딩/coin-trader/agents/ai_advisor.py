@@ -127,13 +127,14 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
     def _score(d: dict) -> int:
         s = 0
         rsi = d.get("rsi", 50)
-        # RSI 스코어링
-        # RSI < 20 = 급락 추세 → BUY 절대 금지 수준으로 강한 패널티
-        if rsi < 20:         s -= 5   # 극단적 과매도 = 급락 추세 중 → BUY 불가
-        elif 20 <= rsi < 35: s += 2   # 과매도 반등 구간 (매수 적합)
-        elif rsi < 50:       s += 1   # 중립 하단
-        elif rsi > 75:       s -= 2   # 과매수
-        elif rsi > 65:       s -= 1   # 과매수 진입
+        # RSI 스코어링 (세분화)
+        if rsi < 20:           s -= 5   # 급락 추세 — BUY 불가
+        elif rsi < 30:         s += 3   # 강한 과매도 반등 구간
+        elif rsi < 40:         s += 2   # 과매도
+        elif rsi < 50:         s += 1   # 중립 하단
+        elif rsi > 80:         s -= 3   # 극단 과매수
+        elif rsi > 70:         s -= 2   # 과매수
+        elif rsi > 60:         s -= 1   # 과매수 진입
         macd = d.get("macd", "")
         if "골든크로스" in macd:   s += 2
         elif "상승" in macd:       s += 1
@@ -144,10 +145,14 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
         elif "중하단" in bb: s += 1
         elif "상단" in bb:  s -= 2
         elif "중상단" in bb: s -= 1
-        # VB 보너스 — 거래량 증가 동반 시에만 신뢰
+        # VB 보너스 — 거래량 증가 강도에 따라 차등
         vol = d.get("vol_change_pct", 0)
-        if d.get("vb") and vol >= 20:   s += 2   # VB + 거래량 급증 → 강한 신호
+        if d.get("vb") and vol >= 30:   s += 3   # VB + 거래량 급증 → 강한 돌파
+        elif d.get("vb") and vol >= 20: s += 2   # VB + 거래량 증가
         elif d.get("vb"):               s += 1   # VB만 → 약한 신호
+        # ADX 추세 보너스
+        adx = d.get("adx", 0)
+        if adx >= 35:   s += 1   # 강한 추세 보너스
         return s
 
     # 쿨다운 중인 종목은 점수 계산에서 완전 제외 (AI가 추천하지 못하도록)
@@ -182,7 +187,7 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
 
     stop_loss = float(os.getenv("STOP_LOSS_PCT", "4.0"))
 
-    # 최소 보유 시간 계산 (기회 교체 방지용)
+    # 보유 시간 계산
     hold_minutes = 0
     if holding and holding.get("buy_time"):
         try:
@@ -207,32 +212,42 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
 {market_text}
 {cooldown_text}
 【판단 규칙】
-30분봉 단기 매매 봇입니다. 투자금 5만원, 빗썸 수수료 0.25%(왕복 0.5%) 고려해 손익비 유리한 신호에만 진입.
-목표: 빠른 진입/청산, 죽은 포지션 오래 들고 있지 않기.
+30분봉 단기 매매 봇. 투자금 5만원, 빗썸 수수료 왕복 0.5%. 승률을 높이는 것이 최우선 목표.
+핵심 원칙: 불확실하면 반드시 HOLD. 강한 신호가 없으면 절대 진입하지 않는다.
 
-⚠️ 손절(-{stop_loss}%)·익절·트레일링스탑·시간초과 청산은 시스템이 자동 처리. AI는 수익률 수치로 손절 판단 금지.
+⚠️ 손절(-{stop_loss}%)·익절·트레일링스탑·강제청산은 시스템 자동 처리. AI는 수익률 수치로 SELL 판단 금지.
 
-【매수 규칙】
-1. 미보유 시에만 BUY 가능
-2. USDT, USDC, DAI, BUSD, TUSD, FDUSD 등 스테이블코인 → BUY 절대 금지
-3. RSI < 20 → BUY 금지 (급락 추세 중 — 반등 신호 아님)
-4. VB✅ + 거래량 변화 +20% 이상 + 점수 +4 이상 → BUY 최우선 (강한 돌파 신호)
-5. 점수 +5 이상 + ADX 25 이상 + MACD 골든크로스 또는 상승 → BUY 적극 고려
-6. ADX 20 미만 + VB❌ → BUY 금지 (방향성 없음, 기준 강화)
-7. 거래량 변화 -30% 이하 → BUY 금지 (거래 참여자 없음)
+【매수 규칙 — 모든 조건 동시 충족 시에만 BUY】
+1. 미보유 상태에서만 BUY 가능
+2. 스테이블코인 (USDT·USDC·DAI·BUSD·TUSD·FDUSD 등) → BUY 절대 금지
+3. RSI < 25 → BUY 금지 (급락 추세 — 반등 신호 아님)
+4. RSI > 70 → BUY 금지 (이미 과매수)
+5. ADX 25 미만 → BUY 금지 (방향성 없는 횡보장)
+6. 거래량 변화 -20% 이하 → BUY 금지 (참여자 이탈)
+7. 점수 +4 미만 → BUY 금지 (신호 불충분)
+8. 【최우선 BUY】 VB✅ + 거래량 +30% 이상 + 점수 +5 이상 + ADX 25 이상 → 강한 돌파, BUY
+9. 【일반 BUY】 점수 +5 이상 + ADX 30 이상 + MACD 골든크로스 + RSI 25~55 → BUY 고려
+10. 위 8·9 중 하나 이상 충족하고 3~7 위반 없을 때만 BUY — 애매하면 HOLD
 
-【매도/HOLD 규칙 — 보유 시간에 따라 기준 완화】
-8. 보유 4시간 미만: 기술 점수 -3 이하 또는 RSI 72+ + MACD 데드크로스 → SELL
-9. 보유 4~6시간: 기술 점수 -1 이하 또는 RSI 70+ + MACD 하락 → SELL 적극 고려
-10. 보유 6시간 이상 + 수익률 0% 이하: 뚜렷한 반등 신호 없으면 SELL (죽은 포지션)
-11. 보유 시간과 무관하게 RSI 75+ + MACD 데드크로스 → SELL
+【보유 중 HOLD 우선 원칙 — 복합 조건 없이는 SELL 금지】
+11. 보유 3시간 미만: 시스템이 손절/익절 처리 — AI는 HOLD 유지. SELL 금지.
+    예외: RSI 78 이상 AND MACD 데드크로스 AND 점수 -4 이하 세 조건 동시 충족 시만 SELL
+12. 보유 3~6시간: 점수 -3 이하 AND RSI 75 이상 AND MACD 데드크로스 → SELL
+13. 보유 6시간 이상 + 수익률 -1% 이하 + 점수 -2 이하 + 반등 신호 없음 → SELL (죽은 포지션)
+14. 수익률 +3% 이상 구간에서는 트레일링스탑이 보호 중 — AI는 HOLD 유지
 
-【기회 교체 — 매우 신중하게】
-12. 매수 후 90분 이상 + 보유 수익률 -3% 미만 + 보유 점수 -2 이하
-    + 다른 종목 점수 +5 이상 + ADX 25 이상 + VB✅ + 거래량 +20% 이상 → SELL 후 BUY (reason에 "기회 교체" 명시)
-13. 보유 수익률 -1% 이상이면 교체 금지 (손실 확정 최소화)
-14. 보유 수익률 +2% 이상 → 교체 절대 금지, 수익 보호
-15. 뚜렷한 신호 없으면 HOLD
+【기회 교체 — 사실상 금지 수준의 엄격한 기준】
+15. 아래 7가지 조건 모두 동시 충족해야만 기회 교체 허용:
+    ① 보유 180분(3시간) 이상
+    ② 보유 수익률 -2% 미만 (즉, 손실이 -2% 초과)
+    ③ 보유 종목 점수 -4 이하
+    ④ 교체 대상 종목 점수 +7 이상
+    ⑤ 교체 대상 ADX 30 이상
+    ⑥ 교체 대상 VB✅ + 거래량 +30% 이상
+    ⑦ 교체 대상 RSI 25~55 사이
+16. 보유 수익률 -0.5% 이상(손실 적음)이면 교체 절대 금지
+17. 보유 수익률 +1% 이상이면 교체 절대 금지 (수익 보호 최우선)
+18. 위 조건 하나라도 미충족이면 HOLD — 교체는 최후의 수단
 
 반드시 아래 JSON만 출력하세요 (다른 텍스트 없이):
 {{"action": "BUY" | "SELL" | "HOLD", "ticker": "BTC" 또는 "XRP" 등 코인심볼만 (KRW- 접두어 없이), "reason": "한국어로 판단 이유 2~3문장"}}"""
