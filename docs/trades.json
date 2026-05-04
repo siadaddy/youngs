@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "BABY",
-    "buy_price": 28.95,
-    "qty": 1721.9343,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-04 10:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-04 10:42",
+      "action": "SELL",
+      "ticker": "BABY",
+      "price": 29.19,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 30원 대비 -2.54%)",
+      "pnl_pct": 0.83,
+      "pnl_krw": 413.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 10:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-29 19:00",
-      "action": "SELL",
-      "ticker": "XRP",
-      "price": 2085.0,
-      "amount_krw": 49850.0,
-      "reason": "보유 시간과 무관하게 RSI 75+ + MACD 데드크로스에 가까운 상황이므로 매도하는 것이 좋으며, 현재 수익률도 1.96%로 낮아 교체를 고려할 수 있습니다.",
-      "pnl_pct": 1.96,
-      "pnl_krw": 975.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 76,
-    "wins": 25,
+    "total_trades": 77,
+    "wins": 26,
     "losses": 51,
-    "total_pnl_krw": -39806.0,
+    "total_pnl_krw": -39393.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 10:00",
+  "updated_at": "2026-05-04 10:42",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
