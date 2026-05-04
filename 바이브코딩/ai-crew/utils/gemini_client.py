@@ -83,10 +83,12 @@ def _call_gemini(prompt: str, system: str, temperature: float, max_tokens: int, 
                 except Exception as e:
                     status = getattr(getattr(e, 'response', None), 'status_code', 0)
                     print(f"  ⚠️  Gemini {key_label}/{gmodel} 시도 {attempt}/3 실패: {e}")
+                    if status == 429:
+                        print(f"      429 → 즉시 다음 모델/키로 전환...")
+                        break  # 429는 재시도 없이 다음 모델로
                     if attempt < 3:
-                        wait = 65 if status == 429 else 15
-                        print(f"      {wait}초 대기 후 재시도...")
-                        time.sleep(wait)
+                        print(f"      15초 대기 후 재시도...")
+                        time.sleep(15)
 
             # 이 모델 실패 → 다음 모델로
             if model_idx < len(gemini_models) - 1:
@@ -172,6 +174,11 @@ def ask_gemini(prompt: str, system: str = "", temperature: float = 0.7, max_toke
         return _call_groq(prompt, system, temperature, max_tokens, json_mode)
     except Exception as e:
         raise RuntimeError(f"Gemini + Groq 모두 실패: {e}")
+
+
+def ask_ai(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 2048, json_mode: bool = False) -> str:
+    """2.5-flash 우선 (2.0-flash 스킵) → 실패 시 Groq 폴백. weekly_trend 등 단발성 호출용."""
+    return ask_gemini25_first(prompt, system=system, temperature=temperature, max_tokens=max_tokens, json_mode=json_mode)
 
 
 def ask_groq_first(prompt: str, system: str = "", temperature: float = 0.7, max_tokens: int = 2048, json_mode: bool = False) -> str:

@@ -3190,6 +3190,7 @@
     }
 
     // 성장 랭킹
+    const normLv = s => Math.max(1, Math.round(Math.sqrt(s || 0)));
     const rankEl = document.getElementById('orp-rank');
     if (rankEl) {
       const ranked = Object.entries(data.agents)
@@ -3199,7 +3200,7 @@
       rankEl.innerHTML = ranked.map((r,i)=>`
         <div class="orp-stat-row">
           <span style="font-size:.7rem">${medals[i]} ${r.icon} ${r.id}</span>
-          <span class="orp-stat-val" style="color:#ffd54f;font-size:.7rem">Lv.${r.score}</span>
+          <span class="orp-stat-val" style="color:#ffd54f;font-size:.7rem">Lv.${normLv(r.score)}</span>
         </div>`).join('') || '<div style="font-size:.68rem;color:var(--muted2)">데이터 없음</div>';
     }
   }
@@ -3229,8 +3230,9 @@
         const score = a.growth_score || 0;
         const persona = a.persona || '';
         const latestDiary = (a.diary && a.diary[0]) ? a.diary[0].lesson : '';
+        const lv = normLv(score);
         const scoreBar = score > 0
-          ? `<span style="font-size:.7rem;opacity:.5;margin-left:4px">Lv.${score} ${'▪'.repeat(Math.min(score,10))}</span>`
+          ? `<span style="font-size:.7rem;opacity:.5;margin-left:4px">Lv.${lv} ${'▪'.repeat(Math.min(lv,10))}</span>`
           : '';
         return `<div class="ohint">
           <span class="ohi">${icons[id]||''}</span>
@@ -3365,7 +3367,7 @@
       Object.entries(data.agents).forEach(([name, d]) => {
         if ((d.growth_score || 0) > topScore) { topScore = d.growth_score; topName = name; }
       });
-      if (topName) el('bb-top').textContent = `🏆 ${topName} Lv.${topScore} 리드`;
+      if (topName) el('bb-top').textContent = `🏆 ${topName} Lv.${normLv(topScore)} 리드`;
     }
   }
 
