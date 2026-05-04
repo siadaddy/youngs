@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BABY",
+    "buy_price": 28.95,
+    "qty": 1721.9343,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-04 10:00"
+  },
   "history": [
+    {
+      "time": "2026-05-04 10:00",
+      "action": "BUY",
+      "ticker": "BABY",
+      "price": 28.9,
+      "amount_krw": 49850.0,
+      "reason": "BABY의 RSI는 31.6으로 저점에 위치해 있으며, MACD는 상승하고 있고, 볼린저밴드 중하단에 위치해 있습니다. 또한, 거래량은 56% 증가했으며, ADX는 51.9로 추세가 있는 것으로 나타나고 있습니다. 이러한 신호들은 BABY에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 09:32",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 1.96,
       "pnl_krw": 975.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-29 01:00",
-      "action": "BUY",
-      "ticker": "XRP",
-      "price": 2047.0,
-      "amount_krw": 49850.0,
-      "reason": "XRP의 RSI가 29.4로 저조하고, MACD가 하락하고 있지만 ADX가 51.6으로 추세가 있는 것으로 나타나며, 점수도 +3으로 매수 신호가 있는 것으로 판단됩니다. 또한, 최근 6건 분석에서 BTC가 반복 손실 종목으로 나타나므로 XRP에 매수하는 것이 더 적절해 보입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 09:32",
+  "updated_at": "2026-05-04 10:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
