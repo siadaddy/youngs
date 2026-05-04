@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "BABY",
-    "buy_price": 29.53,
-    "qty": 1688.1137,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-04 11:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-04 15:25",
+      "action": "SELL",
+      "ticker": "BABY",
+      "price": 29.83,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 31원 대비 -2.77%)",
+      "pnl_pct": 1.02,
+      "pnl_krw": 506.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 11:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-29 21:30",
-      "action": "SELL",
-      "ticker": "LIT",
-      "price": 1328.0,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목 LIT의 수익률이 -0.52%로 낮으며, 기술적 지표도 하락세를 보이고 있습니다. 또한, 다른 종목 중 ETH와 PRL의 기술 점수가 높고, VB✅ 및 거래량 증가로 BUY 신호가 강합니다. 따라서 기회 교체를 통해 수익성을 높이는 것이 좋습니다.",
-      "pnl_pct": -0.52,
-      "pnl_krw": -261.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 77,
-    "wins": 26,
+    "total_trades": 78,
+    "wins": 27,
     "losses": 51,
-    "total_pnl_krw": -39393.0,
+    "total_pnl_krw": -38887.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 11:00",
+  "updated_at": "2026-05-04 15:25",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
