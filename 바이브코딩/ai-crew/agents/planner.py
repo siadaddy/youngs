@@ -1,6 +1,37 @@
-import json, re, html
+import json, re, html, os
+from datetime import date, timedelta
 from utils.gemini_client import ask_gemini
 from utils.agent_memory import remember, get_hints
+
+DOCS_CONTENT_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "content")
+)
+
+def _load_recent_used_titles(days: int = 3) -> list[str]:
+    """최근 N일간 실제로 카드뉴스에 사용된 기사 제목 목록 반환 (중복 방지용)"""
+    used = []
+    today = date.today()
+    for i in range(1, days + 1):
+        d = (today - timedelta(days=i)).strftime("%Y-%m-%d")
+        path = os.path.join(DOCS_CONTENT_DIR, f"{d}.json")
+        if not os.path.exists(path):
+            continue
+        try:
+            data = json.load(open(path, encoding="utf-8"))
+            # 카드뉴스 헤드라인
+            for cap in data.get("captions", []):
+                h = cap.get("headline", "").strip()
+                if h:
+                    used.append(h)
+            # news 원문 기사 제목
+            for articles in data.get("news", {}).values():
+                for a in articles:
+                    t = a.get("title", "").strip()
+                    if t:
+                        used.append(t)
+        except Exception:
+            pass
+    return used
 
 _PLAN_STOP = {
     '의','을','를','이','가','은','는','에','도','와','과','로','으로',
@@ -38,19 +69,26 @@ def run(newsletter_text: str, newsletter_data: dict = None) -> dict:
             for a in articles[:ARTICLE_PER_CAT]:
                 candidates.append((cat, a))
 
-        # 유사 제목 중복 제거 (70% 이상 겹치면 첫 번째만 유지)
+        # 최근 3일 사용 기사 로드 (날짜 간 중복 방지)
+        recent_used = _load_recent_used_titles(days=3)
+        if recent_used:
+            print(f"  📅 최근 3일 사용 기사 {len(recent_used)}건 로드 (중복 방지)")
+
+        # 유사 제목 중복 제거 (오늘 내 + 최근 3일 모두 비교)
         DEDUP_THR = 0.7
-        deduped, seen_titles = [], []
+        deduped, seen_titles = [], list(recent_used)
+        cross_removed = 0
         for cat, a in candidates:
             title = html.unescape(a.get("title", ""))
             if any(_title_overlap(title, t) >= DEDUP_THR for t in seen_titles):
+                cross_removed += 1
                 continue
             deduped.append((cat, a))
             seen_titles.append(title)
 
         removed = len(candidates) - len(deduped)
         if removed:
-            print(f"  🔍 중복 기사 {removed}건 제거 (유사도 ≥{int(DEDUP_THR*100)}%)")
+            print(f"  🔍 중복 기사 {removed}건 제거 (유사도 ≥{int(DEDUP_THR*100)}%, 날짜간 {cross_removed}건 포함)")
 
         lines = []
         for cat, a in deduped:
