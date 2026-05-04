@@ -2637,10 +2637,9 @@
         heroPnlVal.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
       }
 
-      // 승률 계산
-      const wins = s.wins ?? 0, total = s.total_trades ?? 0;
-      const sellCount = d.history ? d.history.filter(t => t.action === 'SELL').length : total;
-      const base = sellCount || total;
+      // 승률 계산 — stats 기준 (history는 최근 50건만 저장돼 분모로 쓰면 100% 초과 버그 발생)
+      const wins = s.wins ?? 0, losses = s.losses ?? 0;
+      const base = wins + losses;
       const winrateEl = document.getElementById('cs-winrate');
       if (base > 0) {
         const wr = (wins / base * 100);
