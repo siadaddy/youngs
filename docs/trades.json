@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "H",
+    "buy_price": 289.0,
+    "qty": 172.4913,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-04 15:30"
+  },
   "history": [
+    {
+      "time": "2026-05-04 15:30",
+      "action": "BUY",
+      "ticker": "H",
+      "price": 290.0,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화 +23% 이상이면서 점수 +5 이상인 강한 돌파 신호가 나타나고, ADX 39.1로 추세가 있는 상황에서 매수 신호가 발생했습니다. 또한 RSI 22.2로 과매도 상태이기 때문에 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 15:25",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.23,
       "pnl_krw": -115.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-29 21:30",
-      "action": "BUY",
-      "ticker": "ETH",
-      "price": 3438000.0,
-      "amount_krw": 49850.0,
-      "reason": "ETH의 RSI는 39.8로 과매도 상태가 아니며, MACD는 하락하지만 ADX는 40.5로 추세가 있는 것으로 나타납니다. 또한 거래량이 88% 증가하여 강한 매수 신호를 보이고 있습니다. 따라서 ETH를 매수하는 것이 좋습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 15:25",
+  "updated_at": "2026-05-04 15:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
