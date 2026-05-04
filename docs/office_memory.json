@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-04 20:02",
+  "updated": "2026-05-05 02:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 35,
-      "total": 79,
+      "total": 80,
       "wins": 28,
-      "losses": 51,
-      "holding": "📊 H 보유 중",
+      "losses": 52,
+      "holding": "📊 YFI 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "02:30",
+          "date": "2026-05-05",
+          "ticker": "YFI",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "22:08",
+          "date": "2026-05-04",
+          "ticker": "H",
+          "pnl": -4.29,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
         {
           "time": "17:30",
           "date": "2026-05-04",
@@ -36,43 +51,28 @@
           "ticker": "H",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "15:25",
-          "date": "2026-05-04",
-          "ticker": "BABY",
-          "pnl": 1.02,
-          "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "11:00",
-          "date": "2026-05-04",
-          "ticker": "BABY",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-04 17:30",
+      "last_active": "2026-05-05 02:30",
       "diary": [
         {
-          "date": "2026-05-04 17:30",
+          "date": "2026-05-05 02:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-04 15:30",
-          "lesson": "나는 데이터가 중요하다고 느낀다.",
+          "date": "2026-05-05 02:00",
+          "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-04 11:00",
+          "date": "2026-05-05 01:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. 손절 중요해.",
-      "growth_score": 112
+      "growth_score": 119
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(7회), '한국'(5회), '전기차'(4회) — 새 각도 필요",
@@ -172,6 +172,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-05 02:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "YFI 매수 — RSI 59.9·ADX 60.2",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-04 22:08",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "H 손절 -4.29% → 학습 기록 🚫",
+      "type": "loss"
+    },
     {
       "time": "2026-05-04 17:30",
       "agent": "AI어드바이저",
@@ -381,20 +395,6 @@
       "icon": "🤖",
       "msg": "GNO 익절 +5.33% 🎯",
       "type": "win"
-    },
-    {
-      "time": "2026-05-03 17:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "GNO 매수 — 진입",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-03 17:20",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 손절 -4.38% → 학습 기록 🚫",
-      "type": "loss"
     },
     {
       "time": "2026-05-03",

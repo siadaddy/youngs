@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "YFI",
+    "buy_price": 4083000.0,
+    "qty": 0.0122,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-05 02:30"
+  },
   "history": [
+    {
+      "time": "2026-05-05 02:30",
+      "action": "BUY",
+      "ticker": "YFI",
+      "price": 4086000.0,
+      "amount_krw": 49850.0,
+      "reason": "YFI의 RSI는 59.9로 과매수 상태가 아니며, MACD는 상승하고 있습니다. 또한, ADX는 60.2로 강한 추세를 보이고 있으며, 거래량도 많이 증가한 상태입니다. 이러한 신호들이 모두BUY 조건을 충족하고 있으므로 BUY를 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-04 22:08",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -4.06,
       "pnl_krw": -2022.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-04-30 03:30",
-      "action": "BUY",
-      "ticker": "A8",
-      "price": 16.27,
-      "amount_krw": 49850.0,
-      "reason": "RSI 값이 높지만, MACD 상승과 거래량의 급증, 볼린저밴드 중상단에 위치하여 상승 추세가 예상되며, 점수도 양호하여 매수 신호가 발생했습니다. 또한, VB✅과 거래량 변화가 20% 이상 증가하여 BUY 최우선 조건을 만족합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-04 22:08",
+  "updated_at": "2026-05-05 02:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
