@@ -1,10 +1,10 @@
 {
-  "updated": "2026-05-04 15:30",
+  "updated": "2026-05-04 17:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 35,
-      "total": 78,
-      "wins": 27,
+      "total": 79,
+      "wins": 28,
       "losses": 51,
       "holding": "📊 H 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "17:30",
+          "date": "2026-05-04",
+          "ticker": "H",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "17:27",
+          "date": "2026-05-04",
+          "ticker": "H",
+          "pnl": 5.19,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "15:30",
           "date": "2026-05-04",
@@ -36,25 +51,15 @@
           "ticker": "BABY",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "10:42",
-          "date": "2026-05-04",
-          "ticker": "BABY",
-          "pnl": 0.83,
-          "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "10:00",
-          "date": "2026-05-04",
-          "ticker": "BABY",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-04 15:30",
+      "last_active": "2026-05-04 17:30",
       "diary": [
+        {
+          "date": "2026-05-04 17:30",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-04 15:30",
           "lesson": "나는 데이터가 중요하다고 느낀다.",
@@ -64,15 +69,10 @@
           "date": "2026-05-04 11:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-04 10:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. 손절 중요해.",
-      "growth_score": 111
+      "growth_score": 112
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(7회), '한국'(5회), '전기차'(4회) — 새 각도 필요",
@@ -156,6 +156,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-04 17:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "H 매수 — RSI 50.0·ADX 38.0",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-04 17:27",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "H 익절 +5.19% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-05-04 15:30",
       "agent": "AI어드바이저",
@@ -344,20 +358,6 @@
       "icon": "🤖",
       "msg": "RSS3 손절 -4.38% → 학습 기록 🚫",
       "type": "loss"
-    },
-    {
-      "time": "2026-05-03 17:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 매수 — 진입",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-03 16:59",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "POLA 익절 +5.0% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-03",
