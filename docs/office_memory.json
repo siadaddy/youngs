@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-05 07:11",
+  "updated": "2026-05-05 08:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 35,
-      "total": 80,
+      "total": 81,
       "wins": 28,
-      "losses": 52,
-      "holding": "📊 YFI 보유 중",
+      "losses": 53,
+      "holding": "💤 현재 보유 없음",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "08:30",
+          "date": "2026-05-05",
+          "ticker": "YFI",
+          "pnl": -1.74,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "02:30",
           "date": "2026-05-05",
@@ -44,16 +52,9 @@
           "pnl": 5.19,
           "action": "SELL",
           "type": "take_profit"
-        },
-        {
-          "time": "15:30",
-          "date": "2026-05-04",
-          "ticker": "H",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-05 02:30",
+      "last_active": "2026-05-05 08:30",
       "diary": [
         {
           "date": "2026-05-05 02:30",
@@ -172,6 +173,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-05 08:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "YFI 강제청산 -1.7% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-05 02:30",
       "agent": "AI어드바이저",
@@ -416,13 +424,6 @@
       "icon": "🤖",
       "msg": "ORCA 매수 — RSI 43.0·ADX 25.2",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-03 21:28",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "GNO 익절 +5.33% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-03",
