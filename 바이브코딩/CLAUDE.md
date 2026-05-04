@@ -1,6 +1,6 @@
 # 🤖 AI 자동화 시스템 — Claude Code 컨텍스트
 
-> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-05-04
+> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-05-05
 
 ---
 
@@ -225,6 +225,13 @@ read · wboard · snack · chat · printer · nap · patrol · report · water �
 ---
 
 ## 🐛 최근 수정 이력
+
+### 2026-05-05 — 버그 수정 및 최적화
+- **브리핑보드 텍스트 미표시**: `normLv` 스코프 오류 → `updateBriefingBoard()` 내 로컬 선언으로 해결
+- **Gemini 429 낭비 제거**: 2.0-flash 429 시 즉시 2.5-flash 전환 (65초 대기 제거), `ask_ai()` 추가
+- **Lv. 표시 정규화**: `√score` 스케일 (AI어드바이저 Lv.112 → Lv.11)
+- **로그 자동 로테이션**: trader.log 5MB 초과 시 최근 2MB 유지
+- **디스크 3.2GB 확보**: pip·Playwright·Zoom·SiriTTS 캐시 정리
 
 ### 2026-04-29 — AI 사무실 레이아웃 최종 정비
 - **책상 2+2 클러스터**: flex → 절대위치(3.25%/20.6%/68.6%/84.4%). 가운데 공간으로 브리핑보드 노출
