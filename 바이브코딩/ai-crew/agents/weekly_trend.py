@@ -8,8 +8,8 @@
 
 import os, json, subprocess
 from datetime import date, timedelta
-from utils.gemini_client import ask_gemini
-from utils.agent_memory import remember, get_hints
+from utils.gemini_client import ask_ai
+from utils.agent_memory import remember, get_hints, add_diary
 
 DOCS_CONTENT_DIR  = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "content")
 WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "weekly_trend.json")
@@ -153,7 +153,7 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 - 한국어·영어·이모지만. 한자·일본어 등 절대 금지
 - JSON만 출력. 코드블록(```) 없이."""
 
-    raw = ask_gemini(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2000)
+    raw = ask_ai(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2000)
     raw = raw.replace("```json", "").replace("```", "").strip()
 
     try:
@@ -190,6 +190,10 @@ def run():
         "week_summary": ai.get("week_summary", ""),
         "hot_category": ai.get("hot_category", ""),
     })
+
+    hot = ai.get("hot_category", "")
+    summary = ai.get("week_summary", "")
+    add_diary("AI주간트렌드", f"{week_label} 주간 분석 완료. 이번 주 핫이슈는 {hot}. '{summary}'", trigger="weekly_trend")
 
     # 기존 history 불러오기 (최대 12주)
     history = []
