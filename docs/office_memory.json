@@ -6,7 +6,7 @@
       "total": 81,
       "wins": 28,
       "losses": 53,
-      "holding": "💤 현재 보유 없음",
+      "holding": "📊 AIOZ 보유 중",
       "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,13 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "08:30",
+          "date": "2026-05-05",
+          "ticker": "AIOZ",
+          "pnl": null,
+          "action": "BUY"
+        },
         {
           "time": "08:30",
           "date": "2026-05-05",
@@ -44,18 +51,15 @@
           "ticker": "H",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "17:27",
-          "date": "2026-05-04",
-          "ticker": "H",
-          "pnl": 5.19,
-          "action": "SELL",
-          "type": "take_profit"
         }
       ],
       "last_active": "2026-05-05 08:30",
       "diary": [
+        {
+          "date": "2026-05-05 08:30",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-05 02:30",
           "lesson": "나, 데이터 믿어야지.",
@@ -65,15 +69,10 @@
           "date": "2026-05-05 02:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-05 01:30",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. 손절 중요해.",
-      "growth_score": 119
+      "growth_score": 120
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(8회), '한국'(5회), '국제유가'(4회) — 새 각도 필요",
@@ -173,6 +172,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-05 08:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "AIOZ 매수 — RSI 38.9·ADX 63.3",
+      "type": "buy"
+    },
     {
       "time": "2026-05-05 08:30",
       "agent": "AI어드바이저",
@@ -417,13 +423,6 @@
       "icon": "🤖",
       "msg": "ORCA 강제청산 -1.3% (8시간)",
       "type": "exit"
-    },
-    {
-      "time": "2026-05-03 21:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ORCA 매수 — RSI 43.0·ADX 25.2",
-      "type": "buy"
     },
     {
       "time": "2026-05-03",

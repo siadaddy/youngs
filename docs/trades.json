@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "AIOZ",
+    "buy_price": 110.0,
+    "qty": 453.1818,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-05 08:30"
+  },
   "history": [
+    {
+      "time": "2026-05-05 08:30",
+      "action": "BUY",
+      "ticker": "AIOZ",
+      "price": 110.0,
+      "amount_krw": 49850.0,
+      "reason": "AIOZ의 RSI는 38.9로 과매도 상태가 아니며, ADX는 63.3으로 강한 추세를 보이고 있습니다. 또한 VB✅와 거래량 증가로 인해 BUY 신호가 발생하였습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-05 08:30",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "현재 보유 종목인 ETH의 RSI가 63.2로 상승세를 보이고 있으나, MACD 데드크로스(강한매도) 신호가 발생하였으며, 기술 점수도 -4로 낮은 수준입니다. 따라서 보유 종목을 매도하고 새로운 기회를 찾는 것이 좋을 것으로 판단됩니다.",
       "pnl_pct": 1.22,
       "pnl_krw": 603.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-04-30 09:00",
-      "action": "BUY",
-      "ticker": "ETH",
-      "price": 3372000.0,
-      "amount_krw": 49850.0,
-      "reason": "ETH의 RSI는 42.9로 상대적으로 낮은 수준이며, MACD는 상승하고 있습니다. 또한, 볼린저밴드의 중하단에 위치해 있기 때문에 매수 신호가 발생한 것으로 판단됩니다. 따라서 ETH를 매수하는 것이 적절한 것으로 보입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
