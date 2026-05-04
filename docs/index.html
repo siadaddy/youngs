@@ -3146,6 +3146,7 @@
   ];
 
   let _officeMem = null;
+  const normLv = s => Math.max(1, Math.round(Math.sqrt(s || 0)));
 
   function _renderRPanel(data) {
     if (!data || !data.agents) return;
@@ -3190,7 +3191,6 @@
     }
 
     // 성장 랭킹
-    const normLv = s => Math.max(1, Math.round(Math.sqrt(s || 0)));
     const rankEl = document.getElementById('orp-rank');
     if (rankEl) {
       const ranked = Object.entries(data.agents)
@@ -3338,7 +3338,6 @@
 
   // ── 브리핑 보드 동적 업데이트 ─────────────────────────────
   function updateBriefingBoard(data) {
-    const normLv = s => Math.max(1, Math.round(Math.sqrt(s || 0)));
     const days = ['일','월','화','수','목','금','토'];
     const now = new Date();
     const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}(${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
