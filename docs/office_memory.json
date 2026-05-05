@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-05 14:00",
+  "updated": "2026-05-05 19:01",
   "agents": {
     "AI어드바이저": {
       "win_rate": 34,
-      "total": 82,
+      "total": 83,
       "wins": 28,
-      "losses": 54,
-      "holding": "📊 RSS3 보유 중",
-      "hint": "⚠️ 최근 손절 3회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 55,
+      "holding": "📊 AIOZ 보유 중",
+      "hint": "⚠️ 최근 손절 4회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "19:01",
+          "date": "2026-05-05",
+          "ticker": "AIOZ",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "14:47",
+          "date": "2026-05-05",
+          "ticker": "RSS3",
+          "pnl": -4.29,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
         {
           "time": "14:00",
           "date": "2026-05-05",
@@ -36,43 +51,28 @@
           "ticker": "AIOZ",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "08:30",
-          "date": "2026-05-05",
-          "ticker": "YFI",
-          "pnl": -1.74,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "02:30",
-          "date": "2026-05-05",
-          "ticker": "YFI",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-05 14:00",
+      "last_active": "2026-05-05 19:01",
       "diary": [
         {
+          "date": "2026-05-05 19:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
+        {
+          "date": "2026-05-05 17:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
+        {
           "date": "2026-05-05 14:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
-        },
-        {
-          "date": "2026-05-05 13:30",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
-        },
-        {
-          "date": "2026-05-05 12:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. 손절 중요해.",
-      "growth_score": 127
+      "growth_score": 129
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(8회), '한국'(5회), '국제유가'(4회) — 새 각도 필요",
@@ -172,6 +172,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-05 19:01",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "AIOZ 매수 — RSI 46.2·거래량+38%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-05 14:47",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "RSS3 손절 -4.29% → 학습 기록 🚫",
+      "type": "loss"
+    },
     {
       "time": "2026-05-05 14:00",
       "agent": "AI어드바이저",
@@ -353,20 +367,6 @@
       "icon": "🤖",
       "msg": "RSS3 손절 -5.7% → 학습 기록 🚫",
       "type": "loss"
-    },
-    {
-      "time": "2026-05-04 01:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 매수 — RSI 33.0·ADX 35.2",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-04 00:02",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 익절 +5.42% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-04",
