@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "TRAC",
+    "buy_price": 508.0,
+    "qty": 98.1299,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-06 02:30"
+  },
   "history": [
+    {
+      "time": "2026-05-06 02:30",
+      "action": "BUY",
+      "ticker": "TRAC",
+      "price": 511.0,
+      "amount_krw": 49850.0,
+      "reason": "TRAC의 RSI는 37.5로 과매도 상태가 아니며, ADX는 49.2로 추세가 있는 것으로 나타납니다. 또한 거래량이 1560% 증가하여 강한 상승 신호를 보이고 있습니다. 이러한 조건은 BUY에 적합합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-05 21:30",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 0.59,
       "pnl_krw": 292.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 12:30",
-      "action": "BUY",
-      "ticker": "ORCA",
-      "price": 2903.0,
-      "amount_krw": 49850.0,
-      "reason": "ORCA의 RSI는 42.0으로 저조한 수준이며, MACD는 하락세를 보이고 있습니다. 그러나 ADX는 25.0으로 추세가 있는 것으로 판단되며, 거래량도 증가하고 있어 매수 신호가 발생한 것으로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-05 21:30",
+  "updated_at": "2026-05-06 02:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
