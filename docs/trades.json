@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "AIOZ",
-    "buy_price": 110.0,
-    "qty": 453.1818,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-05 08:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-05 09:42",
+      "action": "SELL",
+      "ticker": "AIOZ",
+      "price": 105.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.55% (기준 -4.0%)",
+      "pnl_pct": -4.55,
+      "pnl_krw": -2266.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-05 08:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 01:30",
-      "action": "SELL",
-      "ticker": "ETH",
-      "price": 3413000.0,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목인 ETH의 RSI가 63.2로 상승세를 보이고 있으나, MACD 데드크로스(강한매도) 신호가 발생하였으며, 기술 점수도 -4로 낮은 수준입니다. 따라서 보유 종목을 매도하고 새로운 기회를 찾는 것이 좋을 것으로 판단됩니다.",
-      "pnl_pct": 1.22,
-      "pnl_krw": 603.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 81,
+    "total_trades": 82,
     "wins": 28,
-    "losses": 53,
-    "total_pnl_krw": -39305.0,
+    "losses": 54,
+    "total_pnl_krw": -41571.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-05 08:30",
+  "updated_at": "2026-05-05 09:42",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
@@ -686,6 +680,14 @@
       "blacklisted_until": null,
       "history": [
         "2026-05-04 22:08"
+      ]
+    },
+    "AIOZ": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-05 09:42",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-05 09:42"
       ]
     }
   }
