@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "AIOZ",
-    "buy_price": 105.0,
-    "qty": 474.76190476190476,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-05 19:01"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-05 20:07",
+      "action": "SELL",
+      "ticker": "AIOZ",
+      "price": 105.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 108원 대비 -2.78%)",
+      "pnl_pct": 0.0,
+      "pnl_krw": 0.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-05 19:01",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 11:00",
-      "action": "SELL",
-      "ticker": "MANTRA",
-      "price": 15.07,
-      "amount_krw": 49850.0,
-      "reason": "보유 30분 미만이지만 기술 점수가 낮고, MACD 데드크로스와 RSI 52.9로 매도 신호가 발생하였으며, 수익률도 -0.33%로 낮아 매도하는 것이 좋습니다.",
-      "pnl_pct": -0.33,
-      "pnl_krw": -165.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 83,
+    "total_trades": 84,
     "wins": 28,
-    "losses": 55,
+    "losses": 56,
     "total_pnl_krw": -43708.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-05 19:01",
+  "updated_at": "2026-05-05 20:07",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
@@ -695,7 +689,8 @@
       "blacklisted_until": null,
       "history": [
         "2026-05-05 09:42"
-      ]
+      ],
+      "recovery_trades": 1
     }
   }
 }
