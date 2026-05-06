@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "REI",
-    "buy_price": 4.7,
-    "qty": 10606.3829,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-06 09:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-06 09:28",
+      "action": "SELL",
+      "ticker": "REI",
+      "price": 4.505,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.15% (기준 -4.0%)",
+      "pnl_pct": -4.15,
+      "pnl_krw": -2068.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-06 09:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 19:00",
-      "action": "SELL",
-      "ticker": "MBX",
-      "price": 78.29,
-      "amount_krw": 49850.0,
-      "reason": "보유 60분 미만이지만 기술 점수가 낮고, RSI도 29.1로 낮은 수준이며, MACD도 하락하고 있어 매도 신호가 발생했다. 또한, 다른 종목에 비해 수익률이 낮아 기회 교체를 고려해야 한다.",
-      "pnl_pct": -1.11,
-      "pnl_krw": -553.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 86,
+    "total_trades": 87,
     "wins": 29,
-    "losses": 57,
-    "total_pnl_krw": -41456.0,
+    "losses": 58,
+    "total_pnl_krw": -43524.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-06 09:00",
+  "updated_at": "2026-05-06 09:28",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
@@ -697,6 +691,14 @@
         "2026-05-05 09:42"
       ],
       "recovery_trades": 1
+    },
+    "REI": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-06 09:28",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-06 09:28"
+      ]
     }
   }
 }
