@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-06 07:34",
+  "updated": "2026-05-06 09:00",
   "agents": {
     "AI어드바이저": {
       "win_rate": 34,
-      "total": 85,
+      "total": 86,
       "wins": 29,
-      "losses": 56,
-      "holding": "📊 TRAC 보유 중",
+      "losses": 57,
+      "holding": "💤 현재 보유 없음",
       "hint": "⚠️ 최근 손절 3회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "09:00",
+          "date": "2026-05-06",
+          "ticker": "TRAC",
+          "pnl": -1.18,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "02:30",
           "date": "2026-05-06",
@@ -44,16 +52,9 @@
           "pnl": 0.0,
           "action": "SELL",
           "type": "force_exit"
-        },
-        {
-          "time": "19:01",
-          "date": "2026-05-05",
-          "ticker": "AIOZ",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-06 02:30",
+      "last_active": "2026-05-06 09:00",
       "diary": [
         {
           "date": "2026-05-06 02:30",
@@ -177,6 +178,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-06 09:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "TRAC 강제청산 -1.2% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-06 02:30",
       "agent": "AI어드바이저",
@@ -407,13 +415,6 @@
       "icon": "🤖",
       "msg": "BABY 매수 — RSI 31.6·ADX 51.9",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-04 09:32",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 익절 +6.89% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-04",

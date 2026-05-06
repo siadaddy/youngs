@@ -1,13 +1,17 @@
 {
-  "holding": {
-    "ticker": "TRAC",
-    "buy_price": 508.0,
-    "qty": 98.1299,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-06 02:30",
-    "high_price": 516.0
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-06 09:00",
+      "action": "SELL",
+      "ticker": "TRAC",
+      "price": 502.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.18,
+      "pnl_krw": -589.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-06 02:30",
       "action": "BUY",
@@ -546,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 17:51",
-      "action": "SELL",
-      "ticker": "ORCA",
-      "price": 2918.0,
-      "amount_krw": 49850.0,
-      "reason": "실시간 트레일링 스탑 (고점 3,010원 대비 -3.06%)",
-      "pnl_pct": 0.59,
-      "pnl_krw": 292.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 85,
+    "total_trades": 86,
     "wins": 29,
-    "losses": 56,
-    "total_pnl_krw": -40867.0,
+    "losses": 57,
+    "total_pnl_krw": -41456.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-06 07:30",
+  "updated_at": "2026-05-06 09:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
