@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ETH",
+    "buy_price": 3490000.0,
+    "qty": 0.0142,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-06 13:30"
+  },
   "history": [
+    {
+      "time": "2026-05-06 13:30",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 3490000.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 31.8로 저점에 접근하였으며, MACD 골든크로스 신호가 발생하여 강한 매수 신호를 보이고 있습니다. 또한, ADX 31.0으로 추세가 있는 것으로 판단되며, 점수 +6으로 BUY 조건을 충족합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-06 09:28",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.9,
       "pnl_krw": -448.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 19:00",
-      "action": "BUY",
-      "ticker": "IRYS",
-      "price": 64.6,
-      "amount_krw": 49850.0,
-      "reason": "IRYS의 RSI는 56.0으로 상승 중이며, MACD도 상승하고 있습니다. 또한, 거래량이 147% 증가하여 강한 상승 신호를 보이고 있습니다. 이러한 신호에 따라 IRYS를 매수합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-06 09:28",
+  "updated_at": "2026-05-06 13:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
