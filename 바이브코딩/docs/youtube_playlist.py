@@ -11,7 +11,8 @@ from datetime import datetime
 from pathlib import Path
 
 # ── 경로 설정 ──────────────────────────────────────────────
-BASE_DIR       = Path(__file__).parent
+BASE_DIR       = Path(__file__).parent                          # 바이브코딩/docs/ (인증·상태·캐시)
+DOCS_DIR       = Path(__file__).parent.parent.parent / "docs"   # git root/docs/ (music 파일)
 CRED_FILE      = BASE_DIR / "client_secret.json"
 TOKEN_FILE     = BASE_DIR / "token.json"
 CACHE_FILE     = BASE_DIR / "video_cache.json"    # 곡명 → videoId 캐시
@@ -23,9 +24,9 @@ SCOPES = ["https://www.googleapis.com/auth/youtube"]
 today = datetime.now().strftime("%Y-%m-%d")
 
 # 오늘 날짜 music_YYYY-MM-DD.json → 없으면 music.json 폴백
-MUSIC_FILE = BASE_DIR / f"music_{today}.json"
+MUSIC_FILE = DOCS_DIR / f"music_{today}.json"
 if not MUSIC_FILE.exists():
-    MUSIC_FILE = BASE_DIR / "music.json"
+    MUSIC_FILE = DOCS_DIR / "music.json"
 
 
 # ── 상태 파일 (플레이리스트 ID + 추가된 곡) ────────────────
