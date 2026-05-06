@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "REI",
+    "buy_price": 4.7,
+    "qty": 10606.3829,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-06 09:00"
+  },
   "history": [
+    {
+      "time": "2026-05-06 09:00",
+      "action": "BUY",
+      "ticker": "REI",
+      "price": 4.723,
+      "amount_krw": 49850.0,
+      "reason": "REI의 RSI는 53.0으로 중립적인 수준이며, MACD는 하락세이지만 BB 중하단에 위치해 있고, 거래량은 123% 증가하여 강한 상승세를 보이고 있습니다. 또한, ADX가 43.5로 추세가 있는 것으로 나타나며, VB✅과 점수 +5로 강한 돌파 신호가 나타나 BUY에 적합합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-06 09:00",
       "action": "SELL",
@@ -538,17 +555,6 @@
       "reason": "보유 60분 미만이지만 기술 점수가 낮고, RSI도 29.1로 낮은 수준이며, MACD도 하락하고 있어 매도 신호가 발생했다. 또한, 다른 종목에 비해 수익률이 낮아 기회 교체를 고려해야 한다.",
       "pnl_pct": -1.11,
       "pnl_krw": -553.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-05-02 18:00",
-      "action": "BUY",
-      "ticker": "MBX",
-      "price": 79.07,
-      "amount_krw": 49850.0,
-      "reason": "RSI 35.9로 저점에 위치해 있으며, MACD 하락세에도 불구하고 BB 중하단에서 반등의 기회가 있는 것으로 판단되며, ADX 29.5로 추세가 있는 상황에서 VB✅와 거래량-80%로 매수 신호가 발생하였습니다. 또한 점수:+3으로 매수에 유리한 상황입니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
       "dry_run": false
     }
   ],
