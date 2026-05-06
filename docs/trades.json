@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "ETH",
+    "buy_price": 3456000.0,
+    "qty": 0.0144,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-07 07:06"
+  },
   "history": [
+    {
+      "time": "2026-05-07 07:06",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 0.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 38.6으로 매수 신호를 보이고, MACD 골든크로스와 볼린저밴드 중하단에 위치해 있어 강한 매수 신호를 나타내고 있습니다. 또한, ADX 39.5로 추세가 있는 것으로 판단되어 BUY에 적합합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-07 03:00",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 0.84,
       "pnl_krw": 419.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-02 20:30",
-      "action": "BUY",
-      "ticker": "KNC",
-      "price": 239.0,
-      "amount_krw": 49850.0,
-      "reason": "KNC의 RSI는 29.8로 저점에 위치하고 있으며, MACD는 하락세지만 볼린저밴드 중하단에 위치해 있어 반등 가능성이 높습니다. 또한 ADX가 36.0으로 추세가 확인되며, VB 신호도 확인되어 매수 신호가 활성화되었습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-07 03:00",
+  "updated_at": "2026-05-07 07:06",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
