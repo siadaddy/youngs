@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 2045.0,
+    "qty": 24.3765,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-08 02:00"
+  },
   "history": [
+    {
+      "time": "2026-05-08 02:00",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 2045.0,
+      "amount_krw": 49850.0,
+      "reason": "XRP의 RSI는 28.3으로 과매도 상태이며, ADX는 59.7로 추세가 있는 것으로 나타납니다. 또한, 거래량이 83% 증가하여 강한 상승 신호를 보이고 있습니다. 따라서, BUY 조건을 충족하여 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-08 00:30",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -0.82,
       "pnl_krw": -410.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-03 03:30",
-      "action": "BUY",
-      "ticker": "RSS3",
-      "price": 10.99,
-      "amount_krw": 49850.0,
-      "reason": "RSI 84.1로 상승세를 보이고 있으며, MACD도 상승하고 있습니다. 또한, 거래량 변화가 20426%로 매우 높아 돌파 신호를 보이고 있습니다. VB✅와 점수 -1로 BUY 신호가 발생하였습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-08 00:30",
+  "updated_at": "2026-05-08 02:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
