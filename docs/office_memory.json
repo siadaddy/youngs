@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-07 07:58",
+  "updated": "2026-05-07 13:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 33,
-      "total": 88,
+      "total": 89,
       "wins": 29,
-      "losses": 59,
-      "holding": "📊 ETH 보유 중",
+      "losses": 60,
+      "holding": "💤 현재 보유 없음",
       "hint": "⚠️ 최근 손절 4회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "13:30",
+          "date": "2026-05-07",
+          "ticker": "ETH",
+          "pnl": -1.19,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "07:06",
           "date": "2026-05-07",
@@ -44,16 +52,9 @@
           "pnl": -4.15,
           "action": "SELL",
           "type": "stop_loss"
-        },
-        {
-          "time": "09:00",
-          "date": "2026-05-06",
-          "ticker": "REI",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-07 07:06",
+      "last_active": "2026-05-07 13:30",
       "diary": [
         {
           "date": "2026-05-07 07:06",
@@ -177,6 +178,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-07 13:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 강제청산 -1.2% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-07 07:06",
       "agent": "AI어드바이저",
@@ -428,13 +436,6 @@
       "icon": "🤖",
       "msg": "H 매수 — RSI 50.0·ADX 38.0",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-04 17:27",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "H 익절 +5.19% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-04",
