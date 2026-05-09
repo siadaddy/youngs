@@ -22,13 +22,18 @@
   },
   "devDependencies": {
     "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
+    "jest": "^29.7.0",
+    "jest-expo": "^55.0.17",
     "typescript": "~5.9.2"
   },
   "private": true,
   "jest": {
     "preset": "jest-expo",
-    "setupFilesAfterFramework": ["./jest.setup.ts"],
+    "setupFilesAfterEnv": [
+      "./jest.setup.ts"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|zustand)"
     ]
