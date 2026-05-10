@@ -2098,7 +2098,19 @@
         const rows = await fetchNewsFromSupabase(dateStr);
         if (rows && rows.length > 0) {
           console.log('[Supabase] 성공 —', rows.length, '건');
-          renderContent(transformSupabaseData(rows));
+          // content.json에서 AI 카드뉴스(captions) + AI PICK(article) 병합
+          let base = {};
+          try {
+            const res = await fetch(`content.json?t=${Date.now()}`);
+            if (res.ok) base = await res.json();
+          } catch (_) {}
+          const supaData = transformSupabaseData(rows);
+          renderContent({
+            ...base,
+            date:     supaData.date,
+            news:     supaData.news,
+            captions: base.captions || [],
+          });
           return;
         }
         console.log('[Supabase] rows 없음 — fallback');
