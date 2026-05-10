@@ -1903,21 +1903,29 @@
   }
 
   function transformSupabaseData(rows) {
+    // captions: 카드 그리드용 (headline / caption 필드)
+    const captions = rows.map(r => ({
+      headline:    r.title,
+      caption:     r.summary || '',
+      image_url:   r.image_url || null,
+      source_url:  null,
+      source_name: null
+    }));
+
+    // news: 하단 카테고리 토글용 (title / summary / link / source 필드)
     const news = {};
     rows.forEach(r => {
+      if (!r.category) return;
       if (!news[r.category]) news[r.category] = [];
       news[r.category].push({
-        headline: r.title,
-        caption: r.summary || '',
-        image_url: r.image_url || null,
-        source_url: null,
-        source_name: null
+        title:   r.title,
+        summary: r.summary || '',
+        link:    null,
+        source:  null
       });
     });
-    return {
-      date: rows[0].date,
-      news: news
-    };
+
+    return { date: rows[0].date, captions, news };
   }
 
   function renderContent(data) {
