@@ -1902,6 +1902,24 @@
     return `${parseInt(m)}/${parseInt(day)}`;
   }
 
+  function transformSupabaseData(rows) {
+    const news = {};
+    rows.forEach(r => {
+      if (!news[r.category]) news[r.category] = [];
+      news[r.category].push({
+        headline: r.title,
+        caption: r.summary || '',
+        image_url: r.image_url || null,
+        source_url: null,
+        source_name: null
+      });
+    });
+    return {
+      date: rows[0].date,
+      news: news
+    };
+  }
+
   function renderContent(data) {
     const isToday = data.date === today;
 
@@ -2080,7 +2098,7 @@
         const rows = await fetchNewsFromSupabase(dateStr);
         if (rows && rows.length > 0) {
           console.log('[Supabase] 성공 —', rows.length, '건');
-          renderContent(rows);
+          renderContent(transformSupabaseData(rows));
           return;
         }
         console.log('[Supabase] rows 없음 — fallback');

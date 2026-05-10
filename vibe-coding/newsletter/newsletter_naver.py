@@ -9,6 +9,11 @@
 import os, re, time, json, requests
 from datetime import datetime, date
 from dotenv import load_dotenv
+from supabase import create_client
+
+SUPABASE_URL = 'https://rlaemixsrmhocxjhkjxl.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc'
+supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def _sanitize(text: str) -> str:
     """한자·외계어 등 불필요한 문자 제거"""
@@ -213,6 +218,27 @@ def save_markdown(categorized, ai_summary):
     with open(data_path, 'w', encoding='utf-8') as f:
         json.dump({'ai_summary': ai_summary, 'categorized': simplified, 'collected_at': datetime.now().strftime('%Y-%m-%d %H:%M')}, f, ensure_ascii=False, indent=2)
     print(f'    데이터 저장 완료: {data_path}')
+
+    insert_to_supabase(categorized, TODAY)
+
+
+def insert_to_supabase(categorized, today):
+    rows = []
+    for cat, articles in categorized.items():
+        for a in articles:
+            rows.append({
+                'date': today,
+                'title': a['title'],
+                'summary': a.get('summary', ''),
+                'image_url': None,
+                'category': cat
+            })
+    if rows:
+        try:
+            supabase_client.table('news_cards').insert(rows).execute()
+            print(f'    [Supabase] {len(rows)}건 insert 완료')
+        except Exception as e:
+            print(f'    [Supabase] insert 실패: {e}')
 
 # ── Notion 블록 헬퍼 ─────────────────────────────────────
 def _t(text, bold=False, color="default"):
