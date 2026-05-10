@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "WLD",
+    "buy_price": 414.0,
+    "qty": 120.4106,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-11 02:00"
+  },
   "history": [
+    {
+      "time": "2026-05-11 02:00",
+      "action": "BUY",
+      "ticker": "WLD",
+      "price": 413.0,
+      "amount_krw": 49850.0,
+      "reason": "WLD의 RSI는 63.8로 과매수 구간에 있지 않으며, MACD는 상승하고 있고, 볼린저밴드 중상단에 위치해 있습니다. 또한, 거래량은 704% 증가했으며, ADX는 37.5로 추세가 있는 것으로 나타나며, VB도 확인되었습니다. 따라서, BUY 신호가 강하므로 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-11 01:27",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 1.89,
       "pnl_krw": 942.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-03 04:00",
-      "action": "BUY",
-      "ticker": "POLA",
-      "price": 12.76,
-      "amount_krw": 49850.0,
-      "reason": "VB✅과 높은 거래량 증가율, MACD 상승으로 강한 상승 신호가 나타나고 있습니다. 또한 ADX 값이 25 이상으로 추세가 있는 것으로 판단되며, 점수도 양호한 수준입니다. 따라서 POLA를 매수하는 것이 적절하다고 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-11 01:27",
+  "updated_at": "2026-05-11 02:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
