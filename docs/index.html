@@ -666,7 +666,7 @@
     .dashboard-inner {
       max-width: 1080px; margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       padding: 20px 0 16px;
     }
@@ -1365,8 +1365,8 @@
       <div class="stat-label">AI 음악 큐레이션</div>
     </div>
     <div class="stat">
-      <div class="stat-val">30초</div>
-      <div class="stat-label">코인 실시간 감시</div>
+      <a href="coin.html" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(16,185,129,.18) 0%,rgba(16,185,129,.08) 100%);border:1px solid rgba(16,185,129,.4);color:#34d399;padding:7px 18px;border-radius:99px;font-size:.88rem;font-weight:800;text-decoration:none;letter-spacing:-.01em;transition:all .2s;" onmouseover="this.style.borderColor='rgba(16,185,129,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(16,185,129,.4)';this.style.transform='none'">🪙 코인봇 보기 →</a>
+      <div class="stat-label" style="margin-top:6px;">실시간 매매 현황</div>
     </div>
     <div class="stat">
       <div class="stat-val stat-val-pnl" id="hero-pnl-val">-</div>
@@ -1407,12 +1407,6 @@
       <div class="w-sub">USD → KRW</div>
     </div>
 
-    <!-- 공포탐욕지수 -->
-    <div class="widget">
-      <div class="w-label"><span class="w-icon">🧭</span> 공포탐욕지수</div>
-      <div class="w-val" id="w-fng"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
-      <div class="w-sub" id="w-fng-sub">Crypto Fear &amp; Greed</div>
-    </div>
 
   </div>
   <!-- 모바일 위젯 dot 인디케이터 -->
@@ -1964,36 +1958,6 @@
     }
   }
 
-  // 공포탐욕지수 (alternative.me, 무료.무키.CORS 허용)
-  async function fetchFearGreed() {
-    const LABELS = {
-      'Extreme Fear':  '극도의 공포',
-      'Fear':          '공포',
-      'Neutral':       '중립',
-      'Greed':         '탐욕',
-      'Extreme Greed': '극도의 탐욕',
-    };
-    function fngColor(v) {
-      if (v <= 24) return '#f87171';   // 극도의 공포
-      if (v <= 44) return '#fb923c';   // 공포
-      if (v <= 55) return '#facc15';   // 중립
-      if (v <= 74) return '#34d399';   // 탐욕
-      return '#2dd4bf';                // 극도의 탐욕
-    }
-    try {
-      const r = await fetch('https://api.alternative.me/fng/?limit=1');
-      const d = await r.json();
-      const val  = parseInt(d.data[0].value);
-      const cls  = d.data[0].value_classification;
-      const kr   = LABELS[cls] || cls;
-      const col  = fngColor(val);
-      document.getElementById('w-fng').innerHTML =
-        `<span style="color:${col}">${val}</span> <span style="font-size:.72rem;color:${col};font-weight:700;">${kr}</span>`;
-      document.getElementById('w-fng-sub').textContent = '0 공포 . 100 탐욕';
-    } catch {
-      document.getElementById('w-fng').textContent = '--';
-    }
-  }
 
 
   /* ─── 기존 JS ──────────────────────────────────────── */
@@ -2383,6 +2347,16 @@
     this.textContent = isLight ? '☀️' : '🌙';
     localStorage.setItem('theme', isLight ? 'light' : 'dark');
   });
+
+  startClock();
+  fetchWeather();
+  fetchAirQuality();
+  fetchExchangeRate();
+  setInterval(() => {
+    fetchWeather();
+    fetchAirQuality();
+    fetchExchangeRate();
+  }, 5 * 60 * 1000);
 
   init();
   loadHeroCoinPnl();

@@ -296,12 +296,13 @@
       <div id="blacklist-inner" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
-    <!-- 봇 상태 -->
-    <div id="bot-status-row" style="display:flex;align-items:center;gap:10px;margin-top:16px;margin-bottom:4px;">
+    <!-- 봇 상태 + 공포탐욕 -->
+    <div id="bot-status-row" style="display:flex;align-items:center;gap:10px;margin-top:16px;margin-bottom:4px;flex-wrap:wrap;">
       <span id="bot-status-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:var(--muted2);background:var(--glass);">
         ⏳ 상태 확인 중...
       </span>
       <span id="bot-status-time" style="font-size:.72rem;color:var(--muted);"></span>
+      <span id="fng-badge" style="display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:var(--muted2);background:var(--glass);">🧭 공포탐욕 —</span>
     </div>
 
     <!-- 누적손익 배너 -->
@@ -793,6 +794,27 @@
     timeEl.textContent = `마지막 실행 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
   }
 
+  async function fetchFearGreed() {
+    const LABELS = { 'Extreme Fear':'극도의 공포', 'Fear':'공포', 'Neutral':'중립', 'Greed':'탐욕', 'Extreme Greed':'극도의 탐욕' };
+    function fngColor(v) {
+      if (v <= 24) return '#f87171';
+      if (v <= 44) return '#fb923c';
+      if (v <= 55) return '#facc15';
+      if (v <= 74) return '#34d399';
+      return '#2dd4bf';
+    }
+    try {
+      const r = await fetch('https://api.alternative.me/fng/?limit=1');
+      const d = await r.json();
+      const val = parseInt(d.data[0].value);
+      const col = fngColor(val);
+      const kr  = LABELS[d.data[0].value_classification] || d.data[0].value_classification;
+      const el  = document.getElementById('fng-badge');
+      el.innerHTML = `🧭 공포탐욕 <span style="color:${col};font-weight:900;">${val}</span> <span style="color:${col};">${kr}</span>`;
+      el.style.borderColor = col + '55';
+    } catch {}
+  }
+
   // 테마 초기화
   (function() {
     if (localStorage.getItem('theme') === 'light') {
@@ -808,8 +830,10 @@
 
   loadCoinTrader();
   loadBlacklist();
+  fetchFearGreed();
   setInterval(loadCoinTrader, 30 * 1000);
   setInterval(loadBlacklist, 5 * 60 * 1000);
+  setInterval(fetchFearGreed, 5 * 60 * 1000);
 </script>
 </body>
 </html>
