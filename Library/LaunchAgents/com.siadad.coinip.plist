@@ -9,12 +9,12 @@
   <key>ProgramArguments</key>
   <array>
     <string>/opt/anaconda3/bin/python3</string>
-    <string>/Users/youngchulyu/바이브코딩/coin-trader/main.py</string>
+    <string>/Users/youngchulyu/vibe-coding/coin-trader/main.py</string>
     <string>ip</string>
   </array>
 
   <key>WorkingDirectory</key>
-  <string>/Users/youngchulyu/바이브코딩/coin-trader</string>
+  <string>/Users/youngchulyu/vibe-coding/coin-trader</string>
 
   <key>StartCalendarInterval</key>
   <array>
@@ -27,9 +27,9 @@
   </array>
 
   <key>StandardOutPath</key>
-  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+  <string>/Users/youngchulyu/vibe-coding/coin-trader/trader.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+  <string>/Users/youngchulyu/vibe-coding/coin-trader/trader.log</string>
 
   <key>EnvironmentVariables</key>
   <dict>

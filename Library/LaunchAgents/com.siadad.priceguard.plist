@@ -9,11 +9,11 @@
   <key>ProgramArguments</key>
   <array>
     <string>/opt/anaconda3/bin/python3</string>
-    <string>/Users/youngchulyu/바이브코딩/coin-trader/price_guard.py</string>
+    <string>/Users/youngchulyu/vibe-coding/coin-trader/price_guard.py</string>
   </array>
 
   <key>WorkingDirectory</key>
-  <string>/Users/youngchulyu/바이브코딩/coin-trader</string>
+  <string>/Users/youngchulyu/vibe-coding/coin-trader</string>
 
   <!-- 프로세스 종료 시 자동 재시작 -->
   <key>KeepAlive</key>
@@ -24,9 +24,9 @@
   <true/>
 
   <key>StandardOutPath</key>
-  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+  <string>/Users/youngchulyu/vibe-coding/coin-trader/trader.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/youngchulyu/바이브코딩/coin-trader/trader.log</string>
+  <string>/Users/youngchulyu/vibe-coding/coin-trader/trader.log</string>
 
   <key>EnvironmentVariables</key>
   <dict>

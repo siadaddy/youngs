@@ -1,0 +1,139 @@
+{
+  "FORT": {
+    "stop_loss_count": 5,
+    "last_stop_loss": "2026-04-29 00:00",
+    "blacklisted_until": "2026-05-29 00:00",
+    "history": [
+      "2026-04-21 09:19",
+      "2026-04-21 12:49",
+      "2026-04-29 00:00"
+    ]
+  },
+  "EDU": {
+    "stop_loss_count": 5,
+    "last_stop_loss": "2026-04-29 00:00",
+    "blacklisted_until": "2026-05-29 00:00",
+    "history": [
+      "2026-04-29 00:00"
+    ]
+  },
+  "PIEVERSE": {
+    "stop_loss_count": 5,
+    "last_stop_loss": "2026-04-29 00:00",
+    "blacklisted_until": "2026-05-29 00:00",
+    "history": [
+      "2026-04-20 23:46",
+      "2026-04-29 00:00"
+    ]
+  },
+  "NCT": {
+    "stop_loss_count": 3,
+    "last_stop_loss": "2026-04-18 23:55",
+    "blacklisted_until": "2026-04-25 23:55",
+    "history": [
+      "2026-04-18 20:37",
+      "2026-04-18 21:15",
+      "2026-04-18 23:55"
+    ]
+  },
+  "SKL": {
+    "stop_loss_count": 2,
+    "last_stop_loss": "2026-04-18 20:19",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-18 13:33",
+      "2026-04-18 20:19"
+    ]
+  },
+  "IN": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-16 00:36",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-16 00:36"
+    ]
+  },
+  "HEMI": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-15 18:22",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-15 18:22"
+    ]
+  },
+  "BIOT": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-15 07:15",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-15 07:15"
+    ]
+  },
+  "MVC": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-29 23:14",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-29 23:14"
+    ]
+  },
+  "A8": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-04-30 04:44",
+    "blacklisted_until": null,
+    "history": [
+      "2026-04-30 04:44"
+    ]
+  },
+  "MBX": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-05-02 23:11",
+    "blacklisted_until": null,
+    "history": [
+      "2026-05-02 23:11"
+    ]
+  },
+  "MEGA": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-05-03 09:24",
+    "blacklisted_until": null,
+    "history": [
+      "2026-05-03 09:24"
+    ]
+  },
+  "RSS3": {
+    "stop_loss_count": 2,
+    "last_stop_loss": "2026-05-05 14:47",
+    "blacklisted_until": "2026-05-08 14:47",
+    "history": [
+      "2026-05-04 01:28",
+      "2026-05-05 14:47"
+    ],
+    "recovery_trades": 1
+  },
+  "H": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-05-04 22:08",
+    "blacklisted_until": null,
+    "history": [
+      "2026-05-04 22:08"
+    ]
+  },
+  "AIOZ": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-05-05 09:42",
+    "blacklisted_until": null,
+    "history": [
+      "2026-05-05 09:42"
+    ],
+    "recovery_trades": 1
+  },
+  "REI": {
+    "stop_loss_count": 1,
+    "last_stop_loss": "2026-05-06 09:28",
+    "blacklisted_until": null,
+    "history": [
+      "2026-05-06 09:28"
+    ]
+  }
+}
