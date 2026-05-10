@@ -1,0 +1,14 @@
+# API 키 — 절대 커밋 금지
+.env
+*.env
+
+# 수집 데이터 (로컬 전용)
+*.md.bak
+__pycache__/
+*.pyc
+
+# 로그
+*.log
+
+# macOS
+.DS_Store

@@ -1,0 +1,257 @@
+{
+  "ai_summary": {
+    "top3": [
+      {
+        "rank": 1,
+        "title": "테슬라 '모델Y L' 직접 보니...돌풍 이어가나",
+        "why": "테슬라 모델Y는 국내 전기차 판매 돌풍을 이끈 주역으로 꼽히며, 직접 본 모델Y의 특징이 궁금증을 자극한다.",
+        "category": "자동차"
+      },
+      {
+        "rank": 2,
+        "title": "국민연금, 쿠팡 주식 털었다…2천억 회수",
+        "why": "국민연금이 쿠팡 주식을으로 매도한 사실이 알려져, 주가에 미칠 영향과 국민연금의 투자 전략이 관심을 끌고 있다.",
+        "category": "경제/금융"
+      },
+      {
+        "rank": 3,
+        "title": " F-15 전투기·A-10 공격기 이란서 격추…2명 구조, 1명 실종",
+        "why": "미국과 이란의 군사적 충돌이 발생하여, 전투기 격추와 관련된 사고의 여파가 세계적으로 관심을 끌고 있다.",
+        "category": "사건/사고"
+      }
+    ],
+    "category_summaries": {
+      "자동차": "테슬라 모델Y의 판매 돌풍과 전기차 충전요금 공개 표시 제안, 전기차와 수소차의 전환 속도 등이 주요 뉴스이다. 또한, BMW iX3가 세계 올해의 차와 전기차 부문을 석권했다.",
+      "경제/금융": "국민연금의 쿠팡 주식 매도와 외국인 투자자들의 복귀, 주식의 유행과 액티브 투자 상품의 부상, 수익률 꼴찌 ETF의 폭풍 등이 주요 뉴스이다.",
+      "사건/사고": "미국과 이란의 군사적 충돌, 강원 고성소방서의 표창패 수여식, 울진고등학교의 야간 화재대피 훈련, 대전 중구의 방범용 CCTV 설치 등이 주요 뉴스이다."
+    }
+  },
+  "categorized": {
+    "🔥 오늘의 하이라이트": [
+      {
+        "title": "[단독] &quot;경연 트라우마에 부상 투혼&quot;…하이량, '현역가왕3' 재도전의 무...",
+        "source": "뉴스",
+        "link": "https://www.mhnse.com/news/articleView.html?idxno=523771",
+        "summary": "최근 MBN '현역가왕3' 경연을 끝낸 지 약 한 달여 만에 MHN과 단독 인터뷰를 가진 하이량은 몰라보게 살이 빠진 모습으로 등장해 눈길을 끌었다. 치열했던 경연의 시간을 지나 다시 출발선에 선 그는 앞으로의 음악과 활동에..."
+      },
+      {
+        "title": "선두 지킨 고지원 &quot;내륙에서 첫 우승 도전…초심자의 마음으로&quot; [KLPGA 더...",
+        "source": "뉴스",
+        "link": "https://golfhankook.hankooki.com/news/articleView.html?idxno=20019614",
+        "summary": "시즌 첫 우승에 도전하는 고지원은 둘째 날 4타를 줄여 단독 1위(합계 9언더파)를 지켰다. 고지원은 2라운드 경기 후 KLPGA와 인터뷰에서 &quot;샷 감이 괜찮아서 찬스가 많았다. 아쉬운 장면도 있었지만 잘한 부분도 있어서..."
+      },
+      {
+        "title": "[단독]어트랙트 불복 없었다..'큐피드' 저작권 소송, 더기버스 최종 승...",
+        "source": "뉴스",
+        "link": "https://www.starnewskorea.com/music/2026/04/04/2026040211504090392",
+        "summary": "걸그룹 피프티피프티의 전 세계적인 히트곡 '큐피드'(Cupid)의 저작권 소송이 소속사 어트랙트의 상고 포기로 더기버스의 승소로 최종 확정됐다. 스타뉴스 확인 결과, 서울중앙지방법원 제5-2민사부(나)는 지난 3월 28일..."
+      },
+      {
+        "title": "美 F-15 전투기·A-10 공격기 이란서 격추…2명 구조, 1명 실종(종합2보...",
+        "source": "연합뉴스",
+        "link": "https://www.yna.co.kr/view/AKR20260403173452071?input=1195m",
+        "summary": "단독 탑승한 조종사 1명은 구조된 것으로 전해졌다. 이와 관련, 이란군 중앙군사본부의 에브라힘 졸파가리 대변인은 이날 국영방송을 통해 &quot;적의 첨단 항공기 한 대가 게슘 섬 남단에서 격추됐다&quot;며 &quot;기체는 헹감 섬과..."
+      },
+      {
+        "title": "[단독] 국민연금, 쿠팡 주식 털었다…2천억 회수",
+        "source": "KBS",
+        "link": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8526885&ref=A",
+        "summary": "홍성희 기자가 단독 보도합니다. [리포트] 국민연금이 쿠팡에 처음 투자한 건 2021년, 쿠팡이 뉴욕증권거래소에 상장된 해입니다. 이후 줄곧 쿠팡 주식을 보유해 왔고, 지난해 8월 말 기준 2,018억 원어치를 갖고 있었습니다...."
+      }
+    ],
+    "🤖 AI / 인공지능": [
+      {
+        "title": "Elon Musk Ties SpaceX IPO Access to Mandatory Grok AI Subscriptions",
+        "source": "뉴스",
+        "link": "https://www.econotimes.com/Elon-Musk-Ties-SpaceX-IPO-Access-to-Mandatory-Grok-AI-Subscriptions-1738130",
+        "summary": "Grok, developed by Musk's artificial intelligence company xAI, has been positioned as a competitor to tools like ChatGPT and Google Gemini in the enterprise AI market. If the deal proceeds as..."
+      },
+      {
+        "title": "Big Banks Seeking a Piece of SpaceX’s I.P.O. Must Subscribe to Elon Mus...",
+        "source": "뉴스",
+        "link": "https://www.nytimes.com/2026/04/03/business/spacex-ipo-grok-elon-musk.html?partner=naver",
+        "summary": "Musk’s agreement with banks is a big score for SpaceX, which merged with xAI in February and whose Grok is a distant fourth in the artificial intelligence race behind OpenAI’s ChatGPT, Claude..."
+      },
+      {
+        "title": "[중앙AI만평] &quot;버튼 하나의 정치&quot;",
+        "source": "뉴스",
+        "link": "http://www.joongang.tv/news/articleView.html?idxno=214384",
+        "summary": "&quot;버튼 하나의 정치&quot; 일러스트=AI 생성(ChatGPT) 기계가 돌아간다. 버튼 하나에 종이가 쏟아진다. 컨베이어 벨트를 따라 찍혀 나오는 것은 임명장이다. 속도는 빠르고, 과정은 보이지 않는다. 버튼을 누르는 손은 망설임이 없다...."
+      },
+      {
+        "title": "비트코인 6만 7,000달러 위태로운데… AI가 예측한 이달 말 가격은?",
+        "source": "뉴스",
+        "link": "http://coinreaders.com/228631",
+        "summary": "그러나 핀볼드가 챗지피티(ChatGPT), 제미나이 3 플래시(Gemini 3 Flash), 그록 4.1(Grok 4.1) 등 주요 대규모 언어 모델(LLMs)을 활용해 4월 30일 비트코인 가격을 예측한 결과는 모두 약세장(bearish)을 가리켰다. 세 인공지능..."
+      },
+      {
+        "title": "부진 탈출 앞두고 美 변수 만난 철강 3사…관세·환율·탄소 ‘3중 압박...",
+        "source": "뉴스",
+        "link": "https://www.socialvalue.kr/news/view/1065598400905900",
+        "summary": "▲포스코·현대제철·동국제강 로고 이미지/사진=AI 생성 이미지(ChatGPT) ♦ 美 관세 확대…완제품까지 영향, 간접 수출 부담 증가 업계는 이 같은 방식 변경으로 세탁기·냉장고 등 가전제품을 포함한 완제품 수출 전반에..."
+      }
+    ],
+    "💻 기술 / IT": [
+      {
+        "title": "반도체 ‘생각한대로’ 만들어드립니다…디자인하우스에서 진화하는 AS...",
+        "source": "헤럴드경제",
+        "link": "https://biz.heraldcorp.com/article/10709569?ref=naver",
+        "summary": "넓은 서비스 범위와 강력한 기술력 덕분이다. 예를 들어 한화비전처럼 반도체를 설계해 본 경험이 없어도 CCTV용 반도체를 만들고 싶다는 아이디어만 있으면 세미파이브에 맡길 수 있다. 개발서비스로 타임투마켓..."
+      },
+      {
+        "title": "[리벨리온 IPO] ②테슬라도 탐내는 한국 반도체 인재…쟁탈전 최전선 섰...",
+        "source": "뉴스",
+        "link": "https://www.smarttoday.co.kr/ko-kr/articles/106121",
+        "summary": "두 회사 모두 스타 엔지니어 중심의 조직 구조를 갖고 있어, 핵심 인력의 이탈은 곧 기술 경쟁력 손실로 이어진다. AI 반도체 스타트업들은 삼성전자·SK하이닉스 수준의 연봉에 스톡옵션을 얹는 방식으로 S급 엔지니어를..."
+      },
+      {
+        "title": "애플의 ‘D램 싹쓸이’… 삼성·안드로이드 진영 ‘기기값 인상’ 벼랑...",
+        "source": "뉴스",
+        "link": "https://www.g-enews.com/view.php?ud=202604040644294387fbbec65dfb_1",
+        "summary": "‘반도체 지배력’이 곧 시장 지배력… 한국의 대응 과제 애플의 'D램 싹쓸이'는 자본이 기술을 넘어 공급망 자체를 통제할 수 있음을 보여주는 상징적 사건이다. 다만 이번 메모리 대란은 애플의 전략 외에도 ▲AI..."
+      },
+      {
+        "title": "“해커 100명 몫 한다”... 앤스로픽 ‘미토스’ 유출에 전 세계 보안망...",
+        "source": "뉴스",
+        "link": "https://www.g-enews.com/view.php?ud=202604040641275685fbbec65dfb_1",
+        "summary": "인공지능(AI) 기술의 진화가 생산성 도구를 넘어 국가 안보를 뒤흔드는 '사이버 병기'로 변모하는... 반도체 및 핵심 인프라 설계 단계부터 AI의 역설계와 공격을 방어할 수 있는 보안 로직을 이식해야 한다. 셋째..."
+      },
+      {
+        "title": "&quot;삼성·SK의 70년 성벽이 무너진다&quot;... MIT가 발명한 '탄소 반도체' 습격...",
+        "source": "뉴스",
+        "link": "https://www.g-enews.com/view.php?ud=202604040643077729f4f9a46d5b_1",
+        "summary": "미국 주도의 반도체 소재 패권 재편 탄소 나노튜브 반도체 기술의 주도권이 MIT와 아날로그디바이스(ADI)로 각각 대표되는 미국 학계와 설계 전문 기업으로 넘어가는 시나리오는 한국에 치명적이다. 제조 기술력으로..."
+      }
+    ],
+    "💰 경제 / 금융": [
+      {
+        "title": "“팔 만큼 팔았다” 돌아온 외국인… 코스피 반등 열쇠 될까 [코주부]",
+        "source": "뉴스",
+        "link": "https://www.sedaily.com/article/20028164?ref=naver",
+        "summary": "시장에서는 3월만 35조 원을 팔아치운 외국인이 본격적으로 복귀한다면 향후 증시의 강한 상승 랠리를 주도할 수 있다는 장밋빛 전망도 나온다. 3일 코스피 지수는 전장보다 2.74% 오른 5377.30에 거래를 마쳤다...."
+      },
+      {
+        "title": "韓 주식 유행 지속, 액티브도 부상···3월 상장 ETF 살펴보니",
+        "source": "뉴스",
+        "link": "https://www.sisajournal-e.com/news/articleView.html?idxno=420252",
+        "summary": "각 사는 코스닥의 우량 상장사를 늘리고 이들을 지원하는 증시 부양책이 이어진 시점에 코스닥 ETF를... 신한자산운용은 지난달 상승세를 이었던 코스피를 기초자산으로 정기적인 분배금을 지급하는 커버드콜 ETF..."
+      },
+      {
+        "title": "개미들 공포에 던질때 美개미 쓸어담았다…‘수익률 꼴찌’ 韓 ETF 폭풍...",
+        "source": "뉴스",
+        "link": "https://www.mk.co.kr/article/12007878",
+        "summary": "이는 코스피가 유례없는 강한 상승세를 보인 올해 1월(16억5900만달러)과 맞먹는 수준이다. 증시 불장 속에서 지난해 10월 이후 반년 넘게 이어진 자금 유입 흐름이 최근 지정학적 충격에도 꺾이지 않고 지속된..."
+      },
+      {
+        "title": "전쟁에도 ‘불닭볶음면’은 잘 팔려…고환율 시기에 주목할 종목",
+        "source": "조선일보",
+        "link": "https://biz.chosun.com/stock/stock_general/2026/04/04/VSYLOYKOHBB6FIODRAQ6VWXKFQ/?utm_source=naver&utm_medium=original&utm_campaign=biz",
+        "summary": "같은 기간 코스피 지수는 7.1% 하락했다. 이란 사태 이후 증시는 하락하고 원·달러 환율은 오르는 악조건이 이어지고 있지만, 삼양식품 수출은 오히려 호조를 보이면서 주가가 상승한 것이다. 글로벌 시장에서 ‘K..."
+      },
+      {
+        "title": "[단독] 60대 이상 빚투가 7조7000억원…MZ의 2배",
+        "source": "조선일보",
+        "link": "https://biz.chosun.com/policy/policy_sub/2026/04/04/FCNYRTLK2NHHFPQ7X7IN7TOO4Q/?utm_source=naver&utm_medium=original&utm_campaign=biz",
+        "summary": "중동 사태로 증시 변동성이 확대되면서 빚투가 자산 감소로 이어져 실물 경제에 충격을 줄 것이란 우려가 커지고 있다. 코스피지수는 작년 1월 2일부터 올해 2월 27일까지 168% 올랐다가 중동 사태 이후 이달 3일까지..."
+      }
+    ],
+    "🚨 사건 / 사고": [
+      {
+        "title": "강원 고성소방서, 「고성의 영웅! 고성 소방인」 표창패 수여식 개최",
+        "source": "뉴스",
+        "link": "http://www.cfnews.kr/news/view.php?no=106630",
+        "summary": "수상자는 119구조대의 주현우 소방위로 각종 재난 현장에서 인명 구조에 힘써온 것은 물론, 국외 로프구조... 주현우 소방위는 “앞으로도 고성의 안전을 책임진다는 사명감을 갖고, 군민의 생명과 안전을 지키는 데 최선을..."
+      },
+      {
+        "title": "박원종 전남도의원 '현장 중심·실행 중심' 의정활동 4년 성과 주목",
+        "source": "뉴스",
+        "link": "https://www.newsclaim.co.kr/news/articleView.html?idxno=3059859",
+        "summary": "안전한 운반급식 지원 조례' 등은 전국 최초 또는 선도적 사례로 평가받으며 새로운 정책 방향을 제시했다. 또한 아동복지, 인구감소 대응, 수산업 활성화 등 지역 구조적 문제 해결을 위해 '아동·청소년 재난보상..."
+      },
+      {
+        "title": "울진고등학교 2026년 상반기 기숙사 야간 화재대피 훈련 실시",
+        "source": "뉴스",
+        "link": "http://www.cfnews.kr/news/view.php?no=106621",
+        "summary": "이번 훈련은 야간 실제 상황을 가정하여 울진119 재난대응과의 협력하에 진행됐으며, 기숙사 생활 학생... 앞으로도 체계적인 안전교육과 현장 중심 훈련을 지속해 안전한 학교 문화를 정착시켜 나가겠다”라고 밝혔다."
+      },
+      {
+        "title": "대전 중구, '청소년 통학환경 개선' 방범용 CCTV 설치",
+        "source": "뉴스",
+        "link": "http://www.newsworker.co.kr/news/articleView.html?idxno=420505",
+        "summary": "중구 관계자는 &quot;이번 방범용 CCTV 설치를 통해 청소년들의 통학로 환경을 개선하고, 강력범죄를 예방할 수 있기를 바란다&quot;며, &quot;범죄와 재난으로부터 구민들의 생명과 안전을 지키고자 최선을 다하겠다&quot;고 밝혔다."
+      },
+      {
+        "title": "광명시, 재난 피해시민 주거 복구 지원… 광명지역건축사회와 협력 강화",
+        "source": "뉴스",
+        "link": "https://www.thereport.co.kr/news/articleView.html?idxno=86191",
+        "summary": "이번 민관 협업은 단순한 피해 조사에 그치지 않고, 복구 과정 전반에 걸쳐 전문성을 접목해 보다 안전하고 체계적인 지원이 가능하다는 점에서 의미를 더한다. 관계자들은 이를 통해 재난 피해 시민들의 주거 복구가..."
+      }
+    ],
+    "🏙️ 사회": [],
+    "🚗 자동차": [
+      {
+        "title": "[더 CEO] &quot;위기 기업을 다시 일으킨다&quot;… 곽재선 회장의 '회생 경영'이 ...",
+        "source": "뉴스",
+        "link": "https://www.newscj.com/news/articleView.html?idxno=3391243",
+        "summary": "◆철강에서 자동차까지… 회생 전략의 확장 곽 회장의 전략은 철강 산업에서 먼저 성과를 냈다. 동부제철... 이후 전기차, 자율주행, SDV(소프트웨어 중심 차량), 인공지능(AI) 기반 시스템 등 미래차 기술 확보를..."
+      },
+      {
+        "title": "테슬라 '모델Y L' 직접 보니...돌풍 이어가나[카미경]",
+        "source": "뉴스",
+        "link": "https://www.bloter.net/news/articleView.html?idxno=658576",
+        "summary": "테슬라 모델Y는 국내 전기차 판매 돌풍을 이끈 주역으로 꼽힌다. 한국수입자동차협회(KAIDA)에 따르면 모델Y 후륜구동(RWD) 사양의 1~3월 누적 판매량은 1만1926대로 같은 기간 판매된 기아 EV3 8674대를 앞선다. 여기에..."
+      },
+      {
+        "title": "[오늘의 국회 에너지 입법 : 전기차 충전요금, 주유소처럼 공개 표시해...",
+        "source": "뉴스",
+        "link": "http://www.e-platform.net/news/articleView.html?idxno=101210",
+        "summary": "사진은 전기차 충전시설 모습(사진은 특정 기사와 무관함) 국회 윤종군 의원(더불어민주당, 경기 안성시)은 전기사업법 개정안을 대표 발의하고 전기차 충전요금 표시 정보의 구체화를 제안했다. 현행법은 전기자동차..."
+      },
+      {
+        "title": "탄소 저감에 ‘에너지 안보’까지…전기·수소차 전환 속도 낼까?",
+        "source": "KBS",
+        "link": "https://news.kbs.co.kr/news/pc/view/view.do?ncd=8526887&ref=A",
+        "summary": "우리가 석유를 가장 많이 쓰는 곳, 바로 자동차죠. 이번 사태를 계기로 석유 의존도를 낮추기 위해 친환경차... &quot;] 전기차도 성장이 지지부진합니다. 국내 등록 차량 100대 가운데 전기차는 3대가량, 수소차는 미미한..."
+      },
+      {
+        "title": "대전 현대직업전문학교, 국비지원 전기공사·자동차정비산업기사 교육...",
+        "source": "뉴스",
+        "link": "https://www.vegannews.co.kr/news/article.html?no=382042",
+        "summary": "자동차정비산업기사와 기능사 과정, 전기차 정비, 전기내선공사 등 교육 프로그램을 통해 기술 인력 양성에 주력하고 있다. 유성식 이사장은 “전기공사와 자동차정비 분야는 산업 구조 변화에 따라 현장 중심 인력 수요가..."
+      }
+    ],
+    "🚘 BMW": [
+      {
+        "title": "2026 부산모빌리티쇼, 80일 앞으로…'버틸까, 살아날까'",
+        "source": "뉴스",
+        "link": "https://www.dailyt.co.kr/newsView/dlt202604030003",
+        "summary": "수입차 브랜드 중 유일하게 참가한 BMW코리아(BMW, 미니)와 신차를 앞세운 르노코리아 역시 존재감을 과시했다. 국내 수제 스포츠카 제작 업체인 어울림모터스도 참여했다. 이 같은 전례를 감안하면 올해의 관건은 '참가..."
+      },
+      {
+        "title": "[Car &amp; Now] 3월 수입차, 3만3970대 등록…전년비 34.6%↑ 등",
+        "source": "뉴스",
+        "link": "https://www.ebn.co.kr/news/articleView.html?idxno=1704413",
+        "summary": "뉴 BMW iX3'가 '세계 올해의 차'와 '세계 올해의 전기차' 부문을 동시에 수상했다고 3일 밝혔다. 올해로 22회를 맞은 월드 카 어워즈(World Car Awards)는 글로벌 자동차 시장에서 출시된 신차를 대상으로, 전 세계 자동차..."
+      },
+      {
+        "title": "BMW·벤츠 꺾은 테슬라…6인승 모델 Y로 '쐐기'",
+        "source": "뉴스",
+        "link": "https://www.newsway.co.kr/news/view?ud=2026040315455408295",
+        "summary": "2강'이었던 BMW와 메르세데스-벤츠가 테슬라의 공세에 무릎을 꿇었다. 테슬라가 올해 1분기 역대급 판매고를 기록하며 수입차 시장 점유율 1위에 등극한 가운데, 한국 소비자들이 선호하는 6인승 신차까지 투입하며..."
+      },
+      {
+        "title": "BMW iX3, ‘월드카’ 2관왕…세계 올해의 차·전기차 동시 석권",
+        "source": "뉴스",
+        "link": "https://economist.co.kr/article/view/ecn202604030061",
+        "summary": "BMW iX3’가 ‘2026 월드 카 어워즈’에서 ‘세계 올해의 차’와 ‘세계 올해의 전기차’ 2개 부문을 동시에 수상했다고 3일 밝혔다. 월드 카 어워즈는 올해로 22회째를 맞았다. 글로벌 자동차 시장에 출시된 신차..."
+      },
+      {
+        "title": "‘트레이드 인’ 맡긴 BMW 파손⋯차주 책임?",
+        "source": "뉴스",
+        "link": "https://www.ilyosisa.co.kr/news/article.html?no=255171",
+        "summary": "경기도 남양주에서 법인 사업체를 운영하는 차주 A(46)씨는 지난 2일 &lt;일요시사&gt;와의 전화 통화에서 “회사 차량으로 BMW 신차를 계약하면서 기존에 5년가량 탄 X6M 모델을 딜러사 권유로 트레이드 인 서비스에 맡겼다”며..."
+      }
+    ]
+  },
+  "collected_at": "2026-04-04 07:03"
+}
