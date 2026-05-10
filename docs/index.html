@@ -1448,118 +1448,12 @@
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
   <button class="tab-btn" onclick="switchTab('weekly')">📊 AI 주간 트렌드</button>
-  <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
+  <a class="tab-btn" href="coin.html">🪙 코인봇</a>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
   <button class="tab-btn" onclick="switchTab('office')">🏢 AI 사무실</button>
   <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
 </div>
 
-<!-- ─── 탭1: 코인 트레이더 ───────────────────────────── -->
-<div class="tab-content" id="tab-coin">
-<!-- ─── 코인 트레이더 ────────────────────────────────── -->
-<section class="section" id="coin-section">
-  <div class="container">
-    <div class="section-eyebrow">🪙 AI Coin Trader . 실전 운용 중</div>
-    <div class="section-title">AI가 코인을 직접 삽니다</div>
-    <p class="section-sub">
-      RSI . MACD . 볼린저밴드 . ADX . 변동성돌파 스코어링 → Groq AI 최종 판단<br>
-      투자금 5만원 . 30분마다 실행 + 30초 실시간 감시 . 손절 -4% . 익절 +5% . 트레일링스탑 +2.5%/−2.0% . 6h 강제청산 . 일손실 -7,500원 한도
-      <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
-    </p>
-    <div class="tech-stack">
-      <span class="tech-badge blue">🤖 Groq llama-3.3-70b</span>
-      <span class="tech-badge red">🪙 Bithumb API</span>
-      <span class="tech-badge gold">📊 RSI . MACD . ADX . BB</span>
-      <span class="tech-badge green">⚡ 30분마다 자동 실행</span>
-      <span class="tech-badge purple">🛡 일손실 -7,500원 한도</span>
-      <span class="tech-badge gold">🟠 트레일링스탑 +2.5%/−2.0% . 6h 강제청산</span>
-      <span class="tech-badge" style="background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.25);">📚 학습 블랙리스트</span>
-    </div>
-
-    <!-- 블랙리스트 현황 인포박스 -->
-    <div id="blacklist-box" style="display:none;margin-top:20px;padding:14px 20px;border-radius:12px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#f87171;text-transform:uppercase;margin-bottom:10px;">📚 학습 블랙리스트 — 반복 손절 종목 자동 차단</div>
-      <div id="blacklist-inner" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-    </div>
-
-    <!-- 봇 상태 -->
-    <div id="bot-status-row" style="display:flex;align-items:center;gap:10px;margin-top:16px;margin-bottom:4px;">
-      <span id="bot-status-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:var(--muted2);background:var(--glass);">
-        ⏳ 상태 확인 중...
-      </span>
-      <span id="bot-status-time" style="font-size:.72rem;color:var(--muted);"></span>
-    </div>
-
-    <!-- 누적손익 배너 -->
-    <div id="coin-pnl-banner" style="display:none;margin-top:32px;margin-bottom:24px;padding:16px 24px;border-radius:14px;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;"></div>
-
-    <!-- 누적 통계 -->
-    <div class="coin-stats-row" id="coin-stats-row" style="margin-top:32px;">
-      <div class="coin-stat-card">
-        <div class="coin-stat-val" id="cs-trades">-</div>
-        <div class="coin-stat-lbl">총 매매 횟수</div>
-      </div>
-      <div class="coin-stat-card">
-        <div class="coin-stat-val" id="cs-wins" style="color:var(--green)">-</div>
-        <div class="coin-stat-lbl">수익 거래</div>
-      </div>
-      <div class="coin-stat-card">
-        <div class="coin-stat-val" id="cs-losses" style="color:#f87171">-</div>
-        <div class="coin-stat-lbl">손실 거래</div>
-      </div>
-      <div class="coin-stat-card">
-        <div class="coin-stat-val" id="cs-pnl">-</div>
-        <div class="coin-stat-lbl">누적 손익</div>
-      </div>
-      <div class="coin-stat-card">
-        <div class="coin-stat-val" id="cs-winrate">-</div>
-        <div class="coin-stat-lbl">승률</div>
-      </div>
-      <div class="coin-stat-card">
-        <div class="coin-stat-val" id="cs-holdtime">-</div>
-        <div class="coin-stat-lbl">평균 보유시간</div>
-      </div>
-    </div>
-
-    <!-- 현재 보유 상태 -->
-    <div id="coin-status"></div>
-
-    <!-- 누적손익 차트 -->
-    <div id="pnl-chart-wrap" style="display:none;margin-top:40px;margin-bottom:40px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:28px 28px 24px;">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;">📈 누적손익 흐름 . 클릭 시 해당 거래로 이동</div>
-      <canvas id="pnl-chart" style="width:100%;max-height:180px;"></canvas>
-    </div>
-
-    <!-- 종목별 성과 -->
-    <div id="ticker-table-wrap" style="display:none;margin-top:24px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:24px 28px;">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;">📊 종목별 성과 요약 . 수익 높은 순</div>
-      <div id="ticker-table-inner"></div>
-    </div>
-
-    <!-- 매매 히스토리 -->
-    <div style="margin-top:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-        <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;">📋 매매 히스토리</div>
-      </div>
-      <div class="hist-filter-bar">
-        <button class="hist-filter-btn active" onclick="filterTrades('all',this)">전체</button>
-        <button class="hist-filter-btn" onclick="filterTrades('profit',this)">🟢 수익</button>
-        <button class="hist-filter-btn" onclick="filterTrades('loss',this)">🔴 손실</button>
-        <button class="hist-filter-btn" onclick="filterTrades('BUY',this)">매수</button>
-        <button class="hist-filter-btn" onclick="filterTrades('SELL',this)">매도</button>
-      </div>
-      <div class="trade-history" id="coin-history">
-        <div style="text-align:center;color:var(--muted);padding:32px 0;">불러오는 중...</div>
-      </div>
-    </div>
-
-    <div class="disclaimer-box">
-      <span style="font-size:1.3rem;flex-shrink:0;">⚠️</span>
-      <p>이 시스템은 <strong>학습 목적의 소액 실험</strong>입니다. 실제 투자를 권유하지 않으며, 투자 결과에 대한 모든 책임은 투자자 본인에게 있습니다.</p>
-    </div>
-  </div>
-</section>
-</div><!-- /tab-coin -->
 
 <!-- ─── 탭2: 뉴스레터 ───────────────────────────────── -->
 <div class="tab-content active" id="tab-news">
@@ -1827,7 +1721,7 @@
       </a>
 
       <!-- AI 코인 트레이더 -->
-      <a href="#" onclick="switchTab('coin');window.scrollTo(0,0);return false;"
+      <a href="coin.html"
          style="text-decoration:none;background:linear-gradient(135deg,rgba(16,185,129,.1) 0%,var(--card) 100%);border:1px solid rgba(16,185,129,.25);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
          onmouseover="this.style.borderColor='rgba(16,185,129,.5)';this.style.transform='translateY(-3px)'"
          onmouseout="this.style.borderColor='rgba(16,185,129,.25)';this.style.transform='none'">
@@ -2349,475 +2243,9 @@
     loadDate(today);
   }
 
-  /* ─── 코인 트레이더 ──────────────────────────────────── */
-  function fmtPrice(p) {
-    if (!p) return '-';
-    if (p >= 100)  return Number(p).toLocaleString() + '원';
-    if (p >= 1)    return p.toFixed(2) + '원';
-    if (p >= 0.01) return p.toFixed(4) + '원';
-    return p.toFixed(6) + '원';
-  }
-
-  let pnlChart = null;
-
-  let _allTradeHistory = [];   // 필터용 전체 보관
-
-  function filterTrades(type, btn) {
-    document.querySelectorAll('.hist-filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const hist = _allTradeHistory.slice(0, 20);
-    let filtered;
-    if      (type === 'all')    filtered = hist;
-    else if (type === 'profit') filtered = hist.filter(t => t.pnl_krw != null && t.pnl_krw > 0);
-    else if (type === 'loss')   filtered = hist.filter(t => t.pnl_krw != null && t.pnl_krw < 0);
-    else                        filtered = hist.filter(t => t.action === type);
-    renderTradeHistory(filtered, hist);
-  }
-
-  function fmtHoldTime(buyTime, sellTime) {
-    try {
-      const diff = new Date(sellTime.replace(' ', 'T')) - new Date(buyTime.replace(' ', 'T'));
-      const mins = Math.round(diff / 60000);
-      if (mins < 60)  return `${mins}분 보유`;
-      const h = Math.floor(mins/60), m = mins % 60;
-      return m ? `${h}시간 ${m}분 보유` : `${h}시간 보유`;
-    } catch { return ''; }
-  }
-
-  function renderTradeHistory(filtered, allHist) {
-    const histEl = document.getElementById('coin-history');
-    if (!filtered.length) {
-      histEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px 0;">해당 거래가 없습니다.</div>';
-      return;
-    }
-    histEl.innerHTML = filtered.map((t) => {
-      const origIdx = allHist.indexOf(t);
-      const icon   = t.action === 'BUY' ? '🟢' : t.action === 'SELL' ? '🔴' : '⏸';
-      const cls    = t.action === 'BUY' ? 'buy' : t.action === 'SELL' ? 'sell' : 'hold';
-      const pnlPct = t.pnl_pct != null ? t.pnl_pct : null;
-      const pnlCls = pnlPct == null ? 'none' : pnlPct >= 0 ? 'pos' : 'neg';
-      const pnlStr = pnlPct == null ? (t.action === 'BUY' ? '매수' : '-') :
-                     (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
-      const krwStr = t.pnl_krw != null ? (t.pnl_krw >= 0 ? '+' : '') + Number(t.pnl_krw).toLocaleString() + '원' : '';
-      const ticker = (t.ticker || '').replace('KRW-', '');
-
-      // 매수가 / 매도가 표시
-      let priceInfo = '';
-      if (t.action === 'BUY' && t.price) {
-        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">매수가 ${fmtPrice(t.price)}</div>`;
-      } else if (t.action === 'SELL' && t.price) {
-        // 같은 ticker의 직전 BUY 찾기
-        const buyTrade = allHist.slice(origIdx + 1).find(h => h.action === 'BUY' && h.ticker === t.ticker);
-        const holdStr = buyTrade ? fmtHoldTime(buyTrade.time, t.time) : '';
-        const buyPriceStr = buyTrade ? `${fmtPrice(buyTrade.price)} → ` : '';
-        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">${buyPriceStr}${fmtPrice(t.price)}${holdStr ? ` . ⏱ ${holdStr}` : ''}</div>`;
-      }
-
-      return `
-        <div class="trade-item fade-in" id="trade-item-${origIdx}">
-          <div class="trade-badge ${cls}">${icon}</div>
-          <div class="trade-info">
-            <div class="trade-ticker">${t.action} . ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
-            <div class="trade-time">${t.time || ''}</div>
-            ${priceInfo}
-            <div class="trade-reason">${t.reason || ''}</div>
-          </div>
-          <div class="trade-pnl">
-            <div class="trade-pnl-val ${pnlCls}">${pnlStr}</div>
-            ${krwStr ? `<div class="trade-pnl-krw">${krwStr}</div>` : ''}
-          </div>
-        </div>`;
-    }).join('');
-  }
-
-  function buildPnlChart(allHistory, hist) {
-    // SELL 거래만 필터 → 오래된 순으로 정렬
-    const sells = [...allHistory]
-      .filter(t => t.action === 'SELL' && t.pnl_krw != null)
-      .reverse();
-    if (sells.length < 2) {
-      document.getElementById('pnl-chart-wrap').style.display = 'none';
-      return;
-    }
-
-    // 누적손익 계산
-    let cum = 0;
-    const cumPnl = sells.map(t => { cum += t.pnl_krw; return cum; });
-    const labels  = sells.map(t => t.time.slice(5, 16)); // "MM-DD HH:mm"
-
-    document.getElementById('pnl-chart-wrap').style.display = '';
-
-    const ctx = document.getElementById('pnl-chart').getContext('2d');
-    if (pnlChart) pnlChart.destroy();
-
-    pnlChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: '누적손익',
-            data: cumPnl,
-            borderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 7,
-            tension: 0.35,
-            fill: false,
-            segment: {
-              borderColor: ctx => ctx.p0.parsed.y >= 0 ? '#f87171' : '#34d399',
-            },
-            pointBackgroundColor: cumPnl.map(v => v >= 0 ? '#f87171' : '#34d399'),
-            pointBorderColor: 'transparent',
-          },
-          {
-            label: '_zero',
-            data: cumPnl.map(() => 0),
-            borderColor: 'rgba(255,255,255,.18)',
-            borderWidth: 1,
-            borderDash: [5, 5],
-            pointRadius: 0,
-            fill: false,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(15,21,32,.95)',
-            borderColor: 'rgba(255,255,255,.12)',
-            borderWidth: 1,
-            titleColor: '#94a3b8',
-            titleFont: { size: 11 },
-            bodyColor: '#f1f5f9',
-            bodyFont: { size: 12, weight: '700' },
-            filter: item => item.datasetIndex === 0,
-            callbacks: {
-              label: ctx => {
-                const v = ctx.raw;
-                return ` ${v >= 0 ? '+' : ''}${Number(v).toLocaleString()}원`;
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: 'rgba(255,255,255,.04)' },
-            ticks: { color: '#64748b', font: { size: 10 }, maxRotation: 30, maxTicksLimit: 7 }
-          },
-          y: {
-            grid: { color: 'rgba(255,255,255,.05)' },
-            ticks: {
-              color: '#64748b', font: { size: 10 },
-              callback: v => (v >= 0 ? '+' : '') + Number(v).toLocaleString() + '원'
-            }
-          }
-        },
-        onClick: (evt, elements) => {
-          if (!elements.length || elements[0].datasetIndex !== 0) return;
-          const pointIdx = elements[0].index;
-          const sellTime = sells[pointIdx]?.time;
-          if (!sellTime) return;
-          const histIdx = hist.findIndex(t => t.time === sellTime && t.action === 'SELL');
-          if (histIdx >= 0) {
-            const el = document.getElementById(`trade-item-${histIdx}`);
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              el.style.transition = 'box-shadow .3s';
-              el.style.boxShadow = '0 0 0 2px rgba(28,105,212,.7)';
-              setTimeout(() => el.style.boxShadow = '', 1800);
-            }
-          }
-        }
-      }
-    });
-  }
-
-  function setStatsDefault() {
-    document.getElementById('cs-trades').textContent  = '0';
-    document.getElementById('cs-wins').textContent    = '0';
-    document.getElementById('cs-losses').textContent  = '0';
-    const pnlEl = document.getElementById('cs-pnl');
-    pnlEl.textContent = '+0원';
-    pnlEl.style.color = 'var(--muted2)';
-    const wrEl = document.getElementById('cs-winrate');
-    wrEl.textContent = '-';
-    wrEl.style.color = 'var(--muted2)';
-    document.getElementById('cs-holdtime').textContent = '-';
-  }
-  // ─── 학습 블랙리스트 렌더링 ───────────────────────────
-  async function loadBlacklist() {
-    try {
-      // blacklist는 trades.json 안에 포함돼 있음
-      const res = await fetch(`trades.json?t=${Date.now()}`);
-      if (!res.ok) return;
-      const trades = await res.json();
-      const data = trades.blacklist || {};
-      const box   = document.getElementById('blacklist-box');
-      const inner = document.getElementById('blacklist-inner');
-      if (!box || !inner) return;
-
-      const now = Date.now();
-      const active = [];  // 차단 중
-      const warned = [];  // 경고
-
-      for (const [coin, info] of Object.entries(data)) {
-        const count = info.stop_loss_count || 0;
-        const until = info.blacklisted_until
-          ? new Date(info.blacklisted_until.replace(' ','T'))
-          : null;
-        const isActive = until && until > now;
-        if (isActive) {
-          active.push({ coin, count, until: info.blacklisted_until });
-        } else if (count >= 1) {
-          warned.push({ coin, count });
-        }
-      }
-
-      if (active.length === 0 && warned.length === 0) {
-        box.style.display = 'none';
-        return;
-      }
-
-      box.style.display = 'block';
-      inner.innerHTML = '';
-
-      active.forEach(({ coin, count, until }) => {
-        const el = document.createElement('div');
-        el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);font-size:.75rem;';
-        el.innerHTML = `<span style="font-weight:800;color:#f87171;">🚫 ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 . ${until} 해제</span>`;
-        inner.appendChild(el);
-      });
-
-      warned.forEach(({ coin, count }) => {
-        const el = document.createElement('div');
-        el.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);font-size:.75rem;';
-        el.innerHTML = `<span style="font-weight:800;color:#f59e0b;">⚠️ ${coin}</span><span style="color:var(--muted2);">손절 ${count}회 (${count >= 1 ? '다음 손절 시 차단' : ''})</span>`;
-        inner.appendChild(el);
-      });
-    } catch (e) {
-      // blacklist.json 없으면 조용히 무시
-    }
-  }
-
-  async function loadCoinTrader() {
-    try {
-      const res = await fetch(`trades.json?t=${Date.now()}`);
-      if (!res.ok) { setStatsDefault(); return; }
-      const d = await res.json();
-
-      // 봇 상태
-      updateBotStatus(d.updated_at);
-
-      // 시뮬레이션 배지
-      const isDry = d.history && d.history.length > 0 && d.history[0].dry_run;
-      if (isDry) {
-        const badge = document.getElementById('coin-dry-badge');
-        badge.innerHTML = '<span class="dry-run-badge">🧪 시뮬레이션 모드</span>';
-        badge.style.display = 'inline';
-      }
-
-      // 누적 통계
-      const s = d.stats || {};
-      document.getElementById('cs-trades').textContent = s.total_trades ?? 0;
-      document.getElementById('cs-wins').textContent   = s.wins ?? 0;
-      document.getElementById('cs-losses').textContent = s.losses ?? 0;
-      const pnl = s.total_pnl_krw ?? 0;
-      const pnlEl = document.getElementById('cs-pnl');
-      pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
-      pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
-
-      // 히어로 통계줄 — 누적손익 (한국 기준: 수익=빨간, 손실=파란)
-      const heroPnlVal = document.getElementById('hero-pnl-val');
-      if (heroPnlVal) {
-        heroPnlVal.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
-        heroPnlVal.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
-      }
-
-      // 승률 계산 — stats 기준 (history는 최근 50건만 저장돼 분모로 쓰면 100% 초과 버그 발생)
-      const wins = s.wins ?? 0, losses = s.losses ?? 0;
-      const base = wins + losses;
-      const winrateEl = document.getElementById('cs-winrate');
-      if (base > 0) {
-        const wr = (wins / base * 100);
-        winrateEl.textContent = wr.toFixed(1) + '%';
-        winrateEl.style.color = wr >= 60 ? 'var(--green)' : wr >= 50 ? 'var(--gold)' : '#f87171';
-      } else {
-        winrateEl.textContent = '-';
-        winrateEl.style.color = 'var(--muted2)';
-      }
-
-      // 평균 보유시간 계산
-      const sells = (d.history || []).filter(t => t.action === 'SELL');
-      const buys  = (d.history || []).filter(t => t.action === 'BUY');
-      const holdMins = sells.map(sell => {
-        const buy = buys.find(b => b.ticker === sell.ticker && b.time < sell.time);
-        if (!buy) return null;
-        return (new Date(sell.time.replace(' ','T')) - new Date(buy.time.replace(' ','T'))) / 60000;
-      }).filter(m => m !== null && m > 0);
-      const htEl = document.getElementById('cs-holdtime');
-      if (holdMins.length > 0) {
-        const avg = holdMins.reduce((a,b)=>a+b,0) / holdMins.length;
-        htEl.textContent = avg >= 60 ? (avg/60).toFixed(1)+'h' : Math.round(avg)+'분';
-        htEl.style.color = 'var(--text)';
-      }
-
-      // 코인 섹션 누적손익 배너
-      const banner = document.getElementById('coin-pnl-banner');
-      if (banner) {
-        const isPos = pnl > 0, isNeg = pnl < 0;
-        const pnlStr = (pnl >= 0 ? '+' : '') + Number(pnl).toLocaleString() + '원';
-        banner.style.display = 'flex';
-        banner.style.background = isPos
-          ? 'linear-gradient(135deg,rgba(248,113,113,.12) 0%,rgba(248,113,113,.06) 100%)'
-          : isNeg
-          ? 'linear-gradient(135deg,rgba(16,185,129,.1) 0%,rgba(16,185,129,.05) 100%)'
-          : 'rgba(255,255,255,.04)';
-        banner.style.border = `1px solid ${isPos ? 'rgba(248,113,113,.3)' : isNeg ? 'rgba(16,185,129,.25)' : 'rgba(255,255,255,.08)'}`;
-        banner.innerHTML = `
-          <div>
-            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">🤖 AI 코인봇 누적손익</div>
-            <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.03em;color:${isPos?'#f87171':isNeg?'#34d399':'var(--muted2)'};">${pnlStr}</div>
-          </div>
-          <div style="text-align:right;font-size:.78rem;color:var(--muted);line-height:1.7;">
-            <div>총 ${s.total_trades ?? 0}회 매매</div>
-            <div>수익 <span style="color:#f87171">${s.wins ?? 0}</span> . 손실 <span style="color:#34d399">${s.losses ?? 0}</span></div>
-          </div>`;
-      }
-
-      // 현재 보유 상태
-      const h = d.holding;
-      const statusEl = document.getElementById('coin-status');
-      if (h && h.ticker) {
-        // 빗썸 공개 API로 실시간 현재가 조회
-        let livePrice = null;
-        try {
-          const coin = h.ticker.replace('KRW-', '');
-          const priceRes = await fetch(`https://api.bithumb.com/public/ticker/${coin}_KRW`);
-          const priceData = await priceRes.json();
-          livePrice = priceData?.data?.closing_price ? parseFloat(priceData.data.closing_price) : null;
-        } catch(e) {}
-
-        const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 4.0;
-        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 5.0;
-
-        // fmtPrice — 모듈 레벨에 정의됨
-
-        const pct = livePrice && h.buy_price ? ((livePrice / h.buy_price - 1) * 100) : null;
-        const pctStr  = pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%' : '-';
-        const pctColor = pct == null ? 'var(--muted2)' : pct >= 0 ? '#f87171' : 'var(--green)';
-
-        const slDist  = pct != null ? (pct - (-STOP_LOSS)).toFixed(2)   : null;
-        const tpDist  = pct != null ? (TAKE_PROFIT - pct).toFixed(2)    : null;
-
-        statusEl.innerHTML = `
-          <div class="coin-status-card holding" style="display:flex;flex-direction:column;gap:16px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div>
-                <div class="coin-ticker">🪙 ${h.ticker.replace('KRW-','')}</div>
-                <div class="coin-ticker-sub">보유 중 . 30초마다 갱신</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;">현재 수익률</div>
-                <div style="font-size:1.6rem;font-weight:900;color:${pctColor};">${pctStr}</div>
-              </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
-              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
-                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">매수가</div>
-                <div style="font-size:.95rem;font-weight:700;">${fmtPrice(h.buy_price)}</div>
-              </div>
-              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
-                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">현재가</div>
-                <div style="font-size:.95rem;font-weight:700;">${fmtPrice(livePrice)}</div>
-              </div>
-              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
-                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">투자금</div>
-                <div style="font-size:.95rem;font-weight:700;">${Number(h.invest_krw||5000).toLocaleString()}원</div>
-              </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
-              <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px;">
-                <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;">🔴 손절까지</div>
-                <div style="font-size:.9rem;font-weight:700;color:#10b981;">${slDist != null ? '-'+STOP_LOSS+'% ('+slDist+'% 남음)' : '-'}</div>
-              </div>
-              <div style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:10px;">
-                <div style="font-size:.65rem;color:#f87171;margin-bottom:4px;">🟡 익절까지</div>
-                <div style="font-size:.9rem;font-weight:700;color:#f87171;">${tpDist != null ? '+'+TAKE_PROFIT+'% ('+tpDist+'% 남음)' : '-'}</div>
-              </div>
-            </div>
-          </div>`;
-      } else {
-        statusEl.innerHTML = `
-          <div class="coin-status-card watching">
-            <div class="coin-watching-msg">
-              <div style="font-size:2rem;margin-bottom:8px;">👀</div>
-              <div style="font-weight:700;color:var(--text);margin-bottom:4px;">시장 관망 중</div>
-              <div style="font-size:.82rem;">AI가 매수 기회를 탐색하고 있습니다 . 다음 분석: 1시간 이내</div>
-            </div>
-          </div>`;
-      }
-
-      // 누적손익 차트 + 히스토리
-      _allTradeHistory = d.history || [];
-      const hist = _allTradeHistory.slice(0, 20);
-      buildPnlChart(_allTradeHistory, hist);
-      renderTradeHistory(hist, hist);
-
-      // 종목별 성과 집계
-      const tickerMap = {};
-      (d.history || []).forEach(t => {
-        if (t.action !== 'SELL' || t.pnl_krw == null) return;
-        if (!tickerMap[t.ticker]) tickerMap[t.ticker] = { trades:0, wins:0, totalPnl:0 };
-        tickerMap[t.ticker].trades++;
-        tickerMap[t.ticker].totalPnl += t.pnl_krw;
-        if (t.pnl_krw > 0) tickerMap[t.ticker].wins++;
-      });
-      const tickerArr = Object.entries(tickerMap).sort((a,b) => b[1].totalPnl - a[1].totalPnl);
-      if (tickerArr.length > 0) {
-        const wrap = document.getElementById('ticker-table-wrap');
-        const inner = document.getElementById('ticker-table-inner');
-        wrap.style.display = '';
-        inner.innerHTML = `<table class="ticker-tbl">
-          <thead><tr><th>종목</th><th>거래</th><th>승률</th><th>수익 합계</th></tr></thead>
-          <tbody>${tickerArr.map(([tk, v]) => {
-            const wr = v.trades ? (v.wins/v.trades*100).toFixed(0) : 0;
-            const col = v.totalPnl > 0 ? '#f87171' : v.totalPnl < 0 ? '#34d399' : 'var(--muted2)';
-            return `<tr>
-              <td style="font-weight:700;color:var(--text)">${tk}</td>
-              <td style="color:var(--muted2)">${v.trades}회</td>
-              <td style="color:${wr>=60?'var(--green)':wr>=50?'var(--gold)':'#f87171'}">${wr}%</td>
-              <td style="font-weight:700;color:${col}">${v.totalPnl>=0?'+':''}${v.totalPnl.toLocaleString()}원</td>
-            </tr>`;
-          }).join('')}</tbody>
-        </table>`;
-      }
-
-    } catch(e) {
-      setStatsDefault();
-    }
-  }
-
-  // 라이브 위젯 시작
-  startClock();
-  fetchWeather();
-  fetchAirQuality();
-  fetchExchangeRate();
-  fetchFearGreed();
-  // 5분마다 갱신
-  setInterval(() => {
-    fetchWeather();
-    fetchAirQuality();
-    fetchExchangeRate();
-    fetchFearGreed();
-    }, 5 * 60 * 1000);
-
   function switchTab(tab) {
-    const tabs = ['news', 'weekly', 'coin', 'music', 'office'];
-    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
+    const tabs = ['news', 'weekly', 'music', 'office'];
+    document.querySelectorAll('button.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
     tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
     if (tab === 'news') init();
     if (tab === 'weekly') initWeekly();
@@ -2829,7 +2257,6 @@
       } else {
         try { fr.contentWindow.dispatchEvent(new Event('resize')); } catch(e) {}
       }
-      // iframe 로드 후 전체화면으로 전환
       const goFull = () => {
         const rfs = fr.requestFullscreen || fr.webkitRequestFullscreen || fr.mozRequestFullScreen;
         if (rfs) rfs.call(fr).catch(() => {});
@@ -2855,13 +2282,11 @@
         return;
       }
 
-      // 헤더
       document.getElementById('weekly-label').textContent   = `📅 ${d.week_label}`;
       document.getElementById('weekly-date').textContent    = d.generated_at ? `${d.generated_at} 생성` : '';
       document.getElementById('weekly-summary').textContent = d.week_summary;
       document.getElementById('weekly-hot').textContent     = d.hot_category || '';
 
-      // 분야별 바 차트
       const barsEl = document.getElementById('weekly-bars');
       barsEl.innerHTML = '';
       const cats = d.category_counts || [];
@@ -2878,7 +2303,6 @@
         barsEl.appendChild(row);
       });
 
-      // 섹션 인사이트 카드
       const sectionsEl = document.getElementById('weekly-sections');
       sectionsEl.innerHTML = '';
       (d.sections || []).forEach(sec => {
@@ -2891,10 +2315,8 @@
         sectionsEl.appendChild(card);
       });
 
-      // 주간 인사이트
       document.getElementById('weekly-insight').textContent = d.weekly_insight || '';
 
-      // 다음 주 주목 포인트
       const nextEl = document.getElementById('weekly-next');
       nextEl.innerHTML = '';
       (d.next_watch || []).forEach(item => {
@@ -2904,7 +2326,6 @@
         nextEl.appendChild(li);
       });
 
-      // 히스토리
       const history = d.history || [];
       if (history.length > 0) {
         document.getElementById('weekly-history-wrap').style.display = 'block';
@@ -2924,7 +2345,6 @@
       content.style.display = 'block';
       _weeklyLoaded = true;
 
-      // 바 애니메이션 (requestAnimationFrame으로 width 트랜지션 발동)
       requestAnimationFrame(() => {
         document.querySelectorAll('#weekly-bars div div div').forEach(bar => {
           bar.style.width = bar.style.width;
@@ -2938,24 +2358,17 @@
     }
   }
 
-  // 봇 상태 — trades.json updated_at 기준
-  function updateBotStatus(updatedAt) {
-    const badge = document.getElementById('bot-status-badge');
-    const timeEl = document.getElementById('bot-status-time');
-    if (!badge || !updatedAt) return;
-    const diff = (Date.now() - new Date(updatedAt.replace(' ', 'T'))) / 60000; // 분
-    if (diff <= 5) {
-      badge.innerHTML = '🟢 실행 중';
-      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(16,185,129,.35);color:#34d399;background:rgba(16,185,129,.1);';
-    } else if (diff <= 30) {
-      badge.innerHTML = '🟡 지연';
-      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(245,158,11,.35);color:var(--gold);background:rgba(245,158,11,.1);';
-    } else {
-      badge.innerHTML = '🔴 중단 의심';
-      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(248,113,113,.35);color:#f87171;background:rgba(248,113,113,.1);';
-    }
-    const d = new Date(updatedAt.replace(' ', 'T'));
-    timeEl.textContent = `마지막 실행 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  /* ─── 히어로 코인 누적손익 (미니 fetch) ─────────────── */
+  async function loadHeroCoinPnl() {
+    try {
+      const r = await fetch('trades.json?t=' + Date.now());
+      const d = await r.json();
+      const pnl = d.stats?.total_pnl_krw ?? 0;
+      const el = document.getElementById('hero-pnl-val');
+      if (!el) return;
+      el.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
+      el.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
+    } catch {}
   }
 
   // 테마 초기화
@@ -2972,12 +2385,8 @@
   });
 
   init();
-  loadCoinTrader();
-  loadBlacklist();
-  // 30초마다 코인 현재가.봇 상태 갱신
-  setInterval(loadCoinTrader, 30 * 1000);
-  // 블랙리스트는 5분마다 갱신
-  setInterval(loadBlacklist, 5 * 60 * 1000);
+  loadHeroCoinPnl();
+  setInterval(loadHeroCoinPnl, 5 * 60 * 1000);
 
   // ─── 히어로 별 canvas ─────────────────────────────────
   (function initHeroCanvas() {
