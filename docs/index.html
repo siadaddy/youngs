@@ -1903,16 +1903,8 @@
   }
 
   function transformSupabaseData(rows) {
-    // captions: 카드 그리드용 (headline / caption 필드)
-    const captions = rows.map(r => ({
-      headline:    r.title,
-      caption:     r.summary || '',
-      image_url:   r.image_url || null,
-      source_url:  null,
-      source_name: null
-    }));
-
-    // news: 하단 카테고리 토글용 (title / summary / link / source 필드)
+    // news_cards = 원본 수집 기사 → 카테고리 토글 섹션에만 표시
+    // captions(AI 큐레이션 카드)는 Supabase에 없으므로 빈 배열
     const news = {};
     rows.forEach(r => {
       if (!r.category) return;
@@ -1925,7 +1917,7 @@
       });
     });
 
-    return { date: rows[0].date, captions, news };
+    return { date: rows[0].date, captions: [], news };
   }
 
   function renderContent(data) {
