@@ -1,0 +1,711 @@
+{
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 2045.0,
+    "qty": 24.3765,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-08 02:00",
+    "high_price": 2114.0
+  },
+  "history": [
+    {
+      "time": "2026-05-08 02:00",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 2045.0,
+      "amount_krw": 49850.0,
+      "reason": "XRP의 RSI는 28.3으로 과매도 상태이며, ADX는 59.7로 추세가 있는 것으로 나타납니다. 또한, 거래량이 83% 증가하여 강한 상승 신호를 보이고 있습니다. 따라서, BUY 조건을 충족하여 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-08 00:30",
+      "action": "SELL",
+      "ticker": "ETH",
+      "price": 3374000.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.29,
+      "pnl_krw": -638.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-07 14:00",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 3418000.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 30.8로 저점에 위치해 있으며, MACD는 골든크로스를 형성하고 있어 강한 매수 신호가 발생했습니다. 또한, ADX는 57.9로 추세가 있는 것으로 나타나며, 점수는 +7로 높은 신호를 보이고 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-07 13:30",
+      "action": "SELL",
+      "ticker": "ETH",
+      "price": 3415000.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.19,
+      "pnl_krw": -590.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-07 07:06",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 0.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 38.6으로 매수 신호를 보이고, MACD 골든크로스와 볼린저밴드 중하단에 위치해 있어 강한 매수 신호를 나타내고 있습니다. 또한, ADX 39.5로 추세가 있는 것으로 판단되어 BUY에 적합합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-07 03:00",
+      "action": "SELL",
+      "ticker": "ETH",
+      "price": 3453000.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.06,
+      "pnl_krw": -525.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-06 13:30",
+      "action": "BUY",
+      "ticker": "ETH",
+      "price": 3490000.0,
+      "amount_krw": 49850.0,
+      "reason": "ETH의 RSI는 31.8로 저점에 접근하였으며, MACD 골든크로스 신호가 발생하여 강한 매수 신호를 보이고 있습니다. 또한, ADX 31.0으로 추세가 있는 것으로 판단되며, 점수 +6으로 BUY 조건을 충족합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-06 09:28",
+      "action": "SELL",
+      "ticker": "REI",
+      "price": 4.505,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.15% (기준 -4.0%)",
+      "pnl_pct": -4.15,
+      "pnl_krw": -2068.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-06 09:00",
+      "action": "BUY",
+      "ticker": "REI",
+      "price": 4.723,
+      "amount_krw": 49850.0,
+      "reason": "REI의 RSI는 53.0으로 중립적인 수준이며, MACD는 하락세이지만 BB 중하단에 위치해 있고, 거래량은 123% 증가하여 강한 상승세를 보이고 있습니다. 또한, ADX가 43.5로 추세가 있는 것으로 나타나며, VB✅과 점수 +5로 강한 돌파 신호가 나타나 BUY에 적합합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-06 09:00",
+      "action": "SELL",
+      "ticker": "TRAC",
+      "price": 502.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.18,
+      "pnl_krw": -589.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-06 02:30",
+      "action": "BUY",
+      "ticker": "TRAC",
+      "price": 511.0,
+      "amount_krw": 49850.0,
+      "reason": "TRAC의 RSI는 37.5로 과매도 상태가 아니며, ADX는 49.2로 추세가 있는 것으로 나타납니다. 또한 거래량이 1560% 증가하여 강한 상승 신호를 보이고 있습니다. 이러한 조건은 BUY에 적합합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 21:30",
+      "action": "SELL",
+      "ticker": "ZIL",
+      "price": 7.4,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.70% (기준 +5.0%)",
+      "pnl_pct": 5.7,
+      "pnl_krw": 2841.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 21:00",
+      "action": "BUY",
+      "ticker": "ZIL",
+      "price": 7.002,
+      "amount_krw": 49850.0,
+      "reason": "ZIL의 RSI가 22.4로 과매도 상태이며, ADX가 26.3으로 추세가 있는 것으로 판단되며, VB✅과 거래량-76%로 강한 신호가 있는 것으로 판단되어 BUY에 적합합니다. 또한, 점수가 +5로 높은 편으로 BUY 신호가 강합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 20:07",
+      "action": "SELL",
+      "ticker": "AIOZ",
+      "price": 105.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 108원 대비 -2.78%)",
+      "pnl_pct": 0.0,
+      "pnl_krw": 0.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 19:01",
+      "action": "BUY",
+      "ticker": "AIOZ",
+      "price": 0.0,
+      "amount_krw": 49850.0,
+      "reason": "AIOZ의 RSI는 46.2로 중립적인 수준이며, MACD는 하락세이지만 BB 중하단에 위치해 있고, 거래량은 38% 증가하여 강한 상승세를 보이고 있습니다. 또한 VB✅와 점수 +5를 기록하여 BUY 신호가 강합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 14:47",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 10.94,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.29% (기준 -4.0%)",
+      "pnl_pct": -4.29,
+      "pnl_krw": -2137.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 14:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 11.43,
+      "amount_krw": 49850.0,
+      "reason": "RSI 28.1로 과매도 상태이며, ADX 23.8로 추세가 있는 것으로 판단되며, 점수 +5로 강한 신호가 있는 것으로 판단되어 BUY에 적합한 종목입니다. 또한, VB✅와 거래량-52%로 시장 참여도가 낮아 반등의 기회가 있는 것으로 보입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 09:42",
+      "action": "SELL",
+      "ticker": "AIOZ",
+      "price": 105.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.55% (기준 -4.0%)",
+      "pnl_pct": -4.55,
+      "pnl_krw": -2266.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 08:30",
+      "action": "BUY",
+      "ticker": "AIOZ",
+      "price": 110.0,
+      "amount_krw": 49850.0,
+      "reason": "AIOZ의 RSI는 38.9로 과매도 상태가 아니며, ADX는 63.3으로 강한 추세를 보이고 있습니다. 또한 VB✅와 거래량 증가로 인해 BUY 신호가 발생하였습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 08:30",
+      "action": "SELL",
+      "ticker": "YFI",
+      "price": 4012000.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.74,
+      "pnl_krw": -866.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-05 02:30",
+      "action": "BUY",
+      "ticker": "YFI",
+      "price": 4086000.0,
+      "amount_krw": 49850.0,
+      "reason": "YFI의 RSI는 59.9로 과매수 상태가 아니며, MACD는 상승하고 있습니다. 또한, ADX는 60.2로 강한 추세를 보이고 있으며, 거래량도 많이 증가한 상태입니다. 이러한 신호들이 모두BUY 조건을 충족하고 있으므로 BUY를 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 22:08",
+      "action": "SELL",
+      "ticker": "H",
+      "price": 290.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.29% (기준 -4.0%)",
+      "pnl_pct": -4.29,
+      "pnl_krw": -2139.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 17:30",
+      "action": "BUY",
+      "ticker": "H",
+      "price": 303.0,
+      "amount_krw": 49850.0,
+      "reason": "RSI 50.0, MACD 골든크로스(강한매수), BB 중상단, 거래량-26%, ADX 38.0(추세O), VB✅로 강한 매수 신호가 나타나며, 점수 +1로 상대적으로 좋은 상태입니다. 따라서 BUY 신호가 활성화되었습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 17:27",
+      "action": "SELL",
+      "ticker": "H",
+      "price": 304.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.19% (기준 +5.0%)",
+      "pnl_pct": 5.19,
+      "pnl_krw": 2587.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 15:30",
+      "action": "BUY",
+      "ticker": "H",
+      "price": 290.0,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화 +23% 이상이면서 점수 +5 이상인 강한 돌파 신호가 나타나고, ADX 39.1로 추세가 있는 상황에서 매수 신호가 발생했습니다. 또한 RSI 22.2로 과매도 상태이기 때문에 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 15:25",
+      "action": "SELL",
+      "ticker": "BABY",
+      "price": 29.83,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 31원 대비 -2.77%)",
+      "pnl_pct": 1.02,
+      "pnl_krw": 506.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 11:00",
+      "action": "BUY",
+      "ticker": "BABY",
+      "price": 29.56,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화 +58% 이상이면서 점수 +4 이상으로 BUY 최우선 신호가 발생하였습니다. 또한 RSI 38.5로 과매도 상태가 아니며, MACD 상승으로 추세가 좋습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 10:42",
+      "action": "SELL",
+      "ticker": "BABY",
+      "price": 29.19,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 30원 대비 -2.54%)",
+      "pnl_pct": 0.83,
+      "pnl_krw": 413.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 10:00",
+      "action": "BUY",
+      "ticker": "BABY",
+      "price": 28.9,
+      "amount_krw": 49850.0,
+      "reason": "BABY의 RSI는 31.6으로 저점에 위치해 있으며, MACD는 상승하고 있고, 볼린저밴드 중하단에 위치해 있습니다. 또한, 거래량은 56% 증가했으며, ADX는 51.9로 추세가 있는 것으로 나타나고 있습니다. 이러한 신호들은 BABY에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 09:32",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 9.981,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 6.89% (기준 +5.0%)",
+      "pnl_pct": 6.89,
+      "pnl_krw": 3433.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 08:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 9.339,
+      "amount_krw": 49850.0,
+      "reason": "RSI 45.7, MACD 상승, BB 중하단, 거래량-45%, ADX 25.2로 추세가 있는 상황에서 점수 +4로 BUY 신호가 발생하였습니다. 또한, 최근 17건의 거래 메모리에서 시간초과 청산이 10회 발생하였으므로, 추세 없는 횡보 구간 진입을 피하는 것이 좋습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 08:00",
+      "action": "SELL",
+      "ticker": "BABY",
+      "price": 29.32,
+      "amount_krw": 49850.0,
+      "reason": "보유 시간 150분이 경과하였으며, 수익률이 -2.53%로 낮고, 기술 점수도 낮아 죽은 포지션으로 판단되므로 청산한다. 또한 다른 종목에 비해 기술적 지표가 좋지 않아 기회 교체를 고려해야 한다.",
+      "pnl_pct": -2.53,
+      "pnl_krw": -1257.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 05:30",
+      "action": "BUY",
+      "ticker": "BABY",
+      "price": 30.12,
+      "amount_krw": 49850.0,
+      "reason": "BABY의 RSI가 28.3으로 저조하고, BB 중하단에 위치해 있어 반등 가능성이 높으며, ADX 44.4로 추세가 있는 것으로 나타나서 매수 신호가 발생했습니다. 또한, 최근 16건의 거래 메모리에서 시간초과 청산이 9회 발생했으므로, 추세 없는 횡보 구간 진입을 피하기 위해 BABY의 추세를 따라가며 매매를 진행할 계획입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 01:28",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 9.43,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -5.70% (기준 -4.0%)",
+      "pnl_pct": -5.7,
+      "pnl_krw": -2841.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 01:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 10.0,
+      "amount_krw": 49850.0,
+      "reason": "RSI 33.0으로 저점에 위치해 있으며, MACD 하락세에도 불구하고 ADX 35.2로 추세가 유지되고 있어 반등 가능성이 높다. 또한 거래량이 65% 증가하여 시장 참여자들이 관심을 보이고 있다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-04 00:02",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 11.09,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.42% (기준 +5.0%)",
+      "pnl_pct": 5.42,
+      "pnl_krw": 2701.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 22:30",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 10.53,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화가 양호하며, 점수가 +4로 높은 편입니다. 또한 RSI가 32.3으로 과매도 상태이므로, 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 22:30",
+      "action": "SELL",
+      "ticker": "ORCA",
+      "price": 3046.0,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 ORCA의 기술 점수는 +3으로 낮고, RSI도 33.8로 낮으며, MACD도 하락하고 있습니다. 또한, 보유 시간이 60분으로 비교적 짧은 편이므로, 기술 점수가 낮고 반등 신호가 없는 경우 매도하는 것이 좋습니다.",
+      "pnl_pct": -1.26,
+      "pnl_krw": -630.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 21:30",
+      "action": "BUY",
+      "ticker": "ORCA",
+      "price": 3085.0,
+      "amount_krw": 49850.0,
+      "reason": "ORCA의 RSI는 43.0으로 중립적인 수준이며, MACD 골든크로스와 BB 중하단을 보이고 있습니다. 또한 ADX 25.2로 추세가 있는 것으로 나타나며, 점수 +5로 높은 매수 신호를 보이고 있습니다. 이러한 신호들이 강한 매수 신호로 판단되어 매수 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 21:28",
+      "action": "SELL",
+      "ticker": "GNO",
+      "price": 209600.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.33% (기준 +5.0%)",
+      "pnl_pct": 5.33,
+      "pnl_krw": 2655.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 17:30",
+      "action": "BUY",
+      "ticker": "GNO",
+      "price": 199700.0,
+      "amount_krw": 49850.0,
+      "reason": "VB✅와 거래량 변화가 양호하여 강한 돌파 신호가 나타났으며, 점수도 +4로 높아 BUY 신호가 발생했습니다. 또한 RSI와 MACD도 하락 추세이므로 반등 가능성이 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 17:20",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 11.34,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절: -4.38% ≤ -4.0%",
+      "pnl_pct": -4.38,
+      "pnl_krw": -2186.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 17:00",
+      "action": "BUY",
+      "ticker": "RSS3",
+      "price": 11.86,
+      "amount_krw": 49850.0,
+      "reason": "VB✅과 거래량 변화가 양호하며, 점수도 +4로 높아 신호가 강한 돌파 신호를 보이고 있습니다. 또한 RSI 값이 21.9로 저점에 위치해 있어 매수 기회로 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 16:59",
+      "action": "SELL",
+      "ticker": "POLA",
+      "price": 12.81,
+      "amount_krw": 49850.0,
+      "reason": "실시간 익절 5.00% (기준 +5.0%)",
+      "pnl_pct": 5.0,
+      "pnl_krw": 2492.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 13:30",
+      "action": "BUY",
+      "ticker": "POLA",
+      "price": 12.22,
+      "amount_krw": 49850.0,
+      "reason": "RSI 19.6으로 과매도 상태이며, VB✅와 거래량 변화가 적극적으로 증가하지는 않았지만, 점수 -3으로 매수 신호가 발생하였습니다. 또한, 다른 종목에 비해 상대적으로 저렴한 가격으로 매수 기회가 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 09:24",
+      "action": "SELL",
+      "ticker": "MEGA",
+      "price": 195.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.41% (기준 -4.0%)",
+      "pnl_pct": -4.41,
+      "pnl_krw": -2199.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 06:00",
+      "action": "BUY",
+      "ticker": "MEGA",
+      "price": 204.0,
+      "amount_krw": 49850.0,
+      "reason": "MEGA의 RSI는 36.4로 저점에 위치해 있으며, MACD는 상승하고 있습니다. 또한 ADX는 53.1로 추세가 있는 것으로 나타나며, 점수는 +4로 높은 신호를 보이고 있습니다. 이러한 신호들은 BUY에 유리한 조건입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 05:32",
+      "action": "SELL",
+      "ticker": "POLA",
+      "price": 12.94,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 13원 대비 -2.85%)",
+      "pnl_pct": 1.89,
+      "pnl_krw": 942.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 04:00",
+      "action": "BUY",
+      "ticker": "POLA",
+      "price": 12.76,
+      "amount_krw": 49850.0,
+      "reason": "VB✅과 높은 거래량 증가율, MACD 상승으로 강한 상승 신호가 나타나고 있습니다. 또한 ADX 값이 25 이상으로 추세가 있는 것으로 판단되며, 점수도 양호한 수준입니다. 따라서 POLA를 매수하는 것이 적절하다고 판단됩니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-03 04:00",
+      "action": "SELL",
+      "ticker": "RSS3",
+      "price": 10.84,
+      "amount_krw": 49850.0,
+      "reason": "현재 보유 종목 RSS3의 RSI가 82.2로 높으며, MACD도 상승 중이지만 기술 점수가 -1로 낮고, 보유 시간이 30분으로 짧아 기술 점수에 따라 판단할 때 매도 신호가 발생합니다. 또한, 최근 14건의 거래에서 시간초과 청산이 7회 발생하여 추세 없는 횡보 구간 진입을 자제해야 하므로 매도하는 것이 좋습니다.",
+      "pnl_pct": -0.82,
+      "pnl_krw": -410.0,
+      "dry_run": false
+    }
+  ],
+  "stats": {
+    "total_trades": 90,
+    "wins": 29,
+    "losses": 61,
+    "total_pnl_krw": -45277.0,
+    "start_date": "2026-04-06",
+    "stop_loss_pct": 4.0,
+    "take_profit_pct": 5.0
+  },
+  "updated_at": "2026-05-10 21:30",
+  "blacklist": {
+    "FORT": {
+      "stop_loss_count": 5,
+      "last_stop_loss": "2026-04-29 00:00",
+      "blacklisted_until": "2026-05-29 00:00",
+      "history": [
+        "2026-04-21 09:19",
+        "2026-04-21 12:49",
+        "2026-04-29 00:00"
+      ]
+    },
+    "EDU": {
+      "stop_loss_count": 5,
+      "last_stop_loss": "2026-04-29 00:00",
+      "blacklisted_until": "2026-05-29 00:00",
+      "history": [
+        "2026-04-29 00:00"
+      ]
+    },
+    "PIEVERSE": {
+      "stop_loss_count": 5,
+      "last_stop_loss": "2026-04-29 00:00",
+      "blacklisted_until": "2026-05-29 00:00",
+      "history": [
+        "2026-04-20 23:46",
+        "2026-04-29 00:00"
+      ]
+    },
+    "NCT": {
+      "stop_loss_count": 3,
+      "last_stop_loss": "2026-04-18 23:55",
+      "blacklisted_until": "2026-04-25 23:55",
+      "history": [
+        "2026-04-18 20:37",
+        "2026-04-18 21:15",
+        "2026-04-18 23:55"
+      ]
+    },
+    "SKL": {
+      "stop_loss_count": 2,
+      "last_stop_loss": "2026-04-18 20:19",
+      "blacklisted_until": null,
+      "history": [
+        "2026-04-18 13:33",
+        "2026-04-18 20:19"
+      ]
+    },
+    "IN": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-04-16 00:36",
+      "blacklisted_until": null,
+      "history": [
+        "2026-04-16 00:36"
+      ]
+    },
+    "HEMI": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-04-15 18:22",
+      "blacklisted_until": null,
+      "history": [
+        "2026-04-15 18:22"
+      ]
+    },
+    "BIOT": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-04-15 07:15",
+      "blacklisted_until": null,
+      "history": [
+        "2026-04-15 07:15"
+      ]
+    },
+    "MVC": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-04-29 23:14",
+      "blacklisted_until": null,
+      "history": [
+        "2026-04-29 23:14"
+      ]
+    },
+    "A8": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-04-30 04:44",
+      "blacklisted_until": null,
+      "history": [
+        "2026-04-30 04:44"
+      ]
+    },
+    "MBX": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-02 23:11",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-02 23:11"
+      ]
+    },
+    "MEGA": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-03 09:24",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-03 09:24"
+      ]
+    },
+    "RSS3": {
+      "stop_loss_count": 2,
+      "last_stop_loss": "2026-05-05 14:47",
+      "blacklisted_until": "2026-05-08 14:47",
+      "history": [
+        "2026-05-04 01:28",
+        "2026-05-05 14:47"
+      ],
+      "recovery_trades": 1
+    },
+    "H": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-04 22:08",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-04 22:08"
+      ]
+    },
+    "AIOZ": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-05 09:42",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-05 09:42"
+      ],
+      "recovery_trades": 1
+    },
+    "REI": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-06 09:28",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-06 09:28"
+      ]
+    }
+  }
+}

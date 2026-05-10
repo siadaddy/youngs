@@ -1,0 +1,1643 @@
+{
+  "updated": "2026-05-06",
+  "songs": [
+    {
+      "t": "Lose Yourself",
+      "a": "Eminem",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "격렬"
+    },
+    {
+      "t": "In da Club",
+      "a": "50 Cent",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "파티"
+    },
+    {
+      "t": "Gold Digger",
+      "a": "Kanye West",
+      "g": "2000s힙합",
+      "s": 7,
+      "d": "유쾌"
+    },
+    {
+      "t": "Crazy in Love",
+      "a": "Beyonce",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "섹시"
+    },
+    {
+      "t": "Hot in Herre",
+      "a": "Nelly",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "열정"
+    },
+    {
+      "t": "Lady Marmalade",
+      "a": "Christina Aguilera",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "성숙"
+    },
+    {
+      "t": "Get Ur Freak On",
+      "a": "Missy Elliott",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "독특"
+    },
+    {
+      "t": "Drop It Like It's Hot",
+      "a": "Snoop Dogg",
+      "g": "2000s힙합",
+      "s": 7,
+      "d": "쾌활"
+    },
+    {
+      "t": "Regulate",
+      "a": "Warren G",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "느긋"
+    },
+    {
+      "t": "Area Codes",
+      "a": "Ludacris",
+      "g": "2000s힙합",
+      "s": 7,
+      "d": "상쾌"
+    },
+    {
+      "t": "What's Luv?",
+      "a": "Fat Joe",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "활기"
+    },
+    {
+      "t": "Always on Time",
+      "a": "Ja Rule",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "로맨틱"
+    },
+    {
+      "t": "Izzo (H.O.V.A.)",
+      "a": "Jay-Z",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "자부심"
+    },
+    {
+      "t": "Grillz",
+      "a": "Nelly",
+      "g": "2000s힙합",
+      "s": 7,
+      "d": "모던"
+    },
+    {
+      "t": "21 Questions",
+      "a": "50 Cent",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "감성"
+    },
+    {
+      "t": "Right Thurr",
+      "a": "Chingy",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "흥미"
+    },
+    {
+      "t": "God's Plan",
+      "a": "Drake",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "희망"
+    },
+    {
+      "t": "Humble",
+      "a": "Kendrick Lamar",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "자존"
+    },
+    {
+      "t": "Sicko Mode",
+      "a": "Travis Scott",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "격렬"
+    },
+    {
+      "t": "Psycho",
+      "a": "Post Malone",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "신비"
+    },
+    {
+      "t": "Middle Child",
+      "a": "J. Cole",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "성숙"
+    },
+    {
+      "t": "Earfquake",
+      "a": "Tyler, The Creator",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "쾌활"
+    },
+    {
+      "t": "Ransom",
+      "a": "Lil Tecca",
+      "g": "최신힙합",
+      "s": 6,
+      "d": "모험"
+    },
+    {
+      "t": "Panini",
+      "a": "Lil Nas X",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "유쾌"
+    },
+    {
+      "t": "Bad Guy",
+      "a": "Billie Eilish",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "다크"
+    },
+    {
+      "t": "Pumped Up Kicks",
+      "a": "Foster the People",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "신나"
+    },
+    {
+      "t": "Uptown Funk",
+      "a": "Mark Ronson",
+      "g": "러닝업템포",
+      "s": 9,
+      "d": "펑키"
+    },
+    {
+      "t": "Can't Stop the Feeling!",
+      "a": "Justin Timberlake",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "쾌활"
+    },
+    {
+      "t": "We Found Love",
+      "a": "Rihanna",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "쾌활"
+    },
+    {
+      "t": "SexyBack",
+      "a": "Justin Timberlake",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "섹시"
+    },
+    {
+      "t": "Pony",
+      "a": "Ginuwine",
+      "g": "러닝업템포",
+      "s": 6,
+      "d": "성숙"
+    },
+    {
+      "t": "Crazy",
+      "a": "Gnarls Barkley",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "독특"
+    },
+    {
+      "t": "Mr. Brightside",
+      "a": "The Killers",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "상쾌"
+    },
+    {
+      "t": "Shut Up and Dance",
+      "a": "Walk the Moon",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "신나"
+    },
+    {
+      "t": "All About That Bass",
+      "a": "Meghan Trainor",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "자부심"
+    },
+    {
+      "t": "Cake by the Ocean",
+      "a": "DNCE",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "쾌활"
+    },
+    {
+      "t": "Happy",
+      "a": "Pharrell Williams",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "희망"
+    },
+    {
+      "t": "I Gotta Feeling",
+      "a": "The Black Eyed Peas",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "쾌활"
+    },
+    {
+      "t": "Pound the Alarm",
+      "a": "Nicki Minaj",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "격렬"
+    },
+    {
+      "t": "Tik Tok",
+      "a": "Ke$ha",
+      "g": "러닝업템포",
+      "s": 6,
+      "d": "신나"
+    },
+    {
+      "t": "Dynamite",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 9,
+      "d": "격렬"
+    },
+    {
+      "t": "Boy With Luv",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "희망"
+    },
+    {
+      "t": "Kill This Love",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬"
+    },
+    {
+      "t": "Fancy",
+      "a": "TWICE",
+      "g": "K-pop",
+      "s": 7,
+      "d": "상쾌"
+    },
+    {
+      "t": "Gashina",
+      "a": "SUNMI",
+      "g": "K-pop",
+      "s": 7,
+      "d": "신비"
+    },
+    {
+      "t": "Eyes, Nose, Lips",
+      "a": "TAEYANG",
+      "g": "K-pop",
+      "s": 6,
+      "d": "감성"
+    },
+    {
+      "t": "DDU-DU DDU-DU",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬"
+    },
+    {
+      "t": "Yes or Yes",
+      "a": "TWICE",
+      "g": "K-pop",
+      "s": 7,
+      "d": "쾌활"
+    },
+    {
+      "t": "Tempo",
+      "a": "EXO",
+      "g": "K-pop",
+      "s": 7,
+      "d": "신나"
+    },
+    {
+      "t": "Love Scenario",
+      "a": "iKON",
+      "g": "K-pop",
+      "s": 7,
+      "d": "감성"
+    },
+    {
+      "t": "Good Boy",
+      "a": "Baekhyun",
+      "g": "K-pop",
+      "s": 6,
+      "d": "쾌활"
+    },
+    {
+      "t": "HIP",
+      "a": "MAMAMOO",
+      "g": "K-pop",
+      "s": 7,
+      "d": "강렬"
+    },
+    {
+      "t": "How You Like That",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬"
+    },
+    {
+      "t": "Wannabe",
+      "a": "ITZY",
+      "g": "K-pop",
+      "s": 7,
+      "d": "신비"
+    },
+    {
+      "t": "Fever",
+      "a": "ENHYPEN",
+      "g": "K-pop",
+      "s": 6,
+      "d": "격렬"
+    },
+    {
+      "t": "Butter",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "상쾌"
+    },
+    {
+      "t": "Permission to Dance",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 7,
+      "d": "쾌활"
+    },
+    {
+      "t": "Lilac",
+      "a": "IU",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "감성"
+    },
+    {
+      "t": "Without You",
+      "a": "NELL",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "애절"
+    },
+    {
+      "t": "Lost",
+      "a": "Crush",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "감성"
+    },
+    {
+      "t": "Whiskey",
+      "a": "MeloMance",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "애절"
+    },
+    {
+      "t": "Some",
+      "a": "BOL4",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "상쾌"
+    },
+    {
+      "t": "2002",
+      "a": "Anne-Marie",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "감성"
+    },
+    {
+      "t": "Someone Like You",
+      "a": "Adele",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "애절"
+    },
+    {
+      "t": "When the Party's Over",
+      "a": "Billie Eilish",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "감성"
+    },
+    {
+      "t": "Ocean Eyes",
+      "a": "Billie Eilish",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "신비"
+    },
+    {
+      "t": "Stay with Me",
+      "a": "Sam Smith",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "감성"
+    },
+    {
+      "t": "Til It Happens to You",
+      "a": "Lady Gaga",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "감동"
+    },
+    {
+      "t": "A Thousand Years",
+      "a": "Christina Perri",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "로맨틱"
+    },
+    {
+      "t": "Unconditionally",
+      "a": "Katy Perry",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "감동"
+    },
+    {
+      "t": "Skinny Love",
+      "a": "Birdy",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "애절"
+    },
+    {
+      "t": "The Real Slim Shady",
+      "a": "Eminem",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "풍자, 위트, 도발"
+    },
+    {
+      "t": "99 Problems",
+      "a": "Jay-Z",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "강렬함, 거리, 서사"
+    },
+    {
+      "t": "Dirt Off Your Shoulder",
+      "a": "Jay-Z",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "자신감, 과시, 당당"
+    },
+    {
+      "t": "Rich Flex",
+      "a": "Drake & 21 Savage",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "도발적, 트렌디"
+    },
+    {
+      "t": "Blinding Lights",
+      "a": "The Weeknd",
+      "g": "러닝업템포",
+      "s": 10,
+      "d": "질주감 넘치는 신스팝"
+    },
+    {
+      "t": "Seven (feat. Latto)",
+      "a": "Jungkook",
+      "g": "K-pop",
+      "s": 10,
+      "d": "팝, 댄서블, 섹시"
+    },
+    {
+      "t": "Standing Next to You",
+      "a": "Jungkook",
+      "g": "K-pop",
+      "s": 9,
+      "d": "펑키, 그루비"
+    },
+    {
+      "t": "Super (손오공)",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 9,
+      "d": "웅장, 에너제틱"
+    },
+    {
+      "t": "God of Music (음악의 신)",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "경쾌, 희망찬"
+    },
+    {
+      "t": "S-Class (특)",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 9,
+      "d": "강렬, 힙합"
+    },
+    {
+      "t": "밤편지",
+      "a": "IU",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "서정적,그리움"
+    },
+    {
+      "t": "Hype Boy",
+      "a": "NewJeans",
+      "g": "걸그룹",
+      "s": 10,
+      "d": "청량하고 트렌디한 감성"
+    },
+    {
+      "t": "Espresso",
+      "a": "Sabrina Carpenter",
+      "g": "최신곡",
+      "s": 10,
+      "d": "밝고 경쾌한"
+    },
+    {
+      "t": "Jesus Walks",
+      "a": "Kanye West",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "웅장한, 성찰적"
+    },
+    {
+      "t": "Jimmy Cooks",
+      "a": "Drake",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "강렬한 바이브"
+    },
+    {
+      "t": "Don't Stop Me Now",
+      "a": "Queen",
+      "g": "러닝업템포",
+      "s": 10,
+      "d": "쾌활한 질주감"
+    },
+    {
+      "t": "MANIAC",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 9,
+      "d": "강렬,힙합,에너지"
+    },
+    {
+      "t": "Love poem",
+      "a": "아이유",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "위로, 아련함"
+    },
+    {
+      "t": "Pink Venom",
+      "a": "BLACKPINK",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "강렬"
+    },
+    {
+      "t": "Girls",
+      "a": "aespa",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "미래적"
+    },
+    {
+      "t": "Ditto",
+      "a": "NewJeans",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "신남"
+    },
+    {
+      "t": "I Am",
+      "a": "IVE",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "강렬"
+    },
+    {
+      "t": "Scientist",
+      "a": "TWICE",
+      "g": "걸그룹",
+      "s": 7,
+      "d": "상큼"
+    },
+    {
+      "t": "Eyes",
+      "a": "LE SSERAFIM",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "신비"
+    },
+    {
+      "t": "Voltage",
+      "a": "ITZY",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "파워"
+    },
+    {
+      "t": "Egotistic",
+      "a": "MAMAMOO",
+      "g": "걸그룹",
+      "s": 7,
+      "d": "감성"
+    },
+    {
+      "t": "ANTIFRAGILE",
+      "a": "LE SSERAFIM",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "모던"
+    },
+    {
+      "t": "Shut Down",
+      "a": "BLACKPINK",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "강렬"
+    },
+    {
+      "t": "Please Please Please",
+      "a": "Sabrina Carpenter",
+      "g": "최신곡",
+      "s": 10,
+      "d": "매력적인 팝"
+    },
+    {
+      "t": "Summer",
+      "a": "Calvin Harris",
+      "g": "EDM/하우스",
+      "s": 10,
+      "d": "여름 햇살 아래 질주"
+    },
+    {
+      "t": "Dakiti",
+      "a": "Bad Bunny, Rosalia",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "흥미진진"
+    },
+    {
+      "t": "Mi Gente",
+      "a": "J Balvin, Willy William",
+      "g": "라틴팝/레게톤",
+      "s": 9,
+      "d": "에너지 넘치"
+    },
+    {
+      "t": "Hawái",
+      "a": "Maluma",
+      "g": "라틴팝/레게톤",
+      "s": 7,
+      "d": "감성 가득"
+    },
+    {
+      "t": "Chantaje",
+      "a": "Shakira, Maluma",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "섹시하고 강렬"
+    },
+    {
+      "t": "Gasolina",
+      "a": "Daddy Yankee",
+      "g": "라틴팝/레게톤",
+      "s": 9,
+      "d": "파티 분위기"
+    },
+    {
+      "t": "Taki Taki",
+      "a": "Ozuna, DJ Snake, Cardi B",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "신나고 밝"
+    },
+    {
+      "t": "Casi Casi",
+      "a": "Karol G",
+      "g": "라틴팝/레게톤",
+      "s": 6,
+      "d": "느랑한 멜로"
+    },
+    {
+      "t": "Vaina Loca",
+      "a": "Ozuna",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "중독성 있"
+    },
+    {
+      "t": "Ay Vamos",
+      "a": "J Balvin",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "에너지 넘치"
+    },
+    {
+      "t": "Obsesión",
+      "a": "Bad Bunny, Jhay Cortez",
+      "g": "라틴팝/레게톤",
+      "s": 7,
+      "d": "모던하고 시크"
+    },
+    {
+      "t": "Shape of You",
+      "a": "Ed Sheeran",
+      "g": "2010s팝",
+      "s": 9,
+      "d": "신남"
+    },
+    {
+      "t": "Uptown Funk",
+      "a": "Bruno Mars",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "펑키"
+    },
+    {
+      "t": "Firework",
+      "a": "Katy Perry",
+      "g": "2010s팝",
+      "s": 7,
+      "d": "열정"
+    },
+    {
+      "t": "Poker Face",
+      "a": "Lady Gaga",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "강렬"
+    },
+    {
+      "t": "Rolling in the Deep",
+      "a": "Adele",
+      "g": "2010s팝",
+      "s": 9,
+      "d": "감성"
+    },
+    {
+      "t": "Sorry",
+      "a": "Justin Bieber",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "댄스"
+    },
+    {
+      "t": "Moves Like Jagger",
+      "a": "Maroon 5",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "펑키"
+    },
+    {
+      "t": "Sexy and I Know It",
+      "a": "LMFAO",
+      "g": "2010s팝",
+      "s": 7,
+      "d": "유쾌"
+    },
+    {
+      "t": "Call Me Maybe",
+      "a": "Carly Rae Jepsen",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "만화"
+    },
+    {
+      "t": "아무노래",
+      "a": "지코",
+      "g": "국내힙합/R&B",
+      "s": 10,
+      "d": "경쾌하고힙한"
+    },
+    {
+      "t": "Viva La Vida",
+      "a": "Coldplay",
+      "g": "팝록/인디",
+      "s": 9,
+      "d": "고조된 에너지"
+    },
+    {
+      "t": "Radioactive",
+      "a": "Imagine Dragons",
+      "g": "팝록/인디",
+      "s": 8,
+      "d": "격렬한 비트"
+    },
+    {
+      "t": "Do I Wanna Know?",
+      "a": "Arctic Monkeys",
+      "g": "팝록/인디",
+      "s": 7,
+      "d": "매혹적인 리듬"
+    },
+    {
+      "t": "Girls",
+      "a": "The 1975",
+      "g": "팝록/인디",
+      "s": 6,
+      "d": "신남한 비트"
+    },
+    {
+      "t": "Wake Up",
+      "a": "Arcade Fire",
+      "g": "팝록/인디",
+      "s": 9,
+      "d": "고조된 에너지"
+    },
+    {
+      "t": "Paranoid Android",
+      "a": "Radiohead",
+      "g": "팝록/인디",
+      "s": 8,
+      "d": "복잡한 멜로디"
+    },
+    {
+      "t": "Ain't It Fun",
+      "a": "Paramore",
+      "g": "팝록/인디",
+      "s": 7,
+      "d": "쏘아올라가는 에너지"
+    },
+    {
+      "t": "Best Day of My Life",
+      "a": "American Authors",
+      "g": "팝록/인디",
+      "s": 6,
+      "d": "활기찬 비트"
+    },
+    {
+      "t": "On Top of the World",
+      "a": "Imagine Dragons",
+      "g": "팝록/인디",
+      "s": 9,
+      "d": "신남한 분위기"
+    },
+    {
+      "t": "기억 더하기",
+      "a": "윤하",
+      "g": "슬픈감성발라드",
+      "s": 8,
+      "d": "애절"
+    },
+    {
+      "t": "그대 떠난 후",
+      "a": "이선희",
+      "g": "슬픈감성발라드",
+      "s": 7,
+      "d": "고난"
+    },
+    {
+      "t": "내게 남은 사랑을 드릴께",
+      "a": "소향",
+      "g": "슬픈감성발라드",
+      "s": 6,
+      "d": "애수"
+    },
+    {
+      "t": "사랑 안해",
+      "a": "백지영",
+      "g": "슬픈감성발라드",
+      "s": 9,
+      "d": "비애"
+    },
+    {
+      "t": "아프다",
+      "a": "거미",
+      "g": "슬픈감성발라드",
+      "s": 8,
+      "d": "서러움"
+    },
+    {
+      "t": "그대 돌아오면",
+      "a": "지아",
+      "g": "슬픈감성발라드",
+      "s": 5,
+      "d": "슬픔"
+    },
+    {
+      "t": "사랑 Two",
+      "a": "멜로망스",
+      "g": "슬픈감성발라드",
+      "s": 4,
+      "d": "애절"
+    },
+    {
+      "t": "이별",
+      "a": "임재범",
+      "g": "슬픈감성발라드",
+      "s": 6,
+      "d": "고통"
+    },
+    {
+      "t": "사랑이란",
+      "a": "이문세",
+      "g": "슬픈감성발라드",
+      "s": 7,
+      "d": "비탄"
+    },
+    {
+      "t": "보고 싶은 날엔",
+      "a": "박정현",
+      "g": "슬픈감성발라드",
+      "s": 9,
+      "d": "근심"
+    },
+    {
+      "t": "Stronger",
+      "a": "Kanye West",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "에너지"
+    },
+    {
+      "t": "Go Hard",
+      "a": "DJ Khaled",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "파티"
+    },
+    {
+      "t": "A Milli",
+      "a": "Lil Wayne",
+      "g": "2000s힙합",
+      "s": 7,
+      "d": "명랑"
+    },
+    {
+      "t": "Lollipop",
+      "a": "Lil Wayne",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "쾌활"
+    },
+    {
+      "t": "What Them Girls Like",
+      "a": "Ludacris",
+      "g": "2000s힙합",
+      "s": 5,
+      "d": "유혹"
+    },
+    {
+      "t": "How Low",
+      "a": "Ludacris",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "남성적"
+    },
+    {
+      "t": "I Get Money",
+      "a": "50 Cent",
+      "g": "2000s힙합",
+      "s": 7,
+      "d": "강렬"
+    },
+    {
+      "t": "Amusement Park",
+      "a": "50 Cent",
+      "g": "2000s힙합",
+      "s": 6,
+      "d": "유쾌"
+    },
+    {
+      "t": "Number One",
+      "a": "Nelly",
+      "g": "2000s힙합",
+      "s": 5,
+      "d": "자랑"
+    },
+    {
+      "t": "Fair Trade",
+      "a": "Drake",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "다크힙합"
+    },
+    {
+      "t": "Rich Flex",
+      "a": "Drake",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "강렬비트"
+    },
+    {
+      "t": "N95",
+      "a": "Kendrick Lamar",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "사회비판"
+    },
+    {
+      "t": "Die Hard",
+      "a": "Kendrick Lamar",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "힙합진실"
+    },
+    {
+      "t": "Escape Plan",
+      "a": "Travis Scott",
+      "g": "최신힙합",
+      "s": 6,
+      "d": "다크모드"
+    },
+    {
+      "t": "Mafia",
+      "a": "Travis Scott",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "강렬트랩"
+    },
+    {
+      "t": "Cooped Up",
+      "a": "Post Malone",
+      "g": "최신힙합",
+      "s": 5,
+      "d": "차가운비트"
+    },
+    {
+      "t": "My Life",
+      "a": "J. Cole",
+      "g": "최신힙합",
+      "s": 6,
+      "d": "힙합스토리"
+    },
+    {
+      "t": "A Lot",
+      "a": "21 Savage",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "다크스토리"
+    },
+    {
+      "t": "Bank Account",
+      "a": "21 Savage",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "강렬트랩"
+    },
+    {
+      "t": "Unstoppable",
+      "a": "Sia",
+      "g": "러닝업템포",
+      "s": "8",
+      "d": "에너지"
+    },
+    {
+      "t": "High Hopes",
+      "a": "Panic! At The Disco",
+      "g": "러닝업템포",
+      "s": "9",
+      "d": "업비트"
+    },
+    {
+      "t": "Centuries",
+      "a": "Fall Out Boy",
+      "g": "러닝업템포",
+      "s": "8",
+      "d": "파워풀"
+    },
+    {
+      "t": "Brave",
+      "a": "Sara Bareilles",
+      "g": "러닝업템포",
+      "s": "6",
+      "d": "강렬"
+    },
+    {
+      "t": "Unleashed",
+      "a": "Architects",
+      "g": "러닝업템포",
+      "s": "9",
+      "d": "렬"
+    },
+    {
+      "t": "Bullet For My Valentine - Tears Don't Fall",
+      "a": "Bullet For My Valentine",
+      "g": "러닝업템포",
+      "s": "7",
+      "d": "메탈"
+    },
+    {
+      "t": "Pompeii",
+      "a": "Bastille",
+      "g": "러닝업템포",
+      "s": "8",
+      "d": "신비"
+    },
+    {
+      "t": "First Day of My Life",
+      "a": "Bright Eyes",
+      "g": "러닝업템포",
+      "s": "6",
+      "d": "따뜻"
+    },
+    {
+      "t": "Perm",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 6,
+      "d": "강렬"
+    },
+    {
+      "t": "Power",
+      "a": "EXO",
+      "g": "K-pop",
+      "s": 7,
+      "d": "강렬"
+    },
+    {
+      "t": "Superhuman",
+      "a": "NCT 127",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬"
+    },
+    {
+      "t": "Kick It",
+      "a": "NCT 127",
+      "g": "K-pop",
+      "s": 7,
+      "d": "댄스"
+    },
+    {
+      "t": "Fireworks (I'm The One)",
+      "a": "ATEEZ",
+      "g": "K-pop",
+      "s": 6,
+      "d": "활기참"
+    },
+    {
+      "t": "Wave",
+      "a": "ATEEZ",
+      "g": "K-pop",
+      "s": 5,
+      "d": "추억"
+    },
+    {
+      "t": "Left & Right",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "활기참"
+    },
+    {
+      "t": "Rock with you",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 7,
+      "d": "댄스"
+    },
+    {
+      "t": "When We Were Young",
+      "a": "Adele",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "회상적인 그리움"
+    },
+    {
+      "t": "Without Me",
+      "a": "Halsey",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "다크한 분위기"
+    },
+    {
+      "t": "Eastside",
+      "a": "Halsey",
+      "g": "여성발라드",
+      "s": 5,
+      "d": "감성적인 사랑"
+    },
+    {
+      "t": "Chasing Pavements",
+      "a": "Adele",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "감성적인 이별"
+    },
+    {
+      "t": "Lovely",
+      "a": "Billie Eilish",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "다크한 분위기"
+    },
+    {
+      "t": "Good Days",
+      "a": "SZA",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "감성적인 사랑"
+    },
+    {
+      "t": "Love Galore",
+      "a": "SZA",
+      "g": "여성발라드",
+      "s": 6,
+      "d": "감성적인 이별"
+    },
+    {
+      "t": "Love Dive",
+      "a": "IVE",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "감성"
+    },
+    {
+      "t": "Violet",
+      "a": "SZA",
+      "g": "최신곡",
+      "s": 8,
+      "d": "감성"
+    },
+    {
+      "t": "Kill Bill",
+      "a": "SZA",
+      "g": "최신곡",
+      "s": 9,
+      "d": "다크"
+    },
+    {
+      "t": "Anti-Hero",
+      "a": "Taylor Swift",
+      "g": "최신곡",
+      "s": 8,
+      "d": "부드러움"
+    },
+    {
+      "t": "Cruel Summer",
+      "a": "Taylor Swift",
+      "g": "최신곡",
+      "s": 7,
+      "d": "산뜻"
+    },
+    {
+      "t": "Save Your Tears",
+      "a": "The Weeknd",
+      "g": "최신곡",
+      "s": 8,
+      "d": "어둠"
+    },
+    {
+      "t": "Boy's a Liar Pt.2",
+      "a": "PinkPantheress",
+      "g": "최신곡",
+      "s": 7,
+      "d": "여유"
+    },
+    {
+      "t": "First Class",
+      "a": "Jack Harlow",
+      "g": "최신곡",
+      "s": 8,
+      "d": "자신Exist"
+    },
+    {
+      "t": "Escapism",
+      "a": "Raye",
+      "g": "최신곡",
+      "s": 6,
+      "d": "힙합"
+    },
+    {
+      "t": "Peppers",
+      "a": "Ariana Grande",
+      "g": "최신곡",
+      "s": 8,
+      "d": "화려"
+    },
+    {
+      "t": "Levels",
+      "a": "Avicii",
+      "g": "EDM/하우스",
+      "s": 9,
+      "d": "에너지"
+    },
+    {
+      "t": "Animals",
+      "a": "Martin Garrix",
+      "g": "EDM/하우스",
+      "s": 9,
+      "d": "파워풀"
+    },
+    {
+      "t": "Titanium",
+      "a": "David Guetta",
+      "g": "EDM/하우스",
+      "s": 8,
+      "d": "힙합"
+    },
+    {
+      "t": "Red Lights",
+      "a": "Tiësto",
+      "g": "EDM/하우스",
+      "s": 7,
+      "d": "업비트"
+    },
+    {
+      "t": "Clarity",
+      "a": "Zedd",
+      "g": "EDM/하우스",
+      "s": 8,
+      "d": "감성"
+    },
+    {
+      "t": "Alone",
+      "a": "Marshmello",
+      "g": "EDM/하우스",
+      "s": 7,
+      "d": "감성"
+    },
+    {
+      "t": "Sweet Nothing",
+      "a": "Calvin Harris",
+      "g": "EDM/하우스",
+      "s": 8,
+      "d": "업비트"
+    },
+    {
+      "t": "Wake Me Up",
+      "a": "Avicii",
+      "g": "EDM/하우스",
+      "s": 9,
+      "d": "에너지"
+    },
+    {
+      "t": "Scary Monsters and Nice Sprites",
+      "a": "Skrillex",
+      "g": "EDM/하우스",
+      "s": 8,
+      "d": "파워풀"
+    },
+    {
+      "t": "Con Calma",
+      "a": "Daddy Yankee, Snow",
+      "g": "라틴팝/레게톤",
+      "s": 9,
+      "d": "파티"
+    },
+    {
+      "t": "Taki Taki",
+      "a": "Ozuna, Selena Gomez, Cardi B",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "댄스"
+    },
+    {
+      "t": "Mamiii",
+      "a": "Karol G, Becky G",
+      "g": "라틴팝/레게톤",
+      "s": 7,
+      "d": "여자력"
+    },
+    {
+      "t": "Ay Di Os Dejo",
+      "a": "Bad Bunny",
+      "g": "라틴팝/레게톤",
+      "s": 6,
+      "d": "감성"
+    },
+    {
+      "t": "Que Pretendes",
+      "a": "J Balvin, Bad Bunny",
+      "g": "라틴팝/레게톤",
+      "s": 8,
+      "d": "섹시"
+    },
+    {
+      "t": "Uptown Girl",
+      "a": "Bruno Mars",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "밝고 신나"
+    },
+    {
+      "t": "Roar",
+      "a": "Katy Perry",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "자신감 업"
+    },
+    {
+      "t": "Hello",
+      "a": "Adele",
+      "g": "2010s팝",
+      "s": 9,
+      "d": "감성 발라드"
+    },
+    {
+      "t": "Work",
+      "a": "Rihanna",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "섹시한 느낌"
+    },
+    {
+      "t": "One More Night",
+      "a": "Maroon 5",
+      "g": "2010s팝",
+      "s": 7,
+      "d": "여름 느낌"
+    },
+    {
+      "t": "Maps",
+      "a": "Maroon 5",
+      "g": "2010s팝",
+      "s": 7,
+      "d": "사랑의 그리움"
+    },
+    {
+      "t": "Love On Top",
+      "a": "Beyonce",
+      "g": "2010s팝",
+      "s": 8,
+      "d": "행복한 사랑"
+    },
+    {
+      "t": "Any Song",
+      "a": "ZICO",
+      "g": "국내힙합/R&B",
+      "s": 8,
+      "d": "흥미진진"
+    },
+    {
+      "t": "바보처럼",
+      "a": "기리보이",
+      "g": "국내힙합/R&B",
+      "s": 6,
+      "d": "감성적"
+    },
+    {
+      "t": "London",
+      "a": "pH-1",
+      "g": "국내힙합/R&B",
+      "s": 7,
+      "d": "모던"
+    },
+    {
+      "t": "Martian",
+      "a": "DPR Live",
+      "g": "국내힙합/R&B",
+      "s": 5,
+      "d": "신나고"
+    },
+    {
+      "t": "All I Wanna Do",
+      "a": "박재범",
+      "g": "국내힙합/R&B",
+      "s": 9,
+      "d": "매력적"
+    },
+    {
+      "t": "Movie Shoot",
+      "a": "Loco",
+      "g": "국내힙합/R&B",
+      "s": 4,
+      "d": "쿨한"
+    },
+    {
+      "t": "한숨",
+      "a": "이하이",
+      "g": "국내힙합/R&B",
+      "s": 8,
+      "d": "감동적"
+    },
+    {
+      "t": "Half Moon",
+      "a": "DEAN",
+      "g": "국내힙합/R&B",
+      "s": 6,
+      "d": "감성적"
+    },
+    {
+      "t": "Eternity",
+      "a": "오혁",
+      "g": "국내힙합/R&B",
+      "s": 5,
+      "d": "영원한"
+    },
+    {
+      "t": "Good Day",
+      "a": "ZICO",
+      "g": "국내힙합/R&B",
+      "s": 7,
+      "d": "행복한"
+    },
+    {
+      "t": "Mr. November",
+      "a": "The National",
+      "g": "팝록/인디",
+      "s": 7,
+      "d": "다이나믹"
+    },
+    {
+      "t": "Lonely Boy",
+      "a": "The Black Keys",
+      "g": "팝록/인디",
+      "s": 8,
+      "d": "고조되는"
+    },
+    {
+      "t": "미안해",
+      "a": "백지영",
+      "g": "슬픈감성발라드",
+      "s": 8,
+      "d": "애절한감성"
+    },
+    {
+      "t": "이젠 잊기로 해요",
+      "a": "이선희",
+      "g": "슬픈감성발라드",
+      "s": 7,
+      "d": "슬픈마음"
+    },
+    {
+      "t": "가을 타향",
+      "a": "이문세",
+      "g": "슬픈감성발라드",
+      "s": 9,
+      "d": "추억의노래"
+    },
+    {
+      "t": "들리나요",
+      "a": "이선희",
+      "g": "슬픈감성발라드",
+      "s": 6,
+      "d": "애절한노래"
+    },
+    {
+      "t": "내가 너의 곁으로",
+      "a": "박정현",
+      "g": "슬픈감성발라드",
+      "s": 8,
+      "d": "슬픈연가"
+    },
+    {
+      "t": "오래전 그날",
+      "a": "멜로망스",
+      "g": "슬픈감성발라드",
+      "s": 6,
+      "d": "추억의노래"
+    },
+    {
+      "t": "소녀",
+      "a": "윤하",
+      "g": "슬픈감성발라드",
+      "s": 8,
+      "d": "슬픈마음"
+    },
+    {
+      "t": "그대 없이 어둠이",
+      "a": "소향",
+      "g": "슬픈감성발라드",
+      "s": 7,
+      "d": "애절한노래"
+    },
+    {
+      "t": "가슴 시린 이야기",
+      "a": "임재범",
+      "g": "슬픈감성발라드",
+      "s": 9,
+      "d": "슬픈연가"
+    }
+  ]
+}

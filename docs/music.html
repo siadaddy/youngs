@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Universe</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#000008; overflow:hidden; font-family:'Apple SD Gothic Neo',-apple-system,'Noto Sans KR',sans-serif; -webkit-font-smoothing:antialiased; cursor:none; }
+    #bg-canvas { position:fixed; inset:0; z-index:-1; display:block; }
+
+    #cur {
+      position:fixed; width:10px; height:10px; border-radius:50%;
+      background:rgba(255,255,255,.85); pointer-events:none; z-index:999;
+      transform:translate(-50%,-50%);
+      box-shadow:0 0 10px 3px rgba(255,255,255,.2);
+      transition:width .15s,height .15s,background .2s;
+    }
+    #cur.hover { width:22px; height:22px; background:rgba(255,255,255,.25); }
+
+    /* ── 모바일 ── */
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      #cur { display: none; }
+      #player-bar { height: 80px; padding: 0 16px; }
+      .pc-btn { width: 44px; height: 44px; }
+      .pc-btn.play-btn { width: 52px; height: 52px; font-size: 20px; }
+      #player-title { font-size: 13px; }
+    }
+
+    #ui { position:fixed; inset:0; pointer-events:none; z-index:10; }
+
+    #top {
+      position:absolute; top:0; left:0; right:0;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:28px 36px;
+    }
+    .logo-wrap { display:flex; flex-direction:column; gap:5px; }
+    .logo { font-size:11px; letter-spacing:4px; color:rgba(255,255,255,.7); text-transform:uppercase; }
+    .logo-sub { font-size:9px; letter-spacing:2.5px; color:rgba(255,255,255,.4); text-transform:uppercase; font-style:italic; }
+    .back { font-size:11px; letter-spacing:2px; color:rgba(255,255,255,.5); text-decoration:none; pointer-events:all; transition:color .3s; }
+    .back:hover { color:rgba(255,255,255,.9); }
+
+    #date-badge {
+      position:absolute; top:30px; left:50%; transform:translateX(-50%);
+      font-size:10px; letter-spacing:3px; color:rgba(255,255,255,.45); text-transform:uppercase;
+    }
+
+    #hint {
+      position:absolute; bottom:52px; left:50%; transform:translateX(-50%);
+      font-size:10px; letter-spacing:3px; color:rgba(255,255,255,.5); white-space:nowrap;
+      animation:hFade 12s ease-in-out forwards;
+    }
+    @keyframes hFade { 0%,60%{opacity:1} 100%{opacity:0} }
+
+    #count {
+      position:absolute; bottom:52px; right:60px;
+      font-size:10px; letter-spacing:2px; color:rgba(255,255,255,.4);
+    }
+
+    #tip {
+      position:fixed; z-index:50; width:220px;
+      background:rgba(0,0,12,.93); border:1px solid rgba(255,255,255,.12);
+      border-radius:18px; backdrop-filter:blur(24px);
+      pointer-events:none; opacity:0; transition:opacity .2s;
+      overflow:hidden;
+    }
+    #tip-art {
+      width:100%; height:110px;
+      background:rgba(255,255,255,.04);
+      overflow:hidden; position:relative;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #tip-art img { width:100%; height:100%; object-fit:cover; }
+    #tip-art-bg {
+      position:absolute; inset:0; opacity:0.35;
+    }
+    .tip-body { padding:10px 14px 12px; }
+    #tip-t { font-size:13px; font-weight:700; color:rgba(255,255,255,.95); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #tip-a { font-size:11px; color:rgba(255,255,255,.38); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #tip-genre {
+      display:inline-block; margin-top:8px;
+      font-size:8px; letter-spacing:1.5px; padding:3px 9px;
+      border-radius:20px; text-transform:uppercase; font-weight:600;
+    }
+    #tip-mood { font-size:10px; color:rgba(255,255,255,.55); margin-top:6px; font-style:italic; }
+    #tip-h { font-size:8px; color:rgba(255,255,255,.18); margin-top:8px; letter-spacing:2px; }
+
+    #search-wrap {
+      position:absolute; top:28px; left:50%; transform:translateX(-50%);
+      display:flex; align-items:center; gap:8px; z-index:20; pointer-events:all;
+    }
+    #search-input {
+      width:200px; background:rgba(0,0,20,.7); border:1px solid rgba(255,255,255,.15);
+      border-radius:20px; padding:6px 14px 6px 32px; font-size:12px; color:rgba(255,255,255,.85);
+      outline:none; transition:all .3s; backdrop-filter:blur(10px);
+    }
+    #search-input::placeholder { color:rgba(255,255,255,.3); }
+    #search-input:focus { border-color:rgba(255,255,255,.4); width:240px; }
+    #search-icon { position:absolute; left:10px; font-size:12px; color:rgba(255,255,255,.4); pointer-events:none; }
+    #search-clear { font-size:14px; color:rgba(255,255,255,.4); cursor:pointer; pointer-events:all; transition:color .2s; display:none; }
+    #search-clear:hover { color:rgba(255,255,255,.8); }
+
+    /* ── 공유 버튼 ── */
+    #share-btn {
+      font-size:11px; letter-spacing:2px; color:rgba(255,255,255,.5);
+      background:none; border:none; cursor:pointer; pointer-events:all;
+      transition:color .3s; padding:0; margin-right:16px;
+    }
+    #share-btn:hover { color:rgba(255,255,255,.9); }
+    #share-toast {
+      position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+      background:rgba(16,185,129,.9); color:#fff; font-size:13px; font-weight:600;
+      padding:10px 22px; border-radius:99px; pointer-events:none;
+      opacity:0; transition:opacity .3s; z-index:300;
+    }
+    #share-toast.show { opacity:1; }
+
+    /* ── 장르 범례 ── */
+    #legend {
+      position:fixed; right:52px; top:50%; transform:translateY(-50%);
+      display:flex; flex-direction:column; gap:7px;
+      pointer-events:none; z-index:10; opacity:0;
+      transition:opacity .5s;
+    }
+    #legend.show { opacity:1; }
+    .legend-item {
+      display:flex; align-items:center; gap:8px;
+      font-size:8.5px; letter-spacing:1.5px; color:rgba(255,255,255,.5);
+      text-transform:uppercase;
+    }
+    .legend-dot {
+      width:8px; height:8px; border-radius:50%; flex-shrink:0;
+    }
+
+    /* ── 플레이리스트 패널 ── */
+    #playlist-panel {
+      position:fixed; right:0; top:0; bottom:0; width:220px; z-index:40;
+      background:rgba(4,4,20,0.92); border-left:1px solid rgba(255,255,255,0.07);
+      backdrop-filter:blur(24px);
+      display:flex; flex-direction:column;
+      transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1);
+      pointer-events:all;
+    }
+    #playlist-panel.open { transform:translateX(0); }
+    #pl-header {
+      padding:20px 16px 12px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0;
+    }
+    #pl-title { font-size:10px; letter-spacing:2.5px; color:rgba(255,255,255,.55); text-transform:uppercase; }
+    #pl-toggle {
+      position:fixed; right:0; top:50%; transform:translateY(-50%);
+      width:32px; height:72px; background:rgba(20,20,60,0.9);
+      border:1px solid rgba(255,255,255,0.18); border-right:none;
+      border-radius:10px 0 0 10px; cursor:pointer; z-index:41;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+      color:rgba(255,255,255,.75); font-size:14px;
+      transition:color .2s, background .2s, border-color .2s; pointer-events:all;
+      box-shadow:-3px 0 12px rgba(0,0,0,.4);
+    }
+    #pl-toggle:hover { background:rgba(40,40,100,.95); color:#fff; border-color:rgba(255,255,255,.35); }
+    #pl-list {
+      flex:1; overflow-y:auto; padding:8px 0;
+    }
+    #pl-list::-webkit-scrollbar { width:3px; }
+    #pl-list::-webkit-scrollbar-track { background:transparent; }
+    #pl-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:3px; }
+    .pl-item {
+      display:flex; align-items:center; gap:10px;
+      padding:8px 14px; cursor:pointer;
+      transition:background .15s;
+    }
+    .pl-item:hover { background:rgba(255,255,255,.05); }
+    .pl-item.playing { background:rgba(255,255,255,.08); }
+    .pl-dot {
+      width:7px; height:7px; border-radius:50%; flex-shrink:0;
+    }
+    .pl-info { flex:1; min-width:0; }
+    .pl-song { font-size:11px; color:rgba(255,255,255,.8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pl-artist { font-size:9.5px; color:rgba(255,255,255,.35); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+    .pl-del {
+      width:18px; height:18px; border-radius:50%; border:none; background:none;
+      color:rgba(255,255,255,.2); font-size:13px; cursor:pointer; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      transition:color .15s, background .15s;
+    }
+    .pl-del:hover { color:rgba(255,80,80,.8); background:rgba(255,80,80,.1); }
+    #pl-footer {
+      padding:10px 14px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0;
+    }
+    #pl-clear {
+      width:100%; padding:7px; border-radius:8px;
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+      color:rgba(255,255,255,.35); font-size:10px; letter-spacing:1.5px;
+      cursor:pointer; transition:all .2s; text-transform:uppercase;
+    }
+    #pl-clear:hover { background:rgba(255,60,60,.08); border-color:rgba(255,60,60,.2); color:rgba(255,80,80,.7); }
+    #pl-empty { font-size:10px; color:rgba(255,255,255,.2); text-align:center; padding:30px 14px; letter-spacing:1px; }
+    @media (pointer: coarse) { #playlist-panel { display:none; } #pl-toggle { display:none; } }
+
+    /* ── 날짜 히스토리 탭 (상단) ── */
+    #date-nav {
+      position:absolute; top:28px; left:50%; transform:translateX(-50%);
+      display:flex; gap:5px; z-index:20; pointer-events:all;
+      opacity:0; transition:opacity .5s;
+    }
+    #date-nav.show { opacity:1; }
+    .date-btn {
+      font-size:8.5px; letter-spacing:1.5px; padding:5px 12px;
+      border-radius:20px; border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,20,.6); color:rgba(255,255,255,.4);
+      cursor:pointer; transition:all .2s; backdrop-filter:blur(10px);
+      text-transform:uppercase; white-space:nowrap;
+    }
+    .date-btn:hover { border-color:rgba(255,255,255,.3); color:rgba(255,255,255,.8); }
+    .date-btn.active { border-color:rgba(255,255,255,.45); color:#fff; background:rgba(255,255,255,.08); }
+    @media (pointer: coarse) {
+      #date-nav { top:auto; bottom:96px; transform:translateX(-50%); }
+      .date-btn { padding:7px 14px; font-size:10px; }
+    }
+
+    #loading {
+      position:fixed; inset:0; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:20px; z-index:20;
+      background:#000;
+    }
+    .ld-label { font-size:11px; letter-spacing:4px; color:rgba(255,255,255,.3); text-transform:uppercase; }
+    .ld-dots { display:flex; gap:8px; }
+    .ld-dots span { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.5); animation:dp 1.4s ease-in-out infinite; }
+    .ld-dots span:nth-child(2){ animation-delay:.2s; }
+    .ld-dots span:nth-child(3){ animation-delay:.4s; }
+    @keyframes dp { 0%,80%,100%{transform:scale(.5);opacity:.3} 40%{transform:scale(1);opacity:1} }
+
+    /* ── 플레이어 바 ── */
+    #player-bar {
+      position:fixed; bottom:0; left:0; right:0; z-index:100;
+      height:90px;
+      background:rgba(4,4,18,0.95);
+      border-top:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(30px);
+      display:flex; align-items:center; gap:16px;
+      padding:0 24px;
+      transform:translateY(100%);
+      transition:transform .4s cubic-bezier(.4,0,.2,1);
+      pointer-events:all;
+    }
+    #player-bar.open { transform:translateY(0); }
+
+    #player-video {
+      width:142px; height:80px; border-radius:8px;
+      overflow:hidden; flex-shrink:0; position:relative;
+      background:#000; cursor:pointer;
+    }
+    #player-video iframe { width:100%; height:100%; border:0; }
+    #player-video .veil {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.35);
+      font-size:22px; opacity:0; transition:opacity .2s;
+    }
+    #player-video:hover .veil { opacity:1; }
+
+    #player-info { flex:1; min-width:0; }
+    #player-title {
+      font-size:15px; font-weight:600;
+      color:rgba(255,255,255,.95);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    #player-artist {
+      font-size:12px; color:rgba(255,255,255,.4); margin-top:4px;
+    }
+    #player-searching {
+      font-size:11px; color:rgba(255,255,255,.25);
+      letter-spacing:2px; margin-top:5px;
+      display:none;
+    }
+    #player-searching.on { display:block; }
+
+    #player-controls { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+    .pc-btn {
+      width:40px; height:40px; border-radius:50%;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.7); font-size:15px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:all .2s;
+    }
+    .pc-btn:hover { background:rgba(255,255,255,.15); color:#fff; }
+    .pc-btn.play-btn { width:48px; height:48px; font-size:18px; background:rgba(255,255,255,.12); }
+
+    #player-close {
+      width:32px; height:32px; border-radius:50%;
+      background:transparent; border:none;
+      color:rgba(255,255,255,.3); font-size:18px;
+      cursor:pointer; transition:color .2s;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    #player-close:hover { color:rgba(255,255,255,.8); }
+
+    /* ── NOW PLAYING 토스트 ── */
+    #now-toast {
+      position:fixed; top:82px; left:50%; transform:translateX(-50%) translateY(-12px);
+      display:flex; align-items:center; gap:12px;
+      background:rgba(5,5,22,0.93); border:1px solid rgba(255,255,255,.08);
+      border-radius:50px; padding:10px 22px 10px 16px;
+      backdrop-filter:blur(28px);
+      opacity:0; transition:opacity .45s, transform .45s;
+      pointer-events:none; z-index:200; white-space:nowrap;
+    }
+    #now-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    #now-dot {
+      width:7px; height:7px; border-radius:50%;
+      background:rgba(140,190,255,.95);
+      box-shadow:0 0 10px 3px rgba(140,190,255,.35);
+      animation:nowPulse 1.1s ease-in-out infinite;
+      flex-shrink:0;
+    }
+    @keyframes nowPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.6)} }
+    #now-label { font-size:9px; letter-spacing:2.5px; color:rgba(255,255,255,.25); text-transform:uppercase; margin-bottom:2px; }
+    #now-title { font-size:13px; font-weight:600; color:rgba(255,255,255,.92); }
+    #now-artist { font-size:10px; color:rgba(255,255,255,.35); margin-top:1px; }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="cur"></div>
+
+<!-- ── 플레이어 바 ── -->
+<div id="player-bar">
+  <div id="player-video">
+    <div id="yt-frame"></div>
+    <div class="veil">▶</div>
+  </div>
+  <div id="player-info">
+    <div id="player-title">—</div>
+    <div id="player-artist"></div>
+    <div id="player-searching">검색 중...</div>
+  </div>
+  <div id="player-controls">
+    <button class="pc-btn" id="btn-prev" title="이전">⏮</button>
+    <button class="pc-btn play-btn" id="btn-play" title="재생/일시정지">⏸</button>
+    <button class="pc-btn" id="btn-next" title="다음">⏭</button>
+  </div>
+  <button id="player-close" title="닫기">✕</button>
+</div>
+
+<!-- ── 플레이리스트 패널 ── -->
+<button id="pl-toggle" title="내 플레이리스트">♪<span style="font-size:7px;letter-spacing:0.5px;opacity:0.6;font-family:sans-serif;">LIST</span></button>
+<div id="playlist-panel">
+  <div id="pl-header">
+    <span id="pl-title">My Playlist</span>
+    <button id="pl-close" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:16px;cursor:pointer;line-height:1;" title="닫기">✕</button>
+  </div>
+  <div id="pl-list">
+    <div id="pl-empty">별을 클릭해 추가하세요</div>
+  </div>
+  <div id="pl-footer">
+    <div id="pl-count" style="font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.25);text-align:center;text-transform:uppercase;"></div>
+  </div>
+</div>
+
+<div id="loading">
+  <span class="ld-label">Universe Loading</span>
+  <div class="ld-dots"><span></span><span></span><span></span></div>
+</div>
+
+<div id="ui">
+  <div id="top">
+    <div class="logo-wrap">
+      <span class="logo">Music Universe</span>
+      <span class="logo-sub">AI가 오늘의 은하를 채웠습니다</span>
+    </div>
+    <div id="search-wrap"><span id="search-icon">🔍</span><input id="search-input" type="text" placeholder="곡명 · 아티스트 검색..."><span id="search-clear">✕</span></div>
+    <button id="share-btn">🔗 SHARE</button>
+    <a class="back" href="index.html" target="_top">← Home</a>
+  </div>
+  <div id="hint">별 하나가 한 곡입니다 · 클릭하면 우주가 들립니다</div>
+  <div id="count"></div>
+  <div id="legend"></div>
+  <div id="date-nav"></div>
+</div>
+
+<div id="now-toast">
+  <div id="now-dot"></div>
+  <div>
+    <div id="now-label">Now Playing</div>
+    <div id="now-title"></div>
+    <div id="now-artist"></div>
+  </div>
+</div>
+
+<div id="tip">
+  <div id="tip-art">
+    <div id="tip-art-bg"></div>
+  </div>
+  <div class="tip-body">
+    <div id="tip-t"></div>
+    <div id="tip-a"></div>
+    <div id="tip-genre"></div>
+    <div id="tip-mood"></div>
+    <div id="tip-h">CLICK → YOUTUBE MUSIC</div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls }   from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer }  from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }      from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+// ═══════════════════════════════════════════════════
+// YouTube 플레이어
+// ═══════════════════════════════════════════════════
+const YT_KEY = 'AIzaSyBGVbnH0iL_1unWWfktA6nrZMT29uSkOK0';
+
+const GENRE = {
+  '2000s힙합':    { hue:  45, color: '#ffd60a' },   // 골드 — 올드스쿨 바이브
+  '최신힙합':     { hue: 270, color: '#9b5de5' },   // 바이올렛 — 현대 트랩
+  '러닝업템포':   { hue: 150, color: '#00f5a0' },   // 민트그린 — 에너지
+  'K-pop':        { hue: 340, color: '#ff6b9d' },   // 코랄핑크 — 아이돌
+  '여성발라드':   { hue: 230, color: '#74b9ff' },   // 소프트블루 — 감성
+  '걸그룹':       { hue:   0, color: '#ff4d6d' },   // 레드핑크 — 걸크러시
+  '최신곡':       { hue: 195, color: '#00d4ff' },   // 시안 — 트렌디
+  'EDM/하우스':   { hue: 170, color: '#00ffcc' },   // 네온민트 — 전자음악
+  '라틴팝/레게톤':{ hue:  25, color: '#ff9500' },   // 오렌지 — 라틴 열정
+  '2010s팝':      { hue: 210, color: '#5ac8fa' },   // 스카이블루 — 2010s
+  '국내힙합/R&B': { hue:  75, color: '#c8f560' },   // 라임그린 — 국내 힙합
+  '팝록/인디':    { hue:  15, color: '#ff6b35' },   // 버닝오렌지 — 록 에너지
+  '슬픈감성발라드':{ hue: 255, color: '#a78bfa' },  // 라벤더 — 애절한 감성
+  '기타':         { hue:   0, color: '#e0e0e0' },   // 화이트 — 미분류
+};
+
+// 장르별 BPM 기반 beat 속도 (30fps 기준)
+const GENRE_BEAT = {
+  '2000s힙합':    0.048,  // ~90 BPM
+  '최신힙합':     0.053,  // ~100 BPM 트랩
+  '러닝업템포':   0.068,  // ~150 BPM 빠름
+  'K-pop':        0.060,  // ~115 BPM
+  '여성발라드':   0.025,  // ~70 BPM 느림
+  '걸그룹':       0.063,  // ~120 BPM
+  '최신곡':       0.055,  // ~105 BPM
+  'EDM/하우스':   0.075,  // ~140 BPM 빠름
+  '라틴팝/레게톤':0.065,  // ~125 BPM
+  '2010s팝':      0.055,  // ~105 BPM
+  '국내힙합/R&B': 0.050,  // ~95 BPM
+  '팝록/인디':    0.058,  // ~110 BPM
+  '슬픈감성발라드':0.022, // ~65 BPM 아주 느림
+  '기타':         0.042,
+};
+
+let ytPlayer   = null;
+let ytReady    = false;
+let playlist   = [];   // 현재 재생 큐 (song 배열)
+let playIdx    = 0;
+let isPlaying  = false;
+
+// ── 뮤직 리액티브 ──
+let musicEnergy = 0;   // 0(정지) → 1(재생), 부드럽게 lerp
+let beatPhase   = 0;   // 비트 시뮬레이션 위상 (~120 BPM)
+
+// YouTube API를 콜백 등록 후에 동적으로 로드 (타이밍 보장)
+window.onYouTubeIframeAPIReady = function () {
+  ytPlayer = new YT.Player('yt-frame', {
+    height: '80', width: '142',
+    playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1 },
+    events: {
+      onReady: () => { ytReady = true; },
+      onStateChange: e => {
+        isPlaying = e.data === YT.PlayerState.PLAYING;
+        document.getElementById('btn-play').textContent = isPlaying ? '⏸' : '▶';
+        if (e.data === YT.PlayerState.ENDED) playNext();
+      },
+    },
+  });
+};
+const _yt = document.createElement('script');
+_yt.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(_yt);
+
+// ── videoId 로컬 캐시 (video_cache.json) ──
+let _vidCache = null;
+// 페이지 로드 시 미리 캐시 로드 (fire-and-forget) → 클릭 시 동기 참조 가능
+fetch('video_cache.json?t=' + Date.now())
+  .then(r => r.ok ? r.json() : {})
+  .then(d => { _vidCache = d; })
+  .catch(() => { _vidCache = {}; });
+
+async function searchVideo(song) {
+  // 1) 로컬 캐시 (이미 로드됐으면 동기)
+  const cacheKey = `${song.a}|${song.t}`;
+  if (_vidCache && _vidCache[cacheKey]) return _vidCache[cacheKey];
+
+  // 2) 캐시 아직 로딩 중이면 기다렸다가 재확인
+  if (!_vidCache) {
+    try {
+      const r = await fetch('video_cache.json?t=' + Date.now());
+      _vidCache = r.ok ? await r.json() : {};
+    } catch { _vidCache = {}; }
+    if (_vidCache[cacheKey]) return _vidCache[cacheKey];
+  }
+
+  // 3) YouTube Data API 검색 (캐시 미스 시)
+  try {
+    const q   = encodeURIComponent(`${song.t} ${song.a}`);
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=1&key=${YT_KEY}`;
+    const r   = await fetch(url);
+    if (!r.ok) return null;
+    const d   = await r.json();
+    return d.items?.[0]?.id?.videoId ?? null;
+  } catch { return null; }
+}
+
+function showNowPlaying(song) {
+  document.getElementById('now-title').textContent  = song.t;
+  document.getElementById('now-artist').textContent = song.a;
+  const t = document.getElementById('now-toast');
+  t.classList.add('show');
+  clearTimeout(window._nowTimer);
+  window._nowTimer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+const _waitReady = () => new Promise(res => {
+  if (ytReady) { res(); return; }
+  let n = 0;
+  const iv = setInterval(() => {
+    if (ytReady || ++n > 50) { clearInterval(iv); res(); }
+  }, 100);
+});
+
+async function playSong(song) {
+  // 재생 중 별 추적
+  playingSprite = sprites.find(s => s.userData.t === song.t && s.userData.a === song.a) ?? null;
+  updatePanelHighlight();
+
+  const bar  = document.getElementById('player-bar');
+  const srch = document.getElementById('player-searching');
+  document.getElementById('player-title').textContent  = song.t;
+  document.getElementById('player-artist').textContent = song.a;
+  bar.classList.add('open');
+  showNowPlaying(song);
+
+  // ── 캐시 히트 + 플레이어 준비 완료 → 사용자 제스처 컨텍스트 안에서 즉시 재생 ──
+  const cacheKey = `${song.a}|${song.t}`;
+  const cachedVid = _vidCache ? _vidCache[cacheKey] : null;
+
+  if (cachedVid && ytReady) {
+    ytPlayer.loadVideoById(cachedVid);   // await 없이 동기 호출 → Chrome 오토플레이 허용
+    return;
+  }
+
+  // ── 캐시 미스 or 플레이어 미준비 → async 경로 (제스처 체인 소멸 허용, 사용자 알림) ──
+  srch.classList.add('on');
+  try {
+    const vid = cachedVid || await searchVideo(song);
+    srch.classList.remove('on');
+    if (!vid) {
+      window.open(`https://music.youtube.com/search?q=${encodeURIComponent(song.t+' '+song.a)}`, '_blank');
+      return;
+    }
+    await _waitReady();
+    if (ytReady) ytPlayer.loadVideoById(vid);
+  } catch {
+    srch.classList.remove('on');
+  }
+}
+
+function playNext() {
+  if (!playlist.length) return;
+  playIdx = (playIdx + 1) % playlist.length;
+  playSong(playlist[playIdx]);
+}
+function playPrev() {
+  if (!playlist.length) return;
+  playIdx = (playIdx - 1 + playlist.length) % playlist.length;
+  playSong(playlist[playIdx]);
+}
+
+// 컨트롤 버튼
+document.getElementById('btn-play').addEventListener('click', () => {
+  if (!ytReady) return;
+  isPlaying ? ytPlayer.pauseVideo() : ytPlayer.playVideo();
+});
+document.getElementById('btn-next').addEventListener('click', playNext);
+document.getElementById('btn-prev').addEventListener('click', playPrev);
+document.getElementById('player-close').addEventListener('click', () => {
+  if (ytReady) ytPlayer.stopVideo();
+  document.getElementById('player-bar').classList.remove('open');
+});
+// 비디오 클릭 → YouTube에서 열기
+document.getElementById('player-video').addEventListener('click', e => {
+  if (e.target.closest('.veil') && playlist[playIdx]) {
+    const q = encodeURIComponent(`${playlist[playIdx].t} ${playlist[playIdx].a}`);
+    window.open(`https://music.youtube.com/search?q=${q}`, '_blank');
+  }
+});
+
+// ═══════════════════════════════════════════════════
+// 폴백 데이터
+// ═══════════════════════════════════════════════════
+const FALLBACK = [
+  {t:'Supernova',a:'aespa'},{t:'Drama',a:'aespa'},{t:'Spicy',a:'aespa'},
+  {t:'APT.',a:'ROSÉ & Bruno Mars'},{t:'Number One Girl',a:'ROSÉ'},
+  {t:'Attention',a:'NewJeans'},{t:'Ditto',a:'NewJeans'},{t:'Hype Boy',a:'NewJeans'},{t:'GODS',a:'NewJeans'},
+  {t:'Magnetic',a:'ILLIT'},{t:'Lucky Girl Syndrome',a:'ILLIT'},
+  {t:'Love Dive',a:'IVE'},{t:'After LIKE',a:'IVE'},{t:'Baddie',a:'IVE'},
+  {t:'Queencard',a:'(G)I-DLE'},{t:'Nxde',a:'(G)I-DLE'},{t:'Tomboy',a:'(G)I-DLE'},
+  {t:'Pink Venom',a:'BLACKPINK'},{t:'How You Like That',a:'BLACKPINK'},
+  {t:'Dynamite',a:'BTS'},{t:'Butter',a:'BTS'},{t:'봄날',a:'BTS'},
+  {t:'Celebrity',a:'IU'},{t:'밤편지',a:'IU'},{t:'좋은 날',a:'IU'},
+  {t:'주저하는 연인들을 위해',a:'잔나비'},{t:'전설',a:'잔나비'},
+  {t:'Rain and You',a:'크러쉬'},{t:'Beautiful',a:'크러쉬'},
+  {t:'11:11',a:'태연'},{t:'만약에',a:'태연'},
+  {t:'Seven',a:'정국'},{t:'3D',a:'정국'},
+  {t:'Blinding Lights',a:'The Weeknd'},{t:'Starboy',a:'The Weeknd'},{t:'Die For You',a:'The Weeknd'},
+  {t:'Levitating',a:'Dua Lipa'},{t:"Don't Start Now",a:'Dua Lipa'},{t:'Physical',a:'Dua Lipa'},
+  {t:'24K Magic',a:'Bruno Mars'},{t:'Uptown Funk',a:'Bruno Mars'},
+  {t:'Espresso',a:'Sabrina Carpenter'},{t:'Please Please Please',a:'Sabrina Carpenter'},
+  {t:'Birds of a Feather',a:'Billie Eilish'},{t:'lovely',a:'Billie Eilish & Khalid'},
+  {t:'Golden Hour',a:'JVKE'},{t:'Glimpse of Us',a:'Joji'},{t:'Slow Dancing in the Dark',a:'Joji'},
+  {t:'The Night We Met',a:'Lord Huron'},{t:'Holocene',a:'Bon Iver'},
+  {t:'As It Was',a:'Harry Styles'},{t:'Watermelon Sugar',a:'Harry Styles'},
+  {t:'Stay',a:'The Kid LAROI'},{t:'Flowers',a:'Miley Cyrus'},
+  {t:'Believer',a:'Imagine Dragons'},{t:'Natural',a:'Imagine Dragons'},
+  {t:'Someone Like You',a:'Adele'},{t:'Easy On Me',a:'Adele'},
+  {t:'Savage',a:'aespa'},{t:'MONEY',a:'LISA'},
+];
+
+// ═══════════════════════════════════════════════════
+// 기본 설정
+// ═══════════════════════════════════════════════════
+let W = innerWidth, H = innerHeight;
+let mouseX = 0, mouseY = 0;
+let hovered = null;
+let playingSprite = null;
+let playRingSpr   = null;
+const cur  = document.getElementById('cur');
+const tip  = document.getElementById('tip');
+
+// ── 앨범 아트 캐시 & 비동기 fetch ──
+const artCache = {};
+async function fetchArt(song) {
+  const key = `${song.t}|${song.a}`;
+  if (key in artCache) return artCache[key];
+  artCache[key] = null;  // pending
+  try {
+    const q = encodeURIComponent(`${song.t} ${song.a}`);
+    const r = await fetch(`https://itunes.apple.com/search?term=${q}&media=music&limit=1`);
+    const d = await r.json();
+    const url = d.results?.[0]?.artworkUrl100;
+    artCache[key] = url ? url.replace('100x100bb', '300x300bb') : null;
+  } catch { artCache[key] = null; }
+  return artCache[key];
+}
+
+// ═══════════════════════════════════════════════════
+// Scene / Camera / Renderer
+// ═══════════════════════════════════════════════════
+const scene    = new THREE.Scene();
+scene.fog      = new THREE.FogExp2(0x000008, 0.0009);
+scene.background = null;
+
+// 은하 전체를 담는 그룹 (다축 회전 구현용)
+const galaxyGroup = new THREE.Group();
+galaxyGroup.rotation.z = Math.PI / 9.5;   // ~19° 기울기 (은하 디스크 틸트)
+scene.add(galaxyGroup);
+
+const camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 3000);
+camera.position.set(0, 50, 300);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
+renderer.setSize(W, H);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  W = innerWidth; H = innerHeight;
+  camera.aspect = W / H;
+  camera.updateProjectionMatrix();
+  renderer.setSize(W, H);
+  composer.setSize(W, H);
+  buildBgCanvas();
+});
+
+// ═══════════════════════════════════════════════════
+// 블룸 후처리
+// ═══════════════════════════════════════════════════
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+
+const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 1.6, 0.7, 0.08);
+composer.addPass(bloom);
+
+// ═══════════════════════════════════════════════════
+// OrbitControls
+// ═══════════════════════════════════════════════════
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping    = true;
+controls.dampingFactor    = 0.04;
+controls.autoRotate       = false;
+controls.autoRotateSpeed  = 0;
+controls.minDistance      = 60;
+controls.maxDistance      = 600;
+controls.enablePan        = false;
+
+// 드래그 시작하면 자동회전 멈춤, 8초 후 재개
+
+// ═══════════════════════════════════════════════════
+// 별 배경 (다층 + 색상 다양 + 은하수 띠)
+// ═══════════════════════════════════════════════════
+(function buildStars() {
+  // ── 1. 미세한 별 12,000개 (색상 다양) ──
+  {
+    const N = 12000;
+    const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    // 별 색: 청백(O형), 하얀(A형), 노랑(태양), 주황(K형), 붉은(적색거성)
+    const palette = [
+      [0.7,0.82,1.0],[0.95,0.95,1.0],[1.0,1.0,0.82],[1.0,0.78,0.55],[1.0,0.52,0.38]
+    ];
+    for (let i = 0; i < N; i++) {
+      pos[i*3]=(Math.random()-.5)*3000; pos[i*3+1]=(Math.random()-.5)*3000; pos[i*3+2]=(Math.random()-.5)*3000;
+      const c = palette[Math.floor(Math.random()*palette.length)];
+      const b = 0.35 + Math.random()*0.65;
+      col[i*3]=c[0]*b; col[i*3+1]=c[1]*b; col[i*3+2]=c[2]*b;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('color',    new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:0.5, vertexColors:true, transparent:true, opacity:0.85,
+      blending:THREE.AdditiveBlending, depthWrite:false,
+    })));
+  }
+  // ── 2. 밝은 별 700개 (bloom 반응) ──
+  {
+    const N = 700;
+    const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    for (let i = 0; i < N; i++) {
+      pos[i*3]=(Math.random()-.5)*2800; pos[i*3+1]=(Math.random()-.5)*2800; pos[i*3+2]=(Math.random()-.5)*2800;
+      const t = Math.random();
+      col[i*3]=0.88+t*0.12; col[i*3+1]=0.9+t*0.1; col[i*3+2]=1.0;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('color',    new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:1.6, vertexColors:true, transparent:true, opacity:0.9,
+      blending:THREE.AdditiveBlending, depthWrite:false,
+    })));
+  }
+  // ── 3. 은하수 띠 (기울어진 원반 형태) ──
+  {
+    const N = 7000;
+    const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+    const TILT = Math.PI / 5.5;
+    for (let i = 0; i < N; i++) {
+      const angle  = Math.random() * Math.PI * 2;
+      const r      = 350 + Math.random() * 1000;
+      const spread = (Math.random() - .5) * 140;
+      pos[i*3]   = Math.cos(angle) * r;
+      pos[i*3+1] = spread * Math.cos(TILT) + Math.sin(angle) * r * Math.sin(TILT) * 0.18;
+      pos[i*3+2] = Math.sin(angle) * r      + spread * Math.sin(TILT) * 0.28;
+      const b = 0.15 + Math.random() * 0.45;
+      col[i*3]=b*0.88; col[i*3+1]=b*0.84; col[i*3+2]=b;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('color',    new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:0.42, vertexColors:true, transparent:true, opacity:0.5,
+      blending:THREE.AdditiveBlending, depthWrite:false,
+    })));
+  }
+})();
+
+// ═══════════════════════════════════════════════════
+// 2D 배경 캔버스 — 고정 성운 + 고정 별 레이어
+// ═══════════════════════════════════════════════════
+function buildBgCanvas() {
+  const cvs = document.getElementById('bg-canvas');
+  cvs.width = innerWidth;
+  cvs.height = innerHeight;
+  const ctx = cvs.getContext('2d');
+
+  // 베이스: 완전 검정에 가까운 딥스페이스
+  ctx.fillStyle = '#000008';
+  ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+  // 성운 구름 3~4개 (짙은 퍼플/딥블루, 은은하게)
+  const clouds = [
+    { x: 0.18, y: 0.40, r: Math.min(W,H)*0.52, hue: 272, op: 0.22 },  // 퍼플 좌중
+    { x: 0.78, y: 0.58, r: Math.min(W,H)*0.44, hue: 218, op: 0.18 },  // 딥블루 우하
+    { x: 0.50, y: 0.08, r: Math.min(W,H)*0.40, hue: 248, op: 0.15 },  // 인디고 상단
+    { x: 0.88, y: 0.22, r: Math.min(W,H)*0.35, hue: 192, op: 0.16 },  // 청록 우상단
+  ];
+  clouds.forEach(c => {
+    const cx = c.x * cvs.width;
+    const cy = c.y * cvs.height;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, c.r);
+    g.addColorStop(0,    `hsla(${c.hue},88%,18%,${c.op})`);
+    g.addColorStop(0.42, `hsla(${c.hue},75%,12%,${(c.op*0.5).toFixed(3)})`);
+    g.addColorStop(1,    `hsla(${c.hue},60%,8%,0)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+  });
+
+  // 고정 배경 별 280개 (1px, 움직이지 않음)
+  for (let i = 0; i < 280; i++) {
+    const x  = Math.random() * cvs.width;
+    const y  = Math.random() * cvs.height;
+    const op = 0.2 + Math.random() * 0.4;
+    const sz = Math.random() < 0.82 ? 0.5 : 1;
+    const t  = Math.random();
+    // 별 색: 청백 / 따뜻한 흰색 / 순수 흰색
+    const [r2,g2,b2] = t < 0.3 ? [185,210,255] : t < 0.55 ? [255,245,225] : [255,255,255];
+    ctx.beginPath();
+    ctx.arc(x, y, sz, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${r2},${g2},${b2},${op})`;
+    ctx.fill();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 성운 (Nebulae) — 배경 컬러 클라우드
+// ═══════════════════════════════════════════════════
+const nebulae = [];
+function buildNebulae() {
+  const configs = [
+    { hue:210, x:-850, y: 280, z:-550, size:820 },
+    { hue:275, x: 650, y:-320, z:-780, size:700 },
+    { hue:330, x:-420, y:-480, z: 720, size:650 },
+    { hue:185, x: 880, y: 380, z: 320, size:760 },
+    { hue: 35, x: 180, y: 680, z:-680, size:580 },
+    { hue:250, x:-720, y: 560, z: 520, size:700 },
+    { hue:160, x: 300, y:-650, z:-400, size:540 },
+    { hue: 60, x:-200, y: 800, z: 200, size:620 },
+    { hue:300, x: 500, y:-700, z: 100, size:550 },
+  ];
+  configs.forEach(cfg => {
+    const cvs = document.createElement('canvas');
+    cvs.width = cvs.height = 256;
+    const ctx = cvs.getContext('2d');
+    const g = ctx.createRadialGradient(128,128,0,128,128,128);
+    g.addColorStop(0,    `hsla(${cfg.hue},80%,65%,0.45)`);
+    g.addColorStop(0.38, `hsla(${cfg.hue},70%,50%,0.2)`);
+    g.addColorStop(0.72, `hsla(${cfg.hue},60%,40%,0.06)`);
+    g.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(0,0,256,256);
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: new THREE.CanvasTexture(cvs),
+      transparent:true, blending:THREE.AdditiveBlending, depthWrite:false,
+    }));
+    spr.position.set(cfg.x, cfg.y, cfg.z);
+    spr.scale.setScalar(cfg.size);
+    spr.userData.baseOp = 0.12 + Math.random()*0.1;
+    spr.userData.phase  = Math.random() * Math.PI * 2;
+    spr.material.opacity = spr.userData.baseOp;
+    scene.add(spr);
+    nebulae.push(spr);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// 별똥별 (Shooting Star)
+// ═══════════════════════════════════════════════════
+let shootMesh, shootTimer = 450;
+let shootProgress = -1, shootStart = new THREE.Vector3(), shootDir = new THREE.Vector3();
+
+function initShootStar() {
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+  shootMesh = new THREE.Line(geo, new THREE.LineBasicMaterial({
+    color:0xd0eeff, transparent:true, opacity:0,   // 연한 하늘색
+    blending:THREE.AdditiveBlending, linewidth:2,
+  }));
+  scene.add(shootMesh);
+}
+
+// ═══════════════════════════════════════════════════
+// 노드 텍스처 캐시
+// ═══════════════════════════════════════════════════
+const texCache = {};
+function getNodeTex(hue) {
+  if (texCache[hue]) return texCache[hue];
+  const cvs = document.createElement('canvas');
+  cvs.width = cvs.height = 256;
+  const c = cvs.getContext('2d');
+  const g = c.createRadialGradient(128,128,0,128,128,128);
+  g.addColorStop(0,    'rgba(255,255,255,1)');
+  g.addColorStop(0.12, `hsla(${hue},95%,85%,0.95)`);
+  g.addColorStop(0.40, `hsla(${hue},85%,60%,0.5)`);
+  g.addColorStop(0.75, `hsla(${hue},70%,40%,0.15)`);
+  g.addColorStop(1,    'rgba(0,0,0,0)');
+  c.fillStyle = g; c.fillRect(0,0,256,256);
+  texCache[hue] = new THREE.CanvasTexture(cvs);
+  return texCache[hue];
+}
+
+// ═══════════════════════════════════════════════════
+// 노래 노드 + 콘스텔레이션
+// ═══════════════════════════════════════════════════
+const sprites   = [];
+let linesMesh   = null;
+let linePairs   = [];   // [{i, j}] — 매 프레임 position 갱신용
+
+function buildGalaxy(songs) {
+  sprites.forEach(s => galaxyGroup.remove(s));
+  sprites.length = 0;
+  if (linesMesh) galaxyGroup.remove(linesMesh);
+
+  const n = songs.length;
+  songs.forEach((song, i) => {
+    // 장르 기반 색상
+    const genre  = song.g || null;
+    const hue    = genre ? (GENRE[genre] || GENRE['기타']).hue : Math.round(200 + (i/n)*300) % 360;
+
+    // 은하 디스크 분포 — Box-Muller 가우시안으로 중앙 밀집
+    function gauss() {
+      let u, v;
+      do { u = Math.random(); v = Math.random(); } while (u === 0);
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const armAngle = (Math.floor(Math.random() * 3)) * (Math.PI * 2 / 3) + Math.random() * 0.8;
+    const diskR = Math.abs(gauss()) * 70 + 15;
+    const theta = armAngle + diskR * 0.012;
+    const x = Math.cos(theta) * diskR + gauss() * 8;
+    const z = Math.sin(theta) * diskR + gauss() * 8;
+    const y = gauss() * (8 + diskR * 0.04);
+
+    // 인기도 기반 노드 크기 (0.2~2px, 원근감 편차 확대)
+    const score = song.s || 7;
+    const base  = 0.2 + (score - 1) / 9 * 1.8;   // score 1 → 0.2px, score 10 → 2px
+
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: getNodeTex(hue),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    }));
+    spr.position.set(x, y, z);
+    const angleXZ = Math.atan2(z, x);
+    const radiusXZ = Math.sqrt(x*x + z*z);
+    spr.userData = { t: song.t, a: song.a, g: genre, d: song.d || '', hue, base,
+      angleXZ, radiusXZ, oy: y,
+      speed: 0.005 / base + Math.random() * 0.0002,   // 작은별=빠름, 큰별=느림 (시차 효과)
+      dir:   Math.random() < 0.5 ? 1 : -1,           // 시계/반시계 랜덤
+      tilt:  (Math.random() - 0.5) * 0.5,            // 궤도 평면 기울기 (-0.25 ~ +0.25)
+      phase: Math.random() * Math.PI * 2 };
+    spr.scale.setScalar(base);
+
+    galaxyGroup.add(spr);
+    sprites.push(spr);
+  });
+
+  // 콘스텔레이션 라인 — linePairs 저장 후 매 프레임 position 갱신
+  linePairs = [];
+  const cls = [];
+  for (let i = 0; i < sprites.length; i++) {
+    for (let j = i+1; j < sprites.length; j++) {
+      const d = sprites[i].position.distanceTo(sprites[j].position);
+      const sameGenre = sprites[i].userData.g === sprites[j].userData.g;
+      const threshold = sameGenre ? 105 : 60;
+      if (d < threshold) {
+        const alpha = (1 - d/threshold) * (sameGenre ? 0.65 : 0.28);
+        const c1 = new THREE.Color().setHSL(sprites[i].userData.hue/360, .8, .6);
+        const c2 = new THREE.Color().setHSL(sprites[j].userData.hue/360, .8, .6);
+        linePairs.push(i, j);
+        cls.push(c1.r*alpha,c1.g*alpha,c1.b*alpha, c2.r*alpha,c2.g*alpha,c2.b*alpha);
+      }
+    }
+  }
+  // position 버퍼는 dynamic — 매 프레임 덮어씀
+  const posArr = new Float32Array(linePairs.length * 3); // pairs/2 * 2verts * 3floats
+  const lg = new THREE.BufferGeometry();
+  const posAttr = new THREE.BufferAttribute(posArr, 3);
+  posAttr.setUsage(THREE.DynamicDrawUsage);
+  lg.setAttribute('position', posAttr);
+  lg.setAttribute('color',    new THREE.Float32BufferAttribute(cls, 3));
+  linesMesh = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({
+    vertexColors: true, transparent: true, opacity: 1,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  galaxyGroup.add(linesMesh);
+
+  document.getElementById('count').textContent = `${n} SONGS`;
+
+  // 패널 곡 목록 갱신
+  panelSongs = songs.map(s => ({ t: s.t, a: s.a, g: s.g || '기타' }));
+  if (panelOpen) renderPanelPlaylist();
+}
+
+// ═══════════════════════════════════════════════════
+// 마우스 / 레이캐스터
+// ═══════════════════════════════════════════════════
+const ray   = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+ray.params.Sprite = { threshold: isMobile ? 18 : 10 };
+
+window.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+  mouse.x =  (e.clientX / W) * 2 - 1;
+  mouse.y = -(e.clientY / H) * 2 + 1;
+});
+
+// ── 데스크탑 클릭 ──
+window.addEventListener('click', () => {
+  if (!hovered) return;
+  const idx = sprites.indexOf(hovered);
+  playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
+    .map(s => ({ t: s.userData.t, a: s.userData.a }));
+  playIdx = 0;
+  playSong(playlist[0]);
+});
+
+// ── 모바일 터치 ──
+// 레이캐스터 대신 화면 좌표 직접 비교 (그룹 회전 오차 없음)
+let _tx = 0, _ty = 0;
+const _wpos = new THREE.Vector3();
+
+window.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  _tx = t.clientX; _ty = t.clientY;
+}, { passive: true });
+
+window.addEventListener('touchend', e => {
+  const t = e.changedTouches[0];
+  const dx = t.clientX - _tx, dy = t.clientY - _ty;
+  if (dx*dx + dy*dy > 200) return;   // ~14px 이상 드래그면 무시
+
+  // 각 별의 월드 좌표 → 화면 좌표로 투영 → 탭 위치와 거리 계산
+  let closest = null, minDist = Infinity;
+  sprites.forEach(s => {
+    s.getWorldPosition(_wpos);
+    _wpos.project(camera);
+    if (_wpos.z > 1) return;   // 카메라 뒤에 있는 별 제외
+    const sx = (_wpos.x + 1) / 2 * W;
+    const sy = (1 - _wpos.y) / 2 * H;
+    const dist = Math.hypot(sx - t.clientX, sy - t.clientY);
+    if (dist < minDist) { minDist = dist; closest = s; }
+  });
+
+  if (!closest || minDist > 70) return;   // 70px 이내 별만 반응
+
+  const idx = sprites.indexOf(closest);
+  playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
+    .map(sp => ({ t: sp.userData.t, a: sp.userData.a }));
+  playIdx = 0;
+  playSong(playlist[0]);
+}, { passive: true });
+
+// ═══════════════════════════════════════════════════
+// 검색 기능
+// ═══════════════════════════════════════════════════
+const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
+let searchQuery = '';
+function applySearch() {
+  searchQuery = searchInput.value.trim().toLowerCase();
+  searchClear.style.display = searchQuery ? 'block' : 'none';
+  sprites.forEach(s => {
+    if (!searchQuery) {
+      s.userData.searchDim = false;
+      s.material.opacity = 1;
+    } else {
+      const t = (s.userData.t || '').toLowerCase();
+      const a = (s.userData.a || '').toLowerCase();
+      const match = t.includes(searchQuery) || a.includes(searchQuery);
+      s.userData.searchDim = !match;
+      s.userData.searchMatch = match;
+      s.material.opacity = match ? 1 : 0.08;
+      if (match) s.scale.setScalar(s.userData.base * 2.2);
+    }
+  });
+}
+searchInput.addEventListener('input', applySearch);
+searchInput.addEventListener('keydown', e => { if(e.key==='Escape'){searchInput.value='';applySearch();} });
+searchClear.addEventListener('click', () => { searchInput.value=''; applySearch(); });
+
+// ═══════════════════════════════════════════════════
+// 플레이리스트 패널 — 전체 곡 목록 표시
+// ═══════════════════════════════════════════════════
+let panelOpen = false;
+let panelSongs = [];   // buildGalaxy 호출 시 채워짐
+
+function renderPanelPlaylist() {
+  const listEl  = document.getElementById('pl-list');
+  const countEl = document.getElementById('pl-count');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  if (panelSongs.length === 0) {
+    listEl.innerHTML = '<div id="pl-empty">곡 데이터 로딩 중...</div>';
+    return;
+  }
+  if (countEl) countEl.textContent = `${panelSongs.length} songs`;
+  panelSongs.forEach((item, idx) => {
+    const gInfo = GENRE[item.g] || GENRE['기타'];
+    const isPlaying = playingSprite
+      && playingSprite.userData.t === item.t
+      && playingSprite.userData.a === item.a;
+    const div = document.createElement('div');
+    div.className = 'pl-item' + (isPlaying ? ' playing' : '');
+    div.dataset.idx = idx;
+    div.innerHTML = `<div class="pl-dot" style="background:${gInfo.color};box-shadow:0 0 5px ${gInfo.color}88;"></div>
+      <div class="pl-info">
+        <div class="pl-song">${item.t}</div>
+        <div class="pl-artist">${item.a}</div>
+      </div>`;
+    div.addEventListener('click', () => {
+      const spr = sprites.find(s => s.userData.t === item.t && s.userData.a === item.a);
+      if (spr) {
+        const sidx = sprites.indexOf(spr);
+        playlist = [...sprites.slice(sidx), ...sprites.slice(0, sidx)]
+          .map(s => ({ t: s.userData.t, a: s.userData.a }));
+      } else {
+        playlist = panelSongs.map(s => ({ t: s.t, a: s.a }));
+      }
+      playIdx = 0;
+      playSong({ t: item.t, a: item.a });
+    });
+    listEl.appendChild(div);
+  });
+}
+
+// 재생 중인 항목 하이라이트 갱신 (playSong 호출 후 실행)
+function updatePanelHighlight() {
+  const listEl = document.getElementById('pl-list');
+  if (!listEl || !playingSprite) return;
+  listEl.querySelectorAll('.pl-item').forEach(el => el.classList.remove('playing'));
+  const idx = panelSongs.findIndex(s => s.t === playingSprite.userData.t && s.a === playingSprite.userData.a);
+  if (idx === -1) return;
+  const target = listEl.querySelectorAll('.pl-item')[idx];
+  if (target) {
+    target.classList.add('playing');
+    target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+}
+
+function setPanelOpen(open) {
+  panelOpen = open;
+  const panel = document.getElementById('playlist-panel');
+  const tog   = document.getElementById('pl-toggle');
+  tog.style.transition = 'right .35s cubic-bezier(.4,0,.2,1), color .2s, background .2s';
+  if (open) {
+    panel.classList.add('open');
+    tog.style.right = '220px';
+    tog.innerHTML = '✕<span style="font-size:7px;letter-spacing:0.5px;opacity:0.6;font-family:sans-serif;">CLOSE</span>';
+    renderPanelPlaylist();
+    // 현재 재생 중인 곡으로 스크롤
+    setTimeout(updatePanelHighlight, 100);
+  } else {
+    panel.classList.remove('open');
+    tog.style.right = '0';
+    tog.innerHTML = '♪<span style="font-size:7px;letter-spacing:0.5px;opacity:0.6;font-family:sans-serif;">LIST</span>';
+  }
+}
+
+document.getElementById('pl-toggle').addEventListener('click', () => setPanelOpen(!panelOpen));
+document.getElementById('pl-close').addEventListener('click',  () => setPanelOpen(false));
+
+// ═══════════════════════════════════════════════════
+// 애니메이션 루프
+// ═══════════════════════════════════════════════════
+let tick = 0;
+let rafId = null;
+let lastFrameTime = 0;
+const FRAME_MS = 1000 / 30;   // 30fps 캡
+
+// 뷰절두체 (프레임당 재계산)
+const _frustum  = new THREE.Frustum();
+const _projMat  = new THREE.Matrix4();
+
+function animate(now = 0) {
+  rafId = requestAnimationFrame(animate);
+
+  // ── 1+2: 탭 숨김·30fps 제어 ──
+  const elapsed = now - lastFrameTime;
+  if (elapsed < FRAME_MS) return;
+  lastFrameTime = now - (elapsed % FRAME_MS);
+
+  tick++;
+
+  // ── 뮤직 에너지 lerp ──
+  musicEnergy += ((isPlaying ? 1 : 0) - musicEnergy) * 0.035;
+
+  // ── 은하 그룹 자체 회전 (아이들: 느리고 불규칙, 음악: 빨라짐) ──
+  const baseRot  = 0.00018;
+  const musicRot = musicEnergy * 0.00055;
+  const sineVar  = Math.sin(tick * 0.0031) * 0.00008 + Math.sin(tick * 0.0071) * 0.00004;
+  galaxyGroup.rotation.y += baseRot + musicRot + sineVar;
+
+  // 비트 시뮬레이션 — 장르 BPM 기반 속도
+  const curGenreBeat = (playingSprite && GENRE_BEAT[playingSprite.userData.g])
+    ? GENRE_BEAT[playingSprite.userData.g] : 0.042;
+  beatPhase += curGenreBeat * Math.PI * 2;
+  // beat: 0~1 단방향 펄스 (음악 재생 중일 때만)
+  const beat = musicEnergy * Math.max(0, Math.sin(beatPhase)) ** 2;
+
+  // ── 별 개별 드리프트 — 항상 켜짐, 음악 시 폭 확대 ──
+  sprites.forEach(s => {
+    if (s === hovered) return;
+    const driftScale = 1.2 + musicEnergy * 2.0;
+    s.userData.angleXZ += s.userData.speed * s.userData.dir * (0.25 + musicEnergy * 0.75);
+    const a = s.userData.angleXZ;
+    const r = s.userData.radiusXZ;
+    const drift = Math.sin(tick * 0.005 + s.userData.phase) * driftScale;
+    const cosA = Math.cos(a), sinA = Math.sin(a);
+    s.position.x = cosA * (r + drift);
+    s.position.y = s.userData.oy
+      + sinA * (r + drift) * s.userData.tilt
+      + Math.sin(tick * 0.007 + s.userData.phase * 1.3) * (0.5 + musicEnergy * 1.5);
+    s.position.z = sinA * (r + drift);
+  });
+
+  // ── 콘스텔레이션 라인 위치 갱신 ──
+  if (linesMesh && linePairs.length > 0) {
+    const arr = linesMesh.geometry.attributes.position.array;
+    for (let k = 0; k < linePairs.length; k += 2) {
+      const pi = sprites[linePairs[k]].position;
+      const pj = sprites[linePairs[k+1]].position;
+      const base = k * 3;
+      arr[base]   = pi.x; arr[base+1] = pi.y; arr[base+2] = pi.z;
+      arr[base+3] = pj.x; arr[base+4] = pj.y; arr[base+5] = pj.z;
+    }
+    linesMesh.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // ── 3: 블룸 강도 50% 감소 — 재생 중 별에만 집중 ──
+  bloom.strength = 0.8 + musicEnergy * 0.5 + beat * 0.5;
+
+// ── 성운 숨쉬기 ──
+  nebulae.forEach(n => {
+    n.userData.phase += 0.004;
+    n.material.opacity = n.userData.baseOp + Math.sin(n.userData.phase) * 0.035;
+  });
+
+  // ── 별똥별 ──
+  if (--shootTimer <= 0) {
+    shootTimer = 450 + Math.random() * 300;   // 15~25초 (30fps 기준)
+    shootStart.set((Math.random()-.5)*1600, 280+Math.random()*380, (Math.random()-.5)*900);
+    shootDir.set((Math.random()-.5)*1.2, -1-Math.random()*.8, (Math.random()-.5)*.6).normalize();
+    shootProgress = 0;
+  }
+  if (shootProgress >= 0) {
+    shootProgress += 2.8;
+    const head = shootStart.clone().addScaledVector(shootDir, shootProgress);
+    const tail = shootStart.clone().addScaledVector(shootDir, Math.max(0, shootProgress - 90));
+    const arr = shootMesh.geometry.attributes.position.array;
+    head.toArray(arr, 0); tail.toArray(arr, 3);
+    shootMesh.geometry.attributes.position.needsUpdate = true;
+    shootMesh.material.opacity = Math.sin(Math.min(shootProgress/180, 1) * Math.PI) * 0.85;
+    if (shootProgress > 200) { shootProgress = -1; shootMesh.material.opacity = 0; }
+  }
+
+  controls.update();
+
+  // ── 4: 뷰절두체 업데이트 (화면 밖 연산 스킵용) ──
+  _projMat.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+  _frustum.setFromProjectionMatrix(_projMat);
+
+  // ── 2: 호버 raycasting (매 프레임) ──
+  ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(sprites);
+  const newHov = hits.length ? hits[0].object : null;
+  if (newHov !== hovered) {
+    if (hovered) {
+      hovered.scale.setScalar(hovered.userData.base);
+      tip.style.opacity = '0';
+      cur.classList.remove('hover');
+    }
+    hovered = newHov;
+    if (hovered) {
+      cur.classList.add('hover');
+      const ud = hovered.userData;
+      const gInfo = GENRE[ud.g] || GENRE['기타'];
+      document.getElementById('tip-t').textContent = ud.t;
+      document.getElementById('tip-a').textContent = ud.a;
+      const gEl = document.getElementById('tip-genre');
+      gEl.textContent = ud.g || '기타';
+      gEl.style.background = gInfo.color + '33';
+      gEl.style.color = gInfo.color;
+      gEl.style.border = `1px solid ${gInfo.color}55`;
+      document.getElementById('tip-mood').textContent = ud.d || '';
+      document.getElementById('tip-art-bg').style.background =
+        `radial-gradient(circle at 40% 40%, ${gInfo.color}99, ${gInfo.color}22 60%, transparent)`;
+      const artEl = document.getElementById('tip-art');
+      const existing = artEl.querySelector('img');
+      if (existing) existing.remove();
+      fetchArt({ t: ud.t, a: ud.a }).then(url => {
+        if (!url || hovered?.userData.t !== ud.t) return;
+        const img = document.createElement('img');
+        img.src = url;
+        img.onerror = () => img.remove();
+        artEl.insertBefore(img, artEl.firstChild);
+      });
+    }
+  }
+
+  // 호버 노드 확대 + 툴팁
+  if (hovered) {
+    const pulse = Math.sin(tick * .1) * 2;
+    hovered.scale.setScalar(hovered.userData.base * 2.2 + pulse);
+
+    let tx = mouseX + 20, ty = mouseY - 10;
+    if (tx + 210 > W) tx = mouseX - 225;
+    if (ty + 85  > H) ty = mouseY - 95;
+    tip.style.left = tx + 'px';
+    tip.style.top  = ty + 'px';
+    tip.style.opacity = '1';
+  }
+
+  // ── 재생 중 별 pulse ring ──
+  if (playingSprite) {
+    playRingSpr.position.copy(playingSprite.position);
+    const rPulse = Math.sin(tick * 0.07) * 0.5 + 0.5;
+    playRingSpr.scale.setScalar(playingSprite.userData.base * (3 + rPulse * 3));
+    playRingSpr.material.opacity = 0.08 + rPulse * 0.15 + beat * 0.15;
+    // 재생 중 별 크기 강조 (공전은 위 루프에서 이미 처리)
+    if (playingSprite !== hovered) {
+      playingSprite.scale.setScalar(
+        playingSprite.userData.base * (1.8 + Math.sin(tick * 0.1) * 0.3 + beat * 1.2)
+      );
+    }
+  } else {
+    playRingSpr.material.opacity = 0;
+  }
+
+  // ── 4: 모든 노드 숨쉬기 — 화면 밖 별은 스킵 ──
+  sprites.forEach((s, i) => {
+    if (s === hovered || s === playingSprite) return;
+    if (!_frustum.containsPoint(s.position)) return;   // 뷰포트 밖 스킵
+    const calmPulse     = Math.sin(tick * .022 + i * .45) * 1.5;
+    const energyPulse   = Math.sin(tick * .075 + i * .45) * (2.5 + beat * 6);
+    const combinedPulse = calmPulse * (1 - musicEnergy) + energyPulse * musicEnergy;
+    s.scale.setScalar(s.userData.base + combinedPulse);
+  });
+
+  composer.render();
+}
+
+// ═══════════════════════════════════════════════════
+// 장르 범례 생성
+// ═══════════════════════════════════════════════════
+function buildLegend(songs) {
+  const present = new Set(songs.map(s => s.g || '기타'));
+  const leg = document.getElementById('legend');
+  leg.innerHTML = '';
+  Object.entries(GENRE).forEach(([name, info]) => {
+    if (!present.has(name)) return;
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `
+      <div class="legend-dot" style="background:${info.color};box-shadow:0 0 6px 2px ${info.color}55;"></div>
+      <span>${name}</span>`;
+    leg.appendChild(item);
+  });
+  setTimeout(() => leg.classList.add('show'), 1500);
+}
+
+// ═══════════════════════════════════════════════════
+// 날짜별 히스토리 네비게이션
+// ═══════════════════════════════════════════════════
+function getDateStr(daysAgo) {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  return d.toISOString().slice(0, 10);
+}
+
+async function loadAndSwitch(daysAgo) {
+  const filename = daysAgo === 0 ? 'music.json' : `music_${getDateStr(daysAgo)}.json`;
+  try {
+    const r = await fetch(filename + '?t=' + Date.now());
+    if (!r.ok) return false;
+    const d = await r.json();
+    if (!d.songs?.length) return false;
+    buildGalaxy(d.songs);
+    buildLegend(d.songs);
+    if (d.updated) { const db = document.getElementById('date-badge'); if (db) db.textContent = `AI PICKS · ${d.updated}`; }
+    return true;
+  } catch { return false; }
+}
+
+async function buildDateNav() {
+  const nav = document.getElementById('date-nav');
+  const labels = ['오늘','어제','2일 전','3일 전','4일 전','5일 전','6일 전'];
+  for (let i = 0; i < 7; i++) {
+    const filename = i === 0 ? 'music.json' : `music_${getDateStr(i)}.json`;
+    try {
+      const r = await fetch(filename, { method: 'HEAD' });
+      if (!r.ok) continue;
+    } catch { continue; }
+    const btn = document.createElement('button');
+    btn.className = 'date-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = labels[i];
+    btn.dataset.daysAgo = i;
+    btn.addEventListener('click', async () => {
+      document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      await loadAndSwitch(i);
+    });
+    nav.appendChild(btn);
+  }
+  if (nav.children.length > 1) {
+    setTimeout(() => nav.classList.add('show'), 1500);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 데이터 로드 & 시작
+// ═══════════════════════════════════════════════════
+async function init() {
+  let songs = FALLBACK;
+  try {
+    const r = await fetch('music.json?t=' + Date.now());
+    if (r.ok) {
+      const d = await r.json();
+      if (d.songs?.length) {
+        songs = d.songs;
+        if (d.updated) { const db = document.getElementById('date-badge'); if (db) db.textContent = `AI PICKS · ${d.updated}`; }
+      }
+    }
+  } catch {}
+
+  buildBgCanvas();
+  buildNebulae();
+  initShootStar();
+
+  // ── 재생 ring sprite ──
+  const ringCvs = document.createElement('canvas');
+  ringCvs.width = ringCvs.height = 256;
+  const rctx = ringCvs.getContext('2d');
+  const rg = rctx.createRadialGradient(128,128,70,128,128,128);
+  rg.addColorStop(0,    'rgba(255,255,255,0)');
+  rg.addColorStop(0.55, 'rgba(255,255,255,0.55)');
+  rg.addColorStop(0.78, 'rgba(200,220,255,0.25)');
+  rg.addColorStop(1,    'rgba(0,0,0,0)');
+  rctx.fillStyle = rg; rctx.fillRect(0,0,256,256);
+  playRingSpr = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: new THREE.CanvasTexture(ringCvs),
+    transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, opacity:0,
+  }));
+  galaxyGroup.add(playRingSpr);  // 그룹과 함께 회전해야 별 위치와 일치
+
+  buildGalaxy(songs);
+  buildLegend(songs);
+  buildDateNav();
+
+  // 로딩 화면 제거
+  const ld = document.getElementById('loading');
+  ld.style.transition = 'opacity .8s';
+  ld.style.opacity = '0';
+  setTimeout(() => ld.remove(), 800);
+
+  animate();
+}
+
+init();
+
+// ── 1: 탭 비활성 시 RAF 완전 정지 ──
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+  } else if (rafId === null) {
+    lastFrameTime = 0;   // 재개 시 큰 elapsed 방지
+    animate();
+  }
+});
+
+document.getElementById('share-btn').addEventListener('click', () => {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const t = document.getElementById('share-toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  });
+});
+</script>
+<div id="share-toast">🔗 링크가 복사되었습니다</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+streamlit
+gdown
+pandas
+numpy
+plotly-express
+seaborn
+matplotlib
+duckdb
+gcsfs
+

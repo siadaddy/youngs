@@ -1,0 +1,488 @@
+{
+  "updated": "2026-04-18",
+  "songs": [
+    {
+      "t": "Lose Yourself",
+      "a": "Eminem",
+      "g": "2000s힙합",
+      "s": 10,
+      "d": "열정적이고 강렬한 💥"
+    },
+    {
+      "t": "99 Problems",
+      "a": "Jay-Z",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "날카로운 메시지 🎤"
+    },
+    {
+      "t": "Gold Digger",
+      "a": "Kanye West (feat. Jamie Foxx)",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "재치 있고 유쾌한 ✨"
+    },
+    {
+      "t": "In Da Club",
+      "a": "50 Cent",
+      "g": "2000s힙합",
+      "s": 10,
+      "d": "파티 분위기 🥂"
+    },
+    {
+      "t": "Hot in Herre",
+      "a": "Nelly",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "여름밤의 열기 🔥"
+    },
+    {
+      "t": "Stand Up",
+      "a": "Ludacris (feat. Shawnna)",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "자신감 넘치는 💪"
+    },
+    {
+      "t": "A Milli",
+      "a": "Lil Wayne",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "독특한 플로우 🌀"
+    },
+    {
+      "t": "The Real Slim Shady",
+      "a": "Eminem",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "풍자적이고 신랄한 😂"
+    },
+    {
+      "t": "Dirt Off Your Shoulder",
+      "a": "Jay-Z (feat. Missy Elliott)",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "당당한 애티튜드 😎"
+    },
+    {
+      "t": "Stronger",
+      "a": "Kanye West",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "에너제틱한 긍정 🚀"
+    },
+    {
+      "t": "Way 2 Sexy",
+      "a": "Drake",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "파티, 신나는 🕺"
+    },
+    {
+      "t": "Jimmy Cooks",
+      "a": "Drake",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "힙한, 밤 드라이브 🌃"
+    },
+    {
+      "t": "N95",
+      "a": "Kendrick Lamar",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "강렬한, 생각하는 🤔"
+    },
+    {
+      "t": "Die Hard",
+      "a": "Kendrick Lamar",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "감성적인, 부드러운 😌"
+    },
+    {
+      "t": "FRANCHISE",
+      "a": "Travis Scott",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "에너지 넘치는 🔥"
+    },
+    {
+      "t": "MY EYES",
+      "a": "Travis Scott",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "몽환적인, 사색적인 🌌"
+    },
+    {
+      "t": "Cooped Up",
+      "a": "Post Malone",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "편안한, 그루비한 ✨"
+    },
+    {
+      "t": "I Like You (A Happier Song)",
+      "a": "Post Malone",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "밝은, 사랑스러운 ❤️"
+    },
+    {
+      "t": "MY LIFE",
+      "a": "J. Cole",
+      "g": "최신힙합",
+      "s": 8,
+      "d": "진솔한, 묵직한 💪"
+    },
+    {
+      "t": "Glock in My Lap",
+      "a": "21 Savage",
+      "g": "최신힙합",
+      "s": 7,
+      "d": "어두운, 강렬한 😈"
+    },
+    {
+      "t": "Blinding Lights",
+      "a": "The Weeknd",
+      "g": "러닝업템포",
+      "s": 10,
+      "d": "레트로 신나는 🕺"
+    },
+    {
+      "t": "DALLA DALLA",
+      "a": "ITZY",
+      "g": "러닝업템포",
+      "s": 9,
+      "d": "당당한 에너지 💥"
+    },
+    {
+      "t": "Shake It Off",
+      "a": "Taylor Swift",
+      "g": "러닝업템포",
+      "s": 9,
+      "d": "긍정 바이브 💪"
+    },
+    {
+      "t": "God's Menu",
+      "a": "Stray Kids",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "강렬 파워 ⚡️"
+    },
+    {
+      "t": "Hype Boy",
+      "a": "NewJeans",
+      "g": "러닝업템포",
+      "s": 10,
+      "d": "청량한 질주 🏃‍♀️"
+    },
+    {
+      "t": "Everlong",
+      "a": "Foo Fighters",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "폭발적인 열정 🔥"
+    },
+    {
+      "t": "The Greatest",
+      "a": "Sia",
+      "g": "러닝업템포",
+      "s": 8,
+      "d": "희망찬 도전 🌟"
+    },
+    {
+      "t": "Misery Business",
+      "a": "Paramore",
+      "g": "러닝업템포",
+      "s": 7,
+      "d": "거침없는 질주 🤘"
+    },
+    {
+      "t": "DDU-DU DDU-DU",
+      "a": "BLACKPINK",
+      "g": "러닝업템포",
+      "s": 9,
+      "d": "시크한 자신감 😎"
+    },
+    {
+      "t": "As It Was",
+      "a": "Harry Styles",
+      "g": "러닝업템포",
+      "s": 10,
+      "d": "경쾌한 리듬 🎶"
+    },
+    {
+      "t": "Seven (feat. Latto)",
+      "a": "Jungkook",
+      "g": "K-pop",
+      "s": 10,
+      "d": "Pop, Summer vibe ☀️"
+    },
+    {
+      "t": "Like Crazy",
+      "a": "Jimin",
+      "g": "K-pop",
+      "s": 9,
+      "d": "Dreamy, Emotional"
+    },
+    {
+      "t": "Super (손오공)",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 9,
+      "d": "강렬, 활기찬 💪"
+    },
+    {
+      "t": "HOT",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬, 자신감 🔥"
+    },
+    {
+      "t": "S-Class (특)",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 9,
+      "d": "Unique, Dynamic"
+    },
+    {
+      "t": "MANIAC",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 8,
+      "d": "Quirky, Dark"
+    },
+    {
+      "t": "Sugar Rush Ride",
+      "a": "TXT (TOMORROW X TOGETHER)",
+      "g": "K-pop",
+      "s": 8,
+      "d": "몽환적, 매혹적 ✨"
+    },
+    {
+      "t": "Candy",
+      "a": "NCT DREAM",
+      "g": "K-pop",
+      "s": 8,
+      "d": "Cheerful, Sweet 🍬"
+    },
+    {
+      "t": "Get A Guitar",
+      "a": "RIIZE",
+      "g": "K-pop",
+      "s": 8,
+      "d": "Fresh, Groovy 🎸"
+    },
+    {
+      "t": "CRUSH (가시)",
+      "a": "ZEROBASEONE",
+      "g": "K-pop",
+      "s": 7,
+      "d": "강렬, 자신감 👍"
+    },
+    {
+      "t": "밤편지",
+      "a": "아이유",
+      "g": "여성발라드",
+      "s": 10,
+      "d": "그리움 가득🌙"
+    },
+    {
+      "t": "이런 엔딩",
+      "a": "아이유",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "이별의 아련함 💔"
+    },
+    {
+      "t": "마지막 시간",
+      "a": "백아연",
+      "g": "여성발라드",
+      "s": 7,
+      "d": "쓸쓸한 고백 💧"
+    },
+    {
+      "t": "저 별",
+      "a": "헤이즈",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "밤하늘의 위로 ✨"
+    },
+    {
+      "t": "널 너무 모르고",
+      "a": "헤이즈",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "엇갈린 마음 😥"
+    },
+    {
+      "t": "Someone Like You",
+      "a": "Adele",
+      "g": "여성발라드",
+      "s": 10,
+      "d": "가슴 저린 후회 😢"
+    },
+    {
+      "t": "Hello",
+      "a": "Adele",
+      "g": "여성발라드",
+      "s": 10,
+      "d": "보고 싶은 너에게 👋"
+    },
+    {
+      "t": "when the party's over",
+      "a": "Billie Eilish",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "어둠 속 고독 🖤"
+    },
+    {
+      "t": "I Hate U",
+      "a": "SZA",
+      "g": "여성발라드",
+      "s": 8,
+      "d": "떠난 널 향한 분노 🤬"
+    },
+    {
+      "t": "만약에",
+      "a": "태연",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "애절한 사랑 🕊️"
+    },
+    {
+      "t": "Ditto",
+      "a": "NewJeans",
+      "g": "걸그룹",
+      "s": 10,
+      "d": "몽환적이고 감성적 💧"
+    },
+    {
+      "t": "LOVE DIVE",
+      "a": "IVE",
+      "g": "걸그룹",
+      "s": 10,
+      "d": "우아하고 매혹적인 ✨"
+    },
+    {
+      "t": "I AM",
+      "a": "IVE",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "당당하고 희망찬 🚀"
+    },
+    {
+      "t": "ANTIFRAGILE",
+      "a": "LE SSERAFIM",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "강렬하고 자신감 넘침 💪"
+    },
+    {
+      "t": "EASY",
+      "a": "LE SSERAFIM",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "힙하고 여유로운 😎"
+    },
+    {
+      "t": "Spicy",
+      "a": "aespa",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "통통 튀는 신남 💥"
+    },
+    {
+      "t": "Supernova",
+      "a": "aespa",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "독특하고 중독적 💫"
+    },
+    {
+      "t": "Pink Venom",
+      "a": "BLACKPINK",
+      "g": "걸그룹",
+      "s": 9,
+      "d": "강렬하고 시크한 🖤"
+    },
+    {
+      "t": "Talk that Talk",
+      "a": "TWICE",
+      "g": "걸그룹",
+      "s": 8,
+      "d": "상큼 발랄한 레트로 💖"
+    },
+    {
+      "t": "Espresso",
+      "a": "Sabrina Carpenter",
+      "g": "최신곡",
+      "s": 10,
+      "d": "상큼, 톡톡 튀는 ✨"
+    },
+    {
+      "t": "Please Please Please",
+      "a": "Sabrina Carpenter",
+      "g": "최신곡",
+      "s": 9,
+      "d": "매혹적, 몽환적 🌙"
+    },
+    {
+      "t": "360",
+      "a": "Charli XCX",
+      "g": "최신곡",
+      "s": 8,
+      "d": "힙한, 자신감 넘치는 😎"
+    },
+    {
+      "t": "Girl, So Confusing",
+      "a": "Charli XCX",
+      "g": "최신곡",
+      "s": 7,
+      "d": "솔직한, 비트감 있는 🎶"
+    },
+    {
+      "t": "yes, and?",
+      "a": "Ariana Grande",
+      "g": "최신곡",
+      "s": 9,
+      "d": "댄서블, 긍정적 💃"
+    },
+    {
+      "t": "we can't be friends (wait for your love)",
+      "a": "Ariana Grande",
+      "g": "최신곡",
+      "s": 9,
+      "d": "감미로운, 섬세한 💖"
+    },
+    {
+      "t": "Fortnight (feat. Post Malone)",
+      "a": "Taylor Swift",
+      "g": "최신곡",
+      "s": 10,
+      "d": "서정적, 쓸쓸한 🍂"
+    },
+    {
+      "t": "I Can Do It With a Broken Heart",
+      "a": "Taylor Swift",
+      "g": "최신곡",
+      "s": 9,
+      "d": "희망찬, 중독성 있는 💪"
+    },
+    {
+      "t": "Saturn",
+      "a": "SZA",
+      "g": "최신곡",
+      "s": 8,
+      "d": "몽환적, 편안한 🧘‍♀️"
+    },
+    {
+      "t": "Popular",
+      "a": "The Weeknd, Playboi Carti, Madonna",
+      "g": "최신곡",
+      "s": 8,
+      "d": "트렌디, 섹시한 🔥"
+    }
+  ]
+}

@@ -1,0 +1,509 @@
+{
+  "updated": "2026-04-14",
+  "songs": [
+    {
+      "t": "Butter",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 9,
+      "d": "상큼한 여름"
+    },
+    {
+      "t": "Love Dive",
+      "a": "IVE",
+      "g": "K-pop",
+      "s": 8,
+      "d": "매혹적인 밤"
+    },
+    {
+      "t": "Tomboy",
+      "a": "HyunA",
+      "g": "K-pop",
+      "s": 7,
+      "d": "사랑스러운 매력"
+    },
+    {
+      "t": "Kill This Love",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 9,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "Fever",
+      "a": "ENHYPEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "열정적인 밤"
+    },
+    {
+      "t": "Boy With Luv",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 9,
+      "d": "적인 미래"
+    },
+    {
+      "t": "Wings",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "자유로운 비상"
+    },
+    {
+      "t": "Eyes, Nose, Lips",
+      "a": "TAEYANG",
+      "g": "K-pop",
+      "s": 7,
+      "d": "감성적인 사랑"
+    },
+    {
+      "t": "Gashina",
+      "a": "SUNMI",
+      "g": "K-pop",
+      "s": 8,
+      "d": "매혹적인 분위기"
+    },
+    {
+      "t": "Dun Dun Dance",
+      "a": "TWICE",
+      "g": "K-pop",
+      "s": 8,
+      "d": "즐거운 "
+    },
+    {
+      "t": "Hot Sauce",
+      "a": "NCT DREAM",
+      "g": "K-pop",
+      "s": 8,
+      "d": "매운맛의 열기"
+    },
+    {
+      "t": "After Like",
+      "a": "IVE",
+      "g": "K-pop",
+      "s": 8,
+      "d": "신나는 여름"
+    },
+    {
+      "t": "ANTIFRAGILE",
+      "a": "LE SSERAFIM",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강인한 정신"
+    },
+    {
+      "t": "Case 143",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 8,
+      "d": "신비한 사건"
+    },
+    {
+      "t": "Super",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "Cheshire",
+      "a": "ITZY",
+      "g": "K-pop",
+      "s": 8,
+      "d": "고통스러운 사랑"
+    },
+    {
+      "t": "Lilac",
+      "a": "IU",
+      "g": "인디팝",
+      "s": 8,
+      "d": "고급스러운 향기"
+    },
+    {
+      "t": "Celebrity",
+      "a": "IU",
+      "g": "인디팝",
+      "s": 8,
+      "d": "화려한 스타일"
+    },
+    {
+      "t": "EASY",
+      "a": "WJSN",
+      "g": "인디팝",
+      "s": 7,
+      "d": "상큼한 매력"
+    },
+    {
+      "t": "MAGO",
+      "a": "YOUNGJAE",
+      "g": "인디팝",
+      "s": 7,
+      "d": "신비로운 세계"
+    },
+    {
+      "t": "Rainy Days",
+      "a": "JAY B",
+      "g": "인디팝",
+      "s": 7,
+      "d": "우울한 날씨"
+    },
+    {
+      "t": "Hype Boy",
+      "a": "NewJeans",
+      "g": "인디팝",
+      "s": 8,
+      "d": "신나는 에너지"
+    },
+    {
+      "t": "Ditto",
+      "a": "NewJeans",
+      "g": "인디팝",
+      "s": 9,
+      "d": "두근거리는 사랑"
+    },
+    {
+      "t": "OMG",
+      "a": "NewJeans",
+      "g": "인디팝",
+      "s": 8,
+      "d": "매혹적인 분위기"
+    },
+    {
+      "t": "Love Me Like",
+      "a": "10CM",
+      "g": "인디팝",
+      "s": 7,
+      "d": "사랑에 대한 바람"
+    },
+    {
+      "t": "Ghosting",
+      "a": "Code Kunst",
+      "g": "힙합",
+      "s": 6,
+      "d": "고독한 밤"
+    },
+    {
+      "t": "Without You",
+      "a": "NCT U",
+      "g": "인디팝",
+      "s": 7,
+      "d": "비어있는 공간"
+    },
+    {
+      "t": "NAPPI",
+      "a": "YOUNGJAE",
+      "g": "인디팝",
+      "s": 6,
+      "d": "상큼한 매력"
+    },
+    {
+      "t": "Whiskey",
+      "a": "Brown Eyed Soul",
+      "g": "인디팝",
+      "s": 6,
+      "d": "고독한 밤"
+    },
+    {
+      "t": "Shape of You",
+      "a": "Ed Sheeran",
+      "g": "팝",
+      "s": 9,
+      "d": "매혹적인 몸짓"
+    },
+    {
+      "t": "Happy",
+      "a": "Pharrell Williams",
+      "g": "팝",
+      "s": 8,
+      "d": "즐거운 날씨"
+    },
+    {
+      "t": "Uptown Funk",
+      "a": "Mark Ronson ft. Bruno Mars",
+      "g": "팝",
+      "s": 9,
+      "d": "신나는 여가"
+    },
+    {
+      "t": "Can't Stop the Feeling!",
+      "a": "Justin Timberlake",
+      "g": "팝",
+      "s": 8,
+      "d": "즐거운 감정"
+    },
+    {
+      "t": "We Found Love",
+      "a": "Rihanna ft. Calvin Harris",
+      "g": "팝",
+      "s": 8,
+      "d": "매혹적인 사랑"
+    },
+    {
+      "t": "All About That Bass",
+      "a": "Meghan Trainor",
+      "g": "팝",
+      "s": 8,
+      "d": "CONFIDENT한 자아"
+    },
+    {
+      "t": "Roar",
+      "a": "Katy Perry",
+      "g": "팝",
+      "s": 8,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "Shut Up and Dance",
+      "a": "Walk the Moon",
+      "g": "팝",
+      "s": 8,
+      "d": "신나는 "
+    },
+    {
+      "t": "Brave",
+      "a": "Sara Bareilles",
+      "g": "팝",
+      "s": 7,
+      "d": "담대한"
+    },
+    {
+      "t": "Best Day of My Life",
+      "a": "American Authors",
+      "g": "팝",
+      "s": 7,
+      "d": "기쁜 날"
+    },
+    {
+      "t": "On Top of the World",
+      "a": "Imagine Dragons",
+      "g": "팝",
+      "s": 7,
+      "d": "뛰어난 실력"
+    },
+    {
+      "t": "Radioactive",
+      "a": "Imagine Dragons",
+      "g": "팝",
+      "s": 8,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "SexyBack",
+      "a": "Justin Timberlake",
+      "g": "팝",
+      "s": 7,
+      "d": "섹시한 매력"
+    },
+    {
+      "t": "Get Lucky",
+      "a": "Daft Punk ft. Pharrell Williams",
+      "g": "팝",
+      "s": 8,
+      "d": "행운의 여신"
+    },
+    {
+      "t": "Pumped Up Kicks",
+      "a": "Foster the People",
+      "g": "인디록",
+      "s": 7,
+      "d": "고등학교의 추억"
+    },
+    {
+      "t": "Mr. Brightside",
+      "a": "The Killers",
+      "g": "인디록",
+      "s": 8,
+      "d": "밝은 미래"
+    },
+    {
+      "t": "Old Town Road",
+      "a": "Lil Nas X ft. Billy Ray Cyrus",
+      "g": "R&B",
+      "s": 8,
+      "d": "호방한 감정"
+    },
+    {
+      "t": "Senorita",
+      "a": "Shawn Mendes and Camila Cabello",
+      "g": "R&B",
+      "s": 8,
+      "d": "매혹적인 사랑"
+    },
+    {
+      "t": "Eastside",
+      "a": "Benny Blanco, Halsey, and Khalid",
+      "g": "R&B",
+      "s": 7,
+      "d": "회상적인 감정"
+    },
+    {
+      "t": "Thank U, Next",
+      "a": "Ariana Grande",
+      "g": "R&B",
+      "s": 8,
+      "d": "CONFIDENT한 자아"
+    },
+    {
+      "t": "7 Rings",
+      "a": "Ariana Grande",
+      "g": "R&B",
+      "s": 8,
+      "d": "화려한 자아"
+    },
+    {
+      "t": "Bad Guy",
+      "a": "Billie Eilish",
+      "g": "R&B",
+      "s": 8,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "Sucker",
+      "a": "Jonas Brothers",
+      "g": "팝",
+      "s": 7,
+      "d": "사랑에 대한 갈망"
+    },
+    {
+      "t": "Dancing With a Stranger",
+      "a": "Sam Smith and Normani",
+      "g": "R&B",
+      "s": 7,
+      "d": "고독한 밤"
+    },
+    {
+      "t": "Without Me",
+      "a": "Halsey",
+      "g": "R&B",
+      "s": 7,
+      "d": "비어있는 공간"
+    },
+    {
+      "t": "High Hopes",
+      "a": "Panic! At The Disco",
+      "g": "팝",
+      "s": 7,
+      "d": "뛰어난 실력"
+    },
+    {
+      "t": "Wow",
+      "a": "Post Malone",
+      "g": "R&B",
+      "s": 6,
+      "d": "화려한 자아"
+    },
+    {
+      "t": "Suge",
+      "a": "DaBaby",
+      "g": "R&B",
+      "s": 6,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "Roses",
+      "a": "SAINt JHN",
+      "g": "R&B",
+      "s": 6,
+      "d": "고독한 밤"
+    },
+    {
+      "t": "Death Bed (Coffee for Your Head)",
+      "a": "Powfu ft. beabadoobee",
+      "g": "R&B",
+      "s": 6,
+      "d": "우울한 날씨"
+    },
+    {
+      "t": "Blinding Lights",
+      "a": "The Weeknd",
+      "g": "R&B",
+      "s": 8,
+      "d": "매혹적인 사랑"
+    },
+    {
+      "t": "Watermelon Sugar",
+      "a": "Harry Styles",
+      "g": "팝",
+      "s": 7,
+      "d": "상큼한 매력"
+    },
+    {
+      "t": "Levitating",
+      "a": "Dua Lipa ft. DaBaby",
+      "g": "팝",
+      "s": 8,
+      "d": "매혹적인 분위기"
+    },
+    {
+      "t": "Peaches",
+      "a": "Justin Bieber ft. Daniel Caesar and Giveon",
+      "g": "R&B",
+      "s": 7,
+      "d": "상큼한 사랑"
+    },
+    {
+      "t": "Kiss Me More",
+      "a": "Doja Cat ft. SZA",
+      "g": "R&B",
+      "s": 7,
+      "d": "매혹적인 사랑"
+    },
+    {
+      "t": "Good 4 U",
+      "a": "Olivia Rodrigo",
+      "g": "팝",
+      "s": 8,
+      "d": "CONFIDENT한 자아"
+    },
+    {
+      "t": "Stay",
+      "a": "The Kid LAROI and Justin Bieber",
+      "g": "R&B",
+      "s": 7,
+      "d": "사랑에 대한 갈망"
+    },
+    {
+      "t": "The Feels",
+      "a": "TWICE",
+      "g": "K-pop",
+      "s": 6,
+      "d": "상큼한 매력"
+    },
+    {
+      "t": "The Night We Met",
+      "a": "Vince Staples",
+      "g": "힙합",
+      "s": 5,
+      "d": "회상적인 감정"
+    },
+    {
+      "t": "Get You",
+      "a": "Daniel Caesar",
+      "g": "R&B",
+      "s": 5,
+      "d": "사랑에 대한 바람"
+    },
+    {
+      "t": "Lost in Japan",
+      "a": "Shawn Mendes",
+      "g": "팝",
+      "s": 5,
+      "d": "회상적인 감정"
+    },
+    {
+      "t": "Fast Car",
+      "a": "Tracy Chapman",
+      "g": "인디록",
+      "s": 4,
+      "d": "희망적인 "
+    },
+    {
+      "t": "Skinny Love",
+      "a": "Bon Iver",
+      "g": "인디록",
+      "s": 4,
+      "d": "고독한 사랑"
+    }
+  ]
+}

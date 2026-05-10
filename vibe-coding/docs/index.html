@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>시아 아빠의 Claude 실험실</title>
+
+  <!-- OG / SNS 공유 메타태그 -->
+  <meta name="description" content="AI가 매일 뉴스를 분석해 카드뉴스·블로그를 자동 생성하고, 코인봇이 24시간 자동매매하는 AI 자동화 허브입니다." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://siadaddy.github.io/youngs/" />
+  <meta property="og:title"       content="시아 아빠의 Claude 실험실" />
+  <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 3월 말 Claude를 만나 한 달 만에 만든 것들 — AI 뉴스레터 · 코인 자동매매 · 3D 뮤직 갤러리" />
+  <meta property="og:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
+  <meta property="og:locale"      content="ko_KR" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="시아 아빠의 Claude 실험실" />
+  <meta name="twitter:description" content="코딩 몰랐던 아빠가 Claude 만나 한 달 만에 만든 것들" />
+  <meta name="twitter:image"       content="https://siadaddy.github.io/youngs/og-image.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    /* ─── 토큰 ─────────────────────────────────────── */
+    :root {
+      --bg:        #080c14;
+      --glass:     rgba(255,255,255,.04);
+      --glass-border: rgba(255,255,255,.09);
+      --surface:   #0f1520;
+      --card:      #111827;
+      --card2:     #141c2e;
+      --bmw:       #1c69d4;    /* BMW 블루 */
+      --bmw-lt:    #4d90f0;
+      --accent:    #1c69d4;
+      --accent2:   #a78bfa;
+      --green:     #10b981;
+      --gold:      #f59e0b;
+      --text:      #f1f5f9;
+      --muted:     #64748b;
+      --muted2:    #94a3b8;
+      --border:    rgba(255,255,255,.07);
+      --r-sm:      12px;
+      --r-md:      18px;
+      --r-lg:      24px;
+      --r-xl:      32px;
+      --shadow:    0 4px 24px rgba(0,0,0,.4);
+      --shadow-glow: 0 0 40px rgba(28,105,212,.18);
+    }
+
+    html.light {
+      --bg: #f0f4f8; --glass: rgba(0,0,0,.04); --glass-border: rgba(0,0,0,.1);
+      --surface: #e2e8f0; --card: #ffffff; --card2: #f8fafc;
+      --text: #0f172a; --muted: #64748b; --muted2: #475569;
+      --border: rgba(0,0,0,.1); --shadow: 0 4px 24px rgba(0,0,0,.1);
+    }
+    html.light body { background: var(--bg); color: var(--text); }
+    html.light .tab-bar { background: rgba(240,244,248,.96); border-bottom-color: rgba(0,0,0,.08); }
+    html.light .section-alt { background: rgba(0,0,0,.025); }
+    html.light .tab-btn { color: #475569; border-color: rgba(0,0,0,.12); }
+    html.light .tab-btn:hover { color: var(--bmw); }
+
+    .theme-toggle {
+      margin-left: auto; flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--glass-border); background: var(--glass);
+      color: var(--muted2); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .2s;
+    }
+    .theme-toggle:hover { border-color: rgba(28,105,212,.4); color: var(--bmw-lt); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── 배경 메시 ─────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%,  rgba(28,105,212,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%,  rgba(167,139,250,.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(16,185,129,.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── 유틸 ─────────────────────────────────────── */
+    .wrap { position: relative; z-index: 1; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 99px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      color: var(--muted2);
+    }
+    .tag.blue  { border-color: rgba(28,105,212,.4);  color: var(--bmw-lt); background: rgba(28,105,212,.08); }
+    .tag.purple{ border-color: rgba(167,139,250,.4); color: var(--accent2); background: rgba(167,139,250,.08); }
+    .tag.green { border-color: rgba(16,185,129,.4);  color: var(--green);   background: rgba(16,185,129,.08); }
+    .tag.gold  { border-color: rgba(245,158,11,.4);  color: var(--gold);    background: rgba(245,158,11,.08); }
+
+    /* ─── 히어로 ─────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: 80px 24px 72px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--bmw) 30%, var(--accent2) 70%, transparent);
+      opacity: .4;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(28,105,212,.1);
+      border: 1px solid rgba(28,105,212,.3);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+      color: var(--bmw-lt);
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--bmw-lt);
+      box-shadow: 0 0 8px var(--bmw-lt);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+    .hero h1 .sub {
+      display: block;
+      font-size: clamp(1rem, 2.2vw, 1.5rem);
+      font-weight: 500;
+      letter-spacing: -.01em;
+      color: var(--muted2);
+      margin-bottom: 4px;
+    }
+    .hero h1 .line2 {
+      background: linear-gradient(135deg, var(--bmw-lt) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      color: var(--muted2);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+      word-break: keep-all;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--bmw) 0%, #1459b0 100%);
+      color: #fff;
+      padding: 13px 28px;
+      border-radius: var(--r-md);
+      font-size: .9rem; font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(28,105,212,.4);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(28,105,212,.5);
+    }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 32px;
+      margin-top: 52px; padding-top: 36px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat {
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .stat-val {
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em;
+      background: linear-gradient(135deg, #fff 0%, var(--bmw-lt) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    /* 누적손익 — 그라디언트 제거하고 JS color 적용 가능하게 */
+    .stat-val-pnl {
+      background: none;
+      -webkit-text-fill-color: unset;
+      background-clip: unset;
+      -webkit-background-clip: unset;
+      color: var(--muted2);
+    }
+    .stat-label { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+    /* ─── 날짜 네비게이션 ──────────────────────────── */
+    .date-nav {
+      position: sticky; top: 53px; z-index: 200;
+      background: rgba(8,12,20,.8);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+    .date-nav-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .date-nav-label {
+      font-size: .72rem; font-weight: 700;
+      color: var(--muted); white-space: nowrap;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .date-list {
+      display: flex; gap: 6px; overflow-x: auto;
+      padding-bottom: 2px; flex: 1;
+      scrollbar-width: none;
+    }
+    .date-list::-webkit-scrollbar { display: none; }
+    .date-chip {
+      flex-shrink: 0; padding: 6px 14px;
+      border-radius: 99px;
+      font-size: .75rem; font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--muted2);
+      transition: all .18s;
+      white-space: nowrap;
+    }
+    .date-chip:hover { border-color: var(--bmw); color: var(--bmw-lt); }
+    .date-chip.active {
+      background: linear-gradient(135deg, var(--bmw) 0%, #1459b0 100%);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(28,105,212,.4);
+    }
+    .date-chip.today-chip::after {
+      content: ' · 오늘'; font-size: .67rem; opacity: .8;
+    }
+
+    /* ─── 섹션 공통 ──────────────────────────────── */
+    .section { padding: 72px 0; }
+    .section + .section { position: relative; }
+    .section + .section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 24px; right: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(28,105,212,.35) 30%, rgba(167,139,250,.2) 70%, transparent);
+    }
+    .section-alt { background: rgba(255,255,255,.018); }
+    .section-eyebrow {
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--bmw-lt);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 800; letter-spacing: -.02em;
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      color: var(--muted2); font-size: .88rem;
+      margin-bottom: 40px;
+    }
+
+    /* ─── 날짜 배지 ─────────────────────────────── */
+    .date-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-sm);
+      padding: 8px 16px;
+      font-size: .83rem; font-weight: 600;
+      margin-bottom: 36px;
+    }
+    .date-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      animation: blink 2s ease-in-out infinite;
+    }
+    .date-dot-muted {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--muted);
+    }
+
+    /* ─── 카드뉴스 — 피쳐드(1번) ──────────────────── */
+    .featured-card {
+      position: relative;
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid rgba(28,105,212,.25);
+      box-shadow: var(--shadow-glow);
+      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 400px;
+    }
+    .featured-card .fc-image {
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-card .fc-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .featured-card:hover .fc-image img { transform: scale(1.04); }
+    .featured-card .fc-image-placeholder {
+      width: 100%; height: 100%; min-height: 360px;
+      background: linear-gradient(135deg, var(--card2) 0%, #1a2540 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; color: var(--muted);
+    }
+    .featured-badge {
+      position: absolute; top: 16px; left: 16px; z-index: 2;
+      background: linear-gradient(135deg, var(--bmw) 0%, #1459b0 100%);
+      color: #fff;
+      font-size: .68rem; font-weight: 800; letter-spacing: .1em;
+      padding: 5px 12px; border-radius: 99px;
+      box-shadow: 0 4px 16px rgba(28,105,212,.5);
+    }
+    .fc-body {
+      padding: 40px 44px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .fc-num {
+      font-size: .68rem; font-weight: 800; letter-spacing: .14em;
+      color: var(--bmw-lt); margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .fc-headline {
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      font-weight: 800; line-height: 1.35;
+      margin-bottom: 20px;
+      letter-spacing: -.02em;
+    }
+    .fc-caption {
+      font-size: .875rem;
+      line-height: 1.9;
+      color: var(--muted2);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* ─── 카드뉴스 — 일반 그리드 ─────────────────── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .news-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .news-card:hover {
+      border-color: rgba(28,105,212,.4);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.3), 0 0 24px rgba(28,105,212,.1);
+    }
+    .nc-image { width: 100%; max-height: 220px; object-fit: cover; display: block; }
+    .nc-image-placeholder {
+      width: 100%; height: 160px;
+      background: linear-gradient(135deg, var(--card2) 0%, #1a2540 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; color: var(--muted);
+    }
+    .nc-body { padding: 22px 24px 24px; }
+    .nc-num {
+      font-size: .67rem; font-weight: 800; letter-spacing: .12em;
+      color: var(--muted); margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .nc-headline {
+      font-size: .97rem; font-weight: 700; line-height: 1.45;
+      margin-bottom: 14px; letter-spacing: -.01em;
+    }
+    .nc-caption {
+      font-size: .83rem; line-height: 1.85;
+      color: var(--muted2);
+      white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ─── 수집 뉴스 토글 ──────────────────────────── */
+    .news-toggle {
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card);
+    }
+    .news-toggle-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; cursor: pointer;
+      font-weight: 700; font-size: .92rem; color: var(--text);
+      user-select: none;
+      transition: background .15s;
+    }
+    .news-toggle-header:hover { background: rgba(255,255,255,.04); }
+    .news-toggle-arrow { font-size: .8rem; transition: transform .2s; color: var(--muted); }
+    .news-toggle.open .news-toggle-arrow { transform: rotate(90deg); }
+    .news-toggle-body {
+      display: none; padding: 0 20px 14px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .news-toggle.open .news-toggle-body { display: block; }
+    .news-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-item-title {
+      font-size: .85rem; font-weight: 600; color: var(--text);
+      text-decoration: none; line-height: 1.5;
+    }
+    .news-item-title:hover { color: #60a5fa; }
+    .news-item-source {
+      font-size: .74rem; color: var(--muted); margin-top: 3px;
+    }
+    .news-item-summary {
+      font-size: .78rem; color: var(--muted2); margin-top: 4px; line-height: 1.6;
+    }
+
+    /* 출처 버튼 */
+    .source-btn {
+      display: inline-block; margin-top: 12px;
+      font-size: .74rem; font-weight: 700;
+      color: #60a5fa; text-decoration: none;
+      padding: 5px 12px; border-radius: 20px;
+      border: 1px solid rgba(96,165,250,.3);
+      background: rgba(96,165,250,.08);
+      transition: background .2s, border-color .2s;
+    }
+    .source-btn:hover { background: rgba(96,165,250,.18); border-color: rgba(96,165,250,.6); }
+
+    /* 라벨 하이라이트 */
+    .lbl-fact  { color: var(--green);   font-weight: 700; }
+    .lbl-anal  { color: #60a5fa;        font-weight: 700; }
+    .lbl-forec { color: var(--accent2); font-weight: 700; }
+
+    /* ─── 블로그 아티클 ──────────────────────────── */
+    .article-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+    }
+    /* ─── 에디터픽 하이라이트 강조 ─────────────────── */
+    .article-card--highlight {
+      border: 1.5px solid rgba(251,191,36,.35);
+      box-shadow: 0 0 0 1px rgba(251,191,36,.08), 0 8px 32px rgba(251,191,36,.07);
+      background: linear-gradient(160deg, rgba(251,191,36,.04) 0%, var(--card) 60%);
+    }
+    .highlight-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .7rem; font-weight: 800; letter-spacing: .06em;
+      color: #fbbf24; background: rgba(251,191,36,.12);
+      border: 1px solid rgba(251,191,36,.25);
+      border-radius: 20px; padding: 3px 10px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .article-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(251,191,36,.06) 0%, transparent 100%);
+    }
+    .article-header h3 {
+      font-size: clamp(1.1rem,2vw,1.4rem);
+      font-weight: 800; letter-spacing: -.02em; line-height: 1.35;
+    }
+    .article-body-wrap { padding: 32px 40px; }
+    .article-body { font-size: .91rem; line-height: 1.95; color: var(--muted2); }
+    .article-body h1 {
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em;
+      color: var(--text); margin: 28px 0 12px;
+    }
+    .article-body h2 {
+      font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em;
+      color: var(--bmw-lt);
+      margin: 24px 0 10px;
+      padding-left: 14px;
+      border-left: 3px solid var(--bmw);
+    }
+    .article-body h3 {
+      font-size: .95rem; font-weight: 700;
+      color: var(--accent2); margin: 18px 0 8px;
+    }
+    .article-body p { margin-bottom: 14px; }
+    .article-body ul, .article-body ol { padding-left: 20px; margin-bottom: 14px; }
+    .article-body li { margin-bottom: 6px; }
+    .article-body strong { color: var(--text); font-weight: 700; }
+
+    /* ─── 직원 카드 ──────────────────────────────── */
+    .crew-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .crew-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 26px;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .crew-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--bmw) 0%, var(--accent2) 100%);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .crew-card:hover {
+      border-color: rgba(28,105,212,.35);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.3);
+    }
+    .crew-card:hover::before { opacity: 1; }
+    .crew-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .crew-emoji {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: rgba(28,105,212,.1);
+      border: 1px solid rgba(28,105,212,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem; flex-shrink: 0;
+    }
+    .crew-name { font-size: 1rem; font-weight: 800; margin-bottom: 2px; letter-spacing: -.01em; }
+    .crew-title { font-size: .73rem; color: var(--muted); }
+    .crew-quote {
+      font-size: .82rem; color: var(--accent2); font-style: italic;
+      border-left: 2px solid rgba(167,139,250,.4);
+      padding-left: 12px; margin-bottom: 16px; line-height: 1.6;
+    }
+    .crew-model { font-size: .71rem; color: var(--muted); margin-bottom: 14px; }
+    .crew-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* ─── 파이프라인 ────────────────────────────── */
+    .pipeline-wrap {
+      display: flex; align-items: center;
+      justify-content: center; flex-wrap: wrap;
+      gap: 0;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 36px 24px;
+    }
+    .pipe-step {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      padding: 16px 20px; min-width: 110px;
+      border-radius: var(--r-md);
+      transition: background .2s;
+    }
+    .pipe-step:hover { background: var(--glass); }
+    .pipe-icon-wrap {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: rgba(28,105,212,.1);
+      border: 1px solid rgba(28,105,212,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      transition: transform .2s;
+    }
+    .pipe-step:hover .pipe-icon-wrap { transform: translateY(-4px); }
+    .pipe-time { font-size: .65rem; font-weight: 700; letter-spacing: .06em; color: var(--bmw-lt); text-transform: uppercase; }
+    .pipe-label { font-size: .78rem; font-weight: 700; }
+    .pipe-desc { font-size: .7rem; color: var(--muted); text-align: center; max-width: 90px; line-height: 1.4; }
+    .pipe-arrow {
+      color: var(--muted);
+      font-size: 1rem; padding: 0 4px;
+      margin-bottom: 30px; flex-shrink: 0;
+    }
+
+    /* ─── 스택 ──────────────────────────────────── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .stack-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px 20px;
+      display: flex; align-items: center; gap: 14px;
+      transition: border-color .2s, transform .2s;
+    }
+    .stack-card:hover {
+      border-color: rgba(28,105,212,.3);
+      transform: translateY(-2px);
+    }
+    .stack-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .stack-name { font-size: .82rem; font-weight: 700; margin-bottom: 2px; }
+    .stack-free { font-size: .67rem; font-weight: 700; color: var(--green); }
+
+    /* ─── 로딩 / 에러 ─────────────────────────── */
+    .loading {
+      text-align: center; padding: 72px 24px;
+      color: var(--muted2);
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--bmw);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── 푸터 ───────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    footer a { color: var(--bmw-lt); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .footer-logo { font-size: 1rem; font-weight: 800; color: var(--text); }
+    .footer-divider { width: 40px; height: 1px; background: var(--border); }
+
+    /* ─── 반응형 ─────────────────────────────── */
+    /* ─── 라이브 대시보드 ───────────────────────── */
+    .dashboard {
+      padding: 0 24px 0;
+      position: relative; z-index: 1;
+      margin-top: -1px;
+    }
+    .dashboard-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      padding: 20px 0 16px;
+    }
+    .tv-ticker-wrap {
+      max-width: 1080px; margin: 0 auto;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .widget {
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r-md);
+      padding: 16px 18px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; gap: 4px;
+      transition: border-color .2s, transform .2s;
+      min-height: 88px;
+    }
+    .widget:hover {
+      border-color: rgba(28,105,212,.3);
+      transform: translateY(-2px);
+    }
+    .w-label {
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .w-icon { font-size: .9rem; }
+    .w-val {
+      font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em;
+      color: var(--text); line-height: 1.2;
+    }
+    .w-val.clock { font-size: 1.45rem; font-variant-numeric: tabular-nums; }
+    .w-sub { font-size: .69rem; color: var(--muted2); }
+    .w-change { font-size: .69rem; font-weight: 700; }
+    .w-change.up   { color: #f87171; }
+    .w-change.down { color: var(--green); }
+    .w-change.flat { color: var(--muted); }
+    .w-loading { color: var(--muted); font-size: .78rem; animation: blink 1.5s ease-in-out infinite; }
+
+    /* 미세먼지 색상 (PM2.5 기준) */
+    .pm-good   { color: #38bdf8; }   /* 좋음 — 파란색 */
+    .pm-normal { color: #10b981; }   /* 보통 — 초록색 */
+    .pm-bad    { color: #fb923c; }   /* 나쁨 — 주황색 */
+    .pm-worst  { color: #f87171; }   /* 매우나쁨 — 빨간색 */
+
+    @media (max-width: 1024px) {
+      .dashboard-inner { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      /* 위젯 가로 스와이프 슬라이더 */
+      .dashboard-inner {
+        display: flex !important;
+        grid-template-columns: unset;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 10px;
+        padding: 16px 24px 12px;
+      }
+      .dashboard-inner::-webkit-scrollbar { display: none; }
+      .dashboard-inner .widget {
+        flex-shrink: 0;
+        width: calc(100vw / 1.2 - 32px);
+        scroll-snap-align: start;
+      }
+      .featured-card { grid-template-columns: 1fr; }
+      .featured-card .fc-image { min-height: 220px; }
+      .fc-body { padding: 24px 22px; }
+      .news-grid { grid-template-columns: 1fr; }
+      .article-header { padding: 22px 20px 18px; }
+      .article-body-wrap { padding: 22px 20px; }
+      .pipe-arrow { display: none; }
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { gap: 20px; }
+    }
+    @media (max-width: 480px) {
+      .w-val.clock { font-size: 1.1rem; }
+    }
+
+    /* 위젯 dot 인디케이터 */
+    .widget-dots {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0 12px;
+    }
+    @media (max-width: 768px) { .widget-dots { display: flex; } }
+    .widget-dot {
+      width: 6px; height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,.18);
+      transition: all .25s;
+      cursor: pointer;
+    }
+    .widget-dot.active {
+      width: 20px;
+      background: var(--bmw-lt);
+      box-shadow: 0 0 8px rgba(77,144,240,.5);
+    }
+
+
+    /* ─── 코인 트레이더 ─────────────────────────── */
+    .coin-status-card {
+      background: var(--card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-xl);
+      padding: 36px 40px;
+      margin-bottom: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .coin-status-card.holding {
+      border-color: rgba(16,185,129,.3);
+      box-shadow: 0 0 40px rgba(16,185,129,.08);
+    }
+    .coin-status-card.watching {
+      border-color: rgba(100,116,139,.25);
+    }
+    .coin-ticker {
+      font-size: 1.8rem; font-weight: 900; letter-spacing: -.03em;
+    }
+    .coin-ticker-sub { font-size: .8rem; color: var(--muted2); margin-top: 4px; }
+    .coin-pnl {
+      font-size: 2.2rem; font-weight: 900; letter-spacing: -.03em; text-align: center;
+    }
+    .coin-pnl.positive { color: #f87171; }  /* 코인은 빨강=상승 */
+    .coin-pnl.negative { color: var(--green); }
+    .coin-pnl.neutral  { color: var(--muted2); }
+    .coin-meta { text-align: right; }
+    .coin-meta-row { font-size: .82rem; color: var(--muted2); margin-bottom: 5px; }
+    .coin-meta-row strong { color: var(--text); }
+    .coin-watching-msg {
+      grid-column: 1/-1; text-align: center;
+      padding: 20px 0;
+      color: var(--muted2); font-size: 1rem;
+    }
+
+    .trade-history { display: flex; flex-direction: column; gap: 12px; }
+    .trade-item {
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 16px; align-items: center;
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 16px 20px;
+    }
+    .trade-badge {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 900; flex-shrink: 0;
+    }
+    .trade-badge.buy  { background: rgba(16,185,129,.15); color: var(--green); }
+    .trade-badge.sell { background: rgba(248,113,113,.15); color: #f87171; }
+    .trade-badge.hold { background: rgba(100,116,139,.15); color: var(--muted2); }
+    .trade-info { min-width: 0; }
+    .trade-ticker { font-size: .95rem; font-weight: 700; }
+    .trade-time   { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+    .trade-reason { font-size: .78rem; color: var(--muted2); margin-top: 4px;
+                    white-space: normal; overflow: visible; line-height: 1.5; }
+    .trade-pnl { text-align: right; flex-shrink: 0; }
+    .trade-pnl-val { font-size: 1.1rem; font-weight: 800; }
+    .trade-pnl-val.pos { color: #f87171; }
+    .trade-pnl-val.neg { color: var(--green); }
+    .trade-pnl-val.none{ color: var(--muted2); }
+    .trade-pnl-krw { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+
+    .coin-stats-row {
+      display: grid; grid-template-columns: repeat(6,1fr); gap: 16px;
+      margin-bottom: 48px;
+    }
+    .coin-stat-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 18px 20px; text-align: center;
+    }
+    .coin-stat-val { font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; }
+    .coin-stat-lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+    .dry-run-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3);
+      color: var(--gold); border-radius: 99px; padding: 3px 10px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+    }
+
+    @media (max-width: 768px) {
+      .coin-status-card { grid-template-columns: 1fr 1fr; padding: 24px; }
+      .coin-meta { text-align: left; }
+      .coin-stats-row { grid-template-columns: repeat(3,1fr); }
+      /* [7] 768px: 이미 repeat(3,1fr) */
+      .trade-history { overflow-x: auto; }
+      .section { padding: 52px 0; }
+    }
+    @media (max-width: 480px) {
+      .trade-item { padding: 12px 14px; gap: 10px; }
+      .trade-ticker { font-size: .85rem; }
+      .trade-reason { font-size: .74rem; }
+      .trade-pnl-val { font-size: .85rem; }
+      .coin-stats-row { grid-template-columns: repeat(2,1fr); }
+      .tab-btn { padding: 8px 16px; font-size: .82rem; }
+    }
+
+    /* ─── 페이드인 애니메이션 ───────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeIn .5s ease forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── 탭 ────────────────────────────────────────── */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      padding: 10px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 150;
+      background: rgba(8,12,20,.92);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 9px 22px;
+      border-radius: 99px;
+      border: 1px solid var(--glass-border);
+      background: transparent;
+      color: var(--muted2);
+      font-size: .88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
+      letter-spacing: -.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn:hover { border-color: rgba(28,105,212,.4); color: var(--bmw-lt); }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--bmw) 0%, #1459b0 100%);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(28,105,212,.35);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    #tab-music { padding: 0; line-height: 0; }
+    #music-iframe { width:100%; height:calc(100vh - 110px); border:none; display:block; }
+    .fade-in:nth-child(1){ animation-delay:.05s }
+    .fade-in:nth-child(2){ animation-delay:.12s }
+    .fade-in:nth-child(3){ animation-delay:.19s }
+    .fade-in:nth-child(4){ animation-delay:.26s }
+    .fade-in:nth-child(5){ animation-delay:.33s }
+
+    /* ─── 히스토리 필터 탭 ──────────────────────── */
+    .hist-filter-bar {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .hist-filter-btn {
+      padding: 6px 14px; border-radius: 99px;
+      border: 1px solid var(--glass-border);
+      background: transparent;
+      color: var(--muted2); font-size: .78rem; font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .hist-filter-btn:hover { border-color: rgba(28,105,212,.4); color: var(--bmw-lt); }
+    .hist-filter-btn.active {
+      background: rgba(28,105,212,.18);
+      border-color: rgba(28,105,212,.5);
+      color: var(--bmw-lt);
+    }
+
+    /* ─── 테크 스택 배지 ─────────────────────────── */
+    .tech-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; margin-bottom: 0; }
+    .tech-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: .67rem; font-weight: 700; letter-spacing: .03em;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      color: var(--muted2);
+    }
+    .tech-badge.blue   { border-color: rgba(28,105,212,.3);  color: #60a5fa;  background: rgba(28,105,212,.08); }
+    .tech-badge.green  { border-color: rgba(16,185,129,.3);  color: #34d399;  background: rgba(16,185,129,.08); }
+    .tech-badge.purple { border-color: rgba(167,139,250,.3); color: #c4b5fd;  background: rgba(167,139,250,.08); }
+    .tech-badge.gold   { border-color: rgba(245,158,11,.3);  color: #fbbf24;  background: rgba(245,158,11,.08); }
+    .tech-badge.red    { border-color: rgba(248,113,113,.3); color: #f87171;  background: rgba(248,113,113,.08); }
+
+    .ticker-tbl { width:100%; border-collapse:collapse; font-size:.82rem; }
+    .ticker-tbl th { text-align:left; padding:6px 10px; color:var(--muted); font-weight:600; font-size:.72rem; letter-spacing:.05em; border-bottom:1px solid var(--border); }
+    .ticker-tbl td { padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.04); }
+    .ticker-tbl tr:last-child td { border-bottom:none; }
+
+    /* ─── 카테고리 필터 버튼 ──────────────────────── */
+    .cat-filter-btn { padding:5px 14px; border-radius:99px; border:1px solid var(--glass-border); background:var(--glass); color:var(--muted2); font-size:.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+    .cat-filter-btn.active { background:var(--bmw); border-color:transparent; color:#fff; }
+
+    /* ─── 면책 박스 ──────────────────────────────── */
+    .disclaimer-box {
+      margin-top: 28px; padding: 14px 20px;
+      border-radius: 12px;
+      background: rgba(245,158,11,.06);
+      border: 1px solid rgba(245,158,11,.2);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .disclaimer-box p { font-size: .78rem; color: #fbbf24; margin: 0; line-height: 1.7; }
+
+    /* ─── 스켈레톤 UI ────────────────────────────── */
+    .skeleton {
+      display: inline-block;
+      background: linear-gradient(90deg, rgba(255,255,255,.06) 25%, rgba(255,255,255,.13) 50%, rgba(255,255,255,.06) 75%);
+      background-size: 200% 100%;
+      animation: skPulse 1.4s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    @keyframes skPulse {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ─── LIVE 뱃지 강화 ─────────────────────────── */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.4);
+      color: #f87171;
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      box-shadow: 0 0 12px rgba(239,68,68,.2);
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 6px 2px rgba(239,68,68,.5);
+      animation: livePulse 1.2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: .6; }
+    }
+
+    /* ─── 나의 이야기 ──────────────────────────────────── */
+    .story-banner {
+      background: linear-gradient(135deg, rgba(28,105,212,.08) 0%, rgba(167,139,250,.06) 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 0;
+    }
+    .story-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .story-tag {
+      font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+      color: var(--bmw-lt); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .story-title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800; line-height: 1.3;
+      letter-spacing: -.02em; margin-bottom: 20px;
+    }
+    .story-body {
+      font-size: .95rem; color: var(--muted2);
+      line-height: 1.9;
+    }
+    .story-milestones { display: flex; flex-direction: column; gap: 16px; }
+    .story-milestone {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color .2s;
+    }
+    .story-milestone.active {
+      border-color: rgba(28,105,212,.4);
+      background: rgba(28,105,212,.06);
+    }
+    .ms-date {
+      font-size: .78rem; font-weight: 700; color: var(--bmw-lt);
+      min-width: 80px; flex-shrink: 0;
+    }
+    .story-milestone.active .ms-date { color: var(--green); }
+    .ms-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); flex-shrink: 0;
+    }
+    .story-milestone.active .ms-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .ms-text { font-size: .9rem; font-weight: 600; color: var(--text); }
+    @media (max-width: 720px) {
+      .story-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
+  </style>
+</head>
+<body class="wrap">
+
+<!-- ─── 히어로 ──────────────────────────────────────────── -->
+<div class="hero">
+  <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.5;"></canvas>
+  <div class="hero-eyebrow">
+    <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+    &nbsp;2026년 3월 말 시작 · 코딩 비전공 · Claude와 함께
+  </div>
+  <h1>
+    <span class="sub">시아 아빠가</span>
+    <span class="line2">Claude 만나서<br>만든 것들</span>
+  </h1>
+  <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background · Built with Claude · Since March 2026</div>
+  <p class="hero-desc">
+    코딩을 한 줄도 못 썼습니다. 2026년 3월 말, Claude를 처음 열었습니다.<br>
+    그리고 한 달도 안 됐는데 이걸 다 만들었습니다.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-val">5명</div>
+      <div class="stat-label">AI 직원</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">5개</div>
+      <div class="stat-label">일일 카드뉴스</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">70곡+</div>
+      <div class="stat-label">AI 음악 큐레이션</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">30초</div>
+      <div class="stat-label">코인 실시간 감시</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val stat-val-pnl" id="hero-pnl-val">-</div>
+      <div class="stat-label">AI코인봇 누적손익</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 라이브 대시보드 ──────────────────────────────────── -->
+<div class="dashboard">
+  <div class="dashboard-inner">
+
+    <!-- 시계 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">⏰</span> KST 현재시각</div>
+      <div class="w-val clock" id="w-clock">--:--:--</div>
+      <div class="w-sub" id="w-date">----년 --월 --일</div>
+    </div>
+
+    <!-- 날씨 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">🌤</span> 서울 날씨</div>
+      <div class="w-val" id="w-weather"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
+      <div class="w-sub" id="w-weather-desc"></div>
+    </div>
+
+    <!-- 미세먼지 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">🌫</span> 미세먼지 PM2.5</div>
+      <div class="w-val" id="w-pm"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
+      <div class="w-sub" id="w-pm-sub"></div>
+    </div>
+
+    <!-- 환율 USD/KRW -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">💵</span> 달러 환율</div>
+      <div class="w-val" id="w-usd"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
+      <div class="w-sub">USD → KRW</div>
+    </div>
+
+    <!-- 공포탐욕지수 -->
+    <div class="widget">
+      <div class="w-label"><span class="w-icon">🧭</span> 공포탐욕지수</div>
+      <div class="w-val" id="w-fng"><span class="skeleton" style="width:60px;height:1em;display:inline-block;">&nbsp;</span></div>
+      <div class="w-sub" id="w-fng-sub">Crypto Fear &amp; Greed</div>
+    </div>
+
+  </div>
+  <!-- 모바일 위젯 dot 인디케이터 -->
+  <div class="widget-dots" id="widget-dots"></div>
+
+  <!-- TradingView Ticker Tape -->
+  <div class="tv-ticker-wrap">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          {"proName": "TVC:USOIL",           "title": "WTI 원유"},
+          {"proName": "BINANCE:ETHUSDT",    "title": "이더리움"},
+          {"proName": "FOREXCOM:SPXUSD",    "title": "S&P 500"},
+          {"proName": "FOREXCOM:NSXUSD",    "title": "나스닥 100"},
+          {"proName": "FX_IDC:USDKRW",      "title": "달러/원"},
+          {"proName": "BINANCE:BTCUSDT",    "title": "비트코인"},
+          {"proName": "FOREXCOM:XAUUSD",    "title": "금 Gold"}
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": true,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "kr"
+      }
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 나의 이야기 ──────────────────────────────────────── -->
+<div class="story-banner">
+  <div class="container">
+    <div class="story-inner">
+      <div class="story-left">
+        <div class="story-tag">✦ 이 사이트에 대해</div>
+        <h2 class="story-title">코딩 몰라도 됩니다.<br>Claude가 있으면.</h2>
+        <p class="story-body">
+          딸 시아(2022년생)를 키우는 평범한 아빠입니다.<br>
+          개발 배경 없음. 코딩 경험 없음.<br><br>
+          2026년 3월 말, 처음으로 Claude를 열었습니다.<br>
+          뭔가 만들어 보고 싶었고, 그냥 물어봤습니다.<br><br>
+          한 달도 안 됐는데 이 사이트가 생겼습니다.
+        </p>
+      </div>
+      <div class="story-milestones">
+        <div class="story-milestone">
+          <span class="ms-date">2026.03 말</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">Claude 첫 대화</span>
+        </div>
+        <div class="story-milestone">
+          <span class="ms-date">2주 후</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">AI 뉴스레터 자동화 완성</span>
+        </div>
+        <div class="story-milestone">
+          <span class="ms-date">3주 후</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">코인 자동매매 봇 가동</span>
+        </div>
+        <div class="story-milestone active">
+          <span class="ms-date">지금</span>
+          <span class="ms-dot"></span>
+          <span class="ms-text">3D 뮤직 갤러리까지 — 아직 진행 중</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 탭 바 ──────────────────────────────────────────── -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
+  <button class="tab-btn" onclick="switchTab('coin')">🤖 코인 트레이더</button>
+  <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
+  <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
+</div>
+
+<!-- ─── 탭1: 코인 트레이더 ───────────────────────────── -->
+<div class="tab-content" id="tab-coin">
+<!-- ─── 코인 트레이더 ────────────────────────────────── -->
+<section class="section" id="coin-section">
+  <div class="container">
+    <div class="section-eyebrow">🪙 AI Coin Trader · 실전 운용 중</div>
+    <div class="section-title">AI가 코인을 직접 삽니다</div>
+    <p class="section-sub">
+      RSI · MACD · 볼린저밴드 · ADX · 변동성돌파 스코어링 → Groq AI 최종 판단<br>
+      30분봉 분석 · 5분마다 실행 + 30초 실시간 감시 · 손절 -4% · 익절 +6%
+      <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
+    </p>
+    <div class="tech-stack">
+      <span class="tech-badge blue">🤖 Groq llama-3.3-70b</span>
+      <span class="tech-badge red">🪙 Bithumb API</span>
+      <span class="tech-badge gold">📊 RSI · MACD · ADX · BB</span>
+      <span class="tech-badge green">⚡ 5분마다 자동 실행</span>
+      <span class="tech-badge purple">🛡 Daily Drawdown 보호</span>
+    </div>
+
+    <!-- 봇 상태 -->
+    <div id="bot-status-row" style="display:flex;align-items:center;gap:10px;margin-top:16px;margin-bottom:4px;">
+      <span id="bot-status-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.1);color:var(--muted2);background:var(--glass);">
+        ⏳ 상태 확인 중...
+      </span>
+      <span id="bot-status-time" style="font-size:.72rem;color:var(--muted);"></span>
+    </div>
+
+    <!-- 누적손익 배너 -->
+    <div id="coin-pnl-banner" style="display:none;margin-top:32px;margin-bottom:24px;padding:16px 24px;border-radius:14px;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;"></div>
+
+    <!-- 누적 통계 -->
+    <div class="coin-stats-row" id="coin-stats-row" style="margin-top:32px;">
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-trades">-</div>
+        <div class="coin-stat-lbl">총 매매 횟수</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-wins" style="color:var(--green)">-</div>
+        <div class="coin-stat-lbl">수익 거래</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-losses" style="color:#f87171">-</div>
+        <div class="coin-stat-lbl">손실 거래</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-pnl">-</div>
+        <div class="coin-stat-lbl">누적 손익</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-winrate">-</div>
+        <div class="coin-stat-lbl">승률</div>
+      </div>
+      <div class="coin-stat-card">
+        <div class="coin-stat-val" id="cs-holdtime">-</div>
+        <div class="coin-stat-lbl">평균 보유시간</div>
+      </div>
+    </div>
+
+    <!-- 현재 보유 상태 -->
+    <div id="coin-status"></div>
+
+    <!-- 누적손익 차트 -->
+    <div id="pnl-chart-wrap" style="display:none;margin-top:40px;margin-bottom:40px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:28px 28px 24px;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:18px;">📈 누적손익 흐름 · 클릭 시 해당 거래로 이동</div>
+      <canvas id="pnl-chart" style="width:100%;max-height:180px;"></canvas>
+    </div>
+
+    <!-- 종목별 성과 -->
+    <div id="ticker-table-wrap" style="display:none;margin-top:24px;background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:24px 28px;">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:16px;">📊 종목별 성과 요약 · 수익 높은 순</div>
+      <div id="ticker-table-inner"></div>
+    </div>
+
+    <!-- 매매 히스토리 -->
+    <div style="margin-top:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div style="font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;">📋 매매 히스토리</div>
+      </div>
+      <div class="hist-filter-bar">
+        <button class="hist-filter-btn active" onclick="filterTrades('all',this)">전체</button>
+        <button class="hist-filter-btn" onclick="filterTrades('profit',this)">🟢 수익</button>
+        <button class="hist-filter-btn" onclick="filterTrades('loss',this)">🔴 손실</button>
+        <button class="hist-filter-btn" onclick="filterTrades('BUY',this)">매수</button>
+        <button class="hist-filter-btn" onclick="filterTrades('SELL',this)">매도</button>
+      </div>
+      <div class="trade-history" id="coin-history">
+        <div style="text-align:center;color:var(--muted);padding:32px 0;">불러오는 중...</div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      <span style="font-size:1.3rem;flex-shrink:0;">⚠️</span>
+      <p>이 시스템은 <strong>학습 목적의 소액 실험</strong>입니다. 실제 투자를 권유하지 않으며, 투자 결과에 대한 모든 책임은 투자자 본인에게 있습니다.</p>
+    </div>
+  </div>
+</section>
+</div><!-- /tab-coin -->
+
+<!-- ─── 탭2: 뉴스레터 ───────────────────────────────── -->
+<div class="tab-content active" id="tab-news">
+
+<!-- 날짜 네비게이션 -->
+<div class="date-nav">
+  <div class="date-nav-inner">
+    <span class="date-nav-label">📅 날짜</span>
+    <div class="date-list" id="date-list">
+      <span class="date-chip active">불러오는 중...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ① AI 에디터픽 — 훅: 오늘의 핵심 먼저 -->
+<section class="section" id="article-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">✨ AI Editor's Pick</div>
+    <div class="section-title">오늘의 AI 에디터 PICK</div>
+    <p class="section-sub" id="article-sub">AI가 오늘 뉴스 중 가장 임팩트 있는 주제를 골라 심층 분석합니다</p>
+    <div class="article-card article-card--highlight">
+      <div class="article-header">
+        <div class="highlight-badge">✦ Today's Highlight</div>
+        <h3 id="article-title"></h3>
+      </div>
+      <div class="article-body-wrap">
+        <div class="article-body" id="article-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② 카드뉴스 — 디테일 확인 -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-eyebrow">📰 Today's News Cards</div>
+    <div class="section-title">오늘의 카드뉴스</div>
+    <div id="today-sub" class="section-sub">불러오는 중...</div>
+    <div class="tech-stack" style="margin-bottom:28px;">
+      <span class="tech-badge blue">🦙 Llama 3.3 70B (Groq)</span>
+      <span class="tech-badge purple">📡 RSS 자동 수집</span>
+      <span class="tech-badge green">🎨 Pollinations.ai 이미지</span>
+      <span class="tech-badge gold">⏰ 매일 07:00 자동 생성</span>
+    </div>
+    <div id="today-content">
+      <div class="loading"><div class="spinner"></div><p>콘텐츠 불러오는 중...</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 수집된 뉴스 — 더 보고 싶은 사람용 -->
+<section class="section" id="news-raw-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">📡 Today's News Feed</div>
+    <div class="section-title">오늘 수집된 뉴스</div>
+    <p class="section-sub" id="news-raw-sub">카테고리를 클릭하면 뉴스 목록이 펼쳐집니다</p>
+    <div id="news-cat-filter" style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px;"></div>
+    <div id="news-raw-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+  </div>
+</section>
+
+</div><!-- /tab-news -->
+
+<!-- ─── 탭3: Music Universe ──────────────────────────── -->
+<div class="tab-content" id="tab-music">
+  <iframe id="music-iframe" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<!-- ─── 푸터 ───────────────────────────────────────────── -->
+<!-- ─── 내 제작물 ─────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-eyebrow">🛠 My Works · Portfolio</div>
+    <div class="section-title">내 제작물</div>
+    <p class="section-sub">학습 프로젝트부터 실무 자동화까지 직접 만든 것들</p>
+
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--bmw-lt);text-transform:uppercase;margin-bottom:12px;margin-top:8px;">🤖 AI 자동화 프로젝트</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-bottom:32px;">
+
+      <!-- AI 뉴스레터 -->
+      <a href="#" onclick="switchTab('news');window.scrollTo(0,0);return false;"
+         style="text-decoration:none;background:linear-gradient(135deg,rgba(28,105,212,.12) 0%,var(--card) 100%);border:1px solid rgba(28,105,212,.3);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(28,105,212,.6)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='rgba(28,105,212,.3)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">📰</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:700;">AI Crew</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2026.03~</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 뉴스레터 자동 생성</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          5명의 AI 직원(기획자·작가·디자이너·음악큐레이터)이 매일 아침 뉴스를 분석해 카드뉴스 5개 + 블로그 아티클을 자동 생성하고 GitHub Pages에 배포
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Python</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Gemini API</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Notion API</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">launchd</span>
+        </div>
+      </a>
+
+      <!-- AI 코인 트레이더 -->
+      <a href="#" onclick="switchTab('coin');window.scrollTo(0,0);return false;"
+         style="text-decoration:none;background:linear-gradient(135deg,rgba(16,185,129,.1) 0%,var(--card) 100%);border:1px solid rgba(16,185,129,.25);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(16,185,129,.5)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='rgba(16,185,129,.25)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">🪙</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:700;">실전 운용</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2026.03~</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 코인 자동매매 트레이더</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          RSI·MACD·볼린저밴드·ADX 기술 지표 스코어링 + Groq AI 최종 판단. 30분봉 분석, 5분마다 실행, 30초 실시간 감시, 일일 손실 한도 보호
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Python</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Groq API</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Bithumb API</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">TA-Lib</span>
+        </div>
+      </a>
+
+      <!-- 뮤직 유니버스 -->
+      <a href="#" onclick="switchTab('music');window.scrollTo(0,0);return false;"
+         style="text-decoration:none;background:linear-gradient(135deg,rgba(167,139,250,.1) 0%,var(--card) 100%);border:1px solid rgba(167,139,250,.25);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(167,139,250,.5)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='rgba(167,139,250,.25)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">🌌</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(167,139,250,.15);color:#c4b5fd;font-weight:700;">3D WebGL</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2026.03~</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">뮤직 유니버스 3D 갤러리</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          AI가 큐레이션한 70+ 곡을 3D 우주 공간에 표현. 장르별 색상·클러스터링, 개별 공전 궤도, 호버 카드, iTunes 앨범아트 연동
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(167,139,250,.15);color:#c4b5fd;font-weight:600;">Three.js</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(167,139,250,.15);color:#c4b5fd;font-weight:600;">WebGL</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(167,139,250,.15);color:#c4b5fd;font-weight:600;">iTunes API</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(167,139,250,.15);color:#c4b5fd;font-weight:600;">Gemini API</span>
+        </div>
+      </a>
+
+    </div><!-- /AI projects grid -->
+
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:4px;">📚 데이터 분석 · 학습 프로젝트</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:8px;">
+
+      <!-- 1번째 제작물 -->
+      <a href="map.html" target="_blank"
+         style="text-decoration:none;background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(28,105,212,.4)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='var(--glass-border)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">☕</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(251,191,36,.12);color:#fbbf24;font-weight:700;">INNER CIRCLE 2기</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2025.05</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">저가 테이크아웃 커피 브랜드 입점 최적지 분석</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          패스트캠퍼스 이너서클 2기 팀 프로젝트. 서울열린데이터광장 유동인구·상권·임대료 데이터를 기반으로
+          메가커피·컴포즈 등 저가 커피 브랜드의 서울 내 최적 입점 후보지를
+          도출하고 Folium으로 지도 시각화한 발표 프로젝트
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Python</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Folium</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">서울 공공데이터</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">입지 분석</span>
+        </div>
+      </a>
+
+      <!-- 2번째 제작물 -->
+      <a href="https://youngs-9ewwwhdidksu3qeifbh2qb.streamlit.app/" target="_blank"
+         style="text-decoration:none;background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(28,105,212,.4)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='var(--glass-border)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">🛒</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(251,191,36,.12);color:#fbbf24;font-weight:700;">INNER CIRCLE 2기</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2025.07</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">Instacart VIP 분석 대시보드</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          패스트캠퍼스 이너서클 2기 팀 프로젝트. 인스타카트 구매 데이터를 분석해 VIP 고객을 분류하고
+          맞춤 상품을 추천하는 인터랙티브 대시보드
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Python</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Streamlit</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">DuckDB</span>
+        </div>
+      </a>
+
+      <!-- 3번째 제작물 -->
+      <a href="SA대시보드_demo.html" target="_blank"
+         style="text-decoration:none;background:var(--card);border:1px solid var(--glass-border);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(28,105,212,.4)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='var(--glass-border)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">🚗</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:700;">실무 프로젝트</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2026.04</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">BMW Dealer SA 성과 대시보드</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          BMW 딜러 서비스 어드바이저(SA)의 월별 성과 데이터를 시각화한 인터랙티브 대시보드.
+          KPI 요약, 개인별 실적 비교, 기간 필터링을 지원하는 순수 HTML/Chart.js 구현체
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">HTML</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Chart.js</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">대시보드</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">실적 분석</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">시아 아빠의 Claude 실험실</div>
+      <div class="footer-divider"></div>
+      <div>
+        <a href="about.html">👥 AI 직원 소개 &amp; 파이프라인</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/siadaddy/youngs" target="_blank">GitHub</a>
+        &nbsp;·&nbsp; Powered by Groq + Pollinations.ai + RSS
+        &nbsp;·&nbsp; © 2026 시아 아빠
+      </div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);">
+        <img src="https://hits.sh/siadaddy.github.io/youngs.svg?style=flat&color=1c69d4&label=visits" alt="hits" style="height:18px;border-radius:4px;" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ─── 라이브 위젯 ──────────────────────────────────── */
+
+  // 시계
+  function startClock() {
+    function tick() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2,'0');
+      const mm = String(now.getMinutes()).padStart(2,'0');
+      const ss = String(now.getSeconds()).padStart(2,'0');
+      document.getElementById('w-clock').textContent = `${hh}:${mm}:${ss}`;
+      const days = ['일','월','화','수','목','금','토'];
+      document.getElementById('w-date').textContent =
+        `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // 날씨 + 미세먼지 (Open-Meteo, 서울)
+  async function fetchWeather() {
+    const WMO_ICON = {
+      0:'☀️',1:'🌤',2:'⛅',3:'☁️',
+      45:'🌫',48:'🌫',
+      51:'🌦',53:'🌦',55:'🌧',
+      61:'🌧',63:'🌧',65:'🌧',
+      71:'🌨',73:'🌨',75:'❄️',
+      80:'🌦',81:'🌦',82:'🌧',
+      95:'⛈',96:'⛈',99:'⛈'
+    };
+    const WMO_KR = {
+      0:'맑음',1:'대체로맑음',2:'구름조금',3:'흐림',
+      45:'안개',48:'안개',
+      51:'가는비',53:'가는비',55:'비',
+      61:'비',63:'비',65:'강한비',
+      71:'눈',73:'눈',75:'강한눈',
+      80:'소나기',81:'소나기',82:'강한소나기',
+      95:'뇌우',96:'뇌우',99:'뇌우'
+    };
+    try {
+      const r = await fetch(
+        'https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780' +
+        '&current=temperature_2m,weathercode,apparent_temperature&timezone=Asia%2FSeoul'
+      );
+      const d = await r.json();
+      const cur = d.current;
+      const code = cur.weathercode;
+      const icon = WMO_ICON[code] || '🌡';
+      const desc = WMO_KR[code]  || '날씨정보';
+      document.getElementById('w-weather').textContent = `${icon} ${Math.round(cur.temperature_2m)}°C`;
+      document.getElementById('w-weather-desc').textContent =
+        `${desc} · 체감 ${Math.round(cur.apparent_temperature)}°C`;
+    } catch {
+      document.getElementById('w-weather').textContent = '--';
+    }
+  }
+
+  async function fetchAirQuality() {
+    function pmClass(v) {
+      if (v <= 15) return 'pm-good';
+      if (v <= 35) return 'pm-normal';
+      if (v <= 75) return 'pm-bad';
+      return 'pm-worst';
+    }
+    function pmLabel(v) {
+      if (v <= 15) return '좋음';
+      if (v <= 35) return '보통';
+      if (v <= 75) return '나쁨';
+      return '매우나쁨';
+    }
+    try {
+      const r = await fetch(
+        'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=37.5665&longitude=126.9780' +
+        '&current=pm10,pm2_5&timezone=Asia%2FSeoul'
+      );
+      const d = await r.json();
+      const pm25 = Math.round(d.current.pm2_5);
+      const pm10 = Math.round(d.current.pm10);
+      const cls  = pmClass(pm25);
+      const lbl  = pmLabel(pm25);
+      document.getElementById('w-pm').innerHTML =
+        `<span class="${cls}">${pm25} ㎍/m³</span>`;
+      document.getElementById('w-pm-sub').innerHTML =
+        `<span class="${cls}">${lbl}</span> · PM10 ${pm10}`;
+    } catch {
+      document.getElementById('w-pm').textContent = '--';
+    }
+  }
+
+  // 환율 (open.er-api.com, 무료 무키, KRW 지원)
+  async function fetchExchangeRate() {
+    try {
+      const r = await fetch('https://open.er-api.com/v6/latest/USD');
+      const d = await r.json();
+      const rate = d.rates.KRW;
+      if (!rate) throw new Error('KRW rate missing');
+      document.getElementById('w-usd').textContent =
+        `₩${Math.round(rate).toLocaleString()}`;
+    } catch {
+      document.getElementById('w-usd').textContent = '--';
+    }
+  }
+
+  // 공포탐욕지수 (alternative.me, 무료·무키·CORS 허용)
+  async function fetchFearGreed() {
+    const LABELS = {
+      'Extreme Fear':  '극도의 공포',
+      'Fear':          '공포',
+      'Neutral':       '중립',
+      'Greed':         '탐욕',
+      'Extreme Greed': '극도의 탐욕',
+    };
+    function fngColor(v) {
+      if (v <= 24) return '#f87171';   // 극도의 공포
+      if (v <= 44) return '#fb923c';   // 공포
+      if (v <= 55) return '#facc15';   // 중립
+      if (v <= 74) return '#34d399';   // 탐욕
+      return '#2dd4bf';                // 극도의 탐욕
+    }
+    try {
+      const r = await fetch('https://api.alternative.me/fng/?limit=1');
+      const d = await r.json();
+      const val  = parseInt(d.data[0].value);
+      const cls  = d.data[0].value_classification;
+      const kr   = LABELS[cls] || cls;
+      const col  = fngColor(val);
+      document.getElementById('w-fng').innerHTML =
+        `<span style="color:${col}">${val}</span> <span style="font-size:.72rem;color:${col};font-weight:700;">${kr}</span>`;
+      document.getElementById('w-fng-sub').textContent = '0 공포 · 100 탐욕';
+    } catch {
+      document.getElementById('w-fng').textContent = '--';
+    }
+  }
+
+
+  /* ─── 기존 JS ──────────────────────────────────────── */
+  const _d = new Date();
+  const today = `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,'0')}-${String(_d.getDate()).padStart(2,'0')}`;
+  let currentDate = today;
+
+  function highlight(text) {
+    return text
+      .replace(/\[사실\]/g, '<span class="lbl-fact">[사실]</span>')
+      .replace(/\[분석\]/g, '<span class="lbl-anal">[분석]</span>')
+      .replace(/\[전망\]/g, '<span class="lbl-forec">[전망]</span>');
+  }
+
+  function mdToHtml(md) {
+    const lines = md.split('\n');
+    let html = '', inList = false;
+    for (const line of lines) {
+      const l = line.trim();
+      if      (l.startsWith('# '))  { if(inList){html+='</ul>';inList=false;} html += `<h1>${l.slice(2)}</h1>`; }
+      else if (l.startsWith('## ')) { if(inList){html+='</ul>';inList=false;} html += `<h2>${l.slice(3)}</h2>`; }
+      else if (l.startsWith('### ')){ if(inList){html+='</ul>';inList=false;} html += `<h3>${l.slice(4)}</h3>`; }
+      else if (l.startsWith('- '))  { if(!inList){html+='<ul>';inList=true;} html += `<li>${l.slice(2)}</li>`; }
+      else if (l) { if(inList){html+='</ul>';inList=false;} html += `<p>${l}</p>`; }
+    }
+    if (inList) html += '</ul>';
+    return html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  function formatDate(d) {
+    const [y, m, day] = d.split('-');
+    return `${parseInt(m)}/${parseInt(day)}`;
+  }
+
+  function renderContent(data) {
+    const isToday = data.date === today;
+
+    // 날짜 배지
+    document.getElementById('today-sub').innerHTML =
+      `<span class="date-badge">` +
+      (isToday
+        ? `<span class="date-dot"></span><strong>${data.date}</strong>&nbsp; 오늘 자동 생성`
+        : `<span class="date-dot-muted"></span><strong>${data.date}</strong>&nbsp; 아카이브`) +
+      `</span>`;
+
+    // 카드뉴스 렌더링
+    const wrap = document.createElement('div');
+    const items = data.captions || [];
+
+    items.forEach((item, i) => {
+      if (i === 0) {
+        // 피쳐드 카드 (첫 번째 — 자동차/BMW)
+        const fc = document.createElement('div');
+        fc.className = 'featured-card fade-in';
+        const imgHtml = item.image_url
+          ? `<img src="${item.image_url}" alt="${item.headline}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
+          : `<div class="fc-image-placeholder">🚗</div>`;
+        const srcBtn = item.source_url
+          ? `<a href="${item.source_url}" target="_blank" rel="noopener" class="source-btn">📰 ${item.source_name || '원문 보기'} →</a>`
+          : '';
+        fc.innerHTML = `
+          <div class="fc-image" style="position:relative;">
+            ${imgHtml}
+            <div class="featured-badge">🚗 AUTO · CARD 01</div>
+          </div>
+          <div class="fc-body">
+            <div class="fc-num">FEATURED · 오늘의 자동차 뉴스</div>
+            <div class="fc-headline">${item.headline}</div>
+            <div class="fc-caption">${highlight(item.caption)}</div>
+            ${srcBtn}
+          </div>`;
+        wrap.appendChild(fc);
+      } else if (i === 1) {
+        // 2~5번 카드는 2열 그리드로
+        const grid = document.createElement('div');
+        grid.className = 'news-grid';
+        for (let j = 1; j < items.length; j++) {
+          grid.appendChild(buildNewsCard(items[j], j));
+        }
+        wrap.appendChild(grid);
+      } else {
+        // 이미 위에서 처리됨 — 스킵
+        return;
+      }
+    });
+
+    // 카드가 없는 경우 폴백
+    if (items.length === 0) {
+      wrap.innerHTML = `<div class="loading"><p>카드뉴스가 없습니다.</p></div>`;
+    }
+
+    const old = document.getElementById('today-content');
+    wrap.id = 'today-content';
+    old.replaceWith(wrap);
+
+    // 블로그 아티클
+    if (data.article) {
+      document.getElementById('article-section').style.display = '';
+      document.getElementById('article-sub').textContent = data.blog_title || '';
+      document.getElementById('article-title').textContent = data.blog_title || 'AI 에디터 PICK';
+      document.getElementById('article-body').innerHTML = mdToHtml(data.article);
+    } else {
+      document.getElementById('article-section').style.display = 'none';
+    }
+
+    // 수집된 뉴스 토글
+    const news = data.news || {};
+    const cats = Object.keys(news);
+    if (cats.length > 0) {
+      document.getElementById('news-raw-section').style.display = '';
+      const collectedAt = data.news_collected_at || '';
+      document.getElementById('news-raw-sub').textContent =
+        collectedAt ? `수집 시각: ${collectedAt} · 카테고리를 클릭하면 뉴스 목록이 펼쳐집니다` : '카테고리를 클릭하면 뉴스 목록이 펼쳐집니다';
+      const list = document.getElementById('news-raw-list');
+      list.innerHTML = '';
+      // 카테고리 필터 버튼
+      const filterBar = document.getElementById('news-cat-filter');
+      filterBar.innerHTML = '';
+      let activeCat = '전체';
+      function renderCatFilter() {
+        ['전체', ...cats].forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'cat-filter-btn' + (c === activeCat ? ' active' : '');
+          btn.textContent = c;
+          btn.onclick = () => {
+            activeCat = c;
+            document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.news-toggle').forEach(el => {
+              el.style.display = (activeCat === '전체' || el.dataset.cat === activeCat) ? '' : 'none';
+            });
+          };
+          filterBar.appendChild(btn);
+        });
+      }
+      renderCatFilter();
+      cats.forEach(cat => {
+        const articles = news[cat] || [];
+        if (!articles.length) return;
+        const toggle = document.createElement('div');
+        toggle.className = 'news-toggle';
+        toggle.dataset.cat = cat;
+        toggle.innerHTML = `
+          <div class="news-toggle-header" onclick="this.parentElement.classList.toggle('open')">
+            <span>${cat} <span style="font-size:.78rem;color:var(--muted);font-weight:400;">${articles.length}건</span></span>
+            <span class="news-toggle-arrow">▶</span>
+          </div>
+          <div class="news-toggle-body">
+            ${articles.map(a => `
+              <div class="news-item">
+                <a class="news-item-title" href="${a.link || '#'}" target="_blank" rel="noopener">${a.title}</a>
+                ${a.source ? `<div class="news-item-source">${a.source}</div>` : ''}
+                ${a.summary ? `<div class="news-item-summary">${a.summary}</div>` : ''}
+              </div>`).join('')}
+          </div>`;
+        list.appendChild(toggle);
+      });
+    } else {
+      document.getElementById('news-raw-section').style.display = 'none';
+    }
+  }
+
+  function buildNewsCard(item, idx) {
+    const card = document.createElement('div');
+    card.className = 'news-card fade-in';
+    const imgHtml = item.image_url
+      ? `<img class="nc-image" src="${item.image_url}" alt="${item.headline}" loading="lazy">`
+      : `<div class="nc-image-placeholder">🖼</div>`;
+    const srcBtn = item.source_url
+      ? `<a href="${item.source_url}" target="_blank" rel="noopener" class="source-btn">📰 ${item.source_name || '원문 보기'} →</a>`
+      : '';
+    card.innerHTML = `
+      ${imgHtml}
+      <div class="nc-body">
+        <div class="nc-num">CARD ${String(idx+1).padStart(2,'0')}</div>
+        <div class="nc-headline">${item.headline}</div>
+        <div class="nc-caption">${highlight(item.caption)}</div>
+        ${srcBtn}
+      </div>`;
+    return card;
+  }
+
+  function showError() {
+    document.getElementById('today-content').innerHTML =
+      `<div class="loading">
+        <p style="font-size:2rem">⏳</p>
+        <p style="margin-top:14px;font-size:1rem;font-weight:600;">콘텐츠가 아직 준비 중입니다.</p>
+        <p style="font-size:.83rem;color:var(--muted);margin-top:6px;">매일 07:30 이후 자동 업데이트됩니다.</p>
+      </div>`;
+    document.getElementById('today-sub').textContent = '아직 업데이트 전입니다.';
+    document.getElementById('article-section').style.display = 'none';
+    document.getElementById('news-raw-section').style.display = 'none';
+  }
+
+  async function loadDate(date) {
+    currentDate = date;
+    document.querySelectorAll('.date-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.date === date);
+    });
+    document.getElementById('today-content').innerHTML =
+      `<div class="loading"><div class="spinner"></div><p>불러오는 중...</p></div>`;
+    document.getElementById('article-section').style.display = 'none';
+
+    const url = date === today
+      ? `content.json?t=${Date.now()}`
+      : `content/${date}.json?t=${Date.now()}`;
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      renderContent(data);
+    } catch {
+      showError();
+    }
+  }
+
+  async function init() {
+    try {
+      const res = await fetch(`archive.json?t=${Date.now()}`);
+      let dates = [];
+      if (res.ok) {
+        const arc = await res.json();
+        dates = arc.dates || [];
+      }
+      if (!dates.includes(today)) dates.unshift(today);
+
+      const list = document.getElementById('date-list');
+      list.innerHTML = '';
+      dates.forEach(d => {
+        const chip = document.createElement('span');
+        chip.className = 'date-chip' + (d === today ? ' today-chip' : '') + (d === currentDate ? ' active' : '');
+        chip.textContent = formatDate(d);
+        chip.dataset.date = d;
+        chip.onclick = () => loadDate(d);
+        list.appendChild(chip);
+      });
+    } catch {
+      document.getElementById('date-list').innerHTML =
+        `<span class="date-chip active today-chip" data-date="${today}">${formatDate(today)}</span>`;
+    }
+    loadDate(today);
+  }
+
+  /* ─── 코인 트레이더 ──────────────────────────────────── */
+  function fmtPrice(p) {
+    if (!p) return '-';
+    if (p >= 100)  return Number(p).toLocaleString() + '원';
+    if (p >= 1)    return p.toFixed(2) + '원';
+    if (p >= 0.01) return p.toFixed(4) + '원';
+    return p.toFixed(6) + '원';
+  }
+
+  let pnlChart = null;
+
+  let _allTradeHistory = [];   // 필터용 전체 보관
+
+  function filterTrades(type, btn) {
+    document.querySelectorAll('.hist-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const hist = _allTradeHistory.slice(0, 20);
+    let filtered;
+    if      (type === 'all')    filtered = hist;
+    else if (type === 'profit') filtered = hist.filter(t => t.pnl_krw != null && t.pnl_krw > 0);
+    else if (type === 'loss')   filtered = hist.filter(t => t.pnl_krw != null && t.pnl_krw < 0);
+    else                        filtered = hist.filter(t => t.action === type);
+    renderTradeHistory(filtered, hist);
+  }
+
+  function fmtHoldTime(buyTime, sellTime) {
+    try {
+      const diff = new Date(sellTime.replace(' ', 'T')) - new Date(buyTime.replace(' ', 'T'));
+      const mins = Math.round(diff / 60000);
+      if (mins < 60)  return `${mins}분 보유`;
+      const h = Math.floor(mins/60), m = mins % 60;
+      return m ? `${h}시간 ${m}분 보유` : `${h}시간 보유`;
+    } catch { return ''; }
+  }
+
+  function renderTradeHistory(filtered, allHist) {
+    const histEl = document.getElementById('coin-history');
+    if (!filtered.length) {
+      histEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px 0;">해당 거래가 없습니다.</div>';
+      return;
+    }
+    histEl.innerHTML = filtered.map((t) => {
+      const origIdx = allHist.indexOf(t);
+      const icon   = t.action === 'BUY' ? '🟢' : t.action === 'SELL' ? '🔴' : '⏸';
+      const cls    = t.action === 'BUY' ? 'buy' : t.action === 'SELL' ? 'sell' : 'hold';
+      const pnlPct = t.pnl_pct != null ? t.pnl_pct : null;
+      const pnlCls = pnlPct == null ? 'none' : pnlPct >= 0 ? 'pos' : 'neg';
+      const pnlStr = pnlPct == null ? (t.action === 'BUY' ? '매수' : '-') :
+                     (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
+      const krwStr = t.pnl_krw != null ? (t.pnl_krw >= 0 ? '+' : '') + Number(t.pnl_krw).toLocaleString() + '원' : '';
+      const ticker = (t.ticker || '').replace('KRW-', '');
+
+      // 매수가 / 매도가 표시
+      let priceInfo = '';
+      if (t.action === 'BUY' && t.price) {
+        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">매수가 ${fmtPrice(t.price)}</div>`;
+      } else if (t.action === 'SELL' && t.price) {
+        // 같은 ticker의 직전 BUY 찾기
+        const buyTrade = allHist.slice(origIdx + 1).find(h => h.action === 'BUY' && h.ticker === t.ticker);
+        const holdStr = buyTrade ? fmtHoldTime(buyTrade.time, t.time) : '';
+        const buyPriceStr = buyTrade ? `${fmtPrice(buyTrade.price)} → ` : '';
+        priceInfo = `<div style="font-size:.74rem;color:var(--muted);margin-top:3px;">${buyPriceStr}${fmtPrice(t.price)}${holdStr ? ` · ⏱ ${holdStr}` : ''}</div>`;
+      }
+
+      return `
+        <div class="trade-item fade-in" id="trade-item-${origIdx}">
+          <div class="trade-badge ${cls}">${icon}</div>
+          <div class="trade-info">
+            <div class="trade-ticker">${t.action} · ${ticker}${t.dry_run ? ' <span style="font-size:.65rem;color:var(--gold);">[시뮬]</span>' : ''}</div>
+            <div class="trade-time">${t.time || ''}</div>
+            ${priceInfo}
+            <div class="trade-reason">${t.reason || ''}</div>
+          </div>
+          <div class="trade-pnl">
+            <div class="trade-pnl-val ${pnlCls}">${pnlStr}</div>
+            ${krwStr ? `<div class="trade-pnl-krw">${krwStr}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function buildPnlChart(allHistory, hist) {
+    // SELL 거래만 필터 → 오래된 순으로 정렬
+    const sells = [...allHistory]
+      .filter(t => t.action === 'SELL' && t.pnl_krw != null)
+      .reverse();
+    if (sells.length < 2) {
+      document.getElementById('pnl-chart-wrap').style.display = 'none';
+      return;
+    }
+
+    // 누적손익 계산
+    let cum = 0;
+    const cumPnl = sells.map(t => { cum += t.pnl_krw; return cum; });
+    const labels  = sells.map(t => t.time.slice(5, 16)); // "MM-DD HH:mm"
+
+    document.getElementById('pnl-chart-wrap').style.display = '';
+
+    const ctx = document.getElementById('pnl-chart').getContext('2d');
+    if (pnlChart) pnlChart.destroy();
+
+    pnlChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '누적손익',
+            data: cumPnl,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 7,
+            tension: 0.35,
+            fill: false,
+            segment: {
+              borderColor: ctx => ctx.p0.parsed.y >= 0 ? '#f87171' : '#34d399',
+            },
+            pointBackgroundColor: cumPnl.map(v => v >= 0 ? '#f87171' : '#34d399'),
+            pointBorderColor: 'transparent',
+          },
+          {
+            label: '_zero',
+            data: cumPnl.map(() => 0),
+            borderColor: 'rgba(255,255,255,.18)',
+            borderWidth: 1,
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15,21,32,.95)',
+            borderColor: 'rgba(255,255,255,.12)',
+            borderWidth: 1,
+            titleColor: '#94a3b8',
+            titleFont: { size: 11 },
+            bodyColor: '#f1f5f9',
+            bodyFont: { size: 12, weight: '700' },
+            filter: item => item.datasetIndex === 0,
+            callbacks: {
+              label: ctx => {
+                const v = ctx.raw;
+                return ` ${v >= 0 ? '+' : ''}${Number(v).toLocaleString()}원`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,.04)' },
+            ticks: { color: '#64748b', font: { size: 10 }, maxRotation: 30, maxTicksLimit: 7 }
+          },
+          y: {
+            grid: { color: 'rgba(255,255,255,.05)' },
+            ticks: {
+              color: '#64748b', font: { size: 10 },
+              callback: v => (v >= 0 ? '+' : '') + Number(v).toLocaleString() + '원'
+            }
+          }
+        },
+        onClick: (evt, elements) => {
+          if (!elements.length || elements[0].datasetIndex !== 0) return;
+          const pointIdx = elements[0].index;
+          const sellTime = sells[pointIdx]?.time;
+          if (!sellTime) return;
+          const histIdx = hist.findIndex(t => t.time === sellTime && t.action === 'SELL');
+          if (histIdx >= 0) {
+            const el = document.getElementById(`trade-item-${histIdx}`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.style.transition = 'box-shadow .3s';
+              el.style.boxShadow = '0 0 0 2px rgba(28,105,212,.7)';
+              setTimeout(() => el.style.boxShadow = '', 1800);
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function setStatsDefault() {
+    document.getElementById('cs-trades').textContent  = '0';
+    document.getElementById('cs-wins').textContent    = '0';
+    document.getElementById('cs-losses').textContent  = '0';
+    const pnlEl = document.getElementById('cs-pnl');
+    pnlEl.textContent = '+0원';
+    pnlEl.style.color = 'var(--muted2)';
+    const wrEl = document.getElementById('cs-winrate');
+    wrEl.textContent = '-';
+    wrEl.style.color = 'var(--muted2)';
+    document.getElementById('cs-holdtime').textContent = '-';
+  }
+  async function loadCoinTrader() {
+    try {
+      const res = await fetch(`trades.json?t=${Date.now()}`);
+      if (!res.ok) { setStatsDefault(); return; }
+      const d = await res.json();
+
+      // 봇 상태
+      updateBotStatus(d.updated_at);
+
+      // 시뮬레이션 배지
+      const isDry = d.history && d.history.length > 0 && d.history[0].dry_run;
+      if (isDry) {
+        const badge = document.getElementById('coin-dry-badge');
+        badge.innerHTML = '<span class="dry-run-badge">🧪 시뮬레이션 모드</span>';
+        badge.style.display = 'inline';
+      }
+
+      // 누적 통계
+      const s = d.stats || {};
+      document.getElementById('cs-trades').textContent = s.total_trades ?? 0;
+      document.getElementById('cs-wins').textContent   = s.wins ?? 0;
+      document.getElementById('cs-losses').textContent = s.losses ?? 0;
+      const pnl = s.total_pnl_krw ?? 0;
+      const pnlEl = document.getElementById('cs-pnl');
+      pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
+      pnlEl.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? 'var(--green)' : 'var(--muted2)';
+
+      // 히어로 통계줄 — 누적손익 (한국 기준: 수익=빨간, 손실=파란)
+      const heroPnlVal = document.getElementById('hero-pnl-val');
+      if (heroPnlVal) {
+        heroPnlVal.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
+        heroPnlVal.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
+      }
+
+      // 승률 계산
+      const wins = s.wins ?? 0, total = s.total_trades ?? 0;
+      const sellCount = d.history ? d.history.filter(t => t.action === 'SELL').length : total;
+      const base = sellCount || total;
+      const winrateEl = document.getElementById('cs-winrate');
+      if (base > 0) {
+        const wr = (wins / base * 100);
+        winrateEl.textContent = wr.toFixed(1) + '%';
+        winrateEl.style.color = wr >= 60 ? 'var(--green)' : wr >= 50 ? 'var(--gold)' : '#f87171';
+      } else {
+        winrateEl.textContent = '-';
+        winrateEl.style.color = 'var(--muted2)';
+      }
+
+      // 평균 보유시간 계산
+      const sells = (d.history || []).filter(t => t.action === 'SELL');
+      const buys  = (d.history || []).filter(t => t.action === 'BUY');
+      const holdMins = sells.map(sell => {
+        const buy = buys.find(b => b.ticker === sell.ticker && b.time < sell.time);
+        if (!buy) return null;
+        return (new Date(sell.time.replace(' ','T')) - new Date(buy.time.replace(' ','T'))) / 60000;
+      }).filter(m => m !== null && m > 0);
+      const htEl = document.getElementById('cs-holdtime');
+      if (holdMins.length > 0) {
+        const avg = holdMins.reduce((a,b)=>a+b,0) / holdMins.length;
+        htEl.textContent = avg >= 60 ? (avg/60).toFixed(1)+'h' : Math.round(avg)+'분';
+        htEl.style.color = 'var(--text)';
+      }
+
+      // 코인 섹션 누적손익 배너
+      const banner = document.getElementById('coin-pnl-banner');
+      if (banner) {
+        const isPos = pnl > 0, isNeg = pnl < 0;
+        const pnlStr = (pnl >= 0 ? '+' : '') + Number(pnl).toLocaleString() + '원';
+        banner.style.display = 'flex';
+        banner.style.background = isPos
+          ? 'linear-gradient(135deg,rgba(248,113,113,.12) 0%,rgba(248,113,113,.06) 100%)'
+          : isNeg
+          ? 'linear-gradient(135deg,rgba(16,185,129,.1) 0%,rgba(16,185,129,.05) 100%)'
+          : 'rgba(255,255,255,.04)';
+        banner.style.border = `1px solid ${isPos ? 'rgba(248,113,113,.3)' : isNeg ? 'rgba(16,185,129,.25)' : 'rgba(255,255,255,.08)'}`;
+        banner.innerHTML = `
+          <div>
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">🤖 AI 코인봇 누적손익</div>
+            <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.03em;color:${isPos?'#f87171':isNeg?'#34d399':'var(--muted2)'};">${pnlStr}</div>
+          </div>
+          <div style="text-align:right;font-size:.78rem;color:var(--muted);line-height:1.7;">
+            <div>총 ${s.total_trades ?? 0}회 매매</div>
+            <div>수익 <span style="color:#f87171">${s.wins ?? 0}</span> · 손실 <span style="color:#34d399">${s.losses ?? 0}</span></div>
+          </div>`;
+      }
+
+      // 현재 보유 상태
+      const h = d.holding;
+      const statusEl = document.getElementById('coin-status');
+      if (h && h.ticker) {
+        // 빗썸 공개 API로 실시간 현재가 조회
+        let livePrice = null;
+        try {
+          const coin = h.ticker.replace('KRW-', '');
+          const priceRes = await fetch(`https://api.bithumb.com/public/ticker/${coin}_KRW`);
+          const priceData = await priceRes.json();
+          livePrice = priceData?.data?.closing_price ? parseFloat(priceData.data.closing_price) : null;
+        } catch(e) {}
+
+        const STOP_LOSS   = d.stats?.stop_loss_pct   ?? 7.0;
+        const TAKE_PROFIT = d.stats?.take_profit_pct ?? 6.0;
+
+        // fmtPrice — 모듈 레벨에 정의됨
+
+        const pct = livePrice && h.buy_price ? ((livePrice / h.buy_price - 1) * 100) : null;
+        const pctStr  = pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%' : '-';
+        const pctColor = pct == null ? 'var(--muted2)' : pct >= 0 ? '#f87171' : 'var(--green)';
+
+        const slDist  = pct != null ? (pct - (-STOP_LOSS)).toFixed(2)   : null;
+        const tpDist  = pct != null ? (TAKE_PROFIT - pct).toFixed(2)    : null;
+
+        statusEl.innerHTML = `
+          <div class="coin-status-card holding" style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div class="coin-ticker">🪙 ${h.ticker.replace('KRW-','')}</div>
+                <div class="coin-ticker-sub">보유 중 · 30초마다 갱신</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;">현재 수익률</div>
+                <div style="font-size:1.6rem;font-weight:900;color:${pctColor};">${pctStr}</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">매수가</div>
+                <div style="font-size:.95rem;font-weight:700;">${fmtPrice(h.buy_price)}</div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">현재가</div>
+                <div style="font-size:.95rem;font-weight:700;">${fmtPrice(livePrice)}</div>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;">투자금</div>
+                <div style="font-size:.95rem;font-weight:700;">${Number(h.invest_krw||5000).toLocaleString()}원</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
+              <div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px;">
+                <div style="font-size:.65rem;color:#10b981;margin-bottom:4px;">🔴 손절까지</div>
+                <div style="font-size:.9rem;font-weight:700;color:#10b981;">${slDist != null ? '-'+STOP_LOSS+'% ('+slDist+'% 남음)' : '-'}</div>
+              </div>
+              <div style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:10px;">
+                <div style="font-size:.65rem;color:#f87171;margin-bottom:4px;">🟡 익절까지</div>
+                <div style="font-size:.9rem;font-weight:700;color:#f87171;">${tpDist != null ? '+'+TAKE_PROFIT+'% ('+tpDist+'% 남음)' : '-'}</div>
+              </div>
+            </div>
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="coin-status-card watching">
+            <div class="coin-watching-msg">
+              <div style="font-size:2rem;margin-bottom:8px;">👀</div>
+              <div style="font-weight:700;color:var(--text);margin-bottom:4px;">시장 관망 중</div>
+              <div style="font-size:.82rem;">AI가 매수 기회를 탐색하고 있습니다 · 다음 분석: 1시간 이내</div>
+            </div>
+          </div>`;
+      }
+
+      // 누적손익 차트 + 히스토리
+      _allTradeHistory = d.history || [];
+      const hist = _allTradeHistory.slice(0, 20);
+      buildPnlChart(_allTradeHistory, hist);
+      renderTradeHistory(hist, hist);
+
+      // 종목별 성과 집계
+      const tickerMap = {};
+      (d.history || []).forEach(t => {
+        if (t.action !== 'SELL' || t.pnl_krw == null) return;
+        if (!tickerMap[t.ticker]) tickerMap[t.ticker] = { trades:0, wins:0, totalPnl:0 };
+        tickerMap[t.ticker].trades++;
+        tickerMap[t.ticker].totalPnl += t.pnl_krw;
+        if (t.pnl_krw > 0) tickerMap[t.ticker].wins++;
+      });
+      const tickerArr = Object.entries(tickerMap).sort((a,b) => b[1].totalPnl - a[1].totalPnl);
+      if (tickerArr.length > 0) {
+        const wrap = document.getElementById('ticker-table-wrap');
+        const inner = document.getElementById('ticker-table-inner');
+        wrap.style.display = '';
+        inner.innerHTML = `<table class="ticker-tbl">
+          <thead><tr><th>종목</th><th>거래</th><th>승률</th><th>수익 합계</th></tr></thead>
+          <tbody>${tickerArr.map(([tk, v]) => {
+            const wr = v.trades ? (v.wins/v.trades*100).toFixed(0) : 0;
+            const col = v.totalPnl > 0 ? '#f87171' : v.totalPnl < 0 ? '#34d399' : 'var(--muted2)';
+            return `<tr>
+              <td style="font-weight:700;color:var(--text)">${tk}</td>
+              <td style="color:var(--muted2)">${v.trades}회</td>
+              <td style="color:${wr>=60?'var(--green)':wr>=50?'var(--gold)':'#f87171'}">${wr}%</td>
+              <td style="font-weight:700;color:${col}">${v.totalPnl>=0?'+':''}${v.totalPnl.toLocaleString()}원</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>`;
+      }
+
+    } catch(e) {
+      setStatsDefault();
+    }
+  }
+
+  // 라이브 위젯 시작
+  startClock();
+  fetchWeather();
+  fetchAirQuality();
+  fetchExchangeRate();
+  fetchFearGreed();
+  // 5분마다 갱신
+  setInterval(() => {
+    fetchWeather();
+    fetchAirQuality();
+    fetchExchangeRate();
+    fetchFearGreed();
+    }, 5 * 60 * 1000);
+
+  function switchTab(tab) {
+    const tabs = ['news', 'coin', 'music'];
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
+    tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
+    if (tab === 'news') init();
+    if (tab === 'music') {
+      const fr = document.getElementById('music-iframe');
+      if (!fr.getAttribute('src')) {
+        fr.setAttribute('src', 'music.html');
+      } else {
+        try { fr.contentWindow.dispatchEvent(new Event('resize')); } catch(e) {}
+      }
+      // iframe 로드 후 전체화면으로 전환
+      const goFull = () => {
+        const rfs = fr.requestFullscreen || fr.webkitRequestFullscreen || fr.mozRequestFullScreen;
+        if (rfs) rfs.call(fr).catch(() => {});
+      };
+      fr.getAttribute('src') ? goFull() : fr.addEventListener('load', goFull, { once: true });
+    }
+  }
+
+  // 봇 상태 — trades.json updated_at 기준
+  function updateBotStatus(updatedAt) {
+    const badge = document.getElementById('bot-status-badge');
+    const timeEl = document.getElementById('bot-status-time');
+    if (!badge || !updatedAt) return;
+    const diff = (Date.now() - new Date(updatedAt.replace(' ', 'T'))) / 60000; // 분
+    if (diff <= 5) {
+      badge.innerHTML = '🟢 실행 중';
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(16,185,129,.35);color:#34d399;background:rgba(16,185,129,.1);';
+    } else if (diff <= 30) {
+      badge.innerHTML = '🟡 지연';
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(245,158,11,.35);color:var(--gold);background:rgba(245,158,11,.1);';
+    } else {
+      badge.innerHTML = '🔴 중단 의심';
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(248,113,113,.35);color:#f87171;background:rgba(248,113,113,.1);';
+    }
+    const d = new Date(updatedAt.replace(' ', 'T'));
+    timeEl.textContent = `마지막 실행 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  // 테마 초기화
+  (function() {
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.add('light');
+      document.getElementById('theme-toggle').textContent = '☀️';
+    }
+  })();
+  document.getElementById('theme-toggle').addEventListener('click', function() {
+    const isLight = document.documentElement.classList.toggle('light');
+    this.textContent = isLight ? '☀️' : '🌙';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  });
+
+  init();
+  loadCoinTrader();
+  // 30초마다 코인 현재가·봇 상태 갱신
+  setInterval(loadCoinTrader, 30 * 1000);
+
+  // ─── 히어로 별 canvas ─────────────────────────────────
+  (function initHeroCanvas() {
+    const cvs = document.getElementById('hero-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    let W, H, stars = [];
+
+    function resize() {
+      W = cvs.width  = cvs.offsetWidth;
+      H = cvs.height = cvs.offsetHeight;
+    }
+
+    function initStars() {
+      stars = Array.from({length: 60}, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: 0.5 + Math.random() * 1.8,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: 0.3 + Math.random() * 0.7,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    }
+
+    let tick = 0;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      tick += 0.02;
+      stars.forEach(s => {
+        s.x += s.vx; s.y += s.vy;
+        if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+        if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+        const a = s.alpha * (0.6 + 0.4 * Math.sin(tick + s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    initStars();
+    draw();
+    window.addEventListener('resize', () => { resize(); initStars(); });
+  })();
+
+  // ── 모바일 위젯 스와이프 슬라이더 ──
+  function initWidgetSlider() {
+    const dotsEl = document.getElementById('widget-dots');
+    if (!dotsEl) return;
+    if (window.innerWidth >= 768) { dotsEl.innerHTML = ''; return; }
+
+    const inner   = document.querySelector('.dashboard-inner');
+    const widgets = Array.from(inner.querySelectorAll('.widget'));
+    const n = widgets.length;
+
+    // 도트 생성
+    dotsEl.innerHTML = '';
+    widgets.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'widget-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => {
+        inner.scrollTo({ left: widgets[i].offsetLeft - 24, behavior: 'smooth' });
+      });
+      dotsEl.appendChild(dot);
+    });
+
+    const dots = Array.from(dotsEl.querySelectorAll('.widget-dot'));
+    let ticking = false;
+    inner.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const cardW = widgets[0] ? widgets[0].offsetWidth + 10 : 1;
+        const idx = Math.min(n - 1, Math.round(inner.scrollLeft / cardW));
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  initWidgetSlider();
+  window.addEventListener('resize', initWidgetSlider);
+</script>
+</body>
+</html>

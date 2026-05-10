@@ -1,0 +1,495 @@
+{
+  "updated": "2026-04-13",
+  "songs": [
+    {
+      "t": "Butter",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 9,
+      "d": "상큼한 댄스"
+    },
+    {
+      "t": "Love Dive",
+      "a": "IVE",
+      "g": "K-pop",
+      "s": 8,
+      "d": "시원한 여름"
+    },
+    {
+      "t": "Hot",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "열정적인 에너지"
+    },
+    {
+      "t": "Antifragile",
+      "a": "LE SSERAFIM",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Case 143",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 7,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Kill This Love",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 9,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "Boy With Luv",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "희망적인 메시지"
+    },
+    {
+      "t": "Eyes, Nose, Lips",
+      "a": "TAEYANG",
+      "g": "K-pop",
+      "s": 6,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "Gashina",
+      "a": "SUNMI",
+      "g": "K-pop",
+      "s": 7,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Fancy",
+      "a": "TWICE",
+      "g": "K-pop",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Dynamite",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 9,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Wannabe",
+      "a": "ITZY",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Not Shy",
+      "a": "ITZY",
+      "g": "K-pop",
+      "s": 7,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Stay",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "따뜻한 메시지"
+    },
+    {
+      "t": "Next Level",
+      "a": "aespa",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Savage",
+      "a": "aespa",
+      "g": "K-pop",
+      "s": 8,
+      "d": "신나는 에너지"
+    },
+    {
+      "t": "Life Goes On",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "희망적인 메시지"
+    },
+    {
+      "t": "Moon",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 7,
+      "d": " 분위기"
+    },
+    {
+      "t": "Don't Fight The Feeling",
+      "a": "EXO",
+      "g": "K-pop",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Lilac",
+      "a": "IU",
+      "g": "인디팝",
+      "s": 8,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "Celebrity",
+      "a": "IU",
+      "g": "인디팝",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Blueming",
+      "a": "IU",
+      "g": "인디팝",
+      "s": 7,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Without You",
+      "a": "NCT U",
+      "g": "인디팝",
+      "s": 6,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Spring Day",
+      "a": "BTS",
+      "g": "인디팝",
+      "s": 7,
+      "d": "희망적인 메시지"
+    },
+    {
+      "t": "Gotta Go",
+      "a": "TAEYEON",
+      "g": "인디팝",
+      "s": 6,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Four Seasons",
+      "a": "TAEYEON",
+      "g": "인디팝",
+      "s": 6,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "All About You",
+      "a": "TAEMIN",
+      "g": "인디팝",
+      "s": 5,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Want",
+      "a": "TAEMIN",
+      "g": "인디팝",
+      "s": 6,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Fool",
+      "a": "SANDEUL",
+      "g": "인디팝",
+      "s": 5,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "Lost",
+      "a": "Crush",
+      "g": "R&B",
+      "s": 6,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Beautiful",
+      "a": "Crush",
+      "g": "R&B",
+      "s": 6,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "Eternal Summer",
+      "a": "THE BOYZ",
+      "g": "인디팝",
+      "s": 5,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Drunk-Dazed",
+      "a": "ENHYPEN",
+      "g": "인디팝",
+      "s": 5,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Sticker",
+      "a": "NCT 127",
+      "g": "인디팝",
+      "s": 6,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "As You Wish",
+      "a": "WJSN",
+      "g": "인디팝",
+      "s": 5,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Dun Dun Dance",
+      "a": "OH MY GIRL",
+      "g": "인디팝",
+      "s": 6,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Butterfly",
+      "a": "WENDY",
+      "g": "인디팝",
+      "s": 5,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Rollin'",
+      "a": "Brave Girls",
+      "g": "인디팝",
+      "s": 6,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Stay With Me",
+      "a": "CHANYEOL",
+      "g": "인디팝",
+      "s": 5,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "About Damn Time",
+      "a": "Lizzo",
+      "g": "팝",
+      "s": 8,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "As It Was",
+      "a": "Harry Styles",
+      "g": "팝",
+      "s": 8,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Bad Habits",
+      "a": "Ed Sheeran",
+      "g": "팝",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Levitating",
+      "a": "Dua Lipa",
+      "g": "팝",
+      "s": 8,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Drivers License",
+      "a": "Olivia Rodrigo",
+      "g": "팝",
+      "s": 7,
+      "d": "따뜻한 발라드"
+    },
+    {
+      "t": "Good 4 U",
+      "a": "Olivia Rodrigo",
+      "g": "팝",
+      "s": 8,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Kiss Me More",
+      "a": "Doja Cat",
+      "g": "팝",
+      "s": 8,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Peaches",
+      "a": "Justin Bieber",
+      "g": "팝",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Save Your Tears",
+      "a": "The Weeknd",
+      "g": "팝",
+      "s": 7,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Blinding Lights",
+      "a": "The Weeknd",
+      "g": "팝",
+      "s": 8,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Watermelon Sugar",
+      "a": "Harry Styles",
+      "g": "팝",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Don't Start Now",
+      "a": "Dua Lipa",
+      "g": "팝",
+      "s": 8,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Roses",
+      "a": "SAINt JHN",
+      "g": "R&B",
+      "s": 6,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Rockstar",
+      "a": "DaBaby",
+      "g": "힙합",
+      "s": 7,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "WAP",
+      "a": "Cardi B",
+      "g": "힙합",
+      "s": 8,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Laugh Now Cry Later",
+      "a": "Drake",
+      "g": "힙합",
+      "s": 7,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "What's Poppin",
+      "a": "Jack Harlow",
+      "g": "힙합",
+      "s": 6,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Savage Love (Laxed - Siren Beat)",
+      "a": "Jawsh 685",
+      "g": "일렉트로팝",
+      "s": 7,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Death Bed (Coffee for Your Head)",
+      "a": "Powfu",
+      "g": "일렉트로팝",
+      "s": 6,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Mood",
+      "a": "24kGoldn",
+      "g": "힙합",
+      "s": 6,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "For The Night",
+      "a": "Pop Smoke",
+      "g": "힙합",
+      "s": 6,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Whats Luv?",
+      "a": "Fat Joe",
+      "g": "힙합",
+      "s": 5,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Astronaut In The Ocean",
+      "a": "Masked Wolf",
+      "g": "힙합",
+      "s": 6,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Peachy Keen",
+      "a": "Tay Money",
+      "g": "힙합",
+      "s": 4,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Lose Control",
+      "a": "Meduza",
+      "g": "일렉트로팝",
+      "s": 5,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Rain On Me",
+      "a": "Lady Gaga",
+      "g": "팝",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Get You",
+      "a": "Daniel Caesar",
+      "g": "R&B",
+      "s": 6,
+      "d": "매혹적인 보이스"
+    },
+    {
+      "t": "Get Lucky",
+      "a": "Daft Punk",
+      "g": "일렉트로팝",
+      "s": 8,
+      "d": "에너지 넘치는 댄스"
+    },
+    {
+      "t": "Uptown Funk",
+      "a": "Mark Ronson",
+      "g": "팝",
+      "s": 8,
+      "d": "신나는 리듬"
+    },
+    {
+      "t": "Happy",
+      "a": "Pharrell Williams",
+      "g": "팝",
+      "s": 7,
+      "d": "밝은 분위기"
+    },
+    {
+      "t": "Can't Stop The Feeling!",
+      "a": "Justin Timberlake",
+      "g": "팝",
+      "s": 7,
+      "d": "신나는 리듬"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# ────────────────────────────────────────────
+# 바이브코딩 루트 .gitignore
+# ────────────────────────────────────────────
+
+# API 키 — 절대 커밋 금지
+.env
+*.env
+.env.*
+!*.env.example
+client_secret*.json
+**/client_secret*.json
+token*.json
+**/token*.json
+video_cache.json
+**/video_cache.json
+
+# Python 캐시
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 로그
+*.log
+
+# 뉴스레터 데이터 (로컬 전용)
+*.md.bak
+
+# 코인트레이더 상태 파일
+coin-trader/state.json
+coin-trader/ip.txt
+coin-trader/report_sent.txt
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/

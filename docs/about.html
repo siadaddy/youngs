@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>👥 AI 크리에이터 소개 — 시아아빠님의 AI 자동화</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #080c14;
+      --glass:     rgba(255,255,255,.04);
+      --glass-border: rgba(255,255,255,.09);
+      --surface:   #0f1520;
+      --card:      #111827;
+      --card2:     #141c2e;
+      --bmw:       #1c69d4;
+      --bmw-lt:    #4d90f0;
+      --accent:    #1c69d4;
+      --accent2:   #a78bfa;
+      --green:     #10b981;
+      --gold:      #f59e0b;
+      --text:      #f1f5f9;
+      --muted:     #64748b;
+      --muted2:    #94a3b8;
+      --border:    rgba(255,255,255,.07);
+      --r-sm:      12px;
+      --r-md:      18px;
+      --r-lg:      24px;
+      --r-xl:      32px;
+      --shadow:    0 4px 24px rgba(0,0,0,.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%,  rgba(28,105,212,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%,  rgba(167,139,250,.07) 0%, transparent 55%);
+      pointer-events: none; z-index: 0;
+    }
+    .wrap { position: relative; z-index: 1; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 99px;
+      font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+      border: 1px solid var(--glass-border);
+      background: var(--glass); color: var(--muted2);
+    }
+    .tag.blue  { border-color: rgba(28,105,212,.4);  color: var(--bmw-lt); background: rgba(28,105,212,.08); }
+    .tag.purple{ border-color: rgba(167,139,250,.4); color: var(--accent2); background: rgba(167,139,250,.08); }
+    .tag.green { border-color: rgba(16,185,129,.4);  color: var(--green);   background: rgba(16,185,129,.08); }
+    .tag.gold  { border-color: rgba(245,158,11,.4);  color: var(--gold);    background: rgba(245,158,11,.08); }
+
+    /* ─── 나는 누구인가 ─── */
+    .bio-section { padding: 72px 0; }
+    .bio-card {
+      max-width: 660px; margin: 0 auto;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 52px 56px;
+      position: relative; overflow: hidden;
+    }
+    .bio-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--bmw) 0%, var(--accent2) 100%);
+    }
+    .bio-greeting { font-size: 1.15rem; font-weight: 800; margin-bottom: 36px; color: var(--text); }
+    .bio-para { font-size: .95rem; color: var(--muted2); line-height: 2; margin-bottom: 20px; }
+    .bio-para.highlight { color: var(--text); font-weight: 600; }
+    .bio-para.accent { color: var(--bmw-lt); }
+    .bio-sign {
+      margin-top: 40px; padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: .82rem; color: var(--muted); font-style: italic; text-align: right;
+    }
+    @media (max-width: 600px) { .bio-card { padding: 36px 28px; } }
+
+    /* ─── 헤더 ─── */
+    .page-header {
+      padding: 56px 0 48px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .82rem; font-weight: 600; color: var(--bmw-lt);
+      text-decoration: none; margin-bottom: 28px;
+      padding: 8px 16px; border-radius: 99px;
+      border: 1px solid rgba(28,105,212,.3);
+      background: rgba(28,105,212,.08);
+      transition: background .2s, border-color .2s;
+    }
+    .back-link:hover { background: rgba(28,105,212,.15); border-color: rgba(28,105,212,.5); }
+    .page-eyebrow {
+      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--bmw-lt); margin-bottom: 12px;
+    }
+    .page-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px;
+    }
+    .page-sub { color: var(--muted2); font-size: .95rem; max-width: 520px; margin: 0 auto; }
+
+    /* ─── 섹션 공통 ─── */
+    .section { padding: 64px 0; border-top: 1px solid var(--border); }
+    .section-eyebrow {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--bmw-lt); margin-bottom: 10px;
+    }
+    .section-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: 8px; }
+    .section-sub { color: var(--muted2); margin-bottom: 32px; font-size: .88rem; }
+
+    /* ─── 직원 카드 ─── */
+    .crew-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .crew-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 26px;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .crew-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--bmw) 0%, var(--accent2) 100%);
+      opacity: 0; transition: opacity .2s;
+    }
+    .crew-card:hover { border-color: rgba(28,105,212,.35); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.3); }
+    .crew-card:hover::before { opacity: 1; }
+    .crew-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .crew-emoji {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: rgba(28,105,212,.1); border: 1px solid rgba(28,105,212,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem; flex-shrink: 0;
+    }
+    .crew-name { font-size: 1rem; font-weight: 800; margin-bottom: 2px; letter-spacing: -.01em; }
+    .crew-title { font-size: .73rem; color: var(--muted); }
+    .crew-quote {
+      font-size: .82rem; color: var(--accent2); font-style: italic;
+      border-left: 2px solid rgba(167,139,250,.4);
+      padding-left: 12px; margin-bottom: 16px; line-height: 1.6;
+    }
+    .crew-model { font-size: .71rem; color: var(--muted); margin-bottom: 14px; }
+    .crew-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* ─── 파이프라인 ─── */
+    .pipeline-wrap {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 36px 24px;
+    }
+    .pipeline-main {
+      display: flex; align-items: center;
+      justify-content: center; flex-wrap: wrap; gap: 0;
+    }
+    .pipeline-friday {
+      margin-top: 24px; padding-top: 20px;
+      border-top: 1px dashed rgba(167,139,250,.3);
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .friday-label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--accent2); text-transform: uppercase;
+      padding: 6px 14px; border-radius: 99px;
+      border: 1px dashed rgba(167,139,250,.4);
+      background: rgba(167,139,250,.06);
+      white-space: nowrap;
+    }
+    .pipe-step {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      padding: 16px 20px; min-width: 110px;
+      border-radius: var(--r-md); transition: background .2s;
+    }
+    .pipe-step:hover { background: var(--glass); }
+    .pipe-step.friday .pipe-icon-wrap {
+      background: rgba(167,139,250,.1); border-color: rgba(167,139,250,.2);
+    }
+    .pipe-icon-wrap {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: rgba(28,105,212,.1); border: 1px solid rgba(28,105,212,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; transition: transform .2s;
+    }
+    .pipe-step:hover .pipe-icon-wrap { transform: translateY(-4px); }
+    .pipe-time { font-size: .65rem; font-weight: 700; letter-spacing: .06em; color: var(--bmw-lt); text-transform: uppercase; }
+    .pipe-label { font-size: .78rem; font-weight: 700; }
+    .pipe-desc { font-size: .7rem; color: var(--muted); text-align: center; max-width: 90px; line-height: 1.4; }
+    .pipe-arrow { color: var(--muted); font-size: 1rem; padding: 0 4px; margin-bottom: 30px; flex-shrink: 0; }
+
+    /* ─── 운영 현황 ─── */
+    .ops-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px; margin-bottom: 32px;
+    }
+    .ops-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 20px;
+      text-align: center;
+    }
+    .ops-val { font-size: 1.8rem; font-weight: 800; letter-spacing: -.03em; color: var(--text); }
+    .ops-lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+
+    /* ─── 스택 ─── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .stack-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 18px 20px;
+      display: flex; align-items: center; gap: 14px;
+      transition: border-color .2s, transform .2s;
+    }
+    .stack-card:hover { border-color: rgba(28,105,212,.3); transform: translateY(-2px); }
+    .stack-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .stack-name { font-size: .82rem; font-weight: 700; margin-bottom: 2px; }
+    .stack-free { font-size: .67rem; font-weight: 700; color: var(--green); }
+
+    /* ─── 푸터 ─── */
+    footer {
+      text-align: center; padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: .78rem;
+    }
+    footer a { color: var(--bmw-lt); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .footer-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .footer-logo { font-size: 1rem; font-weight: 800; color: var(--text); }
+    .footer-divider { width: 40px; height: 1px; background: var(--border); }
+
+    @media (max-width: 768px) {
+      .pipe-arrow { display: none; }
+      .page-title { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ─── 헤더 ─── -->
+<div class="page-header">
+  <div class="container">
+    <a href="index.html" class="back-link">← 메인으로 돌아가기</a>
+    <div class="page-eyebrow">🤖 About AI Creator</div>
+    <h1 class="page-title">AI 크리에이터 소개</h1>
+    <p class="page-sub">매일 아침 AI 직원들이 협업해 뉴스를 읽고 콘텐츠를 자동 생성합니다. 코인 트레이더는 24시간 시장을 감시합니다.</p>
+  </div>
+</div>
+
+<!-- ─── 나는 누구인가 ─── -->
+<section class="bio-section">
+  <div class="container">
+    <div class="bio-card">
+      <div class="bio-greeting">안녕하세요, 시아아빠입니다.</div>
+
+      <p class="bio-para">저는 개발자가 아니에요.<br>
+      자동차 업계에서 기획관리 일을 하는 평범한 직장인입니다.</p>
+
+      <p class="bio-para">작년 이맘때 GPT를 처음 써봤어요.<br>
+      "신기하다" 정도였어요.</p>
+
+      <p class="bio-para highlight">그러다 올해 3월, Claude Code를 만났어요.<br>
+      그리고 한 달 만에<br>
+      매일 뉴스를 분석해 카드뉴스를 만들고,<br>
+      코인을 자동으로 매매하고,<br>
+      AI가 추천한 음악으로 우주를 채우는 시스템을 만들었습니다.</p>
+
+      <p class="bio-para accent">코드 한 줄 못 짜도 괜찮았어요.<br>
+      뭘 만들고 싶은지만 알면 됐어요.</p>
+
+      <p class="bio-para">이 사이트는 그 한 달의 기록입니다.</p>
+
+      <div class="bio-sign">— 시아아빠 · 2026년 3월~</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 자동화 파이프라인 ─── -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">🔄 Automation Pipeline</div>
+    <div class="section-title">자동화 파이프라인</div>
+    <p class="section-sub">매일 07:00 KST 자동 실행 · 단계 실패 시 최대 3회 자동 재시도</p>
+    <div class="pipeline-wrap">
+      <!-- 메인 파이프라인 (매일) -->
+      <div class="pipeline-main">
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">📰</div>
+          <div class="pipe-time">07:00</div>
+          <div class="pipe-label">뉴스 수집</div>
+          <div class="pipe-desc">RSS 피드 8개 카테고리</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">🎯</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">박기획</div>
+          <div class="pipe-desc">핵심 뉴스 5개 선정</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">✍️</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">이작가</div>
+          <div class="pipe-desc">카드뉴스 5개·아티클 작성</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">🎨</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">최디자</div>
+          <div class="pipe-desc">이미지 5장 생성</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">🎵</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">한뮤직</div>
+          <div class="pipe-desc">70곡+ 추천·우주 업데이트</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">📤</div>
+          <div class="pipe-time">~08:00</div>
+          <div class="pipe-label">정퍼블</div>
+          <div class="pipe-desc">GitHub Pages 자동 배포</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AI 직원 소개 (콘텐츠) ─── -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">👥 AI Crew · 콘텐츠 팀</div>
+    <div class="section-title">AI 콘텐츠 크리에이터</div>
+    <p class="section-sub">매일 07:00 순서대로 협업 · Gemini 2.5 Flash 우선 → Groq 폴백</p>
+    <div class="crew-grid">
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">🎯</div>
+          <div>
+            <div class="crew-name">박기획</div>
+            <div class="crew-title">콘텐츠 전략 기획자</div>
+          </div>
+        </div>
+        <div class="crew-quote">"오늘 어떤 뉴스가 사람들 마음을 움직일까요?"</div>
+        <div class="crew-model">🧠 Gemini 2.5 Flash · temperature 0.6 · JSON 모드</div>
+        <div class="crew-tags">
+          <span class="tag blue">핵심 뉴스 5개 선정</span>
+          <span class="tag gold">자동차/BMW 첫 번째</span>
+          <span class="tag">중복 주제 금지</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">✍️</div>
+          <div>
+            <div class="crew-name">이작가</div>
+            <div class="crew-title">수석 카드뉴스 작가</div>
+          </div>
+        </div>
+        <div class="crew-quote">"독자가 손을 멈추고 읽게 만드는 첫 줄, 제가 씁니다."</div>
+        <div class="crew-model">🧠 Gemini 2.5 Flash · temperature 0.7 · 원문 사실 기반</div>
+        <div class="crew-tags">
+          <span class="tag blue">카드뉴스 5개</span>
+          <span class="tag purple">[사실] [분석] [전망]</span>
+          <span class="tag">블로그 아티클 1개</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">🎨</div>
+          <div>
+            <div class="crew-name">최디자</div>
+            <div class="crew-title">비주얼 아트 디렉터</div>
+          </div>
+        </div>
+        <div class="crew-quote">"글보다 먼저 눈을 사로잡는 이미지, 제 전문입니다."</div>
+        <div class="crew-model">🧠 Gemini (프롬프트 생성) + Stable Horde (이미지 생성)</div>
+        <div class="crew-tags">
+          <span class="tag blue">768×768 이미지 5장</span>
+          <span class="tag purple">Bloomberg/Wired 스타일</span>
+          <span class="tag green">키 없이 무료</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">📤</div>
+          <div>
+            <div class="crew-name">정퍼블</div>
+            <div class="crew-title">콘텐츠 퍼블리셔</div>
+          </div>
+        </div>
+        <div class="crew-quote">"만들어진 콘텐츠를 가장 보기 좋게 정리하는 건 저의 몫입니다."</div>
+        <div class="crew-model">🔌 GitHub Pages · content.json 자동 생성 · 즉시 배포</div>
+        <div class="crew-tags">
+          <span class="tag blue">사이트 자동 배포</span>
+          <span class="tag">출처·링크 포함</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">🎵</div>
+          <div>
+            <div class="crew-name">한뮤직</div>
+            <div class="crew-title">AI 음악 큐레이터</div>
+          </div>
+        </div>
+        <div class="crew-quote">"오늘 하루 어울리는 음악, 제가 골라드릴게요."</div>
+        <div class="crew-model">🧠 Gemini 2.5 Flash · 장르/분위기 기반 큐레이션</div>
+        <div class="crew-tags">
+          <span class="tag blue">7장르 × 10곡 = 70곡+</span>
+          <span class="tag purple">인기도 점수 산출</span>
+          <span class="tag gold">분위기 태그 생성</span>
+          <span class="tag">날짜별 히스토리 저장</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── AI 직원 소개 (코인) ─── -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">🤖 AI Crew · 트레이딩 팀</div>
+    <div class="section-title">AI 코인 트레이더</div>
+    <p class="section-sub">24시간 시장 감시 · 30분마다 AI 판단 · 빗썸 API 연동 · 일일 손실한도 보호</p>
+    <div class="crew-grid">
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">📊</div>
+          <div>
+            <div class="crew-name">김분석</div>
+            <div class="crew-title">기술적 분석가</div>
+          </div>
+        </div>
+        <div class="crew-quote">"RSI, MACD, 볼린저밴드, 변동성 돌파 신호가 말할 때 움직입니다."</div>
+        <div class="crew-model">🔌 빗썸 API + pybithumb · 30분봉 OHLCV + 변동성 돌파 스코어링</div>
+        <div class="crew-tags">
+          <span class="tag blue">빗썸 원화마켓 종목</span>
+          <span class="tag">RSI · MACD · BB</span>
+          <span class="tag gold">ADX 추세 필터</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">🤖</div>
+          <div>
+            <div class="crew-name">AI 어드바이저</div>
+            <div class="crew-title">매매 판단 AI</div>
+          </div>
+        </div>
+        <div class="crew-quote">"BUY / SELL / HOLD — 세 글자에 모든 판단을 담습니다."</div>
+        <div class="crew-model">🧠 Groq — Llama 3.3 70B · key1→4 라운드로빈 · Gemini 폴백</div>
+        <div class="crew-tags">
+          <span class="tag blue">BUY / SELL / HOLD</span>
+          <span class="tag purple">한국어 이유 생성</span>
+          <span class="tag">30분마다 실행</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">🛡️</div>
+          <div>
+            <div class="crew-name">가드</div>
+            <div class="crew-title">실시간 리스크 관리자</div>
+          </div>
+        </div>
+        <div class="crew-quote">"30초마다 확인합니다. 손실은 제가 먼저 막습니다."</div>
+        <div class="crew-model">🔌 빗썸 API · 30초마다 실시간 감시 · 일일 손실한도 관리</div>
+        <div class="crew-tags">
+          <span class="tag green">손절 -4%</span>
+          <span class="tag gold">익절 +5%</span>
+          <span class="tag blue">트레일링스탑</span>
+          <span class="tag">일손실 -7,500원 한도</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── 운영 현황 ─── -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">📈 Operations</div>
+    <div class="section-title">운영 현황</div>
+    <p class="section-sub">2026년 3월 25일 시스템 가동 시작</p>
+    <div class="ops-grid">
+      <div class="ops-card">
+        <div class="ops-val" id="ops-days">—</div>
+        <div class="ops-lbl">운영 일수</div>
+      </div>
+      <div class="ops-card">
+        <div class="ops-val" id="ops-cards">—</div>
+        <div class="ops-lbl">생성된 카드뉴스</div>
+      </div>
+      <div class="ops-card">
+        <div class="ops-val" id="ops-images">—</div>
+        <div class="ops-lbl">생성된 이미지</div>
+      </div>
+      <div class="ops-card">
+        <div class="ops-val" id="ops-newsletters">—</div>
+        <div class="ops-lbl">발행 뉴스레터</div>
+      </div>
+      <div class="ops-card">
+        <div class="ops-val" style="color:var(--green)">$0</div>
+        <div class="ops-lbl">월 운영 비용</div>
+      </div>
+      <div class="ops-card">
+        <div class="ops-val" style="color:var(--green)">24/7</div>
+        <div class="ops-lbl">코인 감시</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 기술 스택 ─── -->
+<section class="section">
+  <div class="container">
+    <div class="section-eyebrow">🛠 Tech Stack</div>
+    <div class="section-title">기술 스택 · 월 비용 $0</div>
+    <p class="section-sub">모든 서비스 무료</p>
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-icon">📡</div>
+        <div><div class="stack-name">RSS 피드</div><div class="stack-free">FREE · 언론사 뉴스 자동 수집</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🧠</div>
+        <div><div class="stack-name">Gemini 2.5 Flash</div><div class="stack-free">FREE · 콘텐츠팀 메인 AI</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">⚡</div>
+        <div><div class="stack-name">Groq Llama 3.3 70B</div><div class="stack-free">FREE · 코인팀 AI · Gemini 폴백</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🎨</div>
+        <div><div class="stack-name">Stable Horde</div><div class="stack-free">FREE · 이미지 생성 (키 불필요)</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🐍</div>
+        <div><div class="stack-name">Python + launchd</div><div class="stack-free">FREE · 맥북 자동화</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🔔</div>
+        <div><div class="stack-name">ntfy.sh</div><div class="stack-free">FREE · 완료 알림</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">📊</div>
+        <div><div class="stack-name">pybithumb</div><div class="stack-free">FREE · 빗썸 코인 자동매매</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🌐</div>
+        <div><div class="stack-name">GitHub Pages</div><div class="stack-free">FREE · 사이트 호스팅</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">▶️</div>
+        <div><div class="stack-name">YouTube API</div><div class="stack-free">FREE · 뮤직 유니버스 재생</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🎵</div>
+        <div><div class="stack-name">iTunes API</div><div class="stack-free">FREE · 앨범아트 연동</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">🤖 시아아빠님의 AI 크리에이터</div>
+      <div class="footer-divider"></div>
+      <div>
+        <a href="index.html">← 메인으로 돌아가기</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/siadaddy/youngs" target="_blank">GitHub</a>
+        &nbsp;·&nbsp; © 2026 시아아빠
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script>
+(async () => {
+  try {
+    const START = new Date('2026-03-25');
+    const today = new Date();
+    const days = Math.floor((today - START) / 86400000) + 1;
+    document.getElementById('ops-days').textContent = days + '일';
+
+    const res = await fetch('archive.json');
+    const data = await res.json();
+    const published = (data.dates || []).length;
+    document.getElementById('ops-newsletters').textContent = published + '일';
+    document.getElementById('ops-cards').textContent = (published * 5) + '개';
+    document.getElementById('ops-images').textContent = (published * 5) + '장';
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

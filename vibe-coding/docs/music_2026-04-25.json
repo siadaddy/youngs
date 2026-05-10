@@ -1,0 +1,103 @@
+{
+  "updated": "2026-04-25",
+  "songs": [
+    {
+      "t": "Lose Yourself",
+      "a": "Eminem",
+      "g": "2000s힙합",
+      "s": 10,
+      "d": "동기부여, 투지"
+    },
+    {
+      "t": "The Real Slim Shady",
+      "a": "Eminem",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "풍자, 위트, 도발"
+    },
+    {
+      "t": "99 Problems",
+      "a": "Jay-Z",
+      "g": "2000s힙합",
+      "s": 9,
+      "d": "강렬함, 거리, 서사"
+    },
+    {
+      "t": "Dirt Off Your Shoulder",
+      "a": "Jay-Z",
+      "g": "2000s힙합",
+      "s": 8,
+      "d": "자신감, 과시, 당당"
+    },
+    {
+      "t": "Rich Flex",
+      "a": "Drake & 21 Savage",
+      "g": "최신힙합",
+      "s": 9,
+      "d": "도발적, 트렌디"
+    },
+    {
+      "t": "Blinding Lights",
+      "a": "The Weeknd",
+      "g": "러닝업템포",
+      "s": 10,
+      "d": "질주감 넘치는 신스팝"
+    },
+    {
+      "t": "Seven (feat. Latto)",
+      "a": "Jungkook",
+      "g": "K-pop",
+      "s": 10,
+      "d": "팝, 댄서블, 섹시"
+    },
+    {
+      "t": "Standing Next to You",
+      "a": "Jungkook",
+      "g": "K-pop",
+      "s": 9,
+      "d": "펑키, 그루비"
+    },
+    {
+      "t": "Super (손오공)",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 9,
+      "d": "웅장, 에너제틱"
+    },
+    {
+      "t": "God of Music (음악의 신)",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 8,
+      "d": "경쾌, 희망찬"
+    },
+    {
+      "t": "S-Class (특)",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 9,
+      "d": "강렬, 힙합"
+    },
+    {
+      "t": "밤편지",
+      "a": "IU",
+      "g": "여성발라드",
+      "s": 9,
+      "d": "서정적,그리움"
+    },
+    {
+      "t": "Hype Boy",
+      "a": "NewJeans",
+      "g": "걸그룹",
+      "s": 10,
+      "d": "청량하고 트렌디한 감성"
+    },
+    {
+      "t": "Espresso",
+      "a": "Sabrina Carpenter",
+      "g": "최신곡",
+      "s": 10,
+      "d": "밝고 경쾌한"
+    }
+  ]
+}

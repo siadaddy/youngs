@@ -1,0 +1,446 @@
+{
+  "updated": "2026-04-12",
+  "songs": [
+    {
+      "t": "Butter",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 8,
+      "d": "업비트 팝"
+    },
+    {
+      "t": "Permission to Dance",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 7,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Dynamite",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 9,
+      "d": "파티 리듬"
+    },
+    {
+      "t": "Boy With Luv",
+      "a": "BTS",
+      "g": "K-pop",
+      "s": 6,
+      "d": "희망적인"
+    },
+    {
+      "t": "Lalisa",
+      "a": "LISA",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Money",
+      "a": "LISA",
+      "g": "K-pop",
+      "s": 7,
+      "d": "모던 힙합"
+    },
+    {
+      "t": "On The Ground",
+      "a": "ROSÉ",
+      "g": "K-pop",
+      "s": 6,
+      "d": "감성적인"
+    },
+    {
+      "t": "Gone",
+      "a": "ROSÉ",
+      "g": "K-pop",
+      "s": 5,
+      "d": "슬픈 이별"
+    },
+    {
+      "t": "Antifragile",
+      "a": "LE SSERAFIM",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강렬한 에너지"
+    },
+    {
+      "t": "No Celestial",
+      "a": "LE SSERAFIM",
+      "g": "K-pop",
+      "s": 6,
+      "d": "꿈 같은 분위기"
+    },
+    {
+      "t": "Sour Candy",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 7,
+      "d": "어둡고 섹시한"
+    },
+    {
+      "t": "How You Like That",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 6,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Kill This Love",
+      "a": "BLACKPINK",
+      "g": "K-pop",
+      "s": 5,
+      "d": "파워풀한"
+    },
+    {
+      "t": "Tomboy",
+      "a": "ITZY",
+      "g": "K-pop",
+      "s": 8,
+      "d": "강한 메시지"
+    },
+    {
+      "t": "Wannabe",
+      "a": "ITZY",
+      "g": "K-pop",
+      "s": 7,
+      "d": "자신감 넘치는"
+    },
+    {
+      "t": "Hot",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 6,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Left & Right",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 5,
+      "d": "즐거운 댄스"
+    },
+    {
+      "t": "Super",
+      "a": "SEVENTEEN",
+      "g": "K-pop",
+      "s": 4,
+      "d": "업리프팅한"
+    },
+    {
+      "t": "Sticker",
+      "a": "NCT 127",
+      "g": "K-pop",
+      "s": 7,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Kick It",
+      "a": "NCT 127",
+      "g": "K-pop",
+      "s": 6,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Punch",
+      "a": "NCT 127",
+      "g": "K-pop",
+      "s": 5,
+      "d": "파워풀한"
+    },
+    {
+      "t": "Oddinary",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 8,
+      "d": "어둡고 강렬한"
+    },
+    {
+      "t": "Thunderous",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 7,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Back Door",
+      "a": "Stray Kids",
+      "g": "K-pop",
+      "s": 6,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Fever",
+      "a": "ENHYPEN",
+      "g": "K-pop",
+      "s": 6,
+      "d": "강한 에너지"
+    },
+    {
+      "t": "Heeseung",
+      "a": "ENHYPEN",
+      "g": "K-pop",
+      "s": 5,
+      "d": "감성적인"
+    },
+    {
+      "t": "Tamed-Dashed",
+      "a": "ENHYPEN",
+      "g": "K-pop",
+      "s": 4,
+      "d": "드ramatic"
+    },
+    {
+      "t": "Weekend",
+      "a": "TAEYONG",
+      "g": "K-pop",
+      "s": 5,
+      "d": "상큼한"
+    },
+    {
+      "t": "Love Again",
+      "a": "HyunA",
+      "g": "K-pop",
+      "s": 4,
+      "d": "섹시한"
+    },
+    {
+      "t": "Dessert",
+      "a": "HyunA",
+      "g": "K-pop",
+      "s": 3,
+      "d": "달콤한"
+    },
+    {
+      "t": "Gashina",
+      "a": "SUNMI",
+      "g": "K-pop",
+      "s": 6,
+      "d": "강렬한"
+    },
+    {
+      "t": "Heroine",
+      "a": "SUNMI",
+      "g": "K-pop",
+      "s": 5,
+      "d": "드라마틱한"
+    },
+    {
+      "t": "Layin' It Down",
+      "a": "Hyukoh",
+      "g": "인디팝",
+      "s": 4,
+      "d": "느낌있는"
+    },
+    {
+      "t": "Die For You",
+      "a": "Hyukoh",
+      "g": "인디팝",
+      "s": 3,
+      "d": "감성적인"
+    },
+    {
+      "t": "Tomboy",
+      "a": "Hyukoh",
+      "g": "인디팝",
+      "s": 2,
+      "d": "강렬한"
+    },
+    {
+      "t": "Eyes, Nose, Lips",
+      "a": "TAEYANG",
+      "g": "K-pop",
+      "s": 5,
+      "d": "감성적인"
+    },
+    {
+      "t": "Ringa Linga",
+      "a": "TAEYANG",
+      "g": "K-pop",
+      "s": 4,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Darling",
+      "a": "TAEYANG",
+      "g": "K-pop",
+      "s": 3,
+      "d": "섹시한"
+    },
+    {
+      "t": "Breathe",
+      "a": "Lee Hyori",
+      "g": "인디팝",
+      "s": 4,
+      "d": "상큼한"
+    },
+    {
+      "t": "10 Minutes",
+      "a": "Lee Hyori",
+      "g": "인디팝",
+      "s": 3,
+      "d": "재밌는"
+    },
+    {
+      "t": "Chitty Chitty Bang Bang",
+      "a": "Lee Hyori",
+      "g": "인디팝",
+      "s": 2,
+      "d": "달콤한"
+    },
+    {
+      "t": "Levitating",
+      "a": "Dua Lipa",
+      "g": "팝",
+      "s": 9,
+      "d": "몽환적인"
+    },
+    {
+      "t": "Don't Start Now",
+      "a": "Dua Lipa",
+      "g": "팝",
+      "s": 8,
+      "d": "디스코 리듬"
+    },
+    {
+      "t": "New Rules",
+      "a": "Dua Lipa",
+      "g": "팝",
+      "s": 7,
+      "d": "강한 메시지"
+    },
+    {
+      "t": "Blinding Lights",
+      "a": "The Weeknd",
+      "g": "R&B",
+      "s": 9,
+      "d": "섹시한"
+    },
+    {
+      "t": "Save Your Tears",
+      "a": "The Weeknd",
+      "g": "R&B",
+      "s": 8,
+      "d": "어둡고 강렬한"
+    },
+    {
+      "t": "The Hills",
+      "a": "The Weeknd",
+      "g": "R&B",
+      "s": 7,
+      "d": "어둡고 섹시한"
+    },
+    {
+      "t": "As It Was",
+      "a": "Harry Styles",
+      "g": "팝",
+      "s": 9,
+      "d": "감성적인"
+    },
+    {
+      "t": "Watermelon Sugar",
+      "a": "Harry Styles",
+      "g": "팝",
+      "s": 8,
+      "d": "상큼한"
+    },
+    {
+      "t": "Adore You",
+      "a": "Harry Styles",
+      "g": "팝",
+      "s": 7,
+      "d": "한"
+    },
+    {
+      "t": "About Damn Time",
+      "a": "Lizzo",
+      "g": "팝",
+      "s": 9,
+      "d": "자신감 넘치는"
+    },
+    {
+      "t": "Good as Hell",
+      "a": "Lizzo",
+      "g": "팝",
+      "s": 8,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Juice",
+      "a": "Lizzo",
+      "g": "팝",
+      "s": 7,
+      "d": "상큼한"
+    },
+    {
+      "t": "Stay",
+      "a": "The Kid LAROI",
+      "g": "팝",
+      "s": 8,
+      "d": "감성적인"
+    },
+    {
+      "t": "Without You",
+      "a": "The Kid LAROI",
+      "g": "팝",
+      "s": 7,
+      "d": "슬픈 이별"
+    },
+    {
+      "t": "Go",
+      "a": "The Kid LAROI",
+      "g": "팝",
+      "s": 6,
+      "d": "강한 에너지"
+    },
+    {
+      "t": "Kiss Me More",
+      "a": "Doja Cat",
+      "g": "팝",
+      "s": 9,
+      "d": "섹시한"
+    },
+    {
+      "t": "Say So",
+      "a": "Doja Cat",
+      "g": "팝",
+      "s": 8,
+      "d": "상큼한"
+    },
+    {
+      "t": "Motive",
+      "a": "Doja Cat",
+      "g": "팝",
+      "s": 7,
+      "d": "섹시한"
+    },
+    {
+      "t": "Astronaut in the Ocean",
+      "a": "Masked Wolf",
+      "g": "힙합",
+      "s": 8,
+      "d": "강렬한 비트"
+    },
+    {
+      "t": "Drivers License",
+      "a": "Olivia Rodrigo",
+      "g": "팝",
+      "s": 9,
+      "d": "감성적인"
+    },
+    {
+      "t": "Good 4 U",
+      "a": "Olivia Rodrigo",
+      "g": "팝",
+      "s": 8,
+      "d": "에너지 넘치는"
+    },
+    {
+      "t": "Deja Vu",
+      "a": "Olivia Rodrigo",
+      "g": "팝",
+      "s": 7,
+      "d": "상큼한"
+    }
+  ]
+}
