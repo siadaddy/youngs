@@ -21,6 +21,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="docs/supabase-client.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <style>
     /* ─── 토큰 ─────────────────────────────────────── */
@@ -771,102 +773,10 @@
     }
 
 
-    /* ─── 코인 트레이더 ─────────────────────────── */
-    .coin-status-card {
-      background: var(--card);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--r-xl);
-      padding: 36px 40px;
-      margin-bottom: 28px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 28px;
-      align-items: center;
-    }
-    .coin-status-card.holding {
-      border-color: rgba(16,185,129,.3);
-      box-shadow: 0 0 40px rgba(16,185,129,.08);
-    }
-    .coin-status-card.watching {
-      border-color: rgba(100,116,139,.25);
-    }
-    .coin-ticker {
-      font-size: 1.8rem; font-weight: 900; letter-spacing: -.03em;
-    }
-    .coin-ticker-sub { font-size: .8rem; color: var(--muted2); margin-top: 4px; }
-    .coin-pnl {
-      font-size: 2.2rem; font-weight: 900; letter-spacing: -.03em; text-align: center;
-    }
-    .coin-pnl.positive { color: #f87171; }  /* 코인은 빨강=상승 */
-    .coin-pnl.negative { color: var(--green); }
-    .coin-pnl.neutral  { color: var(--muted2); }
-    .coin-meta { text-align: right; }
-    .coin-meta-row { font-size: .82rem; color: var(--muted2); margin-bottom: 5px; }
-    .coin-meta-row strong { color: var(--text); }
-    .coin-watching-msg {
-      grid-column: 1/-1; text-align: center;
-      padding: 20px 0;
-      color: var(--muted2); font-size: 1rem;
-    }
-
-    .trade-history { display: flex; flex-direction: column; gap: 12px; }
-    .trade-item {
-      display: grid; grid-template-columns: auto 1fr auto;
-      gap: 16px; align-items: center;
-      background: var(--glass); border: 1px solid var(--border);
-      border-radius: var(--r-md); padding: 16px 20px;
-    }
-    .trade-badge {
-      width: 44px; height: 44px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 900; flex-shrink: 0;
-    }
-    .trade-badge.buy  { background: rgba(16,185,129,.15); color: var(--green); }
-    .trade-badge.sell { background: rgba(248,113,113,.15); color: #f87171; }
-    .trade-badge.hold { background: rgba(100,116,139,.15); color: var(--muted2); }
-    .trade-info { min-width: 0; }
-    .trade-ticker { font-size: .95rem; font-weight: 700; }
-    .trade-time   { font-size: .75rem; color: var(--muted); margin-top: 2px; }
-    .trade-reason { font-size: .78rem; color: var(--muted2); margin-top: 4px;
-                    white-space: normal; overflow: visible; line-height: 1.5; }
-    .trade-pnl { text-align: right; flex-shrink: 0; }
-    .trade-pnl-val { font-size: 1.1rem; font-weight: 800; }
-    .trade-pnl-val.pos { color: #f87171; }
-    .trade-pnl-val.neg { color: var(--green); }
-    .trade-pnl-val.none{ color: var(--muted2); }
-    .trade-pnl-krw { font-size: .72rem; color: var(--muted); margin-top: 2px; }
-
-    .coin-stats-row {
-      display: grid; grid-template-columns: repeat(6,1fr); gap: 16px;
-      margin-bottom: 48px;
-    }
-    .coin-stat-card {
-      background: var(--glass); border: 1px solid var(--border);
-      border-radius: var(--r-md); padding: 18px 20px; text-align: center;
-    }
-    .coin-stat-val { font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; }
-    .coin-stat-lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; }
-    .dry-run-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3);
-      color: var(--gold); border-radius: 99px; padding: 3px 10px;
-      font-size: .68rem; font-weight: 700; letter-spacing: .05em;
-    }
-
     @media (max-width: 768px) {
-      .coin-status-card { grid-template-columns: 1fr 1fr; padding: 24px; }
-      .coin-meta { text-align: left; }
-      .coin-stats-row { grid-template-columns: repeat(3,1fr); }
-      /* [7] 768px: 이미 repeat(3,1fr) */
-      .trade-history { overflow-x: auto; }
       .section { padding: 52px 0; }
     }
     @media (max-width: 480px) {
-      .trade-item { padding: 12px 14px; gap: 10px; }
-      .trade-ticker { font-size: .85rem; }
-      .trade-reason { font-size: .74rem; }
-      .trade-pnl-val { font-size: .85rem; }
-      .coin-stats-row { grid-template-columns: repeat(2,1fr); }
       .tab-btn { padding: 8px 16px; font-size: .82rem; }
     }
 
@@ -2152,31 +2062,48 @@
     document.getElementById('news-raw-section').style.display = 'none';
   }
 
-  async function loadDate(date) {
-    currentDate = date;
+  async function loadNewsContent(dateStr) {
+    currentDate = dateStr;
     document.querySelectorAll('.date-chip').forEach(c => {
-      c.classList.toggle('active', c.dataset.date === date);
+      c.classList.toggle('active', c.dataset.date === dateStr);
     });
     document.getElementById('today-content').innerHTML =
       `<div class="loading"><div class="spinner"></div><p>불러오는 중...</p></div>`;
     document.getElementById('article-section').style.display = 'none';
 
-    const url = date === today
-      ? `content.json?t=${Date.now()}`
-      : `content/${date}.json?t=${Date.now()}`;
+    const today = new Date().toISOString().slice(0, 10);
 
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('not found');
-      const data = await res.json();
-      // 오늘 탭인데 콘텐츠가 아직 오늘 날짜가 아니거나 카드가 비어있으면 준비중 표시
-      if (date === today && (!data.captions || data.captions.length === 0 || data.date !== today)) {
-        showError();
-        return;
+    if (dateStr === today) {
+      // 오늘 날짜: Supabase 우선 시도
+      console.log('[Supabase] news_cards 조회 시도:', dateStr);
+      try {
+        const rows = await fetchNewsFromSupabase(dateStr);
+        if (rows && rows.length > 0) {
+          console.log('[Supabase] 성공 —', rows.length, '건');
+          renderContent(rows);
+          return;
+        }
+        console.log('[Supabase] rows 없음 — fallback');
+      } catch (e) {
+        console.warn('[Supabase] 실패, fallback 시도:', e.message);
       }
-      renderContent(data);
-    } catch {
-      showError();
+      // fallback: content.json
+      try {
+        const res = await fetch(`content.json?t=${Date.now()}`);
+        const data = await res.json();
+        renderContent(data);
+      } catch (e) {
+        showError();
+      }
+    } else {
+      // 과거 날짜: Supabase 스킵, JSON 직접 사용
+      try {
+        const res = await fetch(`content/${dateStr}.json`);
+        const data = await res.json();
+        renderContent(data);
+      } catch (e) {
+        showError();
+      }
     }
   }
 
@@ -2197,14 +2124,14 @@
         chip.className = 'date-chip' + (d === today ? ' today-chip' : '') + (d === currentDate ? ' active' : '');
         chip.textContent = formatDate(d);
         chip.dataset.date = d;
-        chip.onclick = () => loadDate(d);
+        chip.onclick = () => loadNewsContent(d);
         list.appendChild(chip);
       });
     } catch {
       document.getElementById('date-list').innerHTML =
         `<span class="date-chip active today-chip" data-date="${today}">${formatDate(today)}</span>`;
     }
-    loadDate(today);
+    loadNewsContent(today);
   }
 
   function switchTab(tab) {
@@ -2632,27 +2559,8 @@
       }).join('');
     }
 
-    // 로그 피드
-    const feedEl = document.getElementById('officeLogFeed');
-    const log = data.log || [];
-    if (feedEl) {
-      if (!log.length) {
-        feedEl.innerHTML = '<div class="office-mem-empty">아직 학습 기록이 없습니다</div>';
-        return;
-      }
-      const typeLabel = {win:'익절',loss:'손절',buy:'매수',exit:'강제청산',sell:'매도',
-                         plan:'기획',design:'디자인',music:'음악',trend:'트렌드',
-                         diary:'학습일기',grow:'성장'};
-      feedEl.innerHTML = log.map(e => {
-        const t = e.time||''; const disp = t.length>10 ? t.slice(5) : t;
-        const badge = e.type||'buy';
-        return `<div class="olog-row">
-          <span class="olog-time">${disp}</span>
-          <span class="olog-badge ${badge}">${e.icon||''} ${typeLabel[badge]||badge}</span>
-          <span class="olog-msg">${e.msg||''}</span>
-        </div>`;
-      }).join('');
-    }
+    // 로그 피드 — Supabase ai_diary 우선, fallback → data.log
+    _loadDiaryFromSupabase(data.log || []);
 
     // _LINES 실데이터로 보강
     _injectMemLines(data);
@@ -2762,6 +2670,84 @@
     const now = new Date();
     el.textContent = `📅 ${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}(${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   }, 60000);
+
+  // ── AI 학습 기록: Supabase ai_diary 조회 → employee_name 그룹핑 ──
+  const _LV_COLOR = { high: '#69f0ae', mid: '#ffd740', low: '#82b1ff' };
+
+  async function _loadDiaryFromSupabase(fallbackLog) {
+    const feedEl = document.getElementById('officeLogFeed');
+    if (!feedEl) return;
+
+    // 로딩 스피너
+    feedEl.innerHTML =
+      '<div style="padding:18px;text-align:center">' +
+      '<div class="spinner" style="width:22px;height:22px;margin:0 auto 8px"></div>' +
+      '<div style="font-size:.72rem;color:var(--muted2)">학습 기록 불러오는 중...</div></div>';
+
+    if (!window.supabaseClient) {
+      _renderLogFeed(fallbackLog);
+      return;
+    }
+
+    try {
+      const { data: rows, error } = await window.supabaseClient
+        .from('ai_diary')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error || !rows || rows.length === 0) throw new Error('no data');
+
+      // employee_name 기준 그룹핑 (삽입 순서 유지)
+      const groups = {};
+      rows.forEach(r => {
+        if (!groups[r.employee_name]) groups[r.employee_name] = [];
+        groups[r.employee_name].push(r);
+      });
+
+      feedEl.innerHTML = Object.entries(groups).map(([name, entries]) => `
+        <div style="padding:8px 0 4px;font-size:.68rem;font-weight:700;color:#00e5ff;
+                    border-bottom:1px solid rgba(0,229,255,.15);margin-bottom:4px">
+          ${name}
+          <span style="font-weight:400;color:var(--muted2)">${entries.length}건</span>
+        </div>
+        ${entries.map(e => {
+          const lvBadge = e.level
+            ? `<span class="olog-badge diary" style="color:${_LV_COLOR[e.level] || '#81d4fa'}">${e.level}</span>`
+            : `<span class="olog-badge diary">📖 일기</span>`;
+          return `<div class="olog-row">
+            <span class="olog-time">${e.date || ''}</span>
+            ${lvBadge}
+            <span class="olog-msg">${e.content || ''}</span>
+          </div>`;
+        }).join('')}
+      `).join('');
+
+    } catch (_) {
+      _renderLogFeed(fallbackLog);
+    }
+  }
+
+  function _renderLogFeed(log) {
+    const feedEl = document.getElementById('officeLogFeed');
+    if (!feedEl) return;
+    if (!log || !log.length) {
+      feedEl.innerHTML = '<div class="office-mem-empty">아직 학습 기록이 없습니다</div>';
+      return;
+    }
+    const typeLabel = { win:'익절', loss:'손절', buy:'매수', exit:'강제청산', sell:'매도',
+                        plan:'기획', design:'디자인', music:'음악', trend:'트렌드',
+                        diary:'학습일기', grow:'성장' };
+    feedEl.innerHTML = log.map(e => {
+      const t = e.time || ''; const disp = t.length > 10 ? t.slice(5) : t;
+      const badge = e.type || 'buy';
+      return `<div class="olog-row">
+        <span class="olog-time">${disp}</span>
+        <span class="olog-badge ${badge}">${e.icon || ''} ${typeLabel[badge] || badge}</span>
+        <span class="olog-msg">${e.msg || ''}</span>
+      </div>`;
+    }).join('');
+  }
 
   function initOffice() {
     if (_officeActive) return;
