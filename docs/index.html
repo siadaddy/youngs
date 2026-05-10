@@ -1274,14 +1274,6 @@
       <div class="stat-val">70곡+</div>
       <div class="stat-label">AI 음악 큐레이션</div>
     </div>
-    <div class="stat">
-      <a href="coin.html" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(16,185,129,.18) 0%,rgba(16,185,129,.08) 100%);border:1px solid rgba(16,185,129,.4);color:#34d399;padding:7px 18px;border-radius:99px;font-size:.88rem;font-weight:800;text-decoration:none;letter-spacing:-.01em;transition:all .2s;" onmouseover="this.style.borderColor='rgba(16,185,129,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(16,185,129,.4)';this.style.transform='none'">🪙 코인봇 보기 →</a>
-      <div class="stat-label" style="margin-top:6px;">실시간 매매 현황</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val stat-val-pnl" id="hero-pnl-val">-</div>
-      <div class="stat-label">AI코인봇 누적손익</div>
-    </div>
   </div>
 </div>
 
@@ -1352,7 +1344,6 @@
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
   <button class="tab-btn" onclick="switchTab('weekly')">📊 AI 주간 트렌드</button>
-  <a class="tab-btn" href="coin.html">🪙 코인봇</a>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
   <button class="tab-btn" onclick="switchTab('office')">🏢 AI 사무실</button>
   <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
@@ -1621,28 +1612,6 @@
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Gemini API</span>
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">Notion API</span>
           <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(28,105,212,.15);color:#60a5fa;font-weight:600;">launchd</span>
-        </div>
-      </a>
-
-      <!-- AI 코인 트레이더 -->
-      <a href="coin.html"
-         style="text-decoration:none;background:linear-gradient(135deg,rgba(16,185,129,.1) 0%,var(--card) 100%);border:1px solid rgba(16,185,129,.25);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
-         onmouseover="this.style.borderColor='rgba(16,185,129,.5)';this.style.transform='translateY(-3px)'"
-         onmouseout="this.style.borderColor='rgba(16,185,129,.25)';this.style.transform='none'">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="font-size:2rem">🪙</div>
-          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:700;">실전 운용</span>
-          <span style="font-size:.72rem;color:var(--muted2);">2026.03~</span>
-        </div>
-        <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 코인 자동매매 트레이더</div>
-        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
-          김분석(기술지표) → AI 어드바이저(BUY/SELL/HOLD) → 가드(30초 감시). 투자금 5만원 . 손절 -4% . 익절 +5% . 트레일링스탑 +2.5%/−2.0% . 6h 강제청산 . <strong style="color:#f87171;">📚 학습 블랙리스트</strong> 자동 차단
-        </div>
-        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Python</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Groq API</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">Bithumb API</span>
-          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.15);color:#34d399;font-weight:600;">pybithumb</span>
         </div>
       </a>
 
@@ -2279,19 +2248,6 @@
     }
   }
 
-  /* ─── 히어로 코인 누적손익 (미니 fetch) ─────────────── */
-  async function loadHeroCoinPnl() {
-    try {
-      const r = await fetch('trades.json?t=' + Date.now());
-      const d = await r.json();
-      const pnl = d.stats?.total_pnl_krw ?? 0;
-      const el = document.getElementById('hero-pnl-val');
-      if (!el) return;
-      el.textContent = (pnl >= 0 ? '+' : '') + pnl.toLocaleString() + '원';
-      el.style.color = pnl > 0 ? '#f87171' : pnl < 0 ? '#60a5fa' : 'var(--muted2)';
-    } catch {}
-  }
-
   // 테마 초기화
   (function() {
     if (localStorage.getItem('theme') === 'light') {
@@ -2316,8 +2272,6 @@
   }, 5 * 60 * 1000);
 
   init();
-  loadHeroCoinPnl();
-  setInterval(loadHeroCoinPnl, 5 * 60 * 1000);
 
   // ─── 히어로 별 canvas ─────────────────────────────────
   (function initHeroCanvas() {
