@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-11 02:00",
+  "updated": "2026-05-11 06:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 33,
-      "total": 91,
-      "wins": 30,
+      "win_rate": 34,
+      "total": 92,
+      "wins": 31,
       "losses": 61,
-      "holding": "📊 WLD 보유 중",
-      "hint": "⚠️ 최근 손절 3회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "holding": "📊 BTC 보유 중",
+      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "06:00",
+          "date": "2026-05-11",
+          "ticker": "BTC",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "05:16",
+          "date": "2026-05-11",
+          "ticker": "WLD",
+          "pnl": 0.48,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "02:00",
           "date": "2026-05-11",
@@ -36,25 +51,15 @@
           "ticker": "XRP",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "00:30",
-          "date": "2026-05-08",
-          "ticker": "ETH",
-          "pnl": -1.29,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "14:00",
-          "date": "2026-05-07",
-          "ticker": "ETH",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-11 02:00",
+      "last_active": "2026-05-11 06:00",
       "diary": [
+        {
+          "date": "2026-05-11 06:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-11 02:00",
           "lesson": "나, 데이터 믿어야지.",
@@ -64,15 +69,10 @@
           "date": "2026-05-08 02:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-07 14:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 144
+      "growth_score": 145
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(7회), '증시'(5회), '전기차'(5회) — 새 각도 필요",
@@ -177,6 +177,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-11 06:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 매수 — RSI 36.2·거래량+27%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-11 05:16",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "WLD 익절 +0.48% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-05-11 02:00",
       "agent": "AI어드바이저",
@@ -434,20 +448,6 @@
       "agent": "AI어드바이저",
       "icon": "🤖",
       "msg": "RSS3 손절 -4.29% → 학습 기록 🚫",
-      "type": "loss"
-    },
-    {
-      "time": "2026-05-05 14:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 매수 — RSI 28.1·ADX 23.8",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-05 09:42",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "AIOZ 손절 -4.55% → 학습 기록 🚫",
       "type": "loss"
     },
     {
