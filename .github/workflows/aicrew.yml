@@ -8,6 +8,8 @@ on:
 jobs:
   aicrew:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Seoul
 
     steps:
       - name: 저장소 체크아웃
