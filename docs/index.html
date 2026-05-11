@@ -1323,6 +1323,38 @@
       max-height: 320px; padding: 14px 18px 14px 15px;
       border-left-color: var(--bmw); border-top: 1px solid var(--border);
     }
+    /* ─── 이야깃거리 ────────────────────────────────── */
+    .talking-insight {
+      background: rgba(28,105,212,.08);
+      border-left: 4px solid var(--bmw);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      padding: 14px 18px;
+      font-size: .9rem; font-weight: 600; color: var(--text);
+      line-height: 1.65; margin-bottom: 28px;
+    }
+    .talking-card {
+      background: #111827;
+      border: 1px solid #1e2a3a;
+      border-radius: var(--r-md); padding: 22px;
+      display: flex; flex-direction: column; gap: 14px;
+      transition: transform .22s, box-shadow .22s;
+    }
+    .talking-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+    .talking-topic {
+      display: inline-block; font-size: .7rem; font-weight: 800;
+      letter-spacing: .06em; text-transform: uppercase;
+      background: var(--bmw); color: #fff;
+      padding: 4px 12px; border-radius: 99px;
+      align-self: flex-start;
+    }
+    .talking-context { font-size: .85rem; color: var(--muted2); line-height: 1.75; }
+    .talking-divider { border: none; border-top: 1px solid #1e2a3a; margin: 0; }
+    .talking-question {
+      font-size: .84rem; font-style: italic; color: #a78bfa; line-height: 1.7;
+    }
+    .talking-impact {
+      font-size: .82rem; color: #10b981; line-height: 1.65;
+    }
   </style>
 </head>
 <body class="wrap">
@@ -1445,6 +1477,17 @@
     </div>
     <div id="trends-top3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;"></div>
     <div id="trends-summaries"></div>
+  </div>
+</section>
+
+<!-- 🗣️ 오늘의 이야깃거리 -->
+<section class="section" id="talking-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">🗣️ Today's Talking Points</div>
+    <div class="section-title">오늘의 이야깃거리</div>
+    <p class="section-sub">동료/임원과 나눌 비즈니스 대화 소재</p>
+    <div id="talking-insight"></div>
+    <div id="talking-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;"></div>
   </div>
 </section>
 
@@ -2132,6 +2175,7 @@
     document.getElementById('today-sub').textContent = '아직 업데이트 전입니다.';
     document.getElementById('article-section').style.display = 'none';
     document.getElementById('news-raw-section').style.display = 'none';
+    document.getElementById('talking-section').style.display = 'none';
   }
 
   async function loadTrendsSection(dateStr) {
@@ -2195,9 +2239,41 @@
     }
   }
 
+  async function loadTalkingSection(dateStr) {
+    const section = document.getElementById('talking-section');
+    section.style.display = 'none';
+    try {
+      const t = await fetchTrendsFromSupabase(dateStr);
+      let tp = t.talking_points;
+      if (!tp) { section.style.display = 'none'; return; }
+      if (typeof tp === 'string') tp = JSON.parse(tp);
+
+      const points = tp.talking_points || [];
+      const insight = tp.one_line_insight || '';
+      if (!points.length && !insight) { section.style.display = 'none'; return; }
+
+      document.getElementById('talking-insight').innerHTML = insight
+        ? `<div class="talking-insight">💡 ${insight}</div>` : '';
+
+      document.getElementById('talking-cards').innerHTML = points.map(p => `
+        <div class="talking-card">
+          <span class="talking-topic">${p.topic || ''}</span>
+          <div class="talking-context">${p.context || ''}</div>
+          <hr class="talking-divider">
+          <div class="talking-question">💬 ${p.question || ''}</div>
+          <div class="talking-impact">📊 ${p.business_impact || ''}</div>
+        </div>`).join('');
+
+      section.style.display = 'block';
+    } catch (_) {
+      section.style.display = 'none';
+    }
+  }
+
   async function loadNewsContent(dateStr) {
     currentDate = dateStr;
     loadTrendsSection(dateStr);
+    loadTalkingSection(dateStr);
     document.querySelectorAll('.date-chip').forEach(c => {
       c.classList.toggle('active', c.dataset.date === dateStr);
     });
