@@ -1,8 +1,8 @@
 """
 📊 주간 트렌드 브리핑 에이전트 (매주 월요일 실행)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-지난 7일 docs/content/YYYY-MM-DD.json 분석
-→ 분야별 이슈 빈도 집계 + Gemini 인사이트
+Supabase news_trends 테이블에서 지난 7일 데이터 분석
+→ TOP3 등장 횟수 기반 분야 집계 + Gemini 인사이트
 → docs/weekly_trend.json 저장 → GitHub Pages 자동 반영
 """
 
@@ -11,7 +11,6 @@ from datetime import date, timedelta
 from utils.gemini_client import ask_ai
 from utils.agent_memory import remember, get_hints, add_diary
 
-DOCS_CONTENT_DIR  = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "content")
 WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "weekly_trend.json")
 
 SYSTEM = """당신은 30년 경력의 수석 뉴스 큐레이터입니다.
@@ -29,61 +28,70 @@ _CAT_ORDER = [
 ]
 
 
-def _load_recent_days(n: int = 7) -> list[dict]:
-    """최근 n일치 content JSON 로드. 파일 없는 날은 스킵."""
-    today = date.today()
-    result = []
-    for i in range(1, n + 1):  # 어제부터 n일 전까지
-        d = today - timedelta(days=i)
-        path = os.path.join(DOCS_CONTENT_DIR, f"{d.strftime('%Y-%m-%d')}.json")
-        if os.path.exists(path):
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    result.append(json.load(f))
-            except Exception:
-                pass
-    return result
+def _load_from_supabase(n: int = 7) -> list[dict]:
+    """Supabase news_trends 테이블에서 최근 n일치 로드"""
+    try:
+        from supabase import create_client
+        url = os.getenv('SUPABASE_URL', '')
+        key = os.getenv('SUPABASE_KEY', '')
+        if not url or not key:
+            raise ValueError("SUPABASE_URL/KEY 환경변수 없음")
+        client = create_client(url, key)
+        today = date.today()
+        dates = [(today - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, n + 1)]
+        res = client.table('news_trends').select('date,top3,category_summaries').in_('date', dates).execute()
+        rows = res.data or []
+        print(f"  📡 Supabase에서 {len(rows)}일치 데이터 로드")
+        return rows
+    except Exception as e:
+        print(f"  ⚠️  Supabase 로드 실패: {e}")
+        return []
 
 
 def _aggregate(days_data: list[dict]) -> dict:
-    """7일치 데이터 집계: 카테고리 건수, 헤드라인, 블로그 주제"""
+    """7일치 Supabase 데이터 집계: TOP3 카테고리 등장 횟수 기반"""
     cat_counts: dict[str, int] = {}
     all_headlines: list[str] = []
-    blog_topics: list[str] = []
-    news_samples: dict[str, list[str]] = {}  # 카테고리별 기사 제목 샘플
+    news_samples: dict[str, list[str]] = {}
 
     for day in days_data:
-        # 카드 헤드라인
-        for c in day.get("captions", []):
-            h = c.get("headline", "").strip()
-            if h:
-                all_headlines.append(h)
+        # TOP3 카테고리 등장 횟수 집계 + 헤드라인 수집
+        top3 = day.get('top3') or []
+        if isinstance(top3, str):
+            top3 = json.loads(top3)
+        for item in top3:
+            cat = item.get('category', '').strip()
+            title = item.get('title', '').strip()
+            if cat and "하이라이트" not in cat and "BMW" not in cat:
+                cat_counts[cat] = cat_counts.get(cat, 0) + 1
+            if title:
+                all_headlines.append(title)
 
-        # 블로그 주제
-        bt = day.get("blog_title", "").strip()
-        if bt:
-            blog_topics.append(bt)
-
-        # 카테고리별 기사 수
-        for cat, articles in day.get("news", {}).items():
+        # category_summaries → news_samples (AI 분석용 컨텍스트)
+        summaries = day.get('category_summaries') or {}
+        if isinstance(summaries, str):
+            summaries = json.loads(summaries)
+        for cat, summary in summaries.items():
             if "하이라이트" in cat or "BMW" in cat:
                 continue
-            cat_counts[cat] = cat_counts.get(cat, 0) + len(articles)
             if cat not in news_samples:
                 news_samples[cat] = []
-            for a in articles[:2]:
-                title = a.get("title", "").strip()
-                if title and title not in news_samples[cat]:
-                    news_samples[cat].append(title)
+            if summary and summary not in news_samples[cat]:
+                news_samples[cat].append(str(summary)[:120])
 
-    # 카테고리 정렬 (정해진 순서 + 나머지)
-    ordered = []
-    for cat in _CAT_ORDER:
-        if cat in cat_counts:
-            ordered.append({"name": cat, "count": cat_counts[cat]})
-    for cat, cnt in sorted(cat_counts.items(), key=lambda x: -x[1]):
-        if not any(o["name"] == cat for o in ordered):
-            ordered.append({"name": cat, "count": cnt})
+    # 카테고리 정렬 — _CAT_ORDER 키워드 부분 일치 우선, 나머지는 등장 횟수 순
+    def _order_key(cat_name: str) -> int:
+        for i, order_cat in enumerate(_CAT_ORDER):
+            # 이모지 제거 후 핵심 키워드로 비교
+            core = order_cat.split()[-1] if " " in order_cat else order_cat
+            if core in cat_name or cat_name in order_cat:
+                return i
+        return len(_CAT_ORDER)
+
+    ordered = sorted(
+        [{"name": cat, "count": cnt} for cat, cnt in cat_counts.items()],
+        key=lambda x: (_order_key(x["name"]), -x["count"])
+    )
 
     # 최대값 기준 백분율 계산 (바 차트용)
     max_cnt = max((o["count"] for o in ordered), default=1)
@@ -93,7 +101,6 @@ def _aggregate(days_data: list[dict]) -> dict:
     return {
         "category_counts": ordered,
         "all_headlines":   all_headlines,
-        "blog_topics":     blog_topics,
         "news_samples":    news_samples,
     }
 
@@ -102,30 +109,26 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
     """Gemini로 인사이트 분석 → JSON 반환"""
     weekly_hints = get_hints("AI주간트렌드")
     cat_summary = "\n".join(
-        f"  {o['name']}: {o['count']}건"
+        f"  {o['name']}: {o['count']}회 TOP3 등장"
         for o in agg["category_counts"]
     )
     headlines_text = "\n".join(f"  - {h}" for h in agg["all_headlines"][:35])
-    blogs_text     = "\n".join(f"  - {b}" for b in agg["blog_topics"][:7])
 
-    # 카테고리별 기사 샘플
+    # 카테고리별 요약 샘플
     samples_text = ""
-    for cat, titles in agg["news_samples"].items():
-        if titles:
-            samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {t}" for t in titles[:4])
+    for cat, summaries in agg["news_samples"].items():
+        if summaries:
+            samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {s}" for s in summaries[:3])
 
     prompt = f"""아래는 지난 {days_analyzed}일간 AI 뉴스레터의 뉴스 데이터입니다.{weekly_hints}
 
-=== 분야별 기사 건수 ===
+=== 분야별 TOP3 등장 횟수 (7일 누적, 최대 21회) ===
 {cat_summary}
 
-=== 이번 주 카드뉴스 헤드라인 (AI 선정) ===
+=== 이번 주 TOP3 헤드라인 ===
 {headlines_text}
 
-=== 이번 주 블로그 주제 ===
-{blogs_text}
-
-=== 분야별 기사 샘플 ===
+=== 분야별 핵심 요약 ===
 {samples_text}
 
 위 데이터를 분석해서 아래 JSON 형식으로 출력하세요.
@@ -133,7 +136,7 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 
 {{
   "week_summary": "이번 주 전체를 한 문장으로 — 핵심 키워드 2~3개 포함 (30자 내외)",
-  "hot_category": "가장 뉴스가 많았던 분야명 (위 분야명 그대로)",
+  "hot_category": "TOP3에 가장 많이 등장한 분야명 (위 분야명 그대로)",
   "sections": [
     {{
       "category": "분야명 (위 분야명 그대로)",
@@ -148,19 +151,26 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 }}
 
 규칙:
-- sections는 기사 건수 상위 4개 분야만 (0건 분야 제외)
+- sections는 TOP3 등장 횟수 상위 4개 분야만 (0회 분야 제외)
 - weekly_insight는 반드시 200자 이상
 - 한국어·영어·이모지만. 한자·일본어 등 절대 금지
 - JSON만 출력. 코드블록(```) 없이."""
 
+    import re as _re
     for attempt in range(1, 4):
         raw = ask_ai(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=3000)
         raw = raw.replace("```json", "").replace("```", "").strip()
+        # JSON 문자열 값 안의 리터럴 줄바꿈을 공백으로 치환 후 파싱 시도
+        cleaned = raw.replace('\n', ' ').replace('\r', ' ')
+        try:
+            return json.loads(cleaned)
+        except Exception:
+            pass
+        # 원본 그대로 파싱 시도
         try:
             return json.loads(raw)
         except Exception:
-            import re
-            m = re.search(r'\{.*\}', raw, re.DOTALL)
+            m = _re.search(r'\{.*\}', cleaned, _re.DOTALL)
             if m:
                 try:
                     return json.loads(m.group())
@@ -175,9 +185,9 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 def run():
     print("📊 주간 트렌드 브리핑 에이전트 실행 중...")
 
-    days_data = _load_recent_days(7)
+    days_data = _load_from_supabase(7)
     if not days_data:
-        print("  ⚠️  분석 가능한 콘텐츠 데이터 없음 — 스킵")
+        print("  ⚠️  Supabase에서 데이터를 가져올 수 없음 — 스킵")
         return
 
     print(f"  📂 {len(days_data)}일치 데이터 집계 중...")

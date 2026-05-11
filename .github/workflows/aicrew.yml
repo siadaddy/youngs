@@ -25,7 +25,7 @@ jobs:
 
       - name: 패키지 설치
         run: |
-          pip install requests pillow python-dotenv notion-client
+          pip install requests pillow python-dotenv notion-client supabase
 
       - name: git 사용자 설정
         run: |
@@ -45,6 +45,8 @@ jobs:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           STABLE_HORDE_KEY: ${{ secrets.STABLE_HORDE_KEY }}
           NEWSLETTER_DIR: ${{ github.workspace }}/newsletter
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
         run: |
           cd ai-crew
