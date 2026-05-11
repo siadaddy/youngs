@@ -6,11 +6,11 @@
   <title>시아 아빠의 Claude 실험실</title>
 
   <!-- OG / SNS 공유 메타태그 -->
-  <meta name="description" content="AI가 매일 뉴스를 분석해 카드뉴스.블로그를 자동 생성하고, 코인봇이 24시간 자동매매하는 AI 자동화 허브입니다." />
+  <meta name="description" content="코딩 몰랐던 아빠가 Claude와 함께 만든 AI 자동화 실험실 — 매일 뉴스를 분석해 카드뉴스·트렌드 브리핑·블로그를 자동 생성합니다." />
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://siadaddy.github.io/youngs/" />
   <meta property="og:title"       content="시아 아빠의 Claude 실험실" />
-  <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 3월 말 Claude를 만나 한 달 만에 만든 것들 — AI 뉴스레터 . 코인 자동매매 . 3D 뮤직 갤러리" />
+  <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 Claude를 만나 만든 것들 — AI 뉴스레터 · AI 트렌드 브리핑 · 3D 뮤직 갤러리" />
   <meta property="og:image"       content="https://siadaddy.github.io/youngs/og-image-v2.png" />
   <meta property="og:locale"      content="ko_KR" />
   <meta name="twitter:card"        content="summary_large_image" />
@@ -1316,6 +1316,10 @@
       <div class="stat-val">70곡+</div>
       <div class="stat-label">AI 음악 큐레이션</div>
     </div>
+    <div class="stat" style="cursor:pointer" onclick="switchTab('news');setTimeout(()=>document.getElementById('trends-section').scrollIntoView({behavior:'smooth'}),120)">
+      <div class="stat-val" style="font-size:1.4rem">📊</div>
+      <div class="stat-label">AI 트렌드 브리핑</div>
+    </div>
   </div>
 </div>
 
@@ -1364,11 +1368,9 @@
       {
         "symbols": [
           {"proName": "TVC:USOIL",           "title": "WTI 원유"},
-          {"proName": "BINANCE:ETHUSDT",    "title": "이더리움"},
           {"proName": "FOREXCOM:SPXUSD",    "title": "S&P 500"},
           {"proName": "FOREXCOM:NSXUSD",    "title": "나스닥 100"},
           {"proName": "FX_IDC:USDKRW",      "title": "달러/원"},
-          {"proName": "BINANCE:BTCUSDT",    "title": "비트코인"},
           {"proName": "FOREXCOM:XAUUSD",    "title": "금 Gold"}
         ],
         "showSymbolLogo": true,
@@ -1385,6 +1387,7 @@
 <!-- ─── 탭 바 ──────────────────────────────────────────── -->
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
+  <button class="tab-btn" onclick="switchTab('news');setTimeout(()=>document.getElementById('trends-section').scrollIntoView({behavior:'smooth'}),120)">🔥 트렌드 브리핑</button>
   <button class="tab-btn" onclick="switchTab('weekly')">📊 AI 주간 트렌드</button>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
   <button class="tab-btn" onclick="switchTab('office')">🏢 AI 사무실</button>
@@ -1409,7 +1412,7 @@
 <section class="section" id="trends-section" style="display:none">
   <div class="container">
     <div class="section-eyebrow">🔥 Today's Trend Briefing</div>
-    <div class="section-title">오늘의 트렌드 브리핑</div>
+    <div class="section-title">🔥 오늘의 AI 트렌드 브리핑</div>
     <p class="section-sub">AI가 선정한 오늘 주목할 TOP 3 뉴스와 카테고리별 핵심 요약</p>
     <div id="trends-top3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;"></div>
     <div id="trends-summaries"></div>
