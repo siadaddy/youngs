@@ -180,9 +180,9 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 def run():
     print("📊 주간 트렌드 브리핑 에이전트 실행 중...")
 
-    days_data = _load_recent_days(7)
+    days_data = _load_from_supabase(7)
     if not days_data:
-        print("  ⚠️  분석 가능한 콘텐츠 데이터 없음 — 스킵")
+        print("  ⚠️  Supabase에서 데이터를 가져올 수 없음 — 스킵")
         return
 
     print(f"  📂 {len(days_data)}일치 데이터 집계 중...")
