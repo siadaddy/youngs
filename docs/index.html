@@ -1323,6 +1323,13 @@
       max-height: 320px; padding: 14px 18px 14px 15px;
       border-left-color: var(--bmw); border-top: 1px solid var(--border);
     }
+    /* ─── 키워드 Top 10 ─────────────────────────────── */
+    .keyword-chart-wrap {
+      background: #111827;
+      border: 1px solid #1e2a3a;
+      border-radius: var(--r-md);
+      padding: 20px 24px;
+    }
     /* ─── 이야깃거리 ────────────────────────────────── */
     .talking-insight {
       background: rgba(28,105,212,.08);
@@ -1487,6 +1494,18 @@
     <div class="section-title">오늘의 이야깃거리</div>
     <div id="talking-insight"></div>
     <div id="talking-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;"></div>
+  </div>
+</section>
+
+<!-- 📊 키워드 Top 10 -->
+<section class="section" id="keyword-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">📊 Keyword Analysis</div>
+    <div class="section-title">오늘의 키워드 Top 10</div>
+    <p class="section-sub">뉴스 제목·요약에서 추출한 핵심 단어</p>
+    <div class="keyword-chart-wrap">
+      <canvas id="keyword-chart" height="320"></canvas>
+    </div>
   </div>
 </section>
 
@@ -2269,10 +2288,108 @@
     }
   }
 
+  function extractKeywords(cards) {
+    const stopwords = new Set([
+      '이','그','저','것','수','등','및','를','을','가','은','는','에','의',
+      '로','으로','에서','하다','있다','있는','없다','됩니다','합니다','있습니다',
+      '했다','한다','된다','위해','통해','대한','관련','지난','오늘','내년',
+      '올해','지속','계속','현재','예정','관계','해당','속보','포토','뉴스',
+      '기자','이번','최근','전년','대비','따르면','밝혔다','전했다','말했다',
+      '위한','하는','하고','에도','에서','부터','까지','으로','라고','에게',
+      '이라','들이','들을','들은','들도','부터','에는','으로서',
+      '같은','오전','오후','국내','사상','이후','위한','때문',
+      '이상','이하','아직','이미','모든','다시','함께',
+      '가장','매우','더욱','계속','바로','단순','전체','일부'
+    ]);
+    const wordCount = {};
+    cards.forEach(card => {
+      const text = (card.title || '') + ' ' + (card.summary || '');
+      const words = text.match(/[가-힣]{2,}/g) || [];
+      words.forEach(word => {
+        if (!stopwords.has(word) && word.length >= 2)
+          wordCount[word] = (wordCount[word] || 0) + 1;
+      });
+    });
+    return Object.entries(wordCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([word, count]) => ({ word, count }));
+  }
+
+  let _kwChart = null;
+  function renderKeywordChart(cards) {
+    const section = document.getElementById('keyword-section');
+    const keywords = extractKeywords(cards);
+    if (!keywords.length) { section.style.display = 'none'; return; }
+
+    section.style.display = 'block';
+    const labels = keywords.map(k => k.word);
+    const counts = keywords.map(k => k.count);
+    const colors = labels.map((_, i) => {
+      if (i === 0) return '#1c69d4';
+      if (i <= 2)  return '#a78bfa';
+      return '#1e3a5f';
+    });
+
+    const ctx = document.getElementById('keyword-chart').getContext('2d');
+    if (_kwChart) { _kwChart.destroy(); _kwChart = null; }
+    _kwChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: counts,
+          backgroundColor: colors,
+          borderRadius: 6,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        animation: { duration: 800 },
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+          datalabels: { display: false },
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,.06)' },
+            ticks: { color: '#64748b', font: { size: 11 } },
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: '#cbd5e1', font: { size: 13, weight: '600' } },
+          }
+        },
+        layout: { padding: { right: 32 } },
+      },
+      plugins: [{
+        id: 'barLabel',
+        afterDatasetsDraw(chart) {
+          const { ctx, data } = chart;
+          ctx.save();
+          chart.getDatasetMeta(0).data.forEach((bar, i) => {
+            const val = data.datasets[0].data[i];
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '600 11px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(val + '회', bar.x + 6, bar.y);
+          });
+          ctx.restore();
+        }
+      }]
+    });
+  }
+
   async function loadNewsContent(dateStr) {
     currentDate = dateStr;
     loadTrendsSection(dateStr);
     loadTalkingSection(dateStr);
+    document.getElementById('keyword-section').style.display = 'none';
     document.querySelectorAll('.date-chip').forEach(c => {
       c.classList.toggle('active', c.dataset.date === dateStr);
     });
@@ -2303,17 +2420,23 @@
             news:     supaData.news,
             captions: base.captions || [],
           });
+          renderKeywordChart(rows);
           return;
         }
         console.log('[Supabase] rows 없음 — fallback');
       } catch (e) {
         console.warn('[Supabase] 실패, fallback 시도:', e.message);
       }
-      // fallback: content.json
+      // fallback: content.json — 날짜가 오늘과 다르면 준비중 표시
       try {
         const res = await fetch(`content.json?t=${Date.now()}`);
         const data = await res.json();
-        renderContent(data);
+        if (data.date && data.date !== today) {
+          showError();
+        } else {
+          renderContent(data);
+          renderKeywordChart(Object.values(data.news || {}).flat());
+        }
       } catch (e) {
         showError();
       }
@@ -2323,6 +2446,7 @@
         const res = await fetch(`content/${dateStr}.json`);
         const data = await res.json();
         renderContent(data);
+        renderKeywordChart(Object.values(data.news || {}).flat());
       } catch (e) {
         showError();
       }
