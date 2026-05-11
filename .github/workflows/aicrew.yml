@@ -1,0 +1,49 @@
+name: AI 크리에이터
+
+on:
+  schedule:
+    - cron: '20 22 * * *'  # 매일 07:20 KST (UTC+9 → UTC 22:20) — 뉴스 수집(21:40) 완료 후 40분 여유
+  workflow_dispatch:        # 수동 실행 버튼
+
+jobs:
+  aicrew:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: |
+          pip install requests pillow python-dotenv notion-client
+
+      - name: git 사용자 설정
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: AI 크리에이터 실행
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
+          GROQ_API_KEY_3: ${{ secrets.GROQ_API_KEY_3 }}
+          GROQ_API_KEY_4: ${{ secrets.GROQ_API_KEY_4 }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_NEWSLETTER_PARENT_ID: ${{ secrets.NOTION_NEWSLETTER_PARENT_ID }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          STABLE_HORDE_KEY: ${{ secrets.STABLE_HORDE_KEY }}
+          NEWSLETTER_DIR: ${{ github.workspace }}/newsletter
+
+        run: |
+          cd ai-crew
+          python3 main.py

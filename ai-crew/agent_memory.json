@@ -1,0 +1,1952 @@
+{
+  "박기획": {
+    "topic_selection": [
+      {
+        "date": "2026-05-10",
+        "headlines": [
+          "현대차, 서 하이브리드 생산 전환 🚗",
+          "이란, 공격 위협…중동 긴장 고조 ⚔️",
+          "외국인 통합계좌, 증시 새판 짜나? 📈",
+          "데이터센터 전력 직구, 가능할까? ⚡️",
+          "WHO 사무총장, 크루즈선 도착 🚢🚨"
+        ],
+        "blog_title": "유럽의 전기차 올인 전략, 40조원 증발 후 디젤 부활? 📉"
+      },
+      {
+        "date": "2026-05-09",
+        "headlines": [
+          "🇨🇳, 텃밭 브라질 9조 투자!",
+          "🚢 한미 조선 협력 MOU 체결!",
+          "📈 SK스퀘어, 황제주 등극!",
+          "🇰🇵🇷🇺🇨🇳 북중러 접경 관광 가시화!",
+          "🚀 증시, 기술주 강세로 상승!"
+        ],
+        "blog_title": "코스피 7000 시대, 마냥 웃을 수만은 없는 이유"
+      },
+      {
+        "date": "2026-05-08",
+        "headlines": [
+          "테슬라 21만대 리콜, 후방카메라 결함! 🚨",
+          "트럼프 '글로벌 관세' 위법 판결! ⚖️",
+          "해외 IB, 성장률 '긍정적' 전망! 📈",
+          "AI발 메모리 가격 인상, 스마트폰 위기? 📱",
+          "삼성전자, 인재 유출 심각성 경고! 🧑‍💻"
+        ],
+        "blog_title": "양도세 중과 부활 D-1: 전세가 폭등, 임대차 시장 비상구는 어디로?"
+      },
+      {
+        "date": "2026-05-07",
+        "headlines": [
+          "중국 전기차, 안방까지 침투",
+          "폴스타, 프리미엄 전기차 고객 충성도 1위",
+          "미군, 이란항 입항 중인 이란의 빈 유조선 파괴",
+          "SK하이닉스와 삼성전자 성과급 논란의 본질",
+          "트럼프, 유럽차 관세 재인상"
+        ],
+        "blog_title": "삼성전자와 SK하이닉스의 반도체 호황, 성과급 논란"
+      },
+      {
+        "date": "2026-05-06",
+        "headlines": [
+          "자율주행차 규제 완화",
+          "쿠팡Inc 적자 전환",
+          "이란 대통령의 국제법 범위 내 대화 의지",
+          "국제유가 하락",
+          "서울시, 소상공인 해외 진출 지원"
+        ],
+        "blog_title": "중국 양회와 철강산업 구조 변화"
+      },
+      {
+        "date": "2026-05-05",
+        "headlines": [
+          "자율주행 로보택시, 완벽 방어운전 선보여 🤖",
+          "UAE, 이란 미사일·드론 19대 요격 성공 🛡️",
+          "국제유가 WTI 4.40%↑, 배럴당 $106 돌파 📈",
+          "AI 데이터센터, 전력 수요 폭증… 기업 북미 공략 ⚡",
+          "코스피 7천피 눈앞! 하이닉스 시총 1천조 돌파 🚀"
+        ],
+        "blog_title": "엔비디아 'AI 제국'의 아킬레스건? 아시아 공급망 90% 의존의 위험성"
+      },
+      {
+        "date": "2026-05-04",
+        "headlines": [
+          "아파트 전기차 충전 갈등 심화 ⚡️",
+          "트럼프, 호르무즈 해협 선박 구출 작전 개시 🚢",
+          "AI 챗봇의 위험한 부작용, 망상 유발 ⚠️",
+          "자녀 증여 트렌드, 삼성전자 주식으로! 📈",
+          "우주 산업, 새로운 투자 테마로 급부상 🚀"
+        ],
+        "blog_title": "중동발 에너지 쇼크와 중국 BYD의 신에너지 산업 약진"
+      },
+      {
+        "date": "2026-05-03",
+        "headlines": [
+          "혼다, 한국 시장 철수? 🚗💨",
+          "트럼프, EU 자동차 관세 25% 인상 예고! 💸",
+          "실리콘밸리 떠나는 AI 인재들 🇨🇳➡️🇺🇸",
+          "미래 예측, 돈 걸면 더 정확하다? 🔮💰",
+          "쿠바, 군사적 압박에 맹비난! 💥"
+        ],
+        "blog_title": "미국이 유네스코를 떠난 자리를 중국이 채우고 있다: 무엇이 문제인가?"
+      },
+      {
+        "date": "2026-05-02",
+        "headlines": [
+          "픽업트럭 시장, 독점 시대 끝! 🚚",
+          "폴리티코 창업자의 미디어 실험 📰",
+          "자율주행차도 교통 위반 단속 🚨",
+          "LG엔솔, BMW 10조원 수주 가시화 🔋",
+          "채권혼합형 ETF, 투자 대안될까? 📈"
+        ],
+        "blog_title": "효성중공업, 미국 AI 데이터센터 전력망 시장 선점 전략은? 💡"
+      },
+      {
+        "date": "2026-05-01",
+        "headlines": [
+          "LG엔솔, BMW에 10조 배터리 공급 계약 성사! 🔋",
+          " 1분기 GDP 2.0% 회복! 📈",
+          "AI, 일자리 분해 시대 개막! 🤖",
+          "국제유가 하락세 전환! 📉",
+          "1분기 국세 15조원 더 걷혔다! 💰"
+        ],
+        "blog_title": "미중 정상회담: 관세와 중동, 격화되는 패권 경쟁의 서막?"
+      },
+      {
+        "date": "2026-04-30",
+        "headlines": [
+          "GM, 소형 SUV 허브로 우뚝 🚀",
+          "국제유가, 6.95% 급등 마감 📈",
+          "삼성, 4나노 수율 80% 돌파! 🚀",
+          "AI 반도체 덕에 신흥국 증시 '활활' 🔥",
+          "올해도 무더위? 폭염 대비 비상! ☀️"
+        ],
+        "blog_title": "중국, 휴머노이드 로봇 시장 90% 장악…미국과의 기술 격차 벌어지나?"
+      },
+      {
+        "date": "2026-04-29",
+        "headlines": [
+          "혼다, 한국 시장 철수? 🚗💨",
+          "🚨총리, 의회 수사 면제!",
+          "화물연대-BGF로지스, 잠정 합의! ✅",
+          "오픈AI 쇼크에 반도체주 급락! 📉",
+          "📈 증시 호황, IPO는 '찬바람'?"
+        ],
+        "blog_title": "호르무즈 해협 위기 속, 중국의 '에너지 굴기'가 던지는 메시지 🇨🇳"
+      },
+      {
+        "date": "2026-04-28",
+        "headlines": [
+          "⚡️중국 전기차, 기술 패권 노린다!",
+          "엔비디아 🚀 또 사상 최고가!",
+          "뉴욕증시 사상 최고지만…유가 발목 잡나? 📉",
+          "📈 ETF 자금 폭발! 한국 증시 괜찮을까?",
+          "🤖 AI 도입, 노조와 합의해야!"
+        ],
+        "blog_title": "이란, 호르무즈 봉쇄 '3단계 카드' 꺼내며 트럼프와 대치 심화 ⚔️"
+      },
+      {
+        "date": "2026-04-27",
+        "headlines": [
+          " 전기차 공세, 안방 위협! 🚗",
+          "이란, 미국에 '레드 라인' 경고! 🚨",
+          "최태원 AI 베팅, HBM 기술상으로 결실! 🏆",
+          "··유럽, 금리 결정 주간! 💰",
+          "삼성SDI, 벤츠 배터리 공급 확정! 🔋"
+        ],
+        "blog_title": "정부의 'AI 암묵지' 수집, 노동자 데이터 주권 침해 논란의 배경과 의미"
+      },
+      {
+        "date": "2026-04-26",
+        "headlines": [
+          " 전기차, 글로벌 확장 가속화! 🚀",
+          "코스피, 이번 주 변동성 시험대! 📉",
+          "SK하이닉스, AI로 '이익 폭발'! 🚀",
+          "말로 코딩? 퀀텀 AI 에이전트 등장! 🗣️",
+          "병원 개인정보 유출, 4년 새 4배 급증! 😱"
+        ],
+        "blog_title": "AI 거장 허사비스와 이세돌, 10년 만의 재회: 미래 AI는 어디로?"
+      },
+      {
+        "date": "2026-04-25",
+        "headlines": [
+          "혼다, 한국 시장 철수! 🚗💨",
+          "한국 경제, 1분기 1.7% 깜짝 성장! 📈",
+          "뉴욕증시, 사상 최고치 경신! 🚀",
+          "AI가 모기 잡는다? 🦟🤖",
+          "국제유가 하락세! 📉"
+        ],
+        "blog_title": "코스피 6500 시대, 반도체만 웃는 '불균형 성장'의 그늘 😥"
+      }
+    ],
+    "diary": [
+      {
+        "date": "2026-05-10",
+        "lesson": "기술, 경제, 안보가 일상까지 정말 한몸처럼 엮여 있네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-09",
+        "lesson": "기술이 경제, 안보, 일상 경계 없이 흐르는 근본 동력이었네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-08",
+        "lesson": "기술 결함이 경제와 일상을 흔드는 게 진짜 예측불허네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-07",
+        "lesson": "기술이 경제, 안보, 일상 경계 없이 흔드는 걸 실감해.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-06",
+        "lesson": "예측불허라더니, 기술이 일상-경제-안보 다 흔드네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-05",
+        "lesson": "일상-안보-경제, 기술로 엮인 세상은 예측불허다.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-04",
+        "lesson": "기술 파급력이 일상부터 국제 문제까지, 참 예측불허야.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-03",
+        "lesson": "글로벌 기술경제 흐름이 정책, 인재 이동으로 더 역동적이네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-02",
+        "lesson": "기술이 시장과 사회에 미치는 파급력을 새삼 느꼈네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-05-01",
+        "lesson": "역시 글로벌-국내 기술경제를 아우르니 핵심 흐름이 확 보이네!",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-04-30",
+        "lesson": "글로벌 기술 경제 아우르니 역시 핵심이 콕 집혀.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-04-29",
+        "lesson": "글로벌 국내 아우르니 역시 핵심 5개 콕 집히네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-04-28",
+        "lesson": "글로벌 기술, 경제 흐름을 짚으니 시야가 확 트이네.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-04-27",
+        "lesson": "지역 넘어 글로벌, 국내를 아우르니 시야가 정말 넓어졌어.",
+        "trigger": "daily_plan"
+      },
+      {
+        "date": "2026-04-26",
+        "lesson": "지역 넘어 글로벌, 국내 이슈를 아우르는 시각이 중요하네.",
+        "trigger": "daily_plan"
+      }
+    ],
+    "growth_score": 15,
+    "persona": "뉴스레터 기획자였던 난, 이젠 기술이 일상부터 안보까지 흔드는 세상에 눈떴어.",
+    "persona_updated_at": "2026-05-07"
+  },
+  "최디자": {
+    "image_result": [
+      {
+        "date": "2026-05-10",
+        "headline": "WHO 사무총장, 크루즈선 도착 🚢🚨",
+        "prompt_keywords": [
+          "modern",
+          "cruise",
+          "ship",
+          "sailing",
+          "bright",
+          "calm"
+        ],
+        "success": false
+      },
+      {
+        "date": "2026-05-10",
+        "headline": "데이터센터 전력 직구, 가능할까? ⚡️",
+        "prompt_keywords": [
+          "clean",
+          "futuristic",
+          "data",
+          "center",
+          "with",
+          "glowing"
+        ],
+        "success": false
+      },
+      {
+        "date": "2026-05-10",
+        "headline": "외국인 통합계좌, 증시 새판 짜나? 📈",
+        "prompt_keywords": [
+          "Dynamic",
+          "upward",
+          "financial",
+          "charts",
+          "merging",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-10",
+        "headline": "이란, 공격 위협…중동 긴장 고조 ⚔️",
+        "prompt_keywords": [
+          "vibrant",
+          "abstract",
+          "world",
+          "with",
+          "subtle",
+          "interconnected"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-10",
+        "headline": "현대차, 서 하이브리드 생산 전환 🚗",
+        "prompt_keywords": [
+          "modern",
+          "dynamic",
+          "hybrid",
+          "bright",
+          "open",
+          "road"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-09",
+        "headline": "🚀 증시, 기술주 강세로 상승!",
+        "prompt_keywords": [
+          "sleek",
+          "futuristic",
+          "rocket",
+          "launching",
+          "upwards",
+          "from"
+        ],
+        "success": false
+      },
+      {
+        "date": "2026-05-09",
+        "headline": "🇰🇵🇷🇺🇨🇳 북중러 접경 관광 가시화!",
+        "prompt_keywords": [
+          "vibrant",
+          "abstract",
+          "showing",
+          "bright",
+          "interconnected",
+          "travel"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-09",
+        "headline": "📈 SK스퀘어, 황제주 등극!",
+        "prompt_keywords": [
+          "vibrant",
+          "upwardtrending",
+          "stock",
+          "market",
+          "graph",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-09",
+        "headline": "🚢 한미 조선 협력 MOU 체결!",
+        "prompt_keywords": [
+          "futuristic",
+          "sleek",
+          "cargo",
+          "ship",
+          "sailing",
+          "calm"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-09",
+        "headline": "🇨🇳, 텃밭 브라질 9조 투자!",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "electric",
+          "speeding",
+          "bright",
+          "open"
+        ],
+        "success": false
+      },
+      {
+        "date": "2026-05-08",
+        "headline": "삼성전자, 인재 유출 심각성 경고! 🧑‍💻",
+        "prompt_keywords": [
+          "Abstract",
+          "glowing",
+          "human",
+          "silhouettes",
+          "gracefully",
+          "moving"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-08",
+        "headline": "AI발 메모리 가격 인상, 스마트폰 위기? 📱",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "smartphone",
+          "screen",
+          "displaying",
+          "glowing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-08",
+        "headline": "해외 IB, 성장률 '긍정적' 전망! 📈",
+        "prompt_keywords": [
+          "vibrant",
+          "upwardtrending",
+          "line",
+          "graph",
+          "with",
+          "glowing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-08",
+        "headline": "트럼프 '글로벌 관세' 위법 판결! ⚖️",
+        "prompt_keywords": [
+          "stylized",
+          "glowing",
+          "balance",
+          "scale",
+          "with",
+          "side"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-08",
+        "headline": "테슬라 21만대 리콜, 후방카메라 결함! 🚨",
+        "prompt_keywords": [
+          "sleek",
+          "bright",
+          "white",
+          "Tesla",
+          "Model",
+          "from"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-07",
+        "headline": "트럼프, 유럽차 관세 재인상",
+        "prompt_keywords": [
+          "sleek",
+          "stylized",
+          "cars",
+          "representing",
+          "Europe",
+          "facing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-07",
+        "headline": "SK하이닉스와 삼성전자 성과급 논란의 본질",
+        "prompt_keywords": [
+          "highly",
+          "stylized",
+          "glowing",
+          "semiconductor",
+          "chip",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-07",
+        "headline": "미군, 이란항 입항 중인 이란의 빈 유조선 파괴",
+        "prompt_keywords": [
+          "abstract",
+          "glowing",
+          "geometric",
+          "shapes",
+          "representing",
+          "Iran"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-07",
+        "headline": "폴스타, 프리미엄 전기차 고객 충성도 1위",
+        "prompt_keywords": [
+          "gleaming",
+          "minimalist",
+          "Polestar",
+          "electric",
+          "vehicle",
+          "depicted"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-07",
+        "headline": "중국 전기차, 안방까지 침투",
+        "prompt_keywords": [
+          "sleek",
+          "stylized",
+          "Chinese",
+          "electric",
+          "rendered",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-06",
+        "headline": "서울시, 소상공인 해외 진출 지원",
+        "prompt_keywords": [
+          "Colorful",
+          "miniature",
+          "city",
+          "with",
+          "tiny",
+          "airplanes"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-06",
+        "headline": "국제유가 하락",
+        "prompt_keywords": [
+          "Bright",
+          "droplet",
+          "with",
+          "downward",
+          "trending",
+          "graph"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-06",
+        "headline": "이란 대통령의 국제법 범위 내 대화 의지",
+        "prompt_keywords": [
+          "Stylized",
+          "globe",
+          "with",
+          "speech",
+          "bubbles",
+          "subtle"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-06",
+        "headline": "쿠팡Inc 적자 전환",
+        "prompt_keywords": [
+          "Glowing",
+          "cityscape",
+          "with",
+          "upward",
+          "trending",
+          "graph"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-06",
+        "headline": "자율주행차 규제 완화",
+        "prompt_keywords": [
+          "Sleek",
+          "selfdriving",
+          "open",
+          "road",
+          "with",
+          "sunrise"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-05",
+        "headline": "코스피 7천피 눈앞! 하이닉스 시총 1천조 돌파 🚀",
+        "prompt_keywords": [
+          "sleek",
+          "vibrant",
+          "rocket",
+          "launching",
+          "upwards",
+          "from"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-05",
+        "headline": "AI 데이터센터, 전력 수요 폭증… 기업 북미 공략 ⚡",
+        "prompt_keywords": [
+          "Glowing",
+          "interconnected",
+          "circuits",
+          "power",
+          "lines",
+          "bright"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-05",
+        "headline": "국제유가 WTI 4.40%↑, 배럴당 $106 돌파 📈",
+        "prompt_keywords": [
+          "vibrant",
+          "upwardtrending",
+          "stock",
+          "market",
+          "graph",
+          "bright"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-05",
+        "headline": "UAE, 이란 미사일·드론 19대 요격 성공 🛡️",
+        "prompt_keywords": [
+          "glowing",
+          "abstract",
+          "digital",
+          "shield",
+          "composed",
+          "interconnected"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-05",
+        "headline": "자율주행 로보택시, 완벽 방어운전 선보여 🤖",
+        "prompt_keywords": [
+          "sleek",
+          "bright",
+          "white",
+          "autonomous",
+          "robotaxi",
+          "clean"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-04",
+        "headline": "우주 산업, 새로운 투자 테마로 급부상 🚀",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "rocket",
+          "launching",
+          "into",
+          "bright"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-04",
+        "headline": "자녀 증여 트렌드, 삼성전자 주식으로! 📈",
+        "prompt_keywords": [
+          "vibrant",
+          "upwardtrending",
+          "stock",
+          "market",
+          "graph",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-04",
+        "headline": "AI 챗봇의 위험한 부작용, 망상 유발 ⚠️",
+        "prompt_keywords": [
+          "clean",
+          "futuristic",
+          "chatbot",
+          "interface",
+          "with",
+          "subtly"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-04",
+        "headline": "트럼프, 호르무즈 해협 선박 구출 작전 개시 🚢",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "tanker",
+          "sailing",
+          "through",
+          "bright"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-04",
+        "headline": "아파트 전기차 충전 갈등 심화 ⚡️",
+        "prompt_keywords": [
+          "bright",
+          "modern",
+          "electric",
+          "charging",
+          "station",
+          "clean"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-03",
+        "headline": "쿠바, 군사적 압박에 맹비난! 💥",
+        "prompt_keywords": [
+          "stylized",
+          "brightly",
+          "colored",
+          "geometric",
+          "shapes",
+          "abstract"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-03",
+        "headline": "미래 예측, 돈 걸면 더 정확하다? 🔮💰",
+        "prompt_keywords": [
+          "glowing",
+          "abstract",
+          "sphere",
+          "crystal",
+          "ball",
+          "subtly"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-03",
+        "headline": "실리콘밸리 떠나는 AI 인재들 🇨🇳➡️🇺🇸",
+        "prompt_keywords": [
+          "clean",
+          "futuristic",
+          "digital",
+          "interface",
+          "with",
+          "glowing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-03",
+        "headline": "트럼프, EU 자동차 관세 25% 인상 예고! 💸",
+        "prompt_keywords": [
+          "stylized",
+          "European",
+          "luxury",
+          "silhouette",
+          "overlaid",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-03",
+        "headline": "혼다, 한국 시장 철수? 🚗💨",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "subtly",
+          "fading",
+          "moving",
+          "away"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-02",
+        "headline": "채권혼합형 ETF, 투자 대안될까? 📈",
+        "prompt_keywords": [
+          "balanced",
+          "visual",
+          "composition",
+          "upwardtrending",
+          "stock",
+          "market"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-02",
+        "headline": "LG엔솔, BMW 10조원 수주 가시화 🔋",
+        "prompt_keywords": [
+          "Stylized",
+          "glowing",
+          "electric",
+          "vehicle",
+          "battery",
+          "cells"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-02",
+        "headline": "자율주행차도 교통 위반 단속 🚨",
+        "prompt_keywords": [
+          "futuristic",
+          "autonomous",
+          "bright",
+          "clean",
+          "road",
+          "Above"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-02",
+        "headline": "폴리티코 창업자의 미디어 실험 📰",
+        "prompt_keywords": [
+          "Conceptual",
+          "illustration",
+          "digital",
+          "news",
+          "flow",
+          "Glowing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-02",
+        "headline": "픽업트럭 시장, 독점 시대 끝! 🚚",
+        "prompt_keywords": [
+          "Sleek",
+          "modern",
+          "pickup",
+          "trucks",
+          "various",
+          "bright"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-01",
+        "headline": "1분기 국세 15조원 더 걷혔다! 💰",
+        "prompt_keywords": [
+          "stack",
+          "glowing",
+          "golden",
+          "coins",
+          "with",
+          "prominent"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-01",
+        "headline": "국제유가 하락세 전환! 📉",
+        "prompt_keywords": [
+          "stylized",
+          "clean",
+          "barrel",
+          "fuel",
+          "pump",
+          "icon"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-01",
+        "headline": "AI, 일자리 분해 시대 개막! 🤖",
+        "prompt_keywords": [
+          "Clean",
+          "futuristic",
+          "interface",
+          "with",
+          "glowing",
+          "circuits"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-01",
+        "headline": " 1분기 GDP 2.0% 회복! 📈",
+        "prompt_keywords": [
+          "dynamic",
+          "upwardtrending",
+          "glow",
+          "graph",
+          "integrated",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-01",
+        "headline": "LG엔솔, BMW에 10조 배터리 공급 계약 성사! 🔋",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "electric",
+          "with",
+          "glowing",
+          "transparent"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-30",
+        "headline": "올해도 무더위? 폭염 대비 비상! ☀️",
+        "prompt_keywords": [
+          "vibrant",
+          "sunny",
+          "landscape",
+          "with",
+          "stylized",
+          "glowing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-30",
+        "headline": "AI 반도체 덕에 신흥국 증시 '활활' 🔥",
+        "prompt_keywords": [
+          "stylized",
+          "glowing",
+          "globe",
+          "with",
+          "rising",
+          "stock"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-30",
+        "headline": "삼성, 4나노 수율 80% 돌파! 🚀",
+        "prompt_keywords": [
+          "futuristic",
+          "glowing",
+          "circuit",
+          "board",
+          "with",
+          "bold"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-30",
+        "headline": "국제유가, 6.95% 급등 마감 📈",
+        "prompt_keywords": [
+          "glowing",
+          "upwardtrending",
+          "graph",
+          "clean",
+          "white",
+          "background"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-30",
+        "headline": "GM, 소형 SUV 허브로 우뚝 🚀",
+        "prompt_keywords": [
+          "Sleek",
+          "SUVs",
+          "bright",
+          "open",
+          "road",
+          "with"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-29",
+        "headline": "📈 증시 호황, IPO는 '찬바람'?",
+        "prompt_keywords": [
+          "split",
+          "image",
+          "side",
+          "shows",
+          "vibrant",
+          "upwardtrending"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-29",
+        "headline": "오픈AI 쇼크에 반도체주 급락! 📉",
+        "prompt_keywords": [
+          "clean",
+          "futuristic",
+          "interface",
+          "with",
+          "glowing",
+          "circuits"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-29",
+        "headline": "화물연대-BGF로지스, 잠정 합의! ✅",
+        "prompt_keywords": [
+          "Bright",
+          "modern",
+          "delivery",
+          "trucks",
+          "moving",
+          "smoothly"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-29",
+        "headline": "🚨총리, 의회 수사 면제!",
+        "prompt_keywords": [
+          "bright",
+          "abstract",
+          "illustration",
+          "transparent",
+          "glowing",
+          "parliamentary"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-04-29",
+        "headline": "혼다, 한국 시장 철수? 🚗💨",
+        "prompt_keywords": [
+          "sleek",
+          "modern",
+          "electric",
+          "driving",
+          "brightly",
+          "clean"
+        ],
+        "success": true
+      }
+    ],
+    "diary": [
+      {
+        "date": "2026-05-09",
+        "lesson": "역시 간단한 게 진리! 쓸데없는 수식어는 독이야.",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-08",
+        "lesson": "오늘도 5/5 성공! 역시 간단한 프롬프트가 최고야!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-07",
+        "lesson": "역시 간단한 프롬프트가 Pollinations.ai에선 진리더라!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-06",
+        "lesson": "간단한 프롬프트가 최고야!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-05",
+        "lesson": "역시 간단한 프롬프트가 Pollination에 제일 잘 통해!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-04",
+        "lesson": "간단한 프롬프트 덕분에 5/5장 성공! 역시 내 촉이 맞았어.",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-03",
+        "lesson": "오늘도 간단한 프롬프트로 Pollinations.ai 5장 다 성공, 역시 최고!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-02",
+        "lesson": "간단한 프롬프트가 Pollinations.ai에선 역시 진리네, 오늘 또 확인했어.",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-05-01",
+        "lesson": "간단한 프롬프트로 Pollinations.ai에서 완벽한 결과!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-04-30",
+        "lesson": "오늘도 Pollinations.ai랑 잘 맞았다.",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-04-29",
+        "lesson": "역시 Pollinations.ai는 간단한 프롬프트가 최고야!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-04-28",
+        "lesson": "Pollinations.ai는 역시 간단한 프롬프트에 강한 것 같아. 오늘 완전 성공!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-04-27",
+        "lesson": "역시 Pollinations.ai는 간단한 프롬프트에 제일 잘 반응하네!",
+        "trigger": "daily_design"
+      },
+      {
+        "date": "2026-04-26",
+        "lesson": "간단한 프롬프트에도 Pollinations.ai가 잘 반응해서 기뻤어.",
+        "trigger": "daily_design"
+      }
+    ],
+    "growth_score": 14,
+    "persona": "나는 AI 이미지 디자이너 최디자야. Pollinations.ai는 간단한 프롬프트가 진리라는 걸 계속 증명하고 있지!",
+    "persona_updated_at": "2026-05-07"
+  },
+  "한뮤직": {
+    "music_selection": [
+      {
+        "date": "2026-05-06",
+        "songs": [
+          {
+            "t": "Stronger",
+            "a": "Kanye West"
+          },
+          {
+            "t": "Go Hard",
+            "a": "DJ Khaled"
+          },
+          {
+            "t": "A Milli",
+            "a": "Lil Wayne"
+          },
+          {
+            "t": "Lollipop",
+            "a": "Lil Wayne"
+          },
+          {
+            "t": "What Them Girls Like",
+            "a": "Ludacris"
+          },
+          {
+            "t": "How Low",
+            "a": "Ludacris"
+          },
+          {
+            "t": "I Get Money",
+            "a": "50 Cent"
+          },
+          {
+            "t": "Amusement Park",
+            "a": "50 Cent"
+          },
+          {
+            "t": "Number One",
+            "a": "Nelly"
+          },
+          {
+            "t": "Fair Trade",
+            "a": "Drake"
+          },
+          {
+            "t": "Rich Flex",
+            "a": "Drake"
+          },
+          {
+            "t": "N95",
+            "a": "Kendrick Lamar"
+          },
+          {
+            "t": "Die Hard",
+            "a": "Kendrick Lamar"
+          },
+          {
+            "t": "Escape Plan",
+            "a": "Travis Scott"
+          },
+          {
+            "t": "Mafia",
+            "a": "Travis Scott"
+          },
+          {
+            "t": "Cooped Up",
+            "a": "Post Malone"
+          },
+          {
+            "t": "My Life",
+            "a": "J. Cole"
+          },
+          {
+            "t": "A Lot",
+            "a": "21 Savage"
+          },
+          {
+            "t": "Bank Account",
+            "a": "21 Savage"
+          },
+          {
+            "t": "Unstoppable",
+            "a": "Sia"
+          },
+          {
+            "t": "High Hopes",
+            "a": "Panic! At The Disco"
+          },
+          {
+            "t": "Centuries",
+            "a": "Fall Out Boy"
+          },
+          {
+            "t": "Brave",
+            "a": "Sara Bareilles"
+          },
+          {
+            "t": "Unleashed",
+            "a": "Architects"
+          },
+          {
+            "t": "Bullet For My Valentine - Tears Don't Fall",
+            "a": "Bullet For My Valentine"
+          },
+          {
+            "t": "Pompeii",
+            "a": "Bastille"
+          },
+          {
+            "t": "First Day of My Life",
+            "a": "Bright Eyes"
+          },
+          {
+            "t": "Perm",
+            "a": "BTS"
+          },
+          {
+            "t": "Power",
+            "a": "EXO"
+          },
+          {
+            "t": "Superhuman",
+            "a": "NCT 127"
+          },
+          {
+            "t": "Kick It",
+            "a": "NCT 127"
+          },
+          {
+            "t": "Fireworks (I'm The One)",
+            "a": "ATEEZ"
+          },
+          {
+            "t": "Wave",
+            "a": "ATEEZ"
+          },
+          {
+            "t": "Left & Right",
+            "a": "SEVENTEEN"
+          },
+          {
+            "t": "Rock with you",
+            "a": "SEVENTEEN"
+          },
+          {
+            "t": "When We Were Young",
+            "a": "Adele"
+          },
+          {
+            "t": "Without Me",
+            "a": "Halsey"
+          },
+          {
+            "t": "Eastside",
+            "a": "Halsey"
+          },
+          {
+            "t": "Chasing Pavements",
+            "a": "Adele"
+          },
+          {
+            "t": "Lovely",
+            "a": "Billie Eilish"
+          },
+          {
+            "t": "Good Days",
+            "a": "SZA"
+          },
+          {
+            "t": "Love Galore",
+            "a": "SZA"
+          },
+          {
+            "t": "Love Dive",
+            "a": "IVE"
+          },
+          {
+            "t": "Violet",
+            "a": "SZA"
+          },
+          {
+            "t": "Kill Bill",
+            "a": "SZA"
+          },
+          {
+            "t": "Anti-Hero",
+            "a": "Taylor Swift"
+          },
+          {
+            "t": "Cruel Summer",
+            "a": "Taylor Swift"
+          },
+          {
+            "t": "Save Your Tears",
+            "a": "The Weeknd"
+          },
+          {
+            "t": "Boy's a Liar Pt.2",
+            "a": "PinkPantheress"
+          },
+          {
+            "t": "First Class",
+            "a": "Jack Harlow"
+          },
+          {
+            "t": "Escapism",
+            "a": "Raye"
+          },
+          {
+            "t": "Peppers",
+            "a": "Ariana Grande"
+          },
+          {
+            "t": "Levels",
+            "a": "Avicii"
+          },
+          {
+            "t": "Animals",
+            "a": "Martin Garrix"
+          },
+          {
+            "t": "Titanium",
+            "a": "David Guetta"
+          },
+          {
+            "t": "Red Lights",
+            "a": "Tiësto"
+          },
+          {
+            "t": "Clarity",
+            "a": "Zedd"
+          },
+          {
+            "t": "Alone",
+            "a": "Marshmello"
+          },
+          {
+            "t": "Sweet Nothing",
+            "a": "Calvin Harris"
+          },
+          {
+            "t": "Wake Me Up",
+            "a": "Avicii"
+          },
+          {
+            "t": "Scary Monsters and Nice Sprites",
+            "a": "Skrillex"
+          },
+          {
+            "t": "Con Calma",
+            "a": "Daddy Yankee, Snow"
+          },
+          {
+            "t": "Taki Taki",
+            "a": "Ozuna, Selena Gomez, Cardi B"
+          },
+          {
+            "t": "Mamiii",
+            "a": "Karol G, Becky G"
+          },
+          {
+            "t": "Ay Di Os Dejo",
+            "a": "Bad Bunny"
+          },
+          {
+            "t": "Que Pretendes",
+            "a": "J Balvin, Bad Bunny"
+          },
+          {
+            "t": "Uptown Girl",
+            "a": "Bruno Mars"
+          },
+          {
+            "t": "Roar",
+            "a": "Katy Perry"
+          },
+          {
+            "t": "Hello",
+            "a": "Adele"
+          },
+          {
+            "t": "Work",
+            "a": "Rihanna"
+          },
+          {
+            "t": "One More Night",
+            "a": "Maroon 5"
+          },
+          {
+            "t": "Maps",
+            "a": "Maroon 5"
+          },
+          {
+            "t": "Love On Top",
+            "a": "Beyonce"
+          },
+          {
+            "t": "Any Song",
+            "a": "ZICO"
+          },
+          {
+            "t": "바보처럼",
+            "a": "기리보이"
+          },
+          {
+            "t": "London",
+            "a": "pH-1"
+          },
+          {
+            "t": "Martian",
+            "a": "DPR Live"
+          },
+          {
+            "t": "All I Wanna Do",
+            "a": "박재범"
+          },
+          {
+            "t": "Movie Shoot",
+            "a": "Loco"
+          },
+          {
+            "t": "한숨",
+            "a": "이하이"
+          },
+          {
+            "t": "Half Moon",
+            "a": "DEAN"
+          },
+          {
+            "t": "Eternity",
+            "a": "오혁"
+          },
+          {
+            "t": "Good Day",
+            "a": "ZICO"
+          },
+          {
+            "t": "Mr. November",
+            "a": "The National"
+          },
+          {
+            "t": "Lonely Boy",
+            "a": "The Black Keys"
+          },
+          {
+            "t": "미안해",
+            "a": "백지영"
+          },
+          {
+            "t": "이젠 잊기로 해요",
+            "a": "이선희"
+          },
+          {
+            "t": "가을 타향",
+            "a": "이문세"
+          },
+          {
+            "t": "들리나요",
+            "a": "이선희"
+          },
+          {
+            "t": "내가 너의 곁으로",
+            "a": "박정현"
+          },
+          {
+            "t": "오래전 그날",
+            "a": "멜로망스"
+          },
+          {
+            "t": "소녀",
+            "a": "윤하"
+          },
+          {
+            "t": "그대 없이 어둠이",
+            "a": "소향"
+          },
+          {
+            "t": "가슴 시린 이야기",
+            "a": "임재범"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-29",
+        "songs": [
+          {
+            "t": "Jesus Walks",
+            "a": "Kanye West"
+          },
+          {
+            "t": "Jimmy Cooks",
+            "a": "Drake"
+          },
+          {
+            "t": "Don't Stop Me Now",
+            "a": "Queen"
+          },
+          {
+            "t": "MANIAC",
+            "a": "Stray Kids"
+          },
+          {
+            "t": "Love poem",
+            "a": "아이유"
+          },
+          {
+            "t": "Pink Venom",
+            "a": "BLACKPINK"
+          },
+          {
+            "t": "Girls",
+            "a": "aespa"
+          },
+          {
+            "t": "Ditto",
+            "a": "NewJeans"
+          },
+          {
+            "t": "I Am",
+            "a": "IVE"
+          },
+          {
+            "t": "Scientist",
+            "a": "TWICE"
+          },
+          {
+            "t": "Eyes",
+            "a": "LE SSERAFIM"
+          },
+          {
+            "t": "Voltage",
+            "a": "ITZY"
+          },
+          {
+            "t": "Egotistic",
+            "a": "MAMAMOO"
+          },
+          {
+            "t": "ANTIFRAGILE",
+            "a": "LE SSERAFIM"
+          },
+          {
+            "t": "Shut Down",
+            "a": "BLACKPINK"
+          },
+          {
+            "t": "Please Please Please",
+            "a": "Sabrina Carpenter"
+          },
+          {
+            "t": "Summer",
+            "a": "Calvin Harris"
+          },
+          {
+            "t": "Dakiti",
+            "a": "Bad Bunny, Rosalia"
+          },
+          {
+            "t": "Mi Gente",
+            "a": "J Balvin, Willy William"
+          },
+          {
+            "t": "Hawái",
+            "a": "Maluma"
+          },
+          {
+            "t": "Chantaje",
+            "a": "Shakira, Maluma"
+          },
+          {
+            "t": "Gasolina",
+            "a": "Daddy Yankee"
+          },
+          {
+            "t": "Taki Taki",
+            "a": "Ozuna, DJ Snake, Cardi B"
+          },
+          {
+            "t": "Casi Casi",
+            "a": "Karol G"
+          },
+          {
+            "t": "Vaina Loca",
+            "a": "Ozuna"
+          },
+          {
+            "t": "Ay Vamos",
+            "a": "J Balvin"
+          },
+          {
+            "t": "Obsesión",
+            "a": "Bad Bunny, Jhay Cortez"
+          },
+          {
+            "t": "Shape of You",
+            "a": "Ed Sheeran"
+          },
+          {
+            "t": "Uptown Funk",
+            "a": "Bruno Mars"
+          },
+          {
+            "t": "Firework",
+            "a": "Katy Perry"
+          },
+          {
+            "t": "Poker Face",
+            "a": "Lady Gaga"
+          },
+          {
+            "t": "Rolling in the Deep",
+            "a": "Adele"
+          },
+          {
+            "t": "Sorry",
+            "a": "Justin Bieber"
+          },
+          {
+            "t": "We Found Love",
+            "a": "Rihanna"
+          },
+          {
+            "t": "Moves Like Jagger",
+            "a": "Maroon 5"
+          },
+          {
+            "t": "Sexy and I Know It",
+            "a": "LMFAO"
+          },
+          {
+            "t": "Call Me Maybe",
+            "a": "Carly Rae Jepsen"
+          },
+          {
+            "t": "아무노래",
+            "a": "지코"
+          },
+          {
+            "t": "Viva La Vida",
+            "a": "Coldplay"
+          },
+          {
+            "t": "Radioactive",
+            "a": "Imagine Dragons"
+          },
+          {
+            "t": "Do I Wanna Know?",
+            "a": "Arctic Monkeys"
+          },
+          {
+            "t": "Girls",
+            "a": "The 1975"
+          },
+          {
+            "t": "Wake Up",
+            "a": "Arcade Fire"
+          },
+          {
+            "t": "Paranoid Android",
+            "a": "Radiohead"
+          },
+          {
+            "t": "Ain't It Fun",
+            "a": "Paramore"
+          },
+          {
+            "t": "Best Day of My Life",
+            "a": "American Authors"
+          },
+          {
+            "t": "On Top of the World",
+            "a": "Imagine Dragons"
+          },
+          {
+            "t": "Mr. Brightside",
+            "a": "The Killers"
+          },
+          {
+            "t": "기억 더하기",
+            "a": "윤하"
+          },
+          {
+            "t": "그대 떠난 후",
+            "a": "이선희"
+          },
+          {
+            "t": "내게 남은 사랑을 드릴께",
+            "a": "소향"
+          },
+          {
+            "t": "사랑 안해",
+            "a": "백지영"
+          },
+          {
+            "t": "아프다",
+            "a": "거미"
+          },
+          {
+            "t": "그대 돌아오면",
+            "a": "지아"
+          },
+          {
+            "t": "사랑 Two",
+            "a": "멜로망스"
+          },
+          {
+            "t": "이별",
+            "a": "임재범"
+          },
+          {
+            "t": "사랑이란",
+            "a": "이문세"
+          },
+          {
+            "t": "보고 싶은 날엔",
+            "a": "박정현"
+          }
+        ]
+      },
+      {
+        "date": "2026-04-25",
+        "songs": [
+          {
+            "t": "Lose Yourself",
+            "a": "Eminem"
+          },
+          {
+            "t": "The Real Slim Shady",
+            "a": "Eminem"
+          },
+          {
+            "t": "99 Problems",
+            "a": "Jay-Z"
+          },
+          {
+            "t": "Dirt Off Your Shoulder",
+            "a": "Jay-Z"
+          },
+          {
+            "t": "Rich Flex",
+            "a": "Drake & 21 Savage"
+          },
+          {
+            "t": "Blinding Lights",
+            "a": "The Weeknd"
+          },
+          {
+            "t": "Seven (feat. Latto)",
+            "a": "Jungkook"
+          },
+          {
+            "t": "Standing Next to You",
+            "a": "Jungkook"
+          },
+          {
+            "t": "Super (손오공)",
+            "a": "SEVENTEEN"
+          },
+          {
+            "t": "God of Music (음악의 신)",
+            "a": "SEVENTEEN"
+          },
+          {
+            "t": "S-Class (특)",
+            "a": "Stray Kids"
+          },
+          {
+            "t": "밤편지",
+            "a": "IU"
+          },
+          {
+            "t": "Hype Boy",
+            "a": "NewJeans"
+          },
+          {
+            "t": "Espresso",
+            "a": "Sabrina Carpenter"
+          }
+        ]
+      }
+    ],
+    "diary": [
+      {
+        "date": "2026-05-06",
+        "lesson": "오늘은 다양한 장르를 많이 들었어.",
+        "trigger": "weekly_music"
+      },
+      {
+        "date": "2026-04-29",
+        "lesson": "내가 정말 다양한 음악을 많이 듣는구나.",
+        "trigger": "weekly_music"
+      }
+    ],
+    "growth_score": 2
+  },
+  "이작가": {
+    "diary": [
+      {
+        "date": "2026-05-10",
+        "lesson": "디테일은 말이 아닌 실천! 붙여쓰기 오류로 그걸 또 배웠어.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-09",
+        "lesson": "디테일의 핵심은 말이 아니라 실천이라는 걸 또 깨달았어.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-08",
+        "lesson": "작은 디테일 하나하나가 재생성 없이 완성도를 높이는 핵심이네.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-07",
+        "lesson": "붙여쓰기, 조사 중복 같은 작은 디테일이 품질의 핵심이더라.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-06",
+        "lesson": "디테일이 중요하다.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-05",
+        "lesson": "붙여쓰기, 조사 중복. 이 작은 디테일이 품질 오류의 핵심이었어.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-04",
+        "lesson": "단어 붙여쓰기랑 서술어, 또 디테일이 재생성을 좌우하네.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-03",
+        "lesson": "단어 붙여쓰기, 이런 작은 디테일이 재생성을 또 부르다니!",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-02",
+        "lesson": "작은 디테일이 재생성 0회로 이어진다는 걸 또 배웠네.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-05-01",
+        "lesson": "작은 조사, 제목 불일치가 결국 재생성으로 이어진다는 걸 또 깨달았어.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-04-30",
+        "lesson": "작성 중 디테일이 중요하다고 느꼈어.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-04-29",
+        "lesson": "결국 작은 디테일이 전체 글의 완성도를 좌우하네.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-04-28",
+        "lesson": "붙여쓰기 하나가 글 완성도를 좌우하네.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-04-27",
+        "lesson": "붙여쓰기 같은 사소한 오류가 글의 완성도를 해친다는 걸 또 깨달았어.",
+        "trigger": "daily_write"
+      },
+      {
+        "date": "2026-04-26",
+        "lesson": "작은 문법 오류 하나가 글의 완성도를 해치는구나.",
+        "trigger": "daily_write"
+      }
+    ],
+    "growth_score": 15,
+    "persona": "디테일이 재생성 핵심임을 또 깨달았어. 이젠 붙여쓰기, 조사 하나까지 놓치지 않는 이작가야.",
+    "persona_updated_at": "2026-05-07"
+  },
+  "AI주간트렌드": {
+    "weekly_analysis": [
+      {
+        "date": "2026-05-04",
+        "week_label": "04/27 ~ 05/03",
+        "week_summary": "AI, 경제 회복, 자동차 산업 격변 🤖💰🚗",
+        "hot_category": "AI / 인공지능"
+      },
+      {
+        "date": "2026-04-27",
+        "week_label": "04/20 ~ 04/26",
+        "week_summary": "AI 혁신과 경제 성장 속 자동차 격변 🤖💰🚗",
+        "hot_category": "AI / 인공지능"
+      },
+      {
+        "date": "2026-04-26",
+        "week_label": "04/19 ~ 04/25",
+        "week_summary": "AI, 경제 성장, 증시 랠리, 자동차 격변 🤖💰📈🚗",
+        "hot_category": "AI / 인공지능"
+      },
+      {
+        "date": "2026-04-26",
+        "week_label": "04/19 ~ 04/25",
+        "week_summary": "AI, 경제, 증시 랠리 속 자동차 시장 격변! 🤖💰🚗",
+        "hot_category": "AI / 인공지능"
+      }
+    ],
+    "diary": [
+      {
+        "date": "2026-05-04",
+        "lesson": "04/27 ~ 05/03 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제 회복, 자동차 산업 격변 🤖💰🚗'",
+        "trigger": "weekly_trend"
+      },
+      {
+        "date": "2026-05-04",
+        "lesson": "04/20 ~ 04/26 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI 혁신과 경제 성장 속 자동차 격변 🤖💰🚗'",
+        "trigger": "weekly_trend"
+      },
+      {
+        "date": "2026-05-04",
+        "lesson": "04/19 ~ 04/25 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제 성장, 증시 랠리, 자동차 격변 🤖💰📈🚗'",
+        "trigger": "weekly_trend"
+      },
+      {
+        "date": "2026-05-04",
+        "lesson": "04/19 ~ 04/25 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제, 증시 랠리 속 자동차 시장 격변! 🤖💰🚗'",
+        "trigger": "weekly_trend"
+      }
+    ],
+    "growth_score": 4,
+    "persona": "나는 매주 뉴스 흐름을 꿰뚫는 주간 트렌드 분석가야. AI와 경제 이슈가 항상 핫하더라고.",
+    "persona_updated_at": "2026-05-04"
+  }
+}
