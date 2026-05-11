@@ -1,8 +1,8 @@
 """
 📊 주간 트렌드 브리핑 에이전트 (매주 월요일 실행)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-지난 7일 docs/content/YYYY-MM-DD.json 분석
-→ 분야별 이슈 빈도 집계 + Gemini 인사이트
+Supabase news_trends 테이블에서 지난 7일 데이터 분석
+→ TOP3 등장 횟수 기반 분야 집계 + Gemini 인사이트
 → docs/weekly_trend.json 저장 → GitHub Pages 자동 반영
 """
 
@@ -11,7 +11,6 @@ from datetime import date, timedelta
 from utils.gemini_client import ask_ai
 from utils.agent_memory import remember, get_hints, add_diary
 
-DOCS_CONTENT_DIR  = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "content")
 WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "weekly_trend.json")
 
 SYSTEM = """당신은 30년 경력의 수석 뉴스 큐레이터입니다.
