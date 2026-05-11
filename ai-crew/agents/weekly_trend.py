@@ -153,14 +153,21 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 - 한국어·영어·이모지만. 한자·일본어 등 절대 금지
 - JSON만 출력. 코드블록(```) 없이."""
 
+    import re as _re
     for attempt in range(1, 4):
         raw = ask_ai(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=3000)
         raw = raw.replace("```json", "").replace("```", "").strip()
+        # JSON 문자열 값 안의 리터럴 줄바꿈을 공백으로 치환 후 파싱 시도
+        cleaned = raw.replace('\n', ' ').replace('\r', ' ')
+        try:
+            return json.loads(cleaned)
+        except Exception:
+            pass
+        # 원본 그대로 파싱 시도
         try:
             return json.loads(raw)
         except Exception:
-            import re
-            m = re.search(r'\{.*\}', raw, re.DOTALL)
+            m = _re.search(r'\{.*\}', cleaned, _re.DOTALL)
             if m:
                 try:
                     return json.loads(m.group())

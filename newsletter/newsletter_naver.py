@@ -11,6 +11,8 @@ from datetime import datetime, date
 from dotenv import load_dotenv
 from supabase import create_client
 
+load_dotenv()
+
 SUPABASE_URL = os.getenv('SUPABASE_URL', '')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY', '')
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -28,8 +30,6 @@ def _sanitize(text: str) -> str:
     text = re.sub(r'[ \t]{2,}', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
-
-load_dotenv()
 
 NAVER_CLIENT_ID     = os.getenv('NAVER_CLIENT_ID', '')
 NAVER_CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET', '')
@@ -119,6 +119,51 @@ JSON 외 다른 텍스트는 절대 포함하지 마세요."""
         print(f"    ⚠️ AI 요약 파싱 실패: {e}")
         return {"top3": [], "category_summaries": {}}
 
+def build_ai_talking_points(categorized: dict, top3: list) -> dict | None:
+    """임원/직원 이야깃거리 생성"""
+    top3_titles = [f"{i+1}. {t['title']}" for i, t in enumerate(top3)] if top3 else []
+
+    car_news = []
+    for cat, articles in categorized.items():
+        if any(k in cat for k in ['자동차', '車', '모빌리티', 'BMW', '전기차']):
+            car_news.extend([a['title'] for a in articles])
+
+    prompt = f"""
+당신은 BMW 딜러십 임직원을 위한 비즈니스 인사이트 전문가입니다.
+오늘의 주요 뉴스를 바탕으로 직장 내 대화 소재와 비즈니스 인사이트를 제공해주세요.
+
+오늘의 TOP 3 뉴스:
+{chr(10).join(top3_titles)}
+
+자동차/모빌리티 관련 뉴스:
+{chr(10).join(car_news[:5]) if car_news else '해당 뉴스 없음'}
+
+아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
+{{
+  "talking_points": [
+    {{
+      "topic": "대화 주제 (15자 이내)",
+      "context": "배경 설명 (2문장)",
+      "question": "동료에게 던질 질문 (1문장)",
+      "business_impact": "BMW 딜러 관점 영향 (1문장)"
+    }}
+  ],
+  "one_line_insight": "오늘 뉴스를 관통하는 핵심 인사이트 1문장"
+}}
+talking_points는 3개, 비즈니스와 관련성 높은 순서로.
+"""
+    result = ask_ai(prompt)
+    if not result:
+        return None
+    try:
+        import re as _re
+        match = _re.search(r'\{.*\}', result, _re.DOTALL)
+        if match:
+            return json.loads(match.group())
+    except Exception:
+        pass
+    return None
+
 # ── 네이버 뉴스 검색 ─────────────────────────────────────
 def search_naver_news(keyword, display=5):
     url = 'https://openapi.naver.com/v1/search/news.json'
@@ -181,7 +226,7 @@ def extract_source(url):
     return '뉴스'
 
 # ── 마크다운 저장 ─────────────────────────────────────────
-def save_markdown(categorized, ai_summary):
+def save_markdown(categorized, ai_summary, talking_points=None):
     today_str = date.today().strftime('%Y년 %m월 %d일')
     lines = [f'# 📰 뉴스레터 - {today_str}', '']
 
@@ -220,6 +265,7 @@ def save_markdown(categorized, ai_summary):
     print(f'    데이터 저장 완료: {data_path}')
 
     insert_to_supabase(categorized, TODAY)
+    insert_trends_to_supabase(ai_summary, TODAY, talking_points)
 
 
 def insert_to_supabase(categorized, today):
@@ -239,6 +285,23 @@ def insert_to_supabase(categorized, today):
             print(f'    [Supabase] {len(rows)}건 insert 완료')
         except Exception as e:
             print(f'    [Supabase] insert 실패: {e}')
+
+def insert_trends_to_supabase(ai_summary, today, talking_points=None):
+    if not ai_summary:
+        print('[Supabase] ai_summary 없음 — trends insert 스킵')
+        return
+    try:
+        payload = {
+            'date': today,
+            'top3': ai_summary.get('top3', []),
+            'category_summaries': ai_summary.get('category_summaries', {}),
+        }
+        if talking_points:
+            payload['talking_points'] = talking_points
+        supabase_client.table('news_trends').upsert(payload, on_conflict='date').execute()
+        print(f'[Supabase] trends insert 완료')
+    except Exception as e:
+        print(f'[Supabase] trends insert 실패: {e}')
 
 # ── Notion 블록 헬퍼 ─────────────────────────────────────
 def _t(text, bold=False, color="default"):
@@ -426,8 +489,13 @@ def main():
         print(f'  ⚠️  AI 요약 최종 실패, 빈 요약으로 계속 진행: {e}')
         ai_summary = {'top3': []}
 
+    print('    이야깃거리 생성 중...')
+    talking_points = build_ai_talking_points(categorized, ai_summary.get('top3', []))
+    if talking_points:
+        print(f'    이야깃거리 {len(talking_points.get("talking_points", []))}개 생성 완료')
+
     print('\n[3/4] 마크다운 저장 중...')
-    _retry('마크다운 저장', save_markdown, categorized, ai_summary)
+    _retry('마크다운 저장', save_markdown, categorized, ai_summary, talking_points)
 
     # [4/4] Notion 업로드는 ai-crew/notion_publisher.py가 담당
     # → 06:30에 AI 크리에이터가 뉴스 원문 + AI 콘텐츠를 하나의 페이지로 통합 생성
