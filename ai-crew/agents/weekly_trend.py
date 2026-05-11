@@ -131,7 +131,7 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 
 {{
   "week_summary": "이번 주 전체를 한 문장으로 — 핵심 키워드 2~3개 포함 (30자 내외)",
-  "hot_category": "가장 뉴스가 많았던 분야명 (위 분야명 그대로)",
+  "hot_category": "TOP3에 가장 많이 등장한 분야명 (위 분야명 그대로)",
   "sections": [
     {{
       "category": "분야명 (위 분야명 그대로)",
@@ -146,7 +146,7 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 }}
 
 규칙:
-- sections는 기사 건수 상위 4개 분야만 (0건 분야 제외)
+- sections는 TOP3 등장 횟수 상위 4개 분야만 (0회 분야 제외)
 - weekly_insight는 반드시 200자 이상
 - 한국어·영어·이모지만. 한자·일본어 등 절대 금지
 - JSON만 출력. 코드블록(```) 없이."""
