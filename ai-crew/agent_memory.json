@@ -1899,6 +1899,12 @@
   "AI주간트렌드": {
     "weekly_analysis": [
       {
+        "date": "2026-05-11",
+        "week_label": "05/04 ~ 05/10",
+        "week_summary": "AI, 경제, 자동차 격변 속 중동 긴장 고조",
+        "hot_category": "AI / 인공지능"
+      },
+      {
         "date": "2026-05-04",
         "week_label": "04/27 ~ 05/03",
         "week_summary": "AI, 경제 회복, 자동차 산업 격변 🤖💰🚗",
@@ -1925,6 +1931,11 @@
     ],
     "diary": [
       {
+        "date": "2026-05-11",
+        "lesson": "05/04 ~ 05/10 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제, 자동차 격변 속 중동 긴장 고조'",
+        "trigger": "weekly_trend"
+      },
+      {
         "date": "2026-05-04",
         "lesson": "04/27 ~ 05/03 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제 회복, 자동차 산업 격변 🤖💰🚗'",
         "trigger": "weekly_trend"
@@ -1945,7 +1956,7 @@
         "trigger": "weekly_trend"
       }
     ],
-    "growth_score": 4,
+    "growth_score": 5,
     "persona": "나는 매주 뉴스 흐름을 꿰뚫는 주간 트렌드 분석가야. AI와 경제 이슈가 항상 핫하더라고.",
     "persona_updated_at": "2026-05-04"
   }
