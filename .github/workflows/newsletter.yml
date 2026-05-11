@@ -50,3 +50,50 @@ jobs:
           git add -A
           git diff --staged --quiet || git commit -m "📰 뉴스레터 자동 업데이트 $(date +'%Y-%m-%d')"
           git push origin main
+
+  aicrew:
+    runs-on: ubuntu-latest
+    needs: newsletter  # newsletter job 완료 후 실행
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+          ref: main  # newsletter job이 push한 최신 커밋 가져오기
+
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: |
+          pip install anthropic google-generativeai groq notion-client requests python-dotenv Pillow supabase
+
+      - name: AI Crew 실행
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
+          GROQ_API_KEY_3: ${{ secrets.GROQ_API_KEY_3 }}
+          GROQ_API_KEY_4: ${{ secrets.GROQ_API_KEY_4 }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_NEWSLETTER_PARENT_ID: ${{ secrets.NOTION_NEWSLETTER_PARENT_ID }}
+          NEWSLETTER_DIR: ${{ github.workspace }}/newsletter
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          cd ai-crew
+          python3 main.py
+
+      - name: 결과 파일 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "🎨 AI Crew 카드뉴스 자동 생성 $(date +'%Y-%m-%d')"
+          git push origin main
