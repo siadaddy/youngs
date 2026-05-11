@@ -1,0 +1,50 @@
+name: 뉴스레터 자동 수집
+
+on:
+  schedule:
+    - cron: '40 21 * * *'  # 매일 06:40 KST (UTC+9 → UTC 21:40)
+  workflow_dispatch:        # 수동 실행 버튼
+
+jobs:
+  newsletter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: |
+          pip install requests groq notion-client supabase python-dotenv
+
+      - name: 뉴스레터 실행
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_PARENT_PAGE_ID: ${{ secrets.NOTION_PARENT_PAGE_ID }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          NEWSLETTER_DIR: ${{ github.workspace }}/newsletter
+
+        run: |
+          cd newsletter
+          python3 newsletter_naver.py
+
+      - name: 결과 파일 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "📰 뉴스레터 자동 업데이트 $(date +'%Y-%m-%d')"
+          git push origin main
