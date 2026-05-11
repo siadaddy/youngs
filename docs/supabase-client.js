@@ -19,5 +19,17 @@ async function fetchNewsFromSupabase(dateStr) {
   return data;
 }
 
+async function fetchTrendsFromSupabase(dateStr) {
+  if (!_client) throw new Error('Supabase 미설정');
+  const { data, error } = await _client
+    .from('news_trends')
+    .select('*')
+    .eq('date', dateStr)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 window.supabaseClient = _client;
 window.fetchNewsFromSupabase = fetchNewsFromSupabase;
+window.fetchTrendsFromSupabase = fetchTrendsFromSupabase;
