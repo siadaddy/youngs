@@ -104,30 +104,26 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
     """Gemini로 인사이트 분석 → JSON 반환"""
     weekly_hints = get_hints("AI주간트렌드")
     cat_summary = "\n".join(
-        f"  {o['name']}: {o['count']}건"
+        f"  {o['name']}: {o['count']}회 TOP3 등장"
         for o in agg["category_counts"]
     )
     headlines_text = "\n".join(f"  - {h}" for h in agg["all_headlines"][:35])
-    blogs_text     = "\n".join(f"  - {b}" for b in agg["blog_topics"][:7])
 
-    # 카테고리별 기사 샘플
+    # 카테고리별 요약 샘플
     samples_text = ""
-    for cat, titles in agg["news_samples"].items():
-        if titles:
-            samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {t}" for t in titles[:4])
+    for cat, summaries in agg["news_samples"].items():
+        if summaries:
+            samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {s}" for s in summaries[:3])
 
     prompt = f"""아래는 지난 {days_analyzed}일간 AI 뉴스레터의 뉴스 데이터입니다.{weekly_hints}
 
-=== 분야별 기사 건수 ===
+=== 분야별 TOP3 등장 횟수 (7일 누적, 최대 21회) ===
 {cat_summary}
 
-=== 이번 주 카드뉴스 헤드라인 (AI 선정) ===
+=== 이번 주 TOP3 헤드라인 ===
 {headlines_text}
 
-=== 이번 주 블로그 주제 ===
-{blogs_text}
-
-=== 분야별 기사 샘플 ===
+=== 분야별 핵심 요약 ===
 {samples_text}
 
 위 데이터를 분석해서 아래 JSON 형식으로 출력하세요.
