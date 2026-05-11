@@ -2296,7 +2296,10 @@
       '올해','지속','계속','현재','예정','관계','해당','속보','포토','뉴스',
       '기자','이번','최근','전년','대비','따르면','밝혔다','전했다','말했다',
       '위한','하는','하고','에도','에서','부터','까지','으로','라고','에게',
-      '이라','들이','들을','들은','들도','부터','에는','으로서'
+      '이라','들이','들을','들은','들도','부터','에는','으로서',
+      '같은','오전','오후','국내','사상','이후','위한','때문',
+      '이상','이하','아직','이미','모든','다시','함께',
+      '가장','매우','더욱','계속','바로','단순','전체','일부'
     ]);
     const wordCount = {};
     cards.forEach(card => {
@@ -2320,12 +2323,11 @@
     if (!keywords.length) { section.style.display = 'none'; return; }
 
     section.style.display = 'block';
-    const labels = keywords.map(k => k.word).reverse();
-    const counts = keywords.map(k => k.count).reverse();
+    const labels = keywords.map(k => k.word);
+    const counts = keywords.map(k => k.count);
     const colors = labels.map((_, i) => {
-      const ri = labels.length - 1 - i;
-      if (ri === 0) return '#1c69d4';
-      if (ri <= 2)  return '#a78bfa';
+      if (i === 0) return '#1c69d4';
+      if (i <= 2)  return '#a78bfa';
       return '#1e3a5f';
     });
 
