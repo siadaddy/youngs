@@ -79,14 +79,19 @@ def _aggregate(days_data: list[dict]) -> dict:
             if summary and summary not in news_samples[cat]:
                 news_samples[cat].append(str(summary)[:120])
 
-    # 카테고리 정렬 (정해진 순서 + 나머지)
-    ordered = []
-    for cat in _CAT_ORDER:
-        if cat in cat_counts:
-            ordered.append({"name": cat, "count": cat_counts[cat]})
-    for cat, cnt in sorted(cat_counts.items(), key=lambda x: -x[1]):
-        if not any(o["name"] == cat for o in ordered):
-            ordered.append({"name": cat, "count": cnt})
+    # 카테고리 정렬 — _CAT_ORDER 키워드 부분 일치 우선, 나머지는 등장 횟수 순
+    def _order_key(cat_name: str) -> int:
+        for i, order_cat in enumerate(_CAT_ORDER):
+            # 이모지 제거 후 핵심 키워드로 비교
+            core = order_cat.split()[-1] if " " in order_cat else order_cat
+            if core in cat_name or cat_name in order_cat:
+                return i
+        return len(_CAT_ORDER)
+
+    ordered = sorted(
+        [{"name": cat, "count": cnt} for cat, cnt in cat_counts.items()],
+        key=lambda x: (_order_key(x["name"]), -x["count"])
+    )
 
     # 최대값 기준 백분율 계산 (바 차트용)
     max_cnt = max((o["count"] for o in ordered), default=1)
