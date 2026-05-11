@@ -1,15 +1,13 @@
-name: AI 크리에이터
+name: AI Crew 카드뉴스 자동 생성
 
 on:
   schedule:
-    - cron: '20 22 * * *'  # 매일 07:20 KST (UTC+9 → UTC 22:20) — 뉴스 수집(21:40) 완료 후 40분 여유
-  workflow_dispatch:        # 수동 실행 버튼
+    - cron: '10 22 * * *'  # 매일 07:10 KST (UTC 22:10)
+  workflow_dispatch:
 
 jobs:
   aicrew:
     runs-on: ubuntu-latest
-    env:
-      TZ: Asia/Seoul
 
     steps:
       - name: 저장소 체크아웃
@@ -25,14 +23,9 @@ jobs:
 
       - name: 패키지 설치
         run: |
-          pip install requests pillow python-dotenv notion-client supabase
+          pip install anthropic google-generativeai groq notion-client requests python-dotenv Pillow supabase
 
-      - name: git 사용자 설정
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: AI 크리에이터 실행
+      - name: AI Crew 실행
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
@@ -42,12 +35,19 @@ jobs:
           GROQ_API_KEY_4: ${{ secrets.GROQ_API_KEY_4 }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_NEWSLETTER_PARENT_ID: ${{ secrets.NOTION_NEWSLETTER_PARENT_ID }}
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          STABLE_HORDE_KEY: ${{ secrets.STABLE_HORDE_KEY }}
           NEWSLETTER_DIR: ${{ github.workspace }}/newsletter
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
         run: |
           cd ai-crew
           python3 main.py
+
+      - name: 결과 파일 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "🎨 AI Crew 카드뉴스 자동 생성 $(date +'%Y-%m-%d')"
+          git push origin main
