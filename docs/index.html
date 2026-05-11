@@ -2058,7 +2058,8 @@
       `<div class="loading"><div class="spinner"></div><p>불러오는 중...</p></div>`;
     document.getElementById('article-section').style.display = 'none';
 
-    const today = new Date().toISOString().slice(0, 10);
+    const _td = new Date();
+    const today = `${_td.getFullYear()}-${String(_td.getMonth()+1).padStart(2,'0')}-${String(_td.getDate()).padStart(2,'0')}`;
 
     if (dateStr === today) {
       // 오늘 날짜: Supabase 우선 시도
