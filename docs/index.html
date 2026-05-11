@@ -1245,6 +1245,48 @@
     }
 
     /* ─── 나의 이야기 ──────────────────────────────────── */
+
+    /* ─── 트렌드 브리핑 ─────────────────────────────── */
+    .trend-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 22px;
+      transition: border-color .2s, transform .2s;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .trend-card:hover { border-color: rgba(28,105,212,.4); transform: translateY(-2px); }
+    .trend-rank {
+      font-size: 2rem; font-weight: 900; letter-spacing: -.03em; line-height: 1;
+      background: linear-gradient(135deg,#fff 0%,var(--bmw-lt) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .trend-cat-badge {
+      display: inline-block; font-size: .68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 99px;
+      background: rgba(28,105,212,.15); color: var(--bmw-lt);
+      border: 1px solid rgba(28,105,212,.3);
+    }
+    .trend-title { font-size: .95rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+    .trend-why  { font-size: .82rem; color: var(--muted2); line-height: 1.65; }
+    .trend-accordion {
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      overflow: hidden; margin-bottom: 8px;
+    }
+    .trend-accordion-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; cursor: pointer;
+      background: var(--glass); transition: background .18s;
+      font-size: .88rem; font-weight: 700; color: var(--text);
+    }
+    .trend-accordion-header:hover { background: rgba(28,105,212,.08); }
+    .trend-accordion-arrow { font-size: .8rem; color: var(--muted); transition: transform .2s; }
+    .trend-accordion.open .trend-accordion-arrow { transform: rotate(180deg); }
+    .trend-accordion-body {
+      display: none; padding: 14px 18px;
+      font-size: .85rem; color: var(--muted2);
+      line-height: 1.75; border-top: 1px solid var(--border);
+    }
+    .trend-accordion.open .trend-accordion-body { display: block; }
   </style>
 </head>
 <body class="wrap">
@@ -1362,6 +1404,17 @@
     </div>
   </div>
 </div>
+
+<!-- 🔥 오늘의 트렌드 브리핑 -->
+<section class="section" id="trends-section" style="display:none">
+  <div class="container">
+    <div class="section-eyebrow">🔥 Today's Trend Briefing</div>
+    <div class="section-title">오늘의 트렌드 브리핑</div>
+    <p class="section-sub">AI가 선정한 오늘 주목할 TOP 3 뉴스와 카테고리별 핵심 요약</p>
+    <div id="trends-top3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;"></div>
+    <div id="trends-summaries"></div>
+  </div>
+</section>
 
 <!-- ① AI 에디터픽 — 훅: 오늘의 핵심 먼저 -->
 <section class="section" id="article-section" style="display:none">
@@ -2049,8 +2102,44 @@
     document.getElementById('news-raw-section').style.display = 'none';
   }
 
+  async function loadTrendsSection(dateStr) {
+    const section = document.getElementById('trends-section');
+    try {
+      const t = await fetchTrendsFromSupabase(dateStr);
+      const top3 = t.top3 || [];
+      const summaries = t.category_summaries || {};
+      if (!top3.length && !Object.keys(summaries).length) { section.style.display = 'none'; return; }
+
+      // TOP 3
+      const rankLabel = ['🥇', '🥈', '🥉'];
+      document.getElementById('trends-top3').innerHTML = top3.map((item, i) =>
+        `<div class="trend-card">
+          <div class="trend-rank">${rankLabel[i] || item.rank}</div>
+          <span class="trend-cat-badge">${item.category || ''}</span>
+          <div class="trend-title">${item.title}</div>
+          <div class="trend-why">${item.why}</div>
+        </div>`
+      ).join('');
+
+      // 카테고리 요약 아코디언
+      document.getElementById('trends-summaries').innerHTML = Object.entries(summaries).map(([cat, text]) =>
+        `<div class="trend-accordion">
+          <div class="trend-accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <span>${cat}</span><span class="trend-accordion-arrow">▼</span>
+          </div>
+          <div class="trend-accordion-body">${text}</div>
+        </div>`
+      ).join('');
+
+      section.style.display = 'block';
+    } catch (_) {
+      section.style.display = 'none';
+    }
+  }
+
   async function loadNewsContent(dateStr) {
     currentDate = dateStr;
+    loadTrendsSection(dateStr);
     document.querySelectorAll('.date-chip').forEach(c => {
       c.classList.toggle('active', c.dataset.date === dateStr);
     });
