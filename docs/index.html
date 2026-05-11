@@ -1247,46 +1247,82 @@
     /* ─── 나의 이야기 ──────────────────────────────────── */
 
     /* ─── 트렌드 브리핑 ─────────────────────────────── */
+    @keyframes trendShimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+    .trend-skeleton {
+      background: linear-gradient(90deg, var(--card) 25%, rgba(255,255,255,.055) 50%, var(--card) 75%);
+      background-size: 200% 100%;
+      animation: trendShimmer 1.5s infinite;
+      border-radius: var(--r-sm);
+    }
+    .trend-live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .67rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: #f87171; background: rgba(248,113,113,.12);
+      border: 1px solid rgba(248,113,113,.28);
+      padding: 4px 10px; border-radius: 99px;
+    }
+    .trend-live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #f87171;
+      animation: livePulse 1.2s ease-in-out infinite;
+    }
     .trend-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--r-md); padding: 22px;
-      transition: border-color .2s, transform .2s;
-      display: flex; flex-direction: column; gap: 10px;
+      position: relative;
+      background: linear-gradient(var(--card), var(--card)) padding-box,
+                  var(--_tbg, linear-gradient(135deg,var(--border),var(--border))) border-box;
+      border: 2px solid transparent;
+      border-radius: var(--r-md); padding: 24px;
+      display: flex; flex-direction: column; gap: 12px;
+      transition: transform .22s, box-shadow .22s;
     }
-    .trend-card:hover { border-color: rgba(28,105,212,.4); transform: translateY(-2px); }
-    .trend-rank {
-      font-size: 2rem; font-weight: 900; letter-spacing: -.03em; line-height: 1;
-      background: linear-gradient(135deg,#fff 0%,var(--bmw-lt) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    .trend-card:hover { transform: translateY(-4px); box-shadow: var(--_tsh, var(--shadow)); }
+    .trend-card-1 { --_tbg: linear-gradient(135deg,#f59e0b,#78350f); --_tsh: 0 8px 32px rgba(245,158,11,.22); }
+    .trend-card-2 { --_tbg: linear-gradient(135deg,#94a3b8,#475569); --_tsh: 0 8px 32px rgba(148,163,184,.16); }
+    .trend-card-3 { --_tbg: linear-gradient(135deg,#b45309,#78350f); --_tsh: 0 8px 32px rgba(180,83,9,.18); }
+    .trend-rank-badge { display: flex; align-items: center; gap: 10px; }
+    .trend-rank-num { font-size: 1.7rem; font-weight: 900; letter-spacing: -.04em; line-height: 1; }
+    .trend-card-1 .trend-rank-num { color: #f59e0b; }
+    .trend-card-2 .trend-rank-num { color: #94a3b8; }
+    .trend-card-3 .trend-rank-num { color: #b45309; }
     .trend-cat-badge {
-      display: inline-block; font-size: .68rem; font-weight: 700;
+      display: inline-block; font-size: .67rem; font-weight: 700;
       padding: 3px 10px; border-radius: 99px;
       background: rgba(28,105,212,.15); color: var(--bmw-lt);
-      border: 1px solid rgba(28,105,212,.3);
+      border: 1px solid rgba(28,105,212,.25);
     }
-    .trend-title { font-size: .95rem; font-weight: 700; color: var(--text); line-height: 1.5; }
-    .trend-why  { font-size: .82rem; color: var(--muted2); line-height: 1.65; }
+    .trend-title { font-size: .95rem; font-weight: 700; color: var(--text); line-height: 1.55; }
+    .trend-why   { font-size: .82rem; color: var(--muted2); line-height: 1.7; margin-top: auto; }
     .trend-accordion {
       border: 1px solid var(--border); border-radius: var(--r-sm);
       overflow: hidden; margin-bottom: 8px;
+      transition: border-color .2s;
     }
+    .trend-accordion.open { border-color: rgba(28,105,212,.4); }
     .trend-accordion-header {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; gap: 10px;
       padding: 14px 18px; cursor: pointer;
       background: var(--glass); transition: background .18s;
       font-size: .88rem; font-weight: 700; color: var(--text);
+      user-select: none;
     }
-    .trend-accordion-header:hover { background: rgba(28,105,212,.08); }
-    .trend-accordion-arrow { font-size: .8rem; color: var(--muted); transition: transform .2s; }
+    .trend-accordion-header:hover { background: rgba(28,105,212,.06); }
+    .trend-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .trend-accordion-label { flex: 1; }
+    .trend-accordion-arrow { font-size: .75rem; color: var(--muted); transition: transform .25s; }
     .trend-accordion.open .trend-accordion-arrow { transform: rotate(180deg); }
     .trend-accordion-body {
-      display: none; padding: 14px 18px;
-      font-size: .85rem; color: var(--muted2);
-      line-height: 1.75; border-top: 1px solid var(--border);
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s ease, padding .3s ease, border-color .3s;
+      font-size: .85rem; color: var(--muted2); line-height: 1.8;
+      border-left: 3px solid transparent; padding: 0 18px;
     }
-    .trend-accordion.open .trend-accordion-body { display: block; }
+    .trend-accordion.open .trend-accordion-body {
+      max-height: 320px; padding: 14px 18px 14px 15px;
+      border-left-color: var(--bmw); border-top: 1px solid var(--border);
+    }
   </style>
 </head>
 <body class="wrap">
@@ -1411,9 +1447,21 @@
 <!-- 🔥 오늘의 트렌드 브리핑 -->
 <section class="section" id="trends-section" style="display:none">
   <div class="container">
-    <div class="section-eyebrow">🔥 Today's Trend Briefing</div>
-    <div class="section-title">🔥 오늘의 AI 트렌드 브리핑</div>
-    <p class="section-sub">AI가 선정한 오늘 주목할 TOP 3 뉴스와 카테고리별 핵심 요약</p>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <div class="section-eyebrow" style="margin-bottom:0">🔥 Today's Trend Briefing</div>
+      <span class="trend-live-badge"><span class="trend-live-dot"></span>TODAY</span>
+    </div>
+    <div class="section-title">오늘의 AI 트렌드 브리핑</div>
+    <p class="section-sub" id="trends-date-sub">AI가 선정한 오늘 주목할 TOP 3 뉴스와 카테고리별 핵심 요약</p>
+    <div id="trends-skeleton" style="display:none">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;">
+        <div class="trend-skeleton" style="height:160px;border-radius:16px;"></div>
+        <div class="trend-skeleton" style="height:160px;border-radius:16px;"></div>
+        <div class="trend-skeleton" style="height:160px;border-radius:16px;"></div>
+      </div>
+      <div class="trend-skeleton" style="height:52px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="trend-skeleton" style="height:52px;border-radius:12px;margin-bottom:8px;"></div>
+    </div>
     <div id="trends-top3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;"></div>
     <div id="trends-summaries"></div>
   </div>
@@ -2107,35 +2155,61 @@
 
   async function loadTrendsSection(dateStr) {
     const section = document.getElementById('trends-section');
+    const skeleton = document.getElementById('trends-skeleton');
+    const top3El = document.getElementById('trends-top3');
+    const summariesEl = document.getElementById('trends-summaries');
     try {
+      section.style.display = 'block';
+      skeleton.style.display = 'block';
+      top3El.innerHTML = '';
+      summariesEl.innerHTML = '';
+
       const t = await fetchTrendsFromSupabase(dateStr);
       const top3 = t.top3 || [];
       const summaries = t.category_summaries || {};
+
+      skeleton.style.display = 'none';
+
       if (!top3.length && !Object.keys(summaries).length) { section.style.display = 'none'; return; }
+
+      // 날짜 서브텍스트 업데이트
+      const dateSub = document.getElementById('trends-date-sub');
+      if (dateSub && dateStr) {
+        const [y, m, d] = dateStr.split('-');
+        dateSub.textContent = `${y}년 ${parseInt(m)}월 ${parseInt(d)}일 · AI가 선정한 TOP 3 뉴스와 카테고리별 핵심 요약`;
+      }
 
       // TOP 3
       const rankLabel = ['🥇', '🥈', '🥉'];
-      document.getElementById('trends-top3').innerHTML = top3.map((item, i) =>
-        `<div class="trend-card">
-          <div class="trend-rank">${rankLabel[i] || item.rank}</div>
-          <span class="trend-cat-badge">${item.category || ''}</span>
+      const dotColors = ['#f59e0b', '#94a3b8', '#b45309'];
+      top3El.innerHTML = top3.map((item, i) =>
+        `<div class="trend-card trend-card-${i + 1}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="trend-rank">${rankLabel[i] || item.rank}</div>
+            <span class="trend-cat-badge">${item.category || ''}</span>
+          </div>
           <div class="trend-title">${item.title}</div>
           <div class="trend-why">${item.why}</div>
         </div>`
       ).join('');
 
       // 카테고리 요약 아코디언
-      document.getElementById('trends-summaries').innerHTML = Object.entries(summaries).map(([cat, text]) =>
-        `<div class="trend-accordion">
+      summariesEl.innerHTML = Object.entries(summaries).map(([cat, text], idx) => {
+        const dot = dotColors[idx % dotColors.length];
+        return `<div class="trend-accordion">
           <div class="trend-accordion-header" onclick="this.parentElement.classList.toggle('open')">
-            <span>${cat}</span><span class="trend-accordion-arrow">▼</span>
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span class="trend-cat-dot" style="background:${dot}"></span>${cat}
+            </span>
+            <span class="trend-accordion-arrow">▼</span>
           </div>
           <div class="trend-accordion-body">${text}</div>
-        </div>`
-      ).join('');
+        </div>`;
+      }).join('');
 
       section.style.display = 'block';
     } catch (_) {
+      skeleton.style.display = 'none';
       section.style.display = 'none';
     }
   }
