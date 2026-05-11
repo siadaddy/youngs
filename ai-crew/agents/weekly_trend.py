@@ -28,52 +28,56 @@ _CAT_ORDER = [
 ]
 
 
-def _load_recent_days(n: int = 7) -> list[dict]:
-    """최근 n일치 content JSON 로드. 파일 없는 날은 스킵."""
-    today = date.today()
-    result = []
-    for i in range(1, n + 1):  # 어제부터 n일 전까지
-        d = today - timedelta(days=i)
-        path = os.path.join(DOCS_CONTENT_DIR, f"{d.strftime('%Y-%m-%d')}.json")
-        if os.path.exists(path):
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    result.append(json.load(f))
-            except Exception:
-                pass
-    return result
+def _load_from_supabase(n: int = 7) -> list[dict]:
+    """Supabase news_trends 테이블에서 최근 n일치 로드"""
+    try:
+        from supabase import create_client
+        url = os.getenv('SUPABASE_URL', '')
+        key = os.getenv('SUPABASE_KEY', '')
+        if not url or not key:
+            raise ValueError("SUPABASE_URL/KEY 환경변수 없음")
+        client = create_client(url, key)
+        today = date.today()
+        dates = [(today - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, n + 1)]
+        res = client.table('news_trends').select('date,top3,category_summaries').in_('date', dates).execute()
+        rows = res.data or []
+        print(f"  📡 Supabase에서 {len(rows)}일치 데이터 로드")
+        return rows
+    except Exception as e:
+        print(f"  ⚠️  Supabase 로드 실패: {e}")
+        return []
 
 
 def _aggregate(days_data: list[dict]) -> dict:
-    """7일치 데이터 집계: 카테고리 건수, 헤드라인, 블로그 주제"""
+    """7일치 Supabase 데이터 집계: TOP3 카테고리 등장 횟수 기반"""
     cat_counts: dict[str, int] = {}
     all_headlines: list[str] = []
-    blog_topics: list[str] = []
-    news_samples: dict[str, list[str]] = {}  # 카테고리별 기사 제목 샘플
+    news_samples: dict[str, list[str]] = {}
 
     for day in days_data:
-        # 카드 헤드라인
-        for c in day.get("captions", []):
-            h = c.get("headline", "").strip()
-            if h:
-                all_headlines.append(h)
+        # TOP3 카테고리 등장 횟수 집계 + 헤드라인 수집
+        top3 = day.get('top3') or []
+        if isinstance(top3, str):
+            top3 = json.loads(top3)
+        for item in top3:
+            cat = item.get('category', '').strip()
+            title = item.get('title', '').strip()
+            if cat and "하이라이트" not in cat and "BMW" not in cat:
+                cat_counts[cat] = cat_counts.get(cat, 0) + 1
+            if title:
+                all_headlines.append(title)
 
-        # 블로그 주제
-        bt = day.get("blog_title", "").strip()
-        if bt:
-            blog_topics.append(bt)
-
-        # 카테고리별 기사 수
-        for cat, articles in day.get("news", {}).items():
+        # category_summaries → news_samples (AI 분석용 컨텍스트)
+        summaries = day.get('category_summaries') or {}
+        if isinstance(summaries, str):
+            summaries = json.loads(summaries)
+        for cat, summary in summaries.items():
             if "하이라이트" in cat or "BMW" in cat:
                 continue
-            cat_counts[cat] = cat_counts.get(cat, 0) + len(articles)
             if cat not in news_samples:
                 news_samples[cat] = []
-            for a in articles[:2]:
-                title = a.get("title", "").strip()
-                if title and title not in news_samples[cat]:
-                    news_samples[cat].append(title)
+            if summary and summary not in news_samples[cat]:
+                news_samples[cat].append(str(summary)[:120])
 
     # 카테고리 정렬 (정해진 순서 + 나머지)
     ordered = []
@@ -92,7 +96,6 @@ def _aggregate(days_data: list[dict]) -> dict:
     return {
         "category_counts": ordered,
         "all_headlines":   all_headlines,
-        "blog_topics":     blog_topics,
         "news_samples":    news_samples,
     }
 
