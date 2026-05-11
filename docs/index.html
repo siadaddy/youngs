@@ -2425,12 +2425,16 @@
       } catch (e) {
         console.warn('[Supabase] 실패, fallback 시도:', e.message);
       }
-      // fallback: content.json
+      // fallback: content.json — 날짜가 오늘과 다르면 준비중 표시
       try {
         const res = await fetch(`content.json?t=${Date.now()}`);
         const data = await res.json();
-        renderContent(data);
-        renderKeywordChart(Object.values(data.news || {}).flat());
+        if (data.date && data.date !== today) {
+          showError();
+        } else {
+          renderContent(data);
+          renderKeywordChart(Object.values(data.news || {}).flat());
+        }
       } catch (e) {
         showError();
       }
