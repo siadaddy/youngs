@@ -1,315 +1,84 @@
-# 🤖 AI 자동화 시스템 — Claude Code 컨텍스트
-
-> 이 파일은 Claude Code 세션 시작 시 빠른 파악용입니다. 마지막 업데이트: 2026-05-05
-
----
+# 시아아빠의 AI 데일리 — Claude Code 컨텍스트
+> 마지막 업데이트: 2026-05-12
 
 ## 📦 프로젝트 구조
 
 ```
-/Users/youngchulyu/  (git root — GitHub Pages 서빙 기준)
-├── docs/                      ← GitHub Pages (siadaddy.github.io/youngs)
-│   ├── index.html             ← 메인 대시보드
-│   ├── trades.json            ← 코인 매매 기록 + 블랙리스트 현황
-│   ├── office_memory.json     ← AI 직원 학습 기록 (ai-crew + coin-trader 병합)
-│   ├── content.json / archive.json / music.json
-│   └── images/
+youngs/ (git root — siadaddy.github.io/youngs)
+├── docs/                    ← GitHub Pages
+│   ├── index.html           ← 메인 대시보드
+│   ├── content.json / archive.json / music.json / weekly_trend.json
+│   ├── office_memory.json   ← AI 직원 학습 기록 (ai-crew + coin-trader 병합)
+│   ├── trades.json          ← 코인 매매 기록
+│   └── images/              ← Pollinations.ai 생성 이미지 (30일 자동 정리)
+├── ai-crew/                 ← AI 뉴스레터 (GitHub Actions 매일 07:00 KST)
+├── newsletter/              ← 네이버 API 뉴스 수집 (GitHub Actions 매일 06:40 KST)
 └── vibe-coding/
-    ├── ai-crew/               ← AI 뉴스레터 (07:00 KST 매일)
-    ├── coin-trader/           ← AI 코인 자동매매 (30분마다)
-    ├── newsletter/            ← RSS 수집 (06:40 KST 매일)
-    └── CLAUDE.md              ← 이 파일
+    └── coin-trader/         ← AI 코인 자동매매 (맥북 로컬 launchd, 30분마다)
 ```
 
-> ⚠️ git root는 `/Users/youngchulyu/` 이고 vibe-coding/이 아님.
-> `git -C /Users/youngchulyu/ add docs/index.html` 처럼 절대경로 사용.
+> git root는 `youngs/` 폴더. `git add docs/index.html` 처럼 상대경로 사용.
+> coin-trader는 맥북 로컬 전용 (GitHub Actions 미연결).
 
 ---
 
-## 🛠 Claude Code 환경
+## ⚙️ 실행 구조
 
-### MCP 서버
-| 서버 | 용도 | 실행 |
+| 작업 | 방식 | 시간 |
 |------|------|------|
-| sequential-thinking | 복잡한 문제 단계별 사고 | 자동 (node 직접 경로) |
-| claude.ai Gmail | Gmail 연동 | ✓ Connected |
-| claude.ai Notion | Notion 연동 | ✓ Connected |
-
-```bash
-# MCP 상태 확인
-claude mcp list
-```
-
-### 플러그인
-- `/simplify` — 변경 코드 재사용성·품질·효율성 3단계 리뷰 + 자동 수정
-- Context7 — 최신 라이브러리 문서 실시간 참조
+| 뉴스 수집 (newsletter) | GitHub Actions | 매일 06:40 KST |
+| AI 뉴스레터 (ai-crew) | GitHub Actions (needs: newsletter) | 매일 07:00 KST |
+| 코인 매매 (main.py) | 맥북 launchd | 30분마다 |
+| 손절/익절 감시 (price_guard.py) | 맥북 launchd | 상시 30초 루프 |
+| 일일 리포트 | 맥북 launchd | 08:30 |
 
 ---
 
-## 🔑 API 키 & 모델 전략
+## 🗄 Supabase 테이블
 
-### ai-crew (`ai-crew/.env`)
-- **LLM**: Gemini 우선 → 실패 시 Groq 폴백
-  - Gemini 2.5-flash 우선 (키1 → 키2)
-  - Groq: 키 4개 라운드로빈 (Gemini 전체 실패 시)
-
-### coin-trader (`coin-trader/.env`)
-- **LLM**: Groq 우선 → 실패 시 Gemini 폴백
-  - Groq: key1→2→3→4, 429 즉시 전환
-  - Gemini: 키1→키2, 429 시 65초 대기
-- **현재 매매 설정** (2026-05-04 승률 회복 전략으로 전면 강화):
-  - 투자금: **5만원** (MAX_INVEST_KRW=50000)
-  - 손절: **-4%** (STOP_LOSS_PCT=4.0)
-  - 익절: **+5%** (TAKE_PROFIT_PCT=5.0)
-  - 트레일링스탑: **+2.5% 활성 / -2.0% 트리거** (기존 +3%/-2.5%에서 강화)
-  - 강제청산: **6시간** 이상 보유 (기존 8시간)
-  - 일일손실한도: **-7,500원**
-  - 종목 쿨다운: **6시간** / 전역 쿨다운: **4시간**
-  - DRY_RUN=false (실제 매매 중)
-- **AI 판단 전략 강화** (2026-05-04):
-  - 매수: ADX 25↑ + 점수 +4↑ + RSI 25~70 모두 충족 시만 BUY
-  - 기회교체: 7조건 동시충족 필요 (사실상 금지)
-  - 보유 3시간 미만: AI SELL 금지 (시스템 자동 처리)
+| 테이블 | 내용 |
+|--------|------|
+| `news_trends` | 날짜별 TOP3 + category_summaries |
+| `news_cards` | 카드뉴스 본문 데이터 |
+| `agent_memories` | AI 직원 학습 데이터 (agent_name PK, events jsonb, diary jsonb, persona, growth_score) |
 
 ---
 
-## ⚙️ 실행 중인 launchd 서비스
+## 🔑 API 키 & LLM 전략
 
-| plist | 역할 | 주기 |
-|-------|------|------|
-| com.siadad.newsletter | 뉴스 RSS 수집 | 매일 06:40 |
-| com.siadad.aicrew | AI 뉴스레터 생성 | 매일 07:00 |
-| com.siadad.cointrader | 코인 매매 (main.py) | **30분마다** (:00/:30) |
-| com.siadad.priceguard | 손절/익절 감시 (price_guard.py) | 상시 (30초 루프) |
-| com.siadad.dailyreport | 일일 리포트 | 매일 08:30 |
-
-```bash
-launchctl list | grep siadad
-launchctl unload ~/Library/LaunchAgents/com.siadad.cointrader.plist
-launchctl load   ~/Library/LaunchAgents/com.siadad.cointrader.plist
-```
+- **ai-crew** (`ai-crew/.env`): Gemini 2.5-flash 우선 → Groq 폴백
+- **coin-trader** (`vibe-coding/coin-trader/.env`): Groq 우선 → Gemini 폴백
 
 ---
 
-## 🪙 코인 트레이더 핵심 구조
+## 🪙 코인 트레이더 설정 (2026-05-04 기준)
 
-### 파일 역할
+| 항목 | 값 |
+|------|-----|
+| 투자금 | 5만원 |
+| 손절 | -4% |
+| 익절 | +5% |
+| 트레일링스탑 | +2.5% 활성 / -2.0% 트리거 |
+| 강제청산 | 6시간 |
+| 일일손실한도 | -7,500원 |
+| 쿨다운 | 종목 6h / 전역 4h |
+
+**학습 블랙리스트**: 손절 1회→6h쿨, 2회→3일, 3회→7일, 4회→14일, 5회+→30일
+
+---
+
+## 📚 핵심 파일
 
 | 파일 | 역할 |
 |------|------|
-| `coin-trader/main.py` | 30분 오케스트레이터 + 블랙리스트 초기화 + 매매 실행 |
-| `coin-trader/price_guard.py` | 30초 손절/익절 실시간 감시 데몬 |
-| `coin-trader/agents/analyzer.py` | 거래대금 상위 선별 + 블랙리스트 제외 + 기술 지표 계산 |
-| `coin-trader/agents/ai_advisor.py` | Groq AI 판단 (BUY/SELL/HOLD) |
-| `coin-trader/agents/executor.py` | 시장가 주문 + 스테이블코인·블랙리스트 하드차단 |
-| `coin-trader/utils/bithumb_client.py` | pybithumb 래퍼 |
-| `coin-trader/utils/blacklist.py` | 📚 학습 블랙리스트 엔진 |
-| `coin-trader/utils/office_export.py` | AI어드바이저 학습 기록 → docs/office_memory.json |
-
-### 핵심 상태 파일
-
-| 파일 | 내용 |
-|------|------|
-| `state.json` | 현재 보유 종목·매수가·수량·고점 |
-| `cooldown.json` | 손절 쿨다운 (종목 6h + 전역 `_global` 4h) |
-| `blacklist.json` | 📚 반복 손절 종목 학습 데이터 (영구) |
-| `drawdown.json` | 일일 손실 누적 |
-| `trader.log` | 실행 로그 |
-
----
-
-## 📚 학습 블랙리스트 시스템
-
-```
-손절 1회 → 기록 (6h 쿨다운)
-손절 2회 → 3일 차단
-손절 3회 → 7일 차단
-손절 4회 → 14일 차단
-손절 5회+ → 30일 차단
-```
-
-- `register_stop_loss(ticker)` — main.py에서 stop_loss 이벤트 시 자동 호출
-- `get_blacklisted_tickers()` — analyzer.py에서 분석 대상 제외
-- `is_blacklisted(ticker)` — executor.py에서 하드차단
-
-```bash
-# 블랙리스트 현황
-python3 -c "
-import sys; sys.path.insert(0,'.')
-from utils.blacklist import get_summary
-for l in get_summary(): print(l)
-"
-```
-
----
-
-## 🛡 쿨다운 시스템
-
-```json
-// cooldown.json
-{
-  "FORT": "2026-04-24 12:49",   // 종목 쿨다운 (손절 후 6h)
-  "_global": "2026-04-21 16:49" // 전역 쿨다운 (손절 후 4h)
-}
-```
-
----
-
-## 🎭 AI 사무실 탭 (index.html)
-
-CSS 아이소메트릭 배경 + Canvas 픽셀아트 캐릭터 레이어 구조.  
-AI 직원 8명이 실시간으로 돌아다니며 학습 내용을 말풍선으로 표시.
-
-### 렌더링 구조 (2026-04-29 최종)
-
-```
-[#office-iso-bg]  ← CSS 아이소메트릭 배경 (z-index:0)
-  - iso-night / iso-day 클래스로 낮/밤 전환
-  - .iso-floor-grid : CSS skew + perspective 바닥 타일
-  - .meeting-table : 가운데 타원형 회의 테이블 (낮/밤 스타일)
-  - .desks-row.desks-top / .desks-bottom : 책상 2행 4열
-    └ 절대위치 2+2 클러스터: left 3.25% / 20.6% / 68.6% / 84.4%
-
-[#officeCanvas]   ← Canvas 캐릭터 레이어 (z-index:2, 투명 배경)
-  - bg() 제거 → 캔버스는 스프라이트·말풍선·시계만 담당
-  - 발 아래 타원 그림자 (ellipse, alpha 0.28)
-
-[#briefing-board-outer]  ← 브리핑보드 래퍼 (z-index:3, canvas 위)
-  - iso-night / iso-day 클래스 render()에서 동기화
-  - .briefing-board : AI BRIEFING LIVE 보드 (캐릭터에 가려지지 않음)
-  - .on-air : 빨간 네온 깜빡임
-```
-
-### 낮/밤 전환 방식
-- `render()` 매 프레임: `_NIGHT = hours >= 19 || hours < 7`
-- `#office-iso-bg` + `#briefing-board-outer` 동시에 className 토글
-- ☀️ 낮(07~19시): 웜 우드톤 + 갈색 그리드
-- 🌙 밤(19~07시): 다크 네이비(#30374b) + 시안 그리드 (밝기 20% 향상)
-
-### AI BRIEFING LIVE 보드 (동적 데이터)
-- `updateBriefingBoard(data)` 함수 — `initOffice()` fetch 완료 시 호출 + 30초 자동 갱신
-- 표시 내용: 📅 날짜·시간(1분 갱신) / 🤖 코인 현황+승률 / 📰 최신 뉴스 토픽 / 🏆 성장 1위
-
-### 직원 8명
-
-| 직원 | 역할 | homeX | homeY |
-|------|------|-------|-------|
-| 박기획 | 콘텐츠 기획자 | 48 | 125 |
-| 뉴스기자 | 뉴스 수집가 | 204 | 125 |
-| 최디자 | 이미지 디자이너 | 636 | 125 |
-| 이가드 | 시장 감시원 | 778 | 125 |
-| 한뮤직 | 음악 큐레이터 | 48 | 382 |
-| AI주간트렌드 | 주간 분석가 | 204 | 382 |
-| 리포터 | 일일 리포트 작성자 | 636 | 382 |
-| AI어드바이저 | 코인 어드바이저 | 778 | 382 |
-
-> homeX는 스프라이트 좌단 기준. 중심 = homeX+24. CSS 책상 left % = (homeX+24)/900 - 4.75%
-> 좌클러스터(박기획·뉴스기자 / 한뮤직·AI주간트렌드) ↔ 우클러스터(최디자·이가드 / 리포터·AI어드바이저)
-
-### 스프라이트 스펙
-- 크기: **16열 × 24행** 픽셀아트 (`_PX=3`, 화면 48×72px)
-- 2프레임 걷기 애니메이션, 각 캐릭터 고유 팔레트 (16~18색)
-
-### 행동 패턴 19가지
-walk · home · coffee · window · stretch · think · rush · phone · sneak · dance ·  
-read · wboard · snack · chat · printer · nap · patrol · report · water · exercise
-
-- **회의 간격**: 2~3분 (meetTimer=1800~2700 @15fps)
-- **말풍선**: office_memory.json 실데이터 반영
-
-### office_memory.json
-- `coin-trader/utils/office_export.py` → AI어드바이저 데이터
-- `ai-crew/utils/office_export.py` → ai-crew 4명 데이터
-- 에이전트: AI어드바이저 / 박기획 / 최디자 / 한뮤직 / AI주간트렌드
-
----
-
-## 🐛 최근 수정 이력
-
-### 2026-05-05 — 버그 수정 및 최적화
-- **브리핑보드 텍스트 미표시**: `normLv` 스코프 오류 → `updateBriefingBoard()` 내 로컬 선언으로 해결
-- **Gemini 429 낭비 제거**: 2.0-flash 429 시 즉시 2.5-flash 전환 (65초 대기 제거), `ask_ai()` 추가
-- **Lv. 표시 정규화**: `√score` 스케일 (AI어드바이저 Lv.112 → Lv.11)
-- **로그 자동 로테이션**: trader.log 5MB 초과 시 최근 2MB 유지
-- **디스크 3.2GB 확보**: pip·Playwright·Zoom·SiriTTS 캐시 정리
-
-### 2026-04-29 — AI 사무실 레이아웃 최종 정비
-- **책상 2+2 클러스터**: flex → 절대위치(3.25%/20.6%/68.6%/84.4%). 가운데 공간으로 브리핑보드 노출
-- **브리핑보드 z-index 분리**: `#office-iso-bg` 내부 → `#briefing-board-outer`(z:3) 독립 래퍼
-  - canvas(z:2) 위에 렌더링 → 캐릭터가 보드를 가리지 않음
-  - render()에서 iso-bg와 동시에 iso-night/iso-day 클래스 토글
-- **회의 테이블 추가**: 가운데 타원형 `.meeting-table` (left:33.8%, top:43.8%, 30%×25%)
-  - 밤 모드: 다크 네이비 + 시안 테두리, 낮 모드: 원목 갈색
-- **homeX 원복**: 48/204/636/778 (CSS 책상 절대위치와 픽셀 단위 정렬)
-
-### 2026-04-27~28 — AI 사무실 전면 개편
-- **배경 구조 교체**: Canvas bg() 제거 → `#office-iso-bg` CSS 아이소메트릭 레이어
-  - `iso-night` / `iso-day` 클래스, CSS skew+perspective 바닥 그리드
-  - 책상 2행 4열 (.desk), 모니터 파란빛 glow, 브리핑 보드, ON AIR 네온
-- **밤 모드 밝기 20% 상향**: 배경 #080f23→#30374b, 전체 iso-night 색상 RGB+40
-- **AI BRIEFING LIVE 보드 동적 데이터 연동**:
-  - `updateBriefingBoard()` 함수, office_memory.json 30초 자동 갱신
-  - 📅 날짜·시간 / 🤖 코인 현황+승률 / 📰 뉴스 토픽 / 🏆 성장 랭킹
-  - 보드 크기 확대(38%, min 180px) + 폰트 .42→.64rem + 모바일 대응(72%, 줄바꿈)
-- **캐릭터 그림자**: 바닥 반사(reflY*2) → 발 아래 타원 ellipse(alpha 0.28)
-
-### 2026-04-25 (2차) — AI 사무실 낮/밤 자동 전환
-- **낮/밤 자동 전환**: `render()`에서 매 프레임 `new Date().getHours()` 체크
-  - 07~19시 ☀️ 낮 모드: 원목 바닥, 맑은 하늘 창문, 원목 책상·회의 테이블
-  - 19~07시 🌙 밤 모드: 네온 그리드 바닥, 도시 야경, 다크 카본 책상
-- **시계 표시**: 우상단 `☀️ 13:25` / `🌙 22:10` 실시간 표시
-- **우측 데이터 패널**: AI어드바이저 현황 + 오늘의 뉴스 + 성장 랭킹 HTML 오버레이
-
-### 2026-04-25 (1차) — AI 사무실 사이버펑크 업그레이드
-- 배경: 원목 → 다크 네이비 + 네온 그리드
-- 중앙 테이블: 원목 → 홀로그래픽 AI 브리핑 LIVE 패널
-- 말풍선: 글래스모피즘 + 캐릭터 컬러 glow 보더
-- 이름 뱃지: 네온 glow 강화
-- 바닥 반사 효과 추가
-
-### 2026-04-25 — AI 직원 자기학습 시스템 구현
-- `ai-crew/utils/agent_memory.py`: diary, persona, growth_score 함수 추가
-- `coin-trader/utils/agent_memory.py`: AI어드바이저 학습 엔진
-- 각 에이전트 업무 완료 후 LLM 자기반성 → 1문장 일기 저장
-- 5건+ 일기 + 7일 경과 시 페르소나 자동 재작성
-- index.html: Lv.N 성장 점수 + 일기 말풍선 반영
-
-### 2026-04-25 — AI 사무실 고도화
-- 스프라이트: 10×16 @ _PX=4 → **16×24 @ _PX=3**
-- 행동 패턴: 11가지 → **19가지** 확장
-- 회의 빈도: 23초 → **2~3분**으로 완화
-
-### 2026-04-23 — AI 사무실 탭 & 전면 버그 수정
-- Canvas 픽셀아트 AI 사무실 탭 신규 추가 (8명, 10가지 행동)
-- office_memory.json 실데이터 연동
-- price_guard.py: register_stop_loss, record_loss, trailing_stop 누락 수정
-- executor.py: force 플래그, 잔고 3회 재시도
-- analyzer.py: ADX NaN 수정, 120초 타임아웃
-- ai_advisor.py: RSI<20 점수 0→-5
-- blacklist.py: add_successful_trade() 추가
-- 웹사이트: AI 직원 5명→8명
-
-### 2026-04-26 — Claude Code 환경 개선
-- Sequential Thinking MCP 서버 설치 (`/opt/homebrew/Cellar/node/24.1.0/bin/node` 직접 경로)
-- Code Simplifier 플러그인 설치 (`/simplify` 명령으로 코드 리뷰)
-- Context7 플러그인 설치
-- AI 사무실 밤 모드 순수 블랙 → 다크 네이비 (야근 사무실 느낌, 추가 20% 밝기)
-- AI 사무실 자기학습 소개 배너 추가
-- 오늘 콘텐츠 미준비 시 전날 데이터 → "준비중" 메시지로 변경
-- AI 주간 트렌드 첫 실행 시뮬레이션 완료 (04/19~04/25 7일치 분석)
-- ROOT README.md 전면 최신화
-
-### 2026-04-25 (2차) — AI 사무실 낮/밤 자동 전환
-- 낮/밤 자동 전환: 07~19시 ☀️ 원목 오피스, 19~07시 🌙 사이버펑크
-- 우측 실데이터 패널: AI어드바이저 현황 + 뉴스 + 성장 랭킹
-- AI 직원 자기학습 시스템: diary + persona + growth_score
-- 💡 시아아빠 한 줄 누락 버그 수정 (2차 패치 안전망 추가)
-- AI주간트렌드 에이전트 추가 (매주 월요일 [6/6] 단계)
-
-### 2026-04-21 — 전면 개선
-- buy_market_order 버그 수정
-- 학습 블랙리스트 신규 구축
-- MAX_INVEST 10만→5만, TAKE_PROFIT 8%→5%
+| `ai-crew/utils/agent_memory.py` | Supabase agent_memories 연동 |
+| `ai-crew/utils/office_export.py` | ai-crew 4명 학습 기록 → office_memory.json |
+| `ai-crew/agents/designer.py` | Pollinations.ai 이미지 생성 (30일 자동 정리) |
+| `ai-crew/agents/weekly_trend.py` | 주간 트렌드 (매주 월요일) |
+| `vibe-coding/coin-trader/main.py` | 코인 오케스트레이터 |
+| `vibe-coding/coin-trader/price_guard.py` | 손절/익절 30초 감시 |
+| `vibe-coding/coin-trader/utils/blacklist.py` | 학습 블랙리스트 |
+| `vibe-coding/coin-trader/utils/office_export.py` | AI어드바이저 기록 → office_memory.json |
 
 ---
 
@@ -317,41 +86,33 @@ read · wboard · snack · chat · printer · nap · patrol · report · water �
 
 ```bash
 # 코인 보유 현황
-cat ~/vibe-coding/coin-trader/state.json
+cat vibe-coding/coin-trader/state.json
 
-# 블랙리스트 현황
-cd ~/vibe-coding/coin-trader && python3 -c "
-from utils.blacklist import get_summary
-for l in get_summary(): print(l)"
-
-# 쿨다운 현황
-cat ~/vibe-coding/coin-trader/cooldown.json
-
-# 코인 로그 (최근 50줄)
-tail -50 ~/vibe-coding/coin-trader/trader.log
+# 코인 로그
+tail -50 vibe-coding/coin-trader/trader.log
 
 # AI 크루 로그
-tail -50 ~/vibe-coding/ai-crew/crew.log
+tail -50 ai-crew/crew.log
 
-# 음악 수집 상태
-python3 -c "import json; d=json.load(open('docs/music.json')); print(d['updated'], '/', len(d['songs']), '곡')"
+# 블랙리스트 현황
+cd vibe-coding/coin-trader && python3 -c "from utils.blacklist import get_summary; [print(l) for l in get_summary()]"
 ```
 
 ---
 
-## 🎵 음악 큐레이터 현황 (ai-crew)
+## 🎭 AI 사무실 (index.html)
 
-### 장르 구성 (7개 × 10곡 = 70곡, 주 1회)
+Canvas 픽셀아트 AI 직원 8명 + CSS 아이소메트릭 배경 + 낮/밤 자동전환.  
+`office_memory.json` 실데이터 연동, 30초 자동 갱신.
 
-| 장르 | 내용 |
-|------|------|
-| 2000s힙합 | 2000~2009 미국/영국 힙합 |
-| 최신힙합 | 2020년 이후 해외 힙합 |
-| 러닝업템포 | BPM 140~180 운동용 |
-| K-pop | 최근 3년 남자 아이돌/솔로 |
-| 여성발라드 | 한국/팝 여성 보컬 발라드 |
-| 걸그룹 | 최근 3년 K-pop 걸그룹 |
-| 최신곡 | 2024~2025 해외 팝/R&B |
+| 직원 | 역할 | 데이터 출처 |
+|------|------|------------|
+| 박기획 | 콘텐츠 기획자 | agent_memories (Supabase) |
+| 최디자 | 이미지 디자이너 | agent_memories (Supabase) |
+| 한뮤직 | 음악 큐레이터 | agent_memories (Supabase) |
+| AI주간트렌드 | 주간 분석가 | agent_memories (Supabase) |
+| AI어드바이저 | 코인 어드바이저 | coin-trader/utils/office_export.py (로컬) |
+| 뉴스기자 / 이가드 / 리포터 | 보조 직원 | 표시 전용 |
 
 ---
 
@@ -361,22 +122,3 @@ python3 -c "import json; d=json.load(open('docs/music.json')); print(d['updated'
 
 - `ai-crew/main.py` 완료 시 자동 push
 - `coin-trader/main.py` 매매 체결 시 자동 push
-- `price_guard.py` 손절/익절 시 자동 push
-
----
-
-## 📁 핵심 파일 위치
-
-| 파일 | 역할 |
-|------|------|
-| `ai-crew/utils/gemini_client.py` | Gemini/Groq 통합 클라이언트 |
-| `ai-crew/agents/music_curator.py` | 음악 큐레이터 (7장르×10곡, 주1회) |
-| `ai-crew/utils/office_export.py` | ai-crew 4명 학습 기록 → office_memory.json |
-| `coin-trader/price_guard.py` | 손절/익절 30초 감시 데몬 |
-| `coin-trader/main.py` | 코인 AI 매매 오케스트레이터 |
-| `coin-trader/agents/ai_advisor.py` | 코인 AI 판단 (Groq→Gemini) |
-| `coin-trader/utils/blacklist.py` | 📚 학습 블랙리스트 엔진 |
-| `coin-trader/utils/office_export.py` | AI어드바이저 학습 기록 → office_memory.json |
-| `coin-trader/blacklist.json` | 손절 학습 데이터 영구 저장소 |
-| `docs/trades.json` | 코인 매매 기록 + 블랙리스트 (GitHub Pages 서빙) |
-| `docs/office_memory.json` | AI 직원 학습 기록 통합 (GitHub Pages 서빙) |
