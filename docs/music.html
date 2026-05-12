@@ -321,11 +321,56 @@
     #now-label { font-size:9px; letter-spacing:2.5px; color:rgba(255,255,255,.25); text-transform:uppercase; margin-bottom:2px; }
     #now-title { font-size:13px; font-weight:600; color:rgba(255,255,255,.92); }
     #now-artist { font-size:10px; color:rgba(255,255,255,.35); margin-top:1px; }
+
+    /* ── 손 인식 ──────────────────────────────────────────── */
+    #hand-canvas { position:fixed; inset:0; z-index:15; pointer-events:none; }
+
+    #hand-btn {
+      font-size:10px; letter-spacing:2px; padding:5px 13px;
+      background:rgba(0,0,20,.65); border:1px solid rgba(255,255,255,.12);
+      border-radius:20px; color:rgba(255,255,255,.42); cursor:pointer;
+      pointer-events:all; transition:all .3s; backdrop-filter:blur(10px);
+      white-space:nowrap; flex-shrink:0;
+    }
+    #hand-btn:hover { color:rgba(255,255,255,.75); }
+    #hand-btn.active {
+      border-color:rgba(0,240,255,.55); color:rgba(0,240,255,.95);
+      box-shadow:0 0 14px rgba(0,240,255,.18);
+    }
+
+    #webcam-pip {
+      position:fixed; bottom:100px; right:16px; z-index:20;
+      width:152px; height:86px; border-radius:10px; overflow:hidden;
+      border:1px solid rgba(0,240,255,.22); background:#000;
+      display:none; box-shadow:0 0 22px rgba(0,240,255,.1);
+    }
+    #webcam-pip.show { display:block; }
+    #webcam-pip video { width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+    #pip-label {
+      position:absolute; bottom:5px; left:50%; transform:translateX(-50%);
+      font-size:7.5px; letter-spacing:2px; color:rgba(0,240,255,.45);
+      text-transform:uppercase; pointer-events:none;
+    }
+    #pip-dot {
+      position:absolute; top:7px; right:8px; width:6px; height:6px;
+      border-radius:50%; background:rgba(0,240,255,.8);
+      animation:pip-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pip-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.6)} }
+
+    #gesture-label {
+      position:fixed; bottom:196px; right:176px; z-index:21;
+      font-size:9px; letter-spacing:2px; color:rgba(0,240,255,.55);
+      display:none; text-align:right; line-height:2.1; pointer-events:none;
+    }
+    #gesture-label.show { display:block; }
+    #gesture-label .gl-cur { color:rgba(255,255,255,.85); font-size:11px; }
   </style>
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
+<canvas id="hand-canvas"></canvas>
 <div id="cur"></div>
 
 <!-- ── 플레이어 바 ── -->
@@ -375,6 +420,7 @@
     </div>
     <div id="search-wrap"><span id="search-icon">🔍</span><input id="search-input" type="text" placeholder="곡명 · 아티스트 검색..."><span id="search-clear">✕</span></div>
     <button id="share-btn">🔗 SHARE</button>
+    <span id="hand-btn">✋ HAND</span>
     <a class="back" href="index.html" target="_top">← Home</a>
   </div>
   <div id="hint">별 하나가 한 곡입니다 · 클릭하면 우주가 들립니다</div>
@@ -1491,7 +1537,360 @@ document.getElementById('share-btn').addEventListener('click', () => {
     setTimeout(() => t.classList.remove('show'), 2500);
   });
 });
+
+// 손 인식 모듈에 Three.js 상태 노출
+window._disco = {
+  get W() { return W; },
+  get H() { return H; },
+  setMouse(cx, cy) {
+    mouseX = cx; mouseY = cy;
+    mouse.x =  (cx / W) * 2 - 1;
+    mouse.y = -(cy / H) * 2 + 1;
+  },
+  clearMouse() {
+    mouse.x = -9999; mouse.y = -9999;
+  },
+  doClick(cx, cy) {
+    const m = new THREE.Vector2((cx / W) * 2 - 1, -(cy / H) * 2 + 1);
+    ray.setFromCamera(m, camera);
+    const hits = ray.intersectObjects(sprites);
+    if (!hits.length) return;
+    const s = hits[0].object;
+    const idx = sprites.indexOf(s);
+    playlist = [...sprites.slice(idx), ...sprites.slice(0, idx)]
+      .map(sp => ({ t: sp.userData.t, a: sp.userData.a }));
+    playIdx = 0;
+    playSong(playlist[0]);
+  },
+  rotateGalaxy(dx, dy) {
+    galaxyGroup.rotation.y += dx;
+    galaxyGroup.rotation.x = Math.max(-Math.PI / 2,
+      Math.min(Math.PI / 2, galaxyGroup.rotation.x + dy));
+  },
+  playNext,
+  playPrev,
+};
 </script>
 <div id="share-toast">🔗 링크가 복사되었습니다</div>
+
+<div id="webcam-pip">
+  <video id="hand-video" playsinline muted></video>
+  <div id="pip-dot"></div>
+  <div id="pip-label">HAND CAM</div>
+</div>
+<div id="gesture-label">
+  <div>☝️ 검지 → 커서 &nbsp;|&nbsp; 🤏 핀치 → 클릭</div>
+  <div>✊ 주먹+이동 → 회전 &nbsp;|&nbsp; 👋 스와이프 → 곡 이동</div>
+  <div class="gl-cur" id="gl-cur"></div>
+</div>
+
+<!-- MediaPipe Hands -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// 마이너리티 리포트 손 인식 컨트롤러
+// ═══════════════════════════════════════════════════════════
+(function() {
+
+const HAND_CONNECTIONS = [
+  [0,1],[1,2],[2,3],[3,4],
+  [0,5],[5,6],[6,7],[7,8],
+  [0,9],[9,10],[10,11],[11,12],
+  [0,13],[13,14],[14,15],[15,16],
+  [0,17],[17,18],[18,19],[19,20],
+  [5,9],[9,13],[13,17],[0,5],[0,17],
+];
+const TIP_IDS = [4,8,12,16,20];
+
+let handActive = false;
+let mpHands = null, mpCamera = null;
+
+let lastGesture   = 'NONE';
+let lastPinchTime = 0;
+let prevFistPos   = null;
+let wristHistory  = [];
+let lastSwipeTime = 0;
+let ripples       = [];
+let cursorPos     = null;
+let cursorTrail   = [];
+
+const handCanvas   = document.getElementById('hand-canvas');
+const hCtx         = handCanvas.getContext('2d');
+const handBtn      = document.getElementById('hand-btn');
+const webcamPip    = document.getElementById('webcam-pip');
+const gestureLabel = document.getElementById('gesture-label');
+const glCur        = document.getElementById('gl-cur');
+const handVideo    = document.getElementById('hand-video');
+const curEl        = document.getElementById('cur');
+
+function resizeHandCanvas() {
+  handCanvas.width  = innerWidth;
+  handCanvas.height = innerHeight;
+}
+resizeHandCanvas();
+window.addEventListener('resize', resizeHandCanvas);
+
+// ── 제스처 인식 ──────────────────────────────────────────
+function detectGesture(lm) {
+  const pinchDist = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
+  if (pinchDist < 0.058) return 'PINCH';
+
+  const wrist = lm[0];
+  const tipIds = [8, 12, 16, 20];
+  const mcpIds = [5,  9, 13, 17];
+  function d(a, b) { return Math.hypot(a.x-b.x, a.y-b.y, (a.z||0)-(b.z||0)); }
+
+  let ext = 0;
+  for (let i = 0; i < 4; i++) {
+    if (d(wrist, lm[tipIds[i]]) > d(wrist, lm[mcpIds[i]]) * 1.05) ext++;
+  }
+  if (ext === 0) return 'FIST';
+  if (ext >= 3)  return 'OPEN';
+  return 'POINT';
+}
+
+// ── 스와이프 감지 ────────────────────────────────────────
+function checkSwipe(lm) {
+  const W = handCanvas.width;
+  const wx = (1 - lm[0].x) * W;
+  const now = Date.now();
+  wristHistory.push({ x: wx, t: now });
+  if (wristHistory.length > 8) wristHistory.shift();
+  if (wristHistory.length < 5) return;
+
+  const oldest = wristHistory[0];
+  const newest = wristHistory[wristHistory.length - 1];
+  const speed  = (newest.x - oldest.x) / (newest.t - oldest.t) * 1000;
+
+  if (Math.abs(speed) > 1000 && now - lastSwipeTime > 900) {
+    lastSwipeTime = now;
+    const D = window._disco;
+    if (!D) return;
+    if (speed > 0) { D.playNext(); showToast('⏭  NEXT'); }
+    else           { D.playPrev(); showToast('⏮  PREV'); }
+    wristHistory = [];
+  }
+}
+
+function showToast(msg) {
+  glCur.textContent = msg;
+  clearTimeout(glCur._t);
+  glCur._t = setTimeout(() => { glCur.textContent = ''; }, 1000);
+}
+
+// ── 리플 효과 ─────────────────────────────────────────────
+function addRipple(cx, cy) { ripples.push({ x: cx, y: cy, r: 0, life: 1 }); }
+function drawRipples() {
+  for (const rp of ripples) {
+    rp.r += 3.5; rp.life -= 0.035;
+    if (rp.life <= 0) continue;
+    hCtx.beginPath();
+    hCtx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+    hCtx.strokeStyle = `rgba(255,80,255,${rp.life * 0.7})`;
+    hCtx.lineWidth = 2.5;
+    hCtx.stroke();
+  }
+  ripples = ripples.filter(r => r.life > 0);
+}
+
+// ── 커서 & 트레일 ─────────────────────────────────────────
+function drawCursor(cx, cy, gesture) {
+  cursorTrail.push({ x: cx, y: cy });
+  if (cursorTrail.length > 18) cursorTrail.shift();
+  for (let i = 1; i < cursorTrail.length; i++) {
+    hCtx.beginPath();
+    hCtx.arc(cursorTrail[i].x, cursorTrail[i].y, 2, 0, Math.PI * 2);
+    hCtx.fillStyle = `rgba(0,240,255,${(i / cursorTrail.length) * 0.3})`;
+    hCtx.fill();
+  }
+
+  const isPinch = gesture === 'PINCH';
+  const isFist  = gesture === 'FIST';
+  const r   = isPinch ? 7 : isFist ? 18 : 13;
+  const clr = isPinch ? '255,80,255' : isFist ? '255,160,0' : '0,240,255';
+
+  hCtx.save();
+  hCtx.shadowColor = `rgba(${clr},1)`;
+  hCtx.shadowBlur  = 18;
+  hCtx.beginPath();
+  hCtx.arc(cx, cy, r, 0, Math.PI * 2);
+  hCtx.strokeStyle = `rgba(${clr},.9)`;
+  hCtx.lineWidth   = isPinch ? 3 : 2;
+  hCtx.stroke();
+  if (!isPinch) {
+    hCtx.beginPath();
+    hCtx.arc(cx, cy, 3, 0, Math.PI * 2);
+    hCtx.fillStyle = `rgba(${clr},.85)`;
+    hCtx.fill();
+  }
+  hCtx.restore();
+}
+
+// ── 손 스켈레톤 ──────────────────────────────────────────
+function drawSkeleton(lm) {
+  const W = handCanvas.width, H = handCanvas.height;
+  hCtx.save();
+  hCtx.strokeStyle = 'rgba(0,200,255,.28)';
+  hCtx.lineWidth = 1.5;
+  for (const [a, b] of HAND_CONNECTIONS) {
+    const la = lm[a], lb = lm[b];
+    hCtx.beginPath();
+    hCtx.moveTo((1 - la.x) * W, la.y * H);
+    hCtx.lineTo((1 - lb.x) * W, lb.y * H);
+    hCtx.stroke();
+  }
+  for (let i = 0; i < lm.length; i++) {
+    if (i === 8) continue;
+    const x = (1 - lm[i].x) * W, y = lm[i].y * H;
+    hCtx.beginPath();
+    hCtx.arc(x, y, TIP_IDS.includes(i) ? 3.5 : 2, 0, Math.PI * 2);
+    hCtx.fillStyle = TIP_IDS.includes(i) ? 'rgba(0,240,255,.75)' : 'rgba(100,200,255,.45)';
+    hCtx.fill();
+  }
+  hCtx.restore();
+}
+
+// ── 제스처 → 인터랙션 ────────────────────────────────────
+function applyGesture(gesture, lm) {
+  const D = window._disco;
+  if (!D) return;
+  const W = handCanvas.width, H = handCanvas.height;
+  const cx = (1 - lm[8].x) * W;
+  const cy = lm[8].y * H;
+
+  cursorPos = { x: cx, y: cy };
+
+  // 커서 위치를 Three.js mouse 벡터에 반영 → 호버 자동 작동
+  D.setMouse(cx, cy);
+
+  // 핀치 → 클릭
+  if (gesture === 'PINCH' && lastGesture !== 'PINCH') {
+    const now = Date.now();
+    if (now - lastPinchTime > 800) {
+      lastPinchTime = now;
+      D.doClick(cx, cy);
+      addRipple(cx, cy);
+      showToast('✅  CLICK');
+    }
+  }
+
+  // 주먹 → 은하 회전
+  if (gesture === 'FIST') {
+    const wx = (1 - lm[0].x) * W;
+    const wy = lm[0].y * H;
+    if (prevFistPos) {
+      const dx = (wx - prevFistPos.x) / W * 5;
+      const dy = (wy - prevFistPos.y) / H * 3;
+      D.rotateGalaxy(dx, dy);
+    }
+    prevFistPos = { x: wx, y: wy };
+  } else {
+    prevFistPos = null;
+  }
+
+  // 손 펴고 스와이프 → 곡 이동
+  if (gesture === 'OPEN') checkSwipe(lm);
+  else wristHistory = [];
+
+  const labels = { PINCH:'🤏 핀치', FIST:'✊ 주먹', OPEN:'🖐 스와이프', POINT:'☝️ 포인트' };
+  if (gesture !== lastGesture) glCur.textContent = labels[gesture] || '';
+
+  lastGesture = gesture;
+}
+
+// ── 렌더 루프 ─────────────────────────────────────────────
+function renderLoop() {
+  if (!handActive) return;
+  requestAnimationFrame(renderLoop);
+  hCtx.clearRect(0, 0, handCanvas.width, handCanvas.height);
+  drawRipples();
+  if (cursorPos && lastGesture !== 'NONE') {
+    drawCursor(cursorPos.x, cursorPos.y, lastGesture);
+  }
+}
+
+// ── MediaPipe 콜백 ────────────────────────────────────────
+function onResults(results) {
+  if (!results.multiHandLandmarks?.length) {
+    cursorPos = null; lastGesture = 'NONE';
+    prevFistPos = null; wristHistory = [];
+    glCur.textContent = '';
+    const D = window._disco;
+    if (D) D.clearMouse();
+    return;
+  }
+  const lm = results.multiHandLandmarks[0];
+  drawSkeleton(lm);
+  applyGesture(detectGesture(lm), lm);
+}
+
+// ── 초기화 / 종료 ─────────────────────────────────────────
+async function startHand() {
+  if (typeof Hands === 'undefined') {
+    alert('MediaPipe 로드 중입니다. 잠시 후 다시 눌러주세요.');
+    return;
+  }
+  handActive = true;
+  handBtn.classList.add('active');
+  handBtn.textContent = '✋ ON';
+  webcamPip.classList.add('show');
+  gestureLabel.classList.add('show');
+  if (curEl) curEl.style.display = 'none';
+  cursorTrail = [];
+
+  mpHands = new Hands({ locateFile: f =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${f}` });
+  mpHands.setOptions({
+    maxNumHands: 1,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.6,
+    selfieMode: false,
+  });
+  mpHands.onResults(onResults);
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    handVideo.srcObject = stream;
+    await handVideo.play();
+    mpCamera = new Camera(handVideo, {
+      onFrame: async () => { await mpHands.send({ image: handVideo }); },
+      width: 320, height: 180,
+    });
+    mpCamera.start();
+    renderLoop();
+  } catch(e) {
+    alert('카메라 권한이 필요합니다.');
+    stopHand();
+  }
+}
+
+function stopHand() {
+  handActive = false;
+  handBtn.classList.remove('active');
+  handBtn.textContent = '✋ HAND';
+  webcamPip.classList.remove('show');
+  gestureLabel.classList.remove('show');
+  if (curEl) curEl.style.display = '';
+  hCtx.clearRect(0, 0, handCanvas.width, handCanvas.height);
+  cursorPos = null; lastGesture = 'NONE';
+  cursorTrail = []; ripples = [];
+
+  if (mpCamera) { mpCamera.stop(); mpCamera = null; }
+  if (mpHands)  { mpHands.close(); mpHands = null; }
+  if (handVideo.srcObject) {
+    handVideo.srcObject.getTracks().forEach(t => t.stop());
+    handVideo.srcObject = null;
+  }
+}
+
+handBtn.addEventListener('click', () => {
+  if (handActive) stopHand(); else startHand();
+});
+
+})();
+</script>
 </body>
 </html>
