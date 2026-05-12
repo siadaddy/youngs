@@ -1589,7 +1589,7 @@ window._disco = {
 </div>
 <div id="gesture-label">
   <div>☝️ 검지 → 커서 &nbsp;|&nbsp; 🤏 핀치 → 클릭</div>
-  <div>✌️ 두 손가락 벌리기/모으기 → 줌인/아웃</div>
+  <div>👌 엄지+검지 벌리기/모으기 → 줌인/아웃</div>
   <div>✊ 주먹+이동 → 회전 &nbsp;|&nbsp; 👋 스와이프 → 곡 이동</div>
   <div>🤲 양손 벌리기/모으기 → 줌인/아웃</div>
   <div class="gl-cur" id="gl-cur"></div>
@@ -1653,6 +1653,11 @@ function detectGesture(lm) {
   const wrist = lm[0];
   function d(a, b) { return Math.hypot(a.x-b.x, a.y-b.y, (a.z||0)-(b.z||0)); }
 
+  const thumbIndexDist = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
+
+  // PINCH: 엄지+검지 꽉 모음 → 클릭
+  if (thumbIndexDist < 0.058) return 'PINCH';
+
   const ext = [
     d(wrist, lm[8])  > d(wrist, lm[5])  * 1.05,  // 검지
     d(wrist, lm[12]) > d(wrist, lm[9])  * 1.05,  // 중지
@@ -1661,8 +1666,9 @@ function detectGesture(lm) {
   ];
   const extCount = ext.filter(Boolean).length;
 
-  // ✌️ 평화 사인: 검지+중지만 펴기 → 줌
-  if (ext[0] && ext[1] && !ext[2] && !ext[3]) return 'PEACE';
+  // SPREAD: 엄지+검지 벌리기 → 줌 (검지만 펴고 나머지 접음)
+  if (thumbIndexDist > 0.08 && ext[0] && !ext[1] && !ext[2] && !ext[3]) return 'SPREAD';
+
   if (extCount === 0) return 'FIST';
   if (extCount >= 3)  return 'OPEN';
   return 'POINT';
@@ -1845,29 +1851,26 @@ function applyGesture(gesture, lm) {
     prevFistPos = null;
   }
 
-  // ✌️ 평화 사인 → 한 손 줌
-  if (gesture === 'PEACE') {
-    const W = handCanvas.width, H = handCanvas.height;
-    const dist = Math.hypot(
-      (lm[8].x - lm[12].x) * W,
-      (lm[8].y - lm[12].y) * H
-    );
+  // 👌 엄지+검지 벌리기/모으기 → 줌
+  if (gesture === 'SPREAD') {
+    const dist = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
     if (prevPeaceDist !== null) {
-      const delta = (prevPeaceDist - dist) * 1.5; // 벌리면 줌인(음수), 모으면 줌아웃(양수)
+      const delta = (prevPeaceDist - dist) * 800; // 벌리면 줌인(음수→가까워짐), 모으면 줌아웃
       if (Math.abs(delta) > 0.4) {
         D.zoomGalaxy(delta);
-        if (Math.abs(delta) > 3) showToast(delta < 0 ? '🔍 ZOOM IN' : '🔭 ZOOM OUT');
+        if (Math.abs(delta) > 4) showToast(delta < 0 ? '🔍 ZOOM IN' : '🔭 ZOOM OUT');
       }
     }
     prevPeaceDist = dist;
 
-    // 두 손가락 끝 사이 거리 시각화
+    // 엄지-검지 사이 시각화
+    const W = handCanvas.width, H = handCanvas.height;
     hCtx.save();
-    hCtx.strokeStyle = 'rgba(255,220,50,.6)';
-    hCtx.lineWidth = 1.5; hCtx.setLineDash([5,4]);
+    hCtx.strokeStyle = 'rgba(255,220,50,.65)';
+    hCtx.lineWidth = 1.5; hCtx.setLineDash([5, 4]);
     hCtx.beginPath();
-    hCtx.moveTo((1-lm[8].x)*W, lm[8].y*H);
-    hCtx.lineTo((1-lm[12].x)*W, lm[12].y*H);
+    hCtx.moveTo((1-lm[4].x)*W, lm[4].y*H);
+    hCtx.lineTo((1-lm[8].x)*W, lm[8].y*H);
     hCtx.stroke(); hCtx.setLineDash([]); hCtx.restore();
   } else {
     prevPeaceDist = null;
@@ -1877,7 +1880,7 @@ function applyGesture(gesture, lm) {
   if (gesture === 'OPEN') checkSwipe(lm);
   else wristHistory = [];
 
-  const labels = { PINCH:'🤏 핀치', FIST:'✊ 주먹', OPEN:'🖐 스와이프', POINT:'☝️ 포인트', PEACE:'✌️ 줌' };
+  const labels = { PINCH:'🤏 핀치', FIST:'✊ 주먹', OPEN:'🖐 스와이프', POINT:'☝️ 포인트', SPREAD:'👌 줌' };
   if (gesture !== lastGesture) glCur.textContent = labels[gesture] || '';
 
   lastGesture = gesture;
