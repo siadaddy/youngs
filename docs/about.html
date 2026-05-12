@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>👥 AI 크리에이터 소개 — 시아아빠님의 AI 자동화</title>
+  <title>👥 AI 크리에이터 소개 — 시아아빠의 AI 데일리</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -52,6 +52,7 @@
     }
     .wrap { position: relative; z-index: 1; }
     .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
     .tag {
       display: inline-flex; align-items: center; gap: 5px;
       padding: 4px 12px; border-radius: 99px;
@@ -163,44 +164,43 @@
       background: var(--glass); border: 1px solid var(--border);
       border-radius: var(--r-xl); padding: 36px 24px;
     }
-    .pipeline-main {
+    .pipeline-label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--bmw-lt); text-transform: uppercase;
+      margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .pipeline-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .pipeline-row {
       display: flex; align-items: center;
       justify-content: center; flex-wrap: wrap; gap: 0;
+      margin-bottom: 8px;
     }
-    .pipeline-friday {
-      margin-top: 24px; padding-top: 20px;
-      border-top: 1px dashed rgba(167,139,250,.3);
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-    }
-    .friday-label {
-      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
-      color: var(--accent2); text-transform: uppercase;
-      padding: 6px 14px; border-radius: 99px;
-      border: 1px dashed rgba(167,139,250,.4);
-      background: rgba(167,139,250,.06);
-      white-space: nowrap;
+    .pipeline-sep {
+      margin: 20px 0 16px; border: none;
+      border-top: 1px dashed rgba(167,139,250,.25);
     }
     .pipe-step {
       display: flex; flex-direction: column;
-      align-items: center; gap: 10px;
-      padding: 16px 20px; min-width: 110px;
+      align-items: center; gap: 8px;
+      padding: 14px 16px; min-width: 100px;
       border-radius: var(--r-md); transition: background .2s;
     }
     .pipe-step:hover { background: var(--glass); }
-    .pipe-step.friday .pipe-icon-wrap {
-      background: rgba(167,139,250,.1); border-color: rgba(167,139,250,.2);
-    }
     .pipe-icon-wrap {
-      width: 56px; height: 56px; border-radius: 16px;
+      width: 52px; height: 52px; border-radius: 14px;
       background: rgba(28,105,212,.1); border: 1px solid rgba(28,105,212,.2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem; transition: transform .2s;
+      font-size: 1.5rem; transition: transform .2s;
     }
+    .pipe-step.purple .pipe-icon-wrap { background: rgba(167,139,250,.1); border-color: rgba(167,139,250,.2); }
+    .pipe-step.green  .pipe-icon-wrap { background: rgba(16,185,129,.1);  border-color: rgba(16,185,129,.2); }
     .pipe-step:hover .pipe-icon-wrap { transform: translateY(-4px); }
-    .pipe-time { font-size: .65rem; font-weight: 700; letter-spacing: .06em; color: var(--bmw-lt); text-transform: uppercase; }
-    .pipe-label { font-size: .78rem; font-weight: 700; }
-    .pipe-desc { font-size: .7rem; color: var(--muted); text-align: center; max-width: 90px; line-height: 1.4; }
-    .pipe-arrow { color: var(--muted); font-size: 1rem; padding: 0 4px; margin-bottom: 30px; flex-shrink: 0; }
+    .pipe-time { font-size: .63rem; font-weight: 700; letter-spacing: .06em; color: var(--bmw-lt); text-transform: uppercase; }
+    .pipe-label { font-size: .77rem; font-weight: 700; }
+    .pipe-desc { font-size: .68rem; color: var(--muted); text-align: center; max-width: 86px; line-height: 1.4; }
+    .pipe-arrow { color: var(--muted); font-size: 1rem; padding: 0 2px; margin-bottom: 32px; flex-shrink: 0; }
 
     /* ─── 운영 현황 ─── */
     .ops-grid {
@@ -260,7 +260,7 @@
     <a href="index.html" class="back-link">← 메인으로 돌아가기</a>
     <div class="page-eyebrow">🤖 About AI Creator</div>
     <h1 class="page-title">AI 크리에이터 소개</h1>
-    <p class="page-sub">매일 아침 AI 직원들이 협업해 뉴스를 읽고 콘텐츠를 자동 생성합니다. 코인 트레이더는 24시간 시장을 감시합니다.</p>
+    <p class="page-sub">GitHub Actions로 매일 자동 실행. 맥북이 꺼져 있어도 뉴스가 만들어집니다.</p>
   </div>
 </div>
 
@@ -297,17 +297,44 @@
   <div class="container">
     <div class="section-eyebrow">🔄 Automation Pipeline</div>
     <div class="section-title">자동화 파이프라인</div>
-    <p class="section-sub">매일 07:00 KST 자동 실행 · 단계 실패 시 최대 3회 자동 재시도</p>
+    <p class="section-sub">GitHub Actions 단일 워크플로우 · newsletter job → aicrew job 순차 실행 · 맥북 불필요</p>
     <div class="pipeline-wrap">
-      <!-- 메인 파이프라인 (매일) -->
-      <div class="pipeline-main">
+
+      <div class="pipeline-label">📅 매일 06:40 KST — newsletter job</div>
+      <div class="pipeline-row">
         <div class="pipe-step">
-          <div class="pipe-icon-wrap">📰</div>
-          <div class="pipe-time">07:00</div>
+          <div class="pipe-icon-wrap">📡</div>
+          <div class="pipe-time">06:40</div>
           <div class="pipe-label">뉴스 수집</div>
-          <div class="pipe-desc">RSS 피드 8개 카테고리</div>
+          <div class="pipe-desc">네이버 API 8카테고리 × 7개</div>
         </div>
         <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">🗄️</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">Supabase 저장</div>
+          <div class="pipe-desc">news_cards · news_trends</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">💬</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">이야깃거리 생성</div>
+          <div class="pipe-desc">비즈니스 대화 소재 3개</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">📝</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">커밋 & 푸시</div>
+          <div class="pipe-desc">YYYY-MM-DD.md 저장</div>
+        </div>
+      </div>
+
+      <hr class="pipeline-sep">
+
+      <div class="pipeline-label">🤖 aicrew job (newsletter 완료 후 자동 시작)</div>
+      <div class="pipeline-row">
         <div class="pipe-step">
           <div class="pipe-icon-wrap">🎯</div>
           <div class="pipe-time"></div>
@@ -319,7 +346,7 @@
           <div class="pipe-icon-wrap">✍️</div>
           <div class="pipe-time"></div>
           <div class="pipe-label">이작가</div>
-          <div class="pipe-desc">카드뉴스 5개·아티클 작성</div>
+          <div class="pipe-desc">카드뉴스 5개 · 아티클</div>
         </div>
         <div class="pipe-arrow">→</div>
         <div class="pipe-step">
@@ -333,16 +360,50 @@
           <div class="pipe-icon-wrap">🎵</div>
           <div class="pipe-time"></div>
           <div class="pipe-label">한뮤직</div>
-          <div class="pipe-desc">70곡+ 추천·우주 업데이트</div>
+          <div class="pipe-desc">70곡+ 큐레이션 (주 1회)</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step purple">
+          <div class="pipe-icon-wrap">📊</div>
+          <div class="pipe-time">월요일</div>
+          <div class="pipe-label">AI주간트렌드</div>
+          <div class="pipe-desc">Supabase 7일치 인사이트</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step green">
+          <div class="pipe-icon-wrap">🚀</div>
+          <div class="pipe-time">~07:30</div>
+          <div class="pipe-label">GitHub Pages</div>
+          <div class="pipe-desc">content.json 자동 배포</div>
+        </div>
+      </div>
+
+      <hr class="pipeline-sep">
+
+      <div class="pipeline-label">🪙 코인 트레이더 — 맥북 로컬 (30분마다)</div>
+      <div class="pipeline-row">
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">📈</div>
+          <div class="pipe-time">매 :00/:30</div>
+          <div class="pipe-label">시장 분석</div>
+          <div class="pipe-desc">상위 15종목 1시간봉</div>
         </div>
         <div class="pipe-arrow">→</div>
         <div class="pipe-step">
-          <div class="pipe-icon-wrap">📤</div>
-          <div class="pipe-time">~08:00</div>
-          <div class="pipe-label">정퍼블</div>
-          <div class="pipe-desc">GitHub Pages 자동 배포</div>
+          <div class="pipe-icon-wrap">🤖</div>
+          <div class="pipe-time"></div>
+          <div class="pipe-label">AI 판단</div>
+          <div class="pipe-desc">BUY / SELL / HOLD</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon-wrap">⚡</div>
+          <div class="pipe-time">상시</div>
+          <div class="pipe-label">실시간 감시</div>
+          <div class="pipe-desc">30초마다 손절·익절</div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -352,7 +413,7 @@
   <div class="container">
     <div class="section-eyebrow">👥 AI Crew · 콘텐츠 팀</div>
     <div class="section-title">AI 콘텐츠 크리에이터</div>
-    <p class="section-sub">매일 07:00 순서대로 협업 · Gemini 2.5 Flash 우선 → Groq 폴백</p>
+    <p class="section-sub">GitHub Actions aicrew job에서 순서대로 협업 · Gemini 2.5 Flash 우선 → Groq 폴백</p>
     <div class="crew-grid">
 
       <div class="crew-card">
@@ -398,27 +459,11 @@
           </div>
         </div>
         <div class="crew-quote">"글보다 먼저 눈을 사로잡는 이미지, 제 전문입니다."</div>
-        <div class="crew-model">🧠 Gemini (프롬프트 생성) + Stable Horde (이미지 생성)</div>
+        <div class="crew-model">🧠 Gemini (프롬프트 생성) + Pollinations.ai Flux (이미지 생성)</div>
         <div class="crew-tags">
           <span class="tag blue">768×768 이미지 5장</span>
           <span class="tag purple">Bloomberg/Wired 스타일</span>
           <span class="tag green">키 없이 무료</span>
-        </div>
-      </div>
-
-      <div class="crew-card">
-        <div class="crew-top">
-          <div class="crew-emoji">📤</div>
-          <div>
-            <div class="crew-name">정퍼블</div>
-            <div class="crew-title">콘텐츠 퍼블리셔</div>
-          </div>
-        </div>
-        <div class="crew-quote">"만들어진 콘텐츠를 가장 보기 좋게 정리하는 건 저의 몫입니다."</div>
-        <div class="crew-model">🔌 GitHub Pages · content.json 자동 생성 · 즉시 배포</div>
-        <div class="crew-tags">
-          <span class="tag blue">사이트 자동 배포</span>
-          <span class="tag">출처·링크 포함</span>
         </div>
       </div>
 
@@ -431,12 +476,29 @@
           </div>
         </div>
         <div class="crew-quote">"오늘 하루 어울리는 음악, 제가 골라드릴게요."</div>
-        <div class="crew-model">🧠 Gemini 2.5 Flash · 장르/분위기 기반 큐레이션</div>
+        <div class="crew-model">🧠 Gemini 2.5 Flash · 장르/분위기 기반 큐레이션 · 주 1회 갱신</div>
         <div class="crew-tags">
           <span class="tag blue">7장르 × 10곡 = 70곡+</span>
           <span class="tag purple">인기도 점수 산출</span>
           <span class="tag gold">분위기 태그 생성</span>
-          <span class="tag">날짜별 히스토리 저장</span>
+        </div>
+      </div>
+
+      <div class="crew-card">
+        <div class="crew-top">
+          <div class="crew-emoji">📊</div>
+          <div>
+            <div class="crew-name">AI주간트렌드</div>
+            <div class="crew-title">주간 인사이트 분석가</div>
+          </div>
+        </div>
+        <div class="crew-quote">"7일치 뉴스 흐름을 읽고 다음 주를 예측합니다."</div>
+        <div class="crew-model">🧠 Gemini 2.5 Flash · 매주 월요일 실행 · Supabase 7일치 집계</div>
+        <div class="crew-tags">
+          <span class="tag blue">TOP3 카테고리 집계</span>
+          <span class="tag purple">분야별 인사이트</span>
+          <span class="tag gold">다음 주 주목 이슈</span>
+          <span class="tag">12주 히스토리</span>
         </div>
       </div>
 
@@ -449,7 +511,7 @@
   <div class="container">
     <div class="section-eyebrow">🤖 AI Crew · 트레이딩 팀</div>
     <div class="section-title">AI 코인 트레이더</div>
-    <p class="section-sub">24시간 시장 감시 · 30분마다 AI 판단 · 빗썸 API 연동 · 일일 손실한도 보호</p>
+    <p class="section-sub">맥북 로컬 실행 · 30분마다 AI 판단 · 빗썸 API · 5만원 실거래 중</p>
     <div class="crew-grid">
 
       <div class="crew-card">
@@ -460,12 +522,12 @@
             <div class="crew-title">기술적 분석가</div>
           </div>
         </div>
-        <div class="crew-quote">"RSI, MACD, 볼린저밴드, 변동성 돌파 신호가 말할 때 움직입니다."</div>
-        <div class="crew-model">🔌 빗썸 API + pybithumb · 30분봉 OHLCV + 변동성 돌파 스코어링</div>
+        <div class="crew-quote">"1시간봉 지표가 말할 때만 움직입니다."</div>
+        <div class="crew-model">🔌 빗썸 API + pybithumb · 1시간봉 OHLCV · 병렬 5개 분석</div>
         <div class="crew-tags">
-          <span class="tag blue">빗썸 원화마켓 종목</span>
-          <span class="tag">RSI · MACD · BB</span>
-          <span class="tag gold">ADX 추세 필터</span>
+          <span class="tag blue">RSI · MACD · BB · ADX</span>
+          <span class="tag gold">변동성 돌파(VB)</span>
+          <span class="tag">거래대금 20억↑ 필터</span>
         </div>
       </div>
 
@@ -477,12 +539,12 @@
             <div class="crew-title">매매 판단 AI</div>
           </div>
         </div>
-        <div class="crew-quote">"BUY / SELL / HOLD — 세 글자에 모든 판단을 담습니다."</div>
+        <div class="crew-quote">"스코어 +7 이상, MACD 골든크로스 필수 — 그래야 BUY."</div>
         <div class="crew-model">🧠 Groq — Llama 3.3 70B · key1→4 라운드로빈 · Gemini 폴백</div>
         <div class="crew-tags">
-          <span class="tag blue">BUY / SELL / HOLD</span>
-          <span class="tag purple">한국어 이유 생성</span>
-          <span class="tag">30분마다 실행</span>
+          <span class="tag blue">최소 +7점 매수</span>
+          <span class="tag purple">MACD 골든크로스 필수</span>
+          <span class="tag">RSI 25~45 진입</span>
         </div>
       </div>
 
@@ -499,7 +561,7 @@
         <div class="crew-tags">
           <span class="tag green">손절 -4%</span>
           <span class="tag gold">익절 +5%</span>
-          <span class="tag blue">트레일링스탑</span>
+          <span class="tag blue">트레일링스탑 +3%↑</span>
           <span class="tag">일손실 -7,500원 한도</span>
         </div>
       </div>
@@ -552,7 +614,15 @@
     <div class="stack-grid">
       <div class="stack-card">
         <div class="stack-icon">📡</div>
-        <div><div class="stack-name">RSS 피드</div><div class="stack-free">FREE · 언론사 뉴스 자동 수집</div></div>
+        <div><div class="stack-name">네이버 뉴스 API</div><div class="stack-free">FREE · 8카테고리 뉴스 수집</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">🗄️</div>
+        <div><div class="stack-name">Supabase</div><div class="stack-free">FREE · 뉴스 DB · 트렌드 저장</div></div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon">⚙️</div>
+        <div><div class="stack-name">GitHub Actions</div><div class="stack-free">FREE · 전체 파이프라인 자동화</div></div>
       </div>
       <div class="stack-card">
         <div class="stack-icon">🧠</div>
@@ -564,15 +634,7 @@
       </div>
       <div class="stack-card">
         <div class="stack-icon">🎨</div>
-        <div><div class="stack-name">Stable Horde</div><div class="stack-free">FREE · 이미지 생성 (키 불필요)</div></div>
-      </div>
-      <div class="stack-card">
-        <div class="stack-icon">🐍</div>
-        <div><div class="stack-name">Python + launchd</div><div class="stack-free">FREE · 맥북 자동화</div></div>
-      </div>
-      <div class="stack-card">
-        <div class="stack-icon">🔔</div>
-        <div><div class="stack-name">ntfy.sh</div><div class="stack-free">FREE · 완료 알림</div></div>
+        <div><div class="stack-name">Pollinations.ai Flux</div><div class="stack-free">FREE · 이미지 생성 (키 불필요)</div></div>
       </div>
       <div class="stack-card">
         <div class="stack-icon">📊</div>
@@ -590,6 +652,10 @@
         <div class="stack-icon">🎵</div>
         <div><div class="stack-name">iTunes API</div><div class="stack-free">FREE · 앨범아트 연동</div></div>
       </div>
+      <div class="stack-card">
+        <div class="stack-icon">🔔</div>
+        <div><div class="stack-name">ntfy.sh</div><div class="stack-free">FREE · 완료 알림</div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -597,7 +663,7 @@
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-logo">🤖 시아아빠님의 AI 크리에이터</div>
+      <div class="footer-logo">🤖 시아아빠의 AI 데일리</div>
       <div class="footer-divider"></div>
       <div>
         <a href="index.html">← 메인으로 돌아가기</a>
