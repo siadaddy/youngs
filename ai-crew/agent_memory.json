@@ -2,6 +2,17 @@
   "박기획": {
     "topic_selection": [
       {
+        "date": "2026-05-12",
+        "headlines": [
+          "현대차 넥쏘, 수소차 시장 압도적 1위! 🥇",
+          " 재무장관 회동, 관세·미중 관계 논의! 🤝",
+          "K-반도체 파워! 한국 1분기 GDP 성장률 1위! 📈",
+          "중국 AI, 미국 위협하는 '진짜 이유'는? 🇨🇳🤖🇺🇸",
+          "반도체 특수, 백화점 매출까지 폭발! 🛍️💰"
+        ],
+        "blog_title": "SK하이닉스 사장, 빌 게이츠·MS 나델라와 만나 AI 동맹 강화! 🤝"
+      },
+      {
         "date": "2026-05-10",
         "headlines": [
           "현대차, 서 하이브리드 생산 전환 🚗",
@@ -180,6 +191,11 @@
     ],
     "diary": [
       {
+        "date": "2026-05-12",
+        "lesson": "기술이 경제, 안보, 일상을 넘나드는 핵심이네.",
+        "trigger": "daily_plan"
+      },
+      {
         "date": "2026-05-10",
         "lesson": "기술, 경제, 안보가 일상까지 정말 한몸처럼 엮여 있네.",
         "trigger": "daily_plan"
@@ -255,12 +271,77 @@
         "trigger": "daily_plan"
       }
     ],
-    "growth_score": 15,
+    "growth_score": 16,
     "persona": "뉴스레터 기획자였던 난, 이젠 기술이 일상부터 안보까지 흔드는 세상에 눈떴어.",
     "persona_updated_at": "2026-05-07"
   },
   "최디자": {
     "image_result": [
+      {
+        "date": "2026-05-12",
+        "headline": "반도체 특수, 백화점 매출까지 폭발! 🛍️💰",
+        "prompt_keywords": [
+          "cheerful",
+          "stylized",
+          "shopping",
+          "overflowing",
+          "with",
+          "colorful"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-12",
+        "headline": "중국 AI, 미국 위협하는 '진짜 이유'는? 🇨🇳🤖🇺🇸",
+        "prompt_keywords": [
+          "distinct",
+          "glowing",
+          "network",
+          "nodes",
+          "with",
+          "warm"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-12",
+        "headline": "K-반도체 파워! 한국 1분기 GDP 성장률 1위! 📈",
+        "prompt_keywords": [
+          "central",
+          "illuminated",
+          "microchip",
+          "radiating",
+          "energy",
+          "symbolizing"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-12",
+        "headline": " 재무장관 회동, 관세·미중 관계 논의! 🤝",
+        "prompt_keywords": [
+          "professional",
+          "hands",
+          "shaking",
+          "firmly",
+          "over",
+          "stylized"
+        ],
+        "success": true
+      },
+      {
+        "date": "2026-05-12",
+        "headline": "현대차 넥쏘, 수소차 시장 압도적 1위! 🥇",
+        "prompt_keywords": [
+          "sophisticated",
+          "hydrogen",
+          "fuel",
+          "cell",
+          "vehicle",
+          "like"
+        ],
+        "success": true
+      },
       {
         "date": "2026-05-10",
         "headline": "WHO 사무총장, 크루즈선 도착 🚢🚨",
@@ -975,74 +1056,14 @@
           "with"
         ],
         "success": true
-      },
-      {
-        "date": "2026-04-29",
-        "headline": "📈 증시 호황, IPO는 '찬바람'?",
-        "prompt_keywords": [
-          "split",
-          "image",
-          "side",
-          "shows",
-          "vibrant",
-          "upwardtrending"
-        ],
-        "success": true
-      },
-      {
-        "date": "2026-04-29",
-        "headline": "오픈AI 쇼크에 반도체주 급락! 📉",
-        "prompt_keywords": [
-          "clean",
-          "futuristic",
-          "interface",
-          "with",
-          "glowing",
-          "circuits"
-        ],
-        "success": true
-      },
-      {
-        "date": "2026-04-29",
-        "headline": "화물연대-BGF로지스, 잠정 합의! ✅",
-        "prompt_keywords": [
-          "Bright",
-          "modern",
-          "delivery",
-          "trucks",
-          "moving",
-          "smoothly"
-        ],
-        "success": true
-      },
-      {
-        "date": "2026-04-29",
-        "headline": "🚨총리, 의회 수사 면제!",
-        "prompt_keywords": [
-          "bright",
-          "abstract",
-          "illustration",
-          "transparent",
-          "glowing",
-          "parliamentary"
-        ],
-        "success": true
-      },
-      {
-        "date": "2026-04-29",
-        "headline": "혼다, 한국 시장 철수? 🚗💨",
-        "prompt_keywords": [
-          "sleek",
-          "modern",
-          "electric",
-          "driving",
-          "brightly",
-          "clean"
-        ],
-        "success": true
       }
     ],
     "diary": [
+      {
+        "date": "2026-05-12",
+        "lesson": "군더더기 없이 핵심만 던지니 성공률 100%!",
+        "trigger": "daily_design"
+      },
       {
         "date": "2026-05-09",
         "lesson": "역시 간단한 게 진리! 쓸데없는 수식어는 독이야.",
@@ -1114,7 +1135,7 @@
         "trigger": "daily_design"
       }
     ],
-    "growth_score": 14,
+    "growth_score": 15,
     "persona": "나는 AI 이미지 디자이너 최디자야. Pollinations.ai는 간단한 프롬프트가 진리라는 걸 계속 증명하고 있지!",
     "persona_updated_at": "2026-05-07"
   },
@@ -1817,6 +1838,11 @@
   "이작가": {
     "diary": [
       {
+        "date": "2026-05-12",
+        "lesson": "결국 디테일은 말이 아닌 실천, 재생성 0회로 증명했어.",
+        "trigger": "daily_write"
+      },
+      {
         "date": "2026-05-10",
         "lesson": "디테일은 말이 아닌 실천! 붙여쓰기 오류로 그걸 또 배웠어.",
         "trigger": "daily_write"
@@ -1892,12 +1918,18 @@
         "trigger": "daily_write"
       }
     ],
-    "growth_score": 15,
+    "growth_score": 16,
     "persona": "디테일이 재생성 핵심임을 또 깨달았어. 이젠 붙여쓰기, 조사 하나까지 놓치지 않는 이작가야.",
     "persona_updated_at": "2026-05-07"
   },
   "AI주간트렌드": {
     "weekly_analysis": [
+      {
+        "date": "2026-05-11",
+        "week_label": "05/04 ~ 05/10",
+        "week_summary": "AI, 경제, 자동차 격변 속 중동 긴장 고조",
+        "hot_category": "AI / 인공지능"
+      },
       {
         "date": "2026-05-04",
         "week_label": "04/27 ~ 05/03",
@@ -1925,6 +1957,11 @@
     ],
     "diary": [
       {
+        "date": "2026-05-11",
+        "lesson": "05/04 ~ 05/10 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제, 자동차 격변 속 중동 긴장 고조'",
+        "trigger": "weekly_trend"
+      },
+      {
         "date": "2026-05-04",
         "lesson": "04/27 ~ 05/03 주간 분석 완료. 이번 주 핫이슈는 AI / 인공지능. 'AI, 경제 회복, 자동차 산업 격변 🤖💰🚗'",
         "trigger": "weekly_trend"
@@ -1945,7 +1982,7 @@
         "trigger": "weekly_trend"
       }
     ],
-    "growth_score": 4,
+    "growth_score": 5,
     "persona": "나는 매주 뉴스 흐름을 꿰뚫는 주간 트렌드 분석가야. AI와 경제 이슈가 항상 핫하더라고.",
     "persona_updated_at": "2026-05-04"
   }
