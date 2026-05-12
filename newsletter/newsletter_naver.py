@@ -38,7 +38,7 @@ NOTION_PARENT_ID    = os.getenv('NOTION_PARENT_PAGE_ID', '329b395f9fc68169b2e8e7
 NEWSLETTER_DIR      = os.getenv('NEWSLETTER_DIR', os.path.dirname(os.path.abspath(__file__)))
 GROQ_KEYS           = [k for k in [os.getenv('GROQ_API_KEY'), os.getenv('GROQ_API_KEY_2')] if k]
 TODAY               = date.today().strftime('%Y-%m-%d')
-MAX_PER_CATEGORY    = 5
+MAX_PER_CATEGORY    = 7
 
 CATEGORIES = {
     '🔥 오늘의 하이라이트': ['속보', '단독', '오늘 주요뉴스'],
