@@ -11,7 +11,7 @@ from datetime import date, timedelta
 from utils.gemini_client import ask_ai
 from utils.agent_memory import remember, get_hints, add_diary
 
-WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "weekly_trend.json")
+WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "weekly_trend.json")
 
 SYSTEM = """당신은 30년 경력의 수석 뉴스 큐레이터입니다.
 이번 주 뉴스 데이터를 분석해 독자에게 실질적인 인사이트를 제공합니다.
