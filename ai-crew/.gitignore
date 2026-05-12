@@ -1,0 +1,17 @@
+# 로컬 메모리 (Supabase로 이전됨)
+agent_memory.json
+
+# 로컬 실행 로그
+crew.log
+quality_log.json
+
+# 환경변수
+.env
+
+# Python 캐시
+__pycache__/
+*.pyc
+*.pyo
+
+# 임시 출력
+output/
