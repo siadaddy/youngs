@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>시아 아빠의 Claude 실험실</title>
+  <title>시아아빠의 AI 데일리</title>
 
   <!-- OG / SNS 공유 메타태그 -->
   <meta name="description" content="코딩 몰랐던 아빠가 Claude와 함께 만든 AI 자동화 실험실 — 매일 뉴스를 분석해 카드뉴스·트렌드 브리핑·블로그를 자동 생성합니다." />
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://siadaddy.github.io/youngs/" />
-  <meta property="og:title"       content="시아 아빠의 Claude 실험실" />
+  <meta property="og:title"       content="시아아빠의 AI 데일리" />
   <meta property="og:description" content="코딩 몰랐던 아빠가 2026년 Claude를 만나 만든 것들 — AI 뉴스레터 · AI 트렌드 브리핑 · 3D 뮤직 갤러리" />
   <meta property="og:image"       content="https://siadaddy.github.io/youngs/og-image-v2.png" />
   <meta property="og:locale"      content="ko_KR" />
   <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="시아 아빠의 Claude 실험실" />
+  <meta name="twitter:title"       content="시아아빠의 AI 데일리" />
   <meta name="twitter:description" content="코딩 몰랐던 아빠가 Claude 만나 한 달 만에 만든 것들" />
   <meta name="twitter:image"       content="https://siadaddy.github.io/youngs/og-image-v2.png" />
 
@@ -118,7 +118,7 @@
     /* ─── 히어로 ─────────────────────────────────── */
     .hero {
       position: relative;
-      padding: 80px 24px 72px;
+      padding: 16px 24px 12px;
       text-align: center;
       overflow: hidden;
     }
@@ -149,11 +149,11 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 
     .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-size: clamp(1.1rem, 2.5vw, 1.8rem);
       font-weight: 900;
       letter-spacing: -.03em;
       line-height: 1.1;
-      margin-bottom: 18px;
+      margin-bottom: 0;
     }
     .hero h1 .sub {
       display: block;
@@ -681,12 +681,12 @@
       background: var(--glass);
       border: 1px solid rgba(255,255,255,.14);
       border-radius: var(--r-md);
-      padding: 16px 18px;
+      padding: 10px 13px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      display: flex; flex-direction: column; gap: 4px;
+      display: flex; flex-direction: column; gap: 2px;
       transition: border-color .2s, transform .2s;
-      min-height: 88px;
+      min-height: 62px;
     }
     .widget:hover {
       border-color: rgba(28,105,212,.3);
@@ -699,10 +699,10 @@
     }
     .w-icon { font-size: .9rem; }
     .w-val {
-      font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em;
+      font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em;
       color: var(--text); line-height: 1.2;
     }
-    .w-val.clock { font-size: 1.45rem; font-variant-numeric: tabular-nums; }
+    .w-val.clock { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
     .w-sub { font-size: .69rem; color: var(--muted2); }
     .w-change { font-size: .69rem; font-weight: 700; }
     .w-change.up   { color: #f87171; }
@@ -1369,15 +1369,9 @@
 <!-- ─── 히어로 ──────────────────────────────────────────── -->
 <div class="hero">
   <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.5;"></canvas>
-  <div class="hero-eyebrow">
-    <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-    &nbsp;2026년 3월 말 시작 . 코딩 비전공 . Claude와 함께
-  </div>
   <h1>
-    <span class="sub">시아 아빠의</span>
-    <span class="line2">Claude 실험실</span>
+    <span class="line2">시아아빠의 AI 데일리</span>
   </h1>
-  <div style="font-size:.8rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:-8px;margin-bottom:4px;">No Code Background . Built with Claude . Since March 2026</div>
 </div>
 
 <!-- ─── 라이브 대시보드 ──────────────────────────────────── -->
@@ -1783,6 +1777,28 @@
         </div>
       </a>
 
+      <!-- 코인 자동매매 -->
+      <a href="coin.html" target="_blank"
+         style="text-decoration:none;background:linear-gradient(135deg,rgba(16,185,129,.08) 0%,var(--card) 100%);border:1px solid rgba(16,185,129,.2);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;"
+         onmouseover="this.style.borderColor='rgba(16,185,129,.5)';this.style.transform='translateY(-3px)'"
+         onmouseout="this.style.borderColor='rgba(16,185,129,.2)';this.style.transform='none'">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:2rem">🪙</div>
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,.12);color:#34d399;font-weight:700;">Live Trading</span>
+          <span style="font-size:.72rem;color:var(--muted2);">2026.03~</span>
+        </div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text)">AI 코인 자동매매</div>
+        <div style="font-size:.82rem;color:var(--muted2);line-height:1.6">
+          빗썸 KRW 마켓 상위 종목을 1시간봉으로 분석. RSI·MACD·볼린저·ADX·변동성돌파 스코어링 → Groq AI 매매 판단. 손절/익절/트레일링스탑 자동 실행
+        </div>
+        <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.12);color:#34d399;font-weight:600;">pybithumb</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.12);color:#34d399;font-weight:600;">Groq AI</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.12);color:#34d399;font-weight:600;">실거래 중</span>
+          <span style="font-size:.69rem;padding:3px 9px;border-radius:20px;background:rgba(16,185,129,.12);color:#34d399;font-weight:600;">5만원 운용</span>
+        </div>
+      </a>
+
     </div><!-- /AI projects grid -->
 
     <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:4px;">📚 데이터 분석 . 학습 프로젝트</div>
@@ -1864,7 +1880,7 @@
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-logo">시아 아빠의 Claude 실험실</div>
+      <div class="footer-logo">시아아빠의 AI 데일리</div>
       <div class="footer-divider"></div>
       <div>
         <a href="about.html">👥 AI 직원 소개 &amp; 파이프라인</a>
