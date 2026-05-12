@@ -116,6 +116,28 @@ Canvas 픽셀아트 AI 직원 8명 + CSS 아이소메트릭 배경 + 낮/밤 자
 
 ---
 
+## 🎵 뮤직 유니버스 (docs/music.html)
+
+Three.js 은하계 + MediaPipe 손 인식 컨트롤.
+
+| 제스처 | 동작 |
+|--------|------|
+| ☝️ 검지 | 커서 이동 + 호버 |
+| 🤏 엄지+검지 꽉 모음 | 클릭 → 재생 |
+| 👌 엄지+검지 벌리기/모으기 | 줌인/아웃 |
+| ✊ 주먹+이동 | 은하 회전 |
+| 🖐 스와이프 | 이전/다음 곡 |
+| 🤲 양손 | 큰 폭 줌 |
+
+**주요 함수 (window._disco)**
+- `setMouse(cx, cy)` — 호버 위치 업데이트
+- `doClick(cx, cy)` — 직접 레이캐스팅 후 재생
+- `rotateGalaxy(dx, dy)` — galaxyGroup 회전
+- `zoomGalaxy(delta)` — camera ↔ controls.target 거리 조정
+- `playNext()` / `playPrev()`
+
+---
+
 ## 🌐 GitHub Pages
 
 **라이브**: https://siadaddy.github.io/youngs/

@@ -15,6 +15,7 @@
 | 📊 AI 주간 트렌드 | Supabase 7일치 집계 → 분야별 인사이트 브리핑 | 매주 월요일 |
 | 🪙 AI 코인 자동매매 | 빗썸 KRW 마켓 AI 트레이딩 + 대시보드 | 30분마다 (맥북) |
 | 🏢 AI 사무실 | 8명 AI 직원 픽셀아트 오피스 — 낮/밤 자동 전환 | 실시간 |
+| 🎵 뮤직 유니버스 | AI 큐레이션 은하계 + MediaPipe 손 인식 컨트롤 | 상시 |
 | 🎓 내 제작물 | 저가 커피 입점 분석 + Instacart 대시보드 | 상시 배포 |
 
 ---
@@ -190,6 +191,30 @@ Canvas 픽셀아트 인터랙티브 오피스. 8명의 AI 직원이 실데이터
 
 ---
 
+## 🎵 뮤직 유니버스
+
+AI가 큐레이션한 70곡이 은하계를 이루고, 별 하나가 한 곡입니다.
+
+**라이브**: [siadaddy.github.io/youngs/music.html](https://siadaddy.github.io/youngs/music.html)
+
+### ✋ 손 인식 컨트롤 (MediaPipe Hands)
+
+카메라를 켜고 손 제스처만으로 우주를 탐색할 수 있습니다.
+
+| 제스처 | 동작 |
+|--------|------|
+| ☝️ 검지 이동 | 글로우 커서 이동 + 별 호버 |
+| 🤏 엄지+검지 **꽉 모음** | 클릭 → 유튜브 재생 |
+| 👌 엄지+검지 **벌리기/모으기** | 줌인 / 줌아웃 |
+| ✊ 주먹 쥐고 이동 | 은하 드래그 회전 |
+| 🖐 손 펴고 스와이프 | 이전 / 다음 곡 |
+| 🤲 양손 벌리기/모으기 | 빠른 줌인 / 줌아웃 |
+
+- 별도 설치 없이 브라우저에서 바로 실행 (HTTPS 환경)
+- Three.js + UnrealBloom 후처리 + OrbitControls
+
+---
+
 ## 🎓 내 제작물
 
 ### ☕ 저가 테이크아웃 커피 브랜드 입점 최적지 분석
@@ -204,4 +229,4 @@ Canvas 픽셀아트 인터랙티브 오피스. 8명의 AI 직원이 실데이터
 
 ---
 
-*최종 업데이트: 2026-05-12 | Powered by Gemini · Groq · Supabase · Pollinations.ai · pybithumb · GitHub Actions · GitHub Pages | 월 운영비용 $0*
+*최종 업데이트: 2026-05-12 | Powered by Gemini · Groq · Supabase · Pollinations.ai · MediaPipe · pybithumb · GitHub Actions · GitHub Pages | 월 운영비용 $0*
