@@ -29,9 +29,11 @@
         },
         {
           "label": "카드5",
-          "passed": true,
-          "retries": 0,
-          "issues": []
+          "passed": false,
+          "retries": 1,
+          "issues": [
+            "품질 오류: ['단어 붙여쓰기']"
+          ]
         },
         {
           "label": "블로그",
@@ -40,9 +42,11 @@
           "issues": []
         }
       ],
-      "total_retries": 0,
-      "pass_rate": 1.0,
-      "issue_summary": []
+      "total_retries": 1,
+      "pass_rate": 0.83,
+      "issue_summary": [
+        "품질 오류: ['단어 붙여쓰기']"
+      ]
     },
     {
       "date": "2026-05-10",
