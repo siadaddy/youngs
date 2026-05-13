@@ -54,6 +54,8 @@ jobs:
   aicrew:
     runs-on: ubuntu-latest
     needs: newsletter  # newsletter job 완료 후 실행
+    env:
+      TZ: Asia/Seoul
 
     steps:
       - name: 저장소 체크아웃
