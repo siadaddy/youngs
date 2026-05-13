@@ -276,6 +276,8 @@ def insert_to_supabase(categorized, today):
                 'date': today,
                 'title': a['title'],
                 'summary': a.get('summary', ''),
+                'link': a.get('link', ''),
+                'source': a.get('source', ''),
                 'image_url': None,
                 'category': cat
             })

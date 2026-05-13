@@ -2043,8 +2043,8 @@
       news[r.category].push({
         title:   r.title,
         summary: r.summary || '',
-        link:    null,
-        source:  null
+        link:    r.link   || null,
+        source:  r.source || null
       });
     });
 
