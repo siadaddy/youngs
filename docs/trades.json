@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "SUNDOG",
-    "buy_price": 10.0,
-    "qty": 4985.0,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-16 23:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-16 23:58",
+      "action": "SELL",
+      "ticker": "SUNDOG",
+      "price": 10.03,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 10원 대비 -2.90%)",
+      "pnl_pct": 0.3,
+      "pnl_krw": 150.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-16 23:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-03 16:59",
-      "action": "SELL",
-      "ticker": "POLA",
-      "price": 12.81,
-      "amount_krw": 49850.0,
-      "reason": "실시간 익절 5.00% (기준 +5.0%)",
-      "pnl_pct": 5.0,
-      "pnl_krw": 2492.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 93,
-    "wins": 31,
+    "total_trades": 94,
+    "wins": 32,
     "losses": 62,
-    "total_pnl_krw": -42972.0,
+    "total_pnl_krw": -42822.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-16 23:30",
+  "updated_at": "2026-05-16 23:58",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
