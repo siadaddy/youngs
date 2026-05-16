@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "BTC",
+    "buy_price": 116731000.0,
+    "qty": 0.0004,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-17 01:30"
+  },
   "history": [
+    {
+      "time": "2026-05-17 01:30",
+      "action": "BUY",
+      "ticker": "BTC",
+      "price": 116731000.0,
+      "amount_krw": 49850.0,
+      "reason": "BTC의 RSI는 30.3으로 매수 신호가 발생하였으며, MACD 골든크로스와 ADX 56.7로 강한 추세가 나타나고 있습니다. 또한, 거래량이 19% 증가하여 참여자들의 관심이 높아지고 있습니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-16 23:58",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -4.38,
       "pnl_krw": -2186.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-03 17:00",
-      "action": "BUY",
-      "ticker": "RSS3",
-      "price": 11.86,
-      "amount_krw": 49850.0,
-      "reason": "VB✅과 거래량 변화가 양호하며, 점수도 +4로 높아 신호가 강한 돌파 신호를 보이고 있습니다. 또한 RSI 값이 21.9로 저점에 위치해 있어 매수 기회로 판단됩니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-16 23:58",
+  "updated_at": "2026-05-17 01:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
