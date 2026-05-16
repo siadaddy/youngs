@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-11 07:09",
+  "updated": "2026-05-16 16:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 34,
-      "total": 92,
+      "win_rate": 33,
+      "total": 93,
       "wins": 31,
-      "losses": 61,
-      "holding": "📊 BTC 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 62,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "16:00",
+          "date": "2026-05-16",
+          "ticker": "BTC",
+          "pnl": -1.1,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "06:00",
           "date": "2026-05-11",
@@ -44,35 +52,28 @@
           "pnl": 5.18,
           "action": "SELL",
           "type": "take_profit"
-        },
-        {
-          "time": "02:00",
-          "date": "2026-05-08",
-          "ticker": "XRP",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-11 06:00",
+      "last_active": "2026-05-16 16:00",
       "diary": [
-        {
-          "date": "2026-05-11 06:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
-        },
-        {
-          "date": "2026-05-11 02:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
-        },
         {
           "date": "2026-05-08 02:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
+        },
+        {
+          "date": "2026-05-07 14:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
+        {
+          "date": "2026-05-07 07:06",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
         }
       ],
-      "persona": "나, 데이터 믿어. ",
-      "growth_score": 145
+      "persona": "나, 데이터 믿어. 손절 중요해.",
+      "growth_score": 143
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '증시'(5회), '트럼프'(4회) — 새 각도 필요",
@@ -177,6 +178,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-16 16:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.1% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-11 06:00",
       "agent": "AI어드바이저",
@@ -449,13 +457,6 @@
       "icon": "🤖",
       "msg": "AIOZ 매수 — RSI 46.2·거래량+38%",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-05 14:47",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 손절 -4.29% → 학습 기록 🚫",
-      "type": "loss"
     },
     {
       "time": "2026-05-04",
