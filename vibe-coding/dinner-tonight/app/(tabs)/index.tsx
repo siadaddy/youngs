@@ -15,7 +15,8 @@ import { FeedbackModal } from '../../components/FeedbackModal';
 
 const CONDITIONS = {
   style: ['집밥', '배달', '외식'],
-  mood: ['가볍게', '든든하게', '특별하게'],
+  cuisine: ['한식', '중식', '일식', '양식', '동남아', '분식', '디저트'],
+  mood: ['집에서 쉬고 싶어', '기분 전환하고 싶어', '힘내고 싶어', '특별한 날이야'],
   who: ['혼자', '둘이서', '아이랑', '온 가족'],
   time: ['15분 이내', '30분', '여유있게'],
   spicy: ['순한맛', '보통', '매운맛'],
@@ -26,6 +27,7 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const [style, setStyle] = useState<string | null>(null);
+  const [cuisine, setCuisine] = useState<string | null>(null);
   const [mood, setMood] = useState<string | null>(null);
   const [who, setWho] = useState<string | null>(null);
   const [time, setTime] = useState<string | null>(null);
@@ -36,12 +38,13 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [useFridge, setUseFridge] = useState(true);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showExtra, setShowExtra] = useState(false);
 
   const ingredients = useFridgeStore((s) => s.ingredients);
   const members = useProfileStore((s) => s.members);
   const { getThisWeekMenus, addEntry } = useHistoryStore();
 
-  const hasCondition = !!(style || mood || who || time);
+  const hasCondition = !!(style || mood || who || time || cuisine || spicy);
 
   const familyProfile = members.length > 0
     ? members.map((m) => `${m.name}(${m.ageGroup}, 알레르기: ${m.allergies.join('/') || '없음'})`)
@@ -54,7 +57,7 @@ export default function HomeScreen() {
     setRecommendation(null);
     try {
       const result = await getMenuRecommendation({
-        conditions: { style: style ?? '', mood: mood ?? '', who: who ?? '', time: time ?? '', spicy: spicy ?? '' },
+        conditions: { style: style ?? '', cuisine: cuisine ?? '', mood: mood ?? '', who: who ?? '', time: time ?? '', spicy: spicy ?? '' },
         ingredients: useFridge ? ingredients : [],
         recentMenus: getThisWeekMenus(),
         familyProfile,
@@ -73,7 +76,7 @@ export default function HomeScreen() {
     setRecommendation(null);
     try {
       const result = await getMenuRecommendation({
-        conditions: { style: style ?? '', mood: mood ?? '', who: who ?? '', time: time ?? '', spicy: spicy ?? '' },
+        conditions: { style: style ?? '', cuisine: cuisine ?? '', mood: mood ?? '', who: who ?? '', time: time ?? '', spicy: spicy ?? '' },
         ingredients: useFridge ? ingredients : [],
         recentMenus: getThisWeekMenus(),
         familyProfile,
@@ -94,11 +97,13 @@ export default function HomeScreen() {
       menu: recommendation.menu,
       emoji: recommendation.emoji,
       reason: recommendation.reason,
+      ingredients: recommendation.ingredients,
       recipe: recommendation.recipe,
       tip: recommendation.tip,
     });
     setRecommendation(null);
-    setStyle(null); setMood(null); setWho(null); setTime(null); setSpicy(null);
+    setStyle(null); setCuisine(null); setMood(null); setWho(null); setTime(null); setSpicy(null);
+    setShowExtra(false);
     router.push('/recipe?id=' + id);
   }
 
@@ -141,7 +146,7 @@ export default function HomeScreen() {
             {hasCondition && (
               <TouchableOpacity
                 style={[styles.resetBtn, { borderColor: isDark ? colors.borderDark : colors.border }]}
-                onPress={() => { setStyle(null); setMood(null); setWho(null); setTime(null); setSpicy(null); setRecommendation(null); setError(null); }}
+                onPress={() => { setStyle(null); setCuisine(null); setMood(null); setWho(null); setTime(null); setSpicy(null); setRecommendation(null); setError(null); }}
                 activeOpacity={0.7}
               >
                 <Text style={[styles.resetBtnText, { color: colors.textMuted }]}>↺  초기화</Text>
@@ -149,12 +154,34 @@ export default function HomeScreen() {
             )}
           </View>
           <ConditionPicker label="식사 스타일" options={CONDITIONS.style} value={style} onChange={setStyle} isDark={isDark} />
-          <ConditionPicker label="기분" options={CONDITIONS.mood} value={mood} onChange={setMood} isDark={isDark} />
           <ConditionPicker label="인원" options={CONDITIONS.who} value={who} onChange={setWho} isDark={isDark} />
-          {style !== '배달' && (
-            <ConditionPicker label="조리 시간" options={CONDITIONS.time} value={time} onChange={setTime} isDark={isDark} />
+
+          {/* 추가 설정 토글 */}
+          <TouchableOpacity
+            style={[styles.extraToggle, { borderColor: isDark ? colors.borderDark : colors.border }]}
+            onPress={() => setShowExtra(!showExtra)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.extraToggleText, { color: colors.primary }]}>
+              {showExtra ? '▲  추가 설정 접기' : '▼  음식 종류·기분·맵기 더 설정하기'}
+            </Text>
+            {!showExtra && (cuisine || mood || spicy || time) && (
+              <View style={styles.extraDot} />
+            )}
+          </TouchableOpacity>
+
+          {showExtra && (
+            <>
+              <ConditionPicker label="음식 종류" options={CONDITIONS.cuisine} value={cuisine} onChange={setCuisine} isDark={isDark} />
+              <ConditionPicker label="오늘의 상황" options={CONDITIONS.mood} value={mood} onChange={setMood} isDark={isDark} />
+              {style !== '배달' && (
+                <ConditionPicker label="조리 시간" options={CONDITIONS.time} value={time} onChange={setTime} isDark={isDark} />
+              )}
+              {cuisine !== '디저트' && (
+                <ConditionPicker label="맵기" options={CONDITIONS.spicy} value={spicy} onChange={setSpicy} isDark={isDark} />
+              )}
+            </>
           )}
-          <ConditionPicker label="맵기" options={CONDITIONS.spicy} value={spicy} onChange={setSpicy} isDark={isDark} />
 
           {ingredients.length > 0 && (
             <View style={[styles.fridgeToggleRow, { borderTopColor: isDark ? colors.borderDark : colors.border }]}>
@@ -176,13 +203,16 @@ export default function HomeScreen() {
 
         {/* CTA */}
         <TouchableOpacity
-          style={[styles.recommendBtn, (!hasCondition || loading) && styles.disabled, shadows.md]}
+          style={[styles.recommendBtn, loading && styles.disabled, shadows.md]}
           onPress={handleRecommend}
-          disabled={!hasCondition || loading}
+          disabled={loading}
           activeOpacity={0.85}
         >
-          <Text style={styles.recommendText}>✨  AI 메뉴 추천받기</Text>
+          <Text style={styles.recommendText}>
+            {hasCondition ? '✨  AI 메뉴 추천받기' : '🎲  오늘의 랜덤 추천'}
+          </Text>
         </TouchableOpacity>
+        <Text style={styles.aiNotice}>🤖 무료 AI 사용 중 · 간혹 외국어가 섞일 수 있어요</Text>
 
         {(loading || recommendation || error) && (
           <MenuCard
@@ -249,4 +279,15 @@ const styles = StyleSheet.create({
   },
   disabled: { opacity: 0.4 },
   recommendText: { color: '#FFFFFF', fontSize: 18, fontWeight: '800', letterSpacing: 0.3 },
+  aiNotice: { textAlign: 'center', fontSize: 12, color: colors.textMuted, marginTop: 8, marginBottom: 4 },
+  extraToggle: {
+    borderWidth: 1, borderRadius: 16, borderStyle: 'dashed',
+    paddingVertical: 10, paddingHorizontal: 16,
+    alignItems: 'center', marginTop: 8, flexDirection: 'row', justifyContent: 'center',
+  },
+  extraToggleText: { fontSize: 13, fontWeight: '600' },
+  extraDot: {
+    width: 7, height: 7, borderRadius: 4,
+    backgroundColor: colors.primary, marginLeft: 6,
+  },
 });

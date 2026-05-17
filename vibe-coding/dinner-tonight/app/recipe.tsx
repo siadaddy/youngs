@@ -24,10 +24,12 @@ export default function RecipeScreen() {
 
   async function handleShare() {
     if (!entry) return;
+    const ingredientText = entry.ingredients && entry.ingredients.length > 0
+      ? `\n\n🛒 재료\n${entry.ingredients.join(', ')}` : '';
     const recipeText = entry.recipe?.map((s, i) => `${i + 1}. ${s}`).join('\n') ?? '';
     const tipText = entry.tip ? `\n\n💡 꿀팁: ${entry.tip}` : '';
     await Share.share({
-      message: `${entry.emoji} ${entry.menu}\n\n📋 조리법\n${recipeText}${tipText}\n\n— 딱메 앱으로 추천받았어요`,
+      message: `${entry.emoji} ${entry.menu}${ingredientText}\n\n📋 조리법\n${recipeText}${tipText}\n\n— 딱메 앱으로 추천받았어요`,
     });
   }
 
@@ -81,6 +83,20 @@ export default function RecipeScreen() {
           <View style={[styles.card, { backgroundColor: cardBg }, shadows.sm]}>
             <Text style={[styles.sectionTitle, { color: mutedColor }]}>추천 이유</Text>
             <Text style={[styles.reasonText, { color: textColor }]}>{entry.reason}</Text>
+          </View>
+        )}
+
+        {/* 재료 */}
+        {entry.ingredients && entry.ingredients.length > 0 && (
+          <View style={[styles.card, { backgroundColor: cardBg }, shadows.sm]}>
+            <Text style={[styles.sectionTitle, { color: mutedColor }]}>재료</Text>
+            <View style={styles.ingredientGrid}>
+              {entry.ingredients.map((ing, i) => (
+                <View key={i} style={[styles.ingredientChip, { backgroundColor: isDark ? colors.surfaceDark : colors.accent }]}>
+                  <Text style={[styles.ingredientText, { color: isDark ? '#FFD580' : '#8B5000' }]}>{ing}</Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
 
@@ -172,4 +188,7 @@ const styles = StyleSheet.create({
   },
   tipIcon: { fontSize: 18, marginRight: 10, marginTop: 1 },
   tipText: { flex: 1, fontSize: 15, lineHeight: 22, fontWeight: '500' },
+  ingredientGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  ingredientChip: { borderRadius: 20, paddingVertical: 6, paddingHorizontal: 14 },
+  ingredientText: { fontSize: 13, fontWeight: '600' },
 });

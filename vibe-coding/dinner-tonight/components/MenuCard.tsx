@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, useColorScheme } from 'react-native';
 import { colors, shadows } from '../constants/theme';
 import { MenuRecommendation } from '../lib/groq';
@@ -19,6 +19,7 @@ export function MenuCard({ loading, recommendation, error, onConfirm, onRetry, o
   const cardBg = isDark ? colors.cardDark : colors.card;
   const textColor = isDark ? '#FFFFFF' : colors.dark;
   const mutedColor = isDark ? colors.textMutedDark : colors.textMuted;
+  const [showAllSteps, setShowAllSteps] = useState(false);
 
   const isDeliveryOrDineOut = selectedStyle === '배달' || selectedStyle === '외식';
 
@@ -74,11 +75,11 @@ export function MenuCard({ loading, recommendation, error, onConfirm, onRetry, o
       )}
 
       {/* 집밥: 조리법 먼저 */}
-      {!isDeliveryOrDineOut && (
+      {!isDeliveryOrDineOut && recipe.length > 0 && (
         <>
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: textColor }]}>조리법</Text>
-            {recipe.map((step, i) => (
+            <Text style={[styles.sectionTitle, { color: textColor }]}>조리법 미리보기</Text>
+            {(showAllSteps ? recipe : recipe.slice(0, 2)).map((step, i) => (
               <View key={i} style={styles.stepRow}>
                 <View style={styles.stepBadge}>
                   <Text style={styles.stepNum}>{i + 1}</Text>
@@ -86,6 +87,13 @@ export function MenuCard({ loading, recommendation, error, onConfirm, onRetry, o
                 <Text style={[styles.stepText, { color: textColor }]}>{step}</Text>
               </View>
             ))}
+            {recipe.length > 2 && (
+              <TouchableOpacity onPress={() => setShowAllSteps(!showAllSteps)} style={styles.showMoreBtn}>
+                <Text style={[styles.showMoreText, { color: colors.primary }]}>
+                  {showAllSteps ? '▲  접기' : `▼  전체 ${recipe.length}단계 보기`}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={[styles.tipBox, { backgroundColor: isDark ? '#2A1F00' : colors.accent }]}>
             <Text style={styles.tipIcon}>💡</Text>
@@ -155,6 +163,8 @@ const styles = StyleSheet.create({
   },
   stepNum: { color: '#FFF', fontSize: 12, fontWeight: '700' },
   stepText: { flex: 1, fontSize: 15, lineHeight: 22 },
+  showMoreBtn: { alignItems: 'center', paddingVertical: 8, marginTop: 4 },
+  showMoreText: { fontSize: 13, fontWeight: '700' },
   tipBox: {
     flexDirection: 'row', alignItems: 'flex-start',
     marginHorizontal: 20, marginTop: 16, borderRadius: 14, padding: 14,

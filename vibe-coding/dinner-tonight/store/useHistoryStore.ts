@@ -8,6 +8,7 @@ export interface HistoryEntry {
   menu: string;
   emoji: string;
   reason?: string;
+  ingredients?: string[];
   recipe?: string[];
   tip?: string;
 }
