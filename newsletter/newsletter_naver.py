@@ -82,6 +82,26 @@ def ask_ai(prompt: str, system: str = "") -> str:
             print(f"    ⚠️ Groq 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
     return ""
 
+def _is_korean_text(text: str) -> bool:
+    """문자열이 주로 한국어/영어로 구성됐는지 확인 (러시아어·중국어 등 차단)"""
+    import unicodedata
+    allowed_scripts = {'Hangul', 'Latin', 'Common'}
+    for ch in text:
+        if ch.isspace() or ch.isdigit():
+            continue
+        try:
+            name = unicodedata.name(ch, '')
+            script = name.split()[0] if name else 'Common'
+        except Exception:
+            script = 'Common'
+        if script not in allowed_scripts:
+            return False
+    return True
+
+def _sanitize_category_summaries(summaries: dict) -> dict:
+    """비한국어 키를 가진 항목 제거"""
+    return {k: v for k, v in summaries.items() if _is_korean_text(k) and _is_korean_text(str(v))}
+
 def build_ai_summary(categorized: dict) -> dict:
     """카테고리 요약 + TOP 3 한 번에 생성"""
     print("  🤖 AI 요약 & TOP 3 생성 중...")
@@ -91,12 +111,14 @@ def build_ai_summary(categorized: dict) -> dict:
             all_articles.append(f"[{cat}] [{a['source']}] {a['title']}: {a['summary']}")
 
     articles_text = "\n".join(all_articles)
-    prompt = f"""오늘의 뉴스 기사들을 분석해주세요.
+    cat_names = list(categorized.keys())
+    prompt = f"""오늘의 뉴스 기사들을 분석해주세요. 반드시 한국어로만 응답하세요.
 
 [오늘의 뉴스]
 {articles_text}
 
-아래 JSON 형식으로 정확히 응답하세요:
+아래 JSON 형식으로 정확히 응답하세요. 모든 키와 값은 반드시 한국어(또는 영어)로만 작성하세요.
+category_summaries의 키는 반드시 다음 카테고리 중 하나를 그대로 사용: {cat_names}
 {{
   "top3": [
     {{"rank": 1, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}},
@@ -104,17 +126,19 @@ def build_ai_summary(categorized: dict) -> dict:
     {{"rank": 3, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}}
   ],
   "category_summaries": {{
-    "카테고리명": "2~3문장 핵심 요약"
+    "카테고리명": "2~3문장 핵심 요약 (한국어)"
   }}
 }}
-JSON 외 다른 텍스트는 절대 포함하지 마세요."""
+JSON 외 다른 텍스트는 절대 포함하지 마세요. 러시아어·중국어·일본어 등 한국어 외 언어 절대 사용 금지."""
 
-    raw = ask_ai(prompt, system="당신은 뉴스 분석 전문가입니다. 항상 JSON으로만 응답합니다.")
+    raw = ask_ai(prompt, system="당신은 한국어 뉴스 분석 전문가입니다. 반드시 한국어로만 JSON을 작성합니다.")
     if not raw:
         return {"top3": [], "category_summaries": {}}
     try:
         raw = raw.replace("```json", "").replace("```", "").strip()
-        return json.loads(raw)
+        result = json.loads(raw)
+        result["category_summaries"] = _sanitize_category_summaries(result.get("category_summaries", {}))
+        return result
     except Exception as e:
         print(f"    ⚠️ AI 요약 파싱 실패: {e}")
         return {"top3": [], "category_summaries": {}}
