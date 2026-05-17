@@ -53,6 +53,12 @@
 
     /* 섹션 레이블 */
     .section-title{font-size:14px;font-weight:800;color:#FF6B9D;padding:6px 2px 4px;grid-column:1/-1}
+
+    /* 모드 토글 */
+    .mode-row{display:flex;gap:8px;justify-content:center;margin-bottom:6px}
+    .mode-btn{padding:6px 20px;border-radius:16px;border:2px solid #FFB6C1;background:white;font-size:13px;font-weight:700;cursor:pointer;color:#FF9EBC;transition:all .15s}
+    .mode-btn.on{background:#FF9EBC;color:white;border-color:#FF9EBC}
+    .mode-btn:active{transform:scale(.93)}
   </style>
 </head>
 <body>
@@ -89,6 +95,10 @@
     </div>
   </div>
   <div class="palette">
+    <div class="mode-row">
+      <button class="mode-btn on" id="btn-bucket" onclick="setMode('bucket')">🪣 채우기</button>
+      <button class="mode-btn" id="btn-brush" onclick="setMode('brush')">🖌️ 붓</button>
+    </div>
     <div class="sel-row"><div id="sel-dot"></div><span id="sel-lbl">색을 골라서 터치하세요 🖌️</span></div>
     <div class="swatches" id="swatches"></div>
   </div>
@@ -215,11 +225,43 @@ const ERASER = '__er__';
 
 // ══ 상태 ══
 let curChar = null, origData = null, selColor = '#FFD600', curTab = 'all';
+let mode='bucket', painting=false, lastX=0, lastY=0;
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d', {willReadFrequently:true});
 
 // ══ 색상 헬퍼 ══
 function hex2rgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+
+// ══ 선 틈새 닫기 (1px 팽창) ══
+function boldenLines(id){
+  const d=id.data,w=id.width,h=id.height;
+  const dk=new Uint8Array(w*h);
+  for(let i=0;i<w*h;i++){const p=i*4;if(d[p]<110&&d[p+1]<110&&d[p+2]<110)dk[i]=1;}
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const i=y*w+x; if(dk[i])continue;
+    if((y>0&&dk[i-w])||(y<h-1&&dk[i+w])||(x>0&&dk[i-1])||(x<w-1&&dk[i+1]))
+      {d[i*4]=d[i*4+1]=d[i*4+2]=0;d[i*4+3]=255;}
+  }
+  return id;
+}
+
+// ══ 붓 그리기 ══
+function drawBrush(x1,y1,x2,y2){
+  const r=Math.round(13*(window.devicePixelRatio||1));
+  ctx.save();
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.lineWidth=r*2;
+  ctx.strokeStyle=selColor===ERASER?'#FFFFFF':selColor;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.restore();
+}
+
+// ══ 모드 전환 ══
+function setMode(m){
+  mode=m; painting=false;
+  document.getElementById('btn-bucket').classList.toggle('on',m==='bucket');
+  document.getElementById('btn-brush').classList.toggle('on',m==='brush');
+}
 
 // ══ 플러드 필 ══
 function fill(sx, sy, fillHex) {
@@ -277,7 +319,8 @@ function loadChar(ch){
     const wrap=document.getElementById('canvas-wrap');
     wrap.style.width=cssW+'px'; wrap.style.height=cssH+'px';
     ctx.drawImage(img,0,0,w,h);
-    origData=ctx.getImageData(0,0,w,h);
+    origData=boldenLines(ctx.getImageData(0,0,w,h));
+    ctx.putImageData(origData,0,0);
     document.getElementById('loading').style.display='none';
   };
   img.onerror=()=>{
@@ -293,13 +336,27 @@ function getXY(e){
   const s=e.changedTouches?e.changedTouches[0]:(e.touches?e.touches[0]:e);
   return{x:Math.floor((s.clientX-r.left)*sx),y:Math.floor((s.clientY-r.top)*sy)};
 }
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  if(mode==='brush'){painting=true;const{x,y}=getXY(e);lastX=x;lastY=y;drawBrush(x,y,x,y);}
+},{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(mode==='brush'&&painting){const{x,y}=getXY(e);drawBrush(lastX,lastY,x,y);lastX=x;lastY=y;}
+},{passive:false});
 canvas.addEventListener('touchend',e=>{
   e.preventDefault();
-  const{x,y}=getXY(e);
-  fill(x,y,selColor);
-  if(navigator.vibrate) navigator.vibrate(18);
+  if(mode==='brush'){painting=false;}
+  else{const{x,y}=getXY(e);fill(x,y,selColor);if(navigator.vibrate)navigator.vibrate(18);}
 },{passive:false});
-canvas.addEventListener('click',e=>{const{x,y}=getXY(e);fill(x,y,selColor);});
+canvas.addEventListener('mousedown',e=>{
+  if(mode==='brush'){painting=true;const{x,y}=getXY(e);lastX=x;lastY=y;drawBrush(x,y,x,y);}
+});
+canvas.addEventListener('mousemove',e=>{
+  if(mode==='brush'&&painting){const{x,y}=getXY(e);drawBrush(lastX,lastY,x,y);lastX=x;lastY=y;}
+});
+canvas.addEventListener('mouseup',()=>{painting=false;});
+canvas.addEventListener('click',e=>{if(mode==='bucket'){const{x,y}=getXY(e);fill(x,y,selColor);}});
 
 // ══ 화면 전환 ══
 function openChar(ch){
