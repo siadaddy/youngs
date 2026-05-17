@@ -254,12 +254,14 @@ function fill(sx, sy, fillHex) {
 
 // ══ 캔버스 크기 ══
 function calcSize(iw,ih){
+  const dpr=window.devicePixelRatio||1;
   const pH=document.querySelector('.palette')?.offsetHeight||148;
   const hH=document.querySelector('.c-head')?.offsetHeight||52;
   const avH=window.innerHeight-pH-hH-16;
   const avW=window.innerWidth-16;
   const s=Math.min(avW/iw,avH/ih);
-  return{w:Math.floor(iw*s),h:Math.floor(ih*s)};
+  const cssW=Math.floor(iw*s), cssH=Math.floor(ih*s);
+  return{w:Math.floor(cssW*dpr),h:Math.floor(cssH*dpr),cssW,cssH};
 }
 
 // ══ 이미지 로드 ══
@@ -269,10 +271,11 @@ function loadChar(ch){
   const img=new Image();
   img.crossOrigin='anonymous';
   img.onload=()=>{
-    const{w,h}=calcSize(img.naturalWidth,img.naturalHeight);
+    const{w,h,cssW,cssH}=calcSize(img.naturalWidth,img.naturalHeight);
     canvas.width=w; canvas.height=h;
+    canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
     const wrap=document.getElementById('canvas-wrap');
-    wrap.style.width=w+'px'; wrap.style.height=h+'px';
+    wrap.style.width=cssW+'px'; wrap.style.height=cssH+'px';
     ctx.drawImage(img,0,0,w,h);
     origData=ctx.getImageData(0,0,w,h);
     document.getElementById('loading').style.display='none';
