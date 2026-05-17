@@ -2,7 +2,7 @@
 """
 📰 시아아빠님의 뉴스레터 자동 수집기
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-네이버 뉴스 API 수집 + Groq AI 요약 + TOP 3 선정 → 노션 업로드 + 이야깃거리 생성
+네이버 뉴스 API 수집 + Groq AI 요약 + TOP 3 선정 → 노션 업로드
 매일 06:00 자동 실행 (crontab)
 """
 
@@ -11,10 +11,8 @@ from datetime import datetime, date
 from dotenv import load_dotenv
 from supabase import create_client
 
-load_dotenv()
-
-SUPABASE_URL = os.getenv('SUPABASE_URL', '')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY', '')
+SUPABASE_URL = 'https://rlaemixsrmhocxjhkjxl.supabase.co'
+SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc'
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def _sanitize(text: str) -> str:
@@ -31,6 +29,8 @@ def _sanitize(text: str) -> str:
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
+load_dotenv()
+
 NAVER_CLIENT_ID     = os.getenv('NAVER_CLIENT_ID', '')
 NAVER_CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET', '')
 NOTION_TOKEN        = os.getenv('NOTION_TOKEN', '')
@@ -38,7 +38,7 @@ NOTION_PARENT_ID    = os.getenv('NOTION_PARENT_PAGE_ID', '329b395f9fc68169b2e8e7
 NEWSLETTER_DIR      = os.getenv('NEWSLETTER_DIR', os.path.dirname(os.path.abspath(__file__)))
 GROQ_KEYS           = [k for k in [os.getenv('GROQ_API_KEY'), os.getenv('GROQ_API_KEY_2')] if k]
 TODAY               = date.today().strftime('%Y-%m-%d')
-MAX_PER_CATEGORY    = 7
+MAX_PER_CATEGORY    = 5
 
 CATEGORIES = {
     '🔥 오늘의 하이라이트': ['속보', '단독', '오늘 주요뉴스'],
@@ -82,26 +82,6 @@ def ask_ai(prompt: str, system: str = "") -> str:
             print(f"    ⚠️ Groq 키{key_idx+1} 소진 → 키{key_idx+2}로 전환...")
     return ""
 
-def _is_korean_text(text: str) -> bool:
-    """문자열이 주로 한국어/영어로 구성됐는지 확인 (러시아어·중국어 등 차단)"""
-    import unicodedata
-    allowed_scripts = {'Hangul', 'Latin', 'Common'}
-    for ch in text:
-        if ch.isspace() or ch.isdigit():
-            continue
-        try:
-            name = unicodedata.name(ch, '')
-            script = name.split()[0] if name else 'Common'
-        except Exception:
-            script = 'Common'
-        if script not in allowed_scripts:
-            return False
-    return True
-
-def _sanitize_category_summaries(summaries: dict) -> dict:
-    """비한국어 키를 가진 항목 제거"""
-    return {k: v for k, v in summaries.items() if _is_korean_text(k) and _is_korean_text(str(v))}
-
 def build_ai_summary(categorized: dict) -> dict:
     """카테고리 요약 + TOP 3 한 번에 생성"""
     print("  🤖 AI 요약 & TOP 3 생성 중...")
@@ -111,14 +91,12 @@ def build_ai_summary(categorized: dict) -> dict:
             all_articles.append(f"[{cat}] [{a['source']}] {a['title']}: {a['summary']}")
 
     articles_text = "\n".join(all_articles)
-    cat_names = list(categorized.keys())
-    prompt = f"""오늘의 뉴스 기사들을 분석해주세요. 반드시 한국어로만 응답하세요.
+    prompt = f"""오늘의 뉴스 기사들을 분석해주세요.
 
 [오늘의 뉴스]
 {articles_text}
 
-아래 JSON 형식으로 정확히 응답하세요. 모든 키와 값은 반드시 한국어(또는 영어)로만 작성하세요.
-category_summaries의 키는 반드시 다음 카테고리 중 하나를 그대로 사용: {cat_names}
+아래 JSON 형식으로 정확히 응답하세요:
 {{
   "top3": [
     {{"rank": 1, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}},
@@ -126,67 +104,20 @@ category_summaries의 키는 반드시 다음 카테고리 중 하나를 그대�
     {{"rank": 3, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}}
   ],
   "category_summaries": {{
-    "카테고리명": "2~3문장 핵심 요약 (한국어)"
+    "카테고리명": "2~3문장 핵심 요약"
   }}
 }}
-JSON 외 다른 텍스트는 절대 포함하지 마세요. 러시아어·중국어·일본어 등 한국어 외 언어 절대 사용 금지."""
+JSON 외 다른 텍스트는 절대 포함하지 마세요."""
 
-    raw = ask_ai(prompt, system="당신은 한국어 뉴스 분석 전문가입니다. 반드시 한국어로만 JSON을 작성합니다.")
+    raw = ask_ai(prompt, system="당신은 뉴스 분석 전문가입니다. 항상 JSON으로만 응답합니다.")
     if not raw:
         return {"top3": [], "category_summaries": {}}
     try:
         raw = raw.replace("```json", "").replace("```", "").strip()
-        result = json.loads(raw)
-        result["category_summaries"] = _sanitize_category_summaries(result.get("category_summaries", {}))
-        return result
+        return json.loads(raw)
     except Exception as e:
         print(f"    ⚠️ AI 요약 파싱 실패: {e}")
         return {"top3": [], "category_summaries": {}}
-
-def build_ai_talking_points(categorized: dict, top3: list) -> dict | None:
-    """임원/직원 이야깃거리 생성"""
-    top3_titles = [f"{i+1}. {t['title']}" for i, t in enumerate(top3)] if top3 else []
-
-    car_news = []
-    for cat, articles in categorized.items():
-        if any(k in cat for k in ['자동차', '車', '모빌리티', 'BMW', '전기차']):
-            car_news.extend([a['title'] for a in articles])
-
-    prompt = f"""
-당신은 BMW 딜러십 임직원을 위한 비즈니스 인사이트 전문가입니다.
-오늘의 주요 뉴스를 바탕으로 직장 내 대화 소재와 비즈니스 인사이트를 제공해주세요.
-
-오늘의 TOP 3 뉴스:
-{chr(10).join(top3_titles)}
-
-자동차/모빌리티 관련 뉴스:
-{chr(10).join(car_news[:5]) if car_news else '해당 뉴스 없음'}
-
-아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
-{{
-  "talking_points": [
-    {{
-      "topic": "대화 주제 (15자 이내)",
-      "context": "배경 설명 (2문장)",
-      "question": "동료에게 던질 질문 (1문장)",
-      "business_impact": "BMW 딜러 관점 영향 (1문장)"
-    }}
-  ],
-  "one_line_insight": "오늘 뉴스를 관통하는 핵심 인사이트 1문장"
-}}
-talking_points는 3개, 비즈니스와 관련성 높은 순서로.
-"""
-    result = ask_ai(prompt)
-    if not result:
-        return None
-    try:
-        import re as _re
-        match = _re.search(r'\{.*\}', result, _re.DOTALL)
-        if match:
-            return json.loads(match.group())
-    except Exception:
-        pass
-    return None
 
 # ── 네이버 뉴스 검색 ─────────────────────────────────────
 def search_naver_news(keyword, display=5):
@@ -250,7 +181,7 @@ def extract_source(url):
     return '뉴스'
 
 # ── 마크다운 저장 ─────────────────────────────────────────
-def save_markdown(categorized, ai_summary, talking_points=None):
+def save_markdown(categorized, ai_summary):
     today_str = date.today().strftime('%Y년 %m월 %d일')
     lines = [f'# 📰 뉴스레터 - {today_str}', '']
 
@@ -289,7 +220,6 @@ def save_markdown(categorized, ai_summary, talking_points=None):
     print(f'    데이터 저장 완료: {data_path}')
 
     insert_to_supabase(categorized, TODAY)
-    insert_trends_to_supabase(ai_summary, TODAY, talking_points)
 
 
 def insert_to_supabase(categorized, today):
@@ -300,8 +230,6 @@ def insert_to_supabase(categorized, today):
                 'date': today,
                 'title': a['title'],
                 'summary': a.get('summary', ''),
-                'link': a.get('link', ''),
-                'source': a.get('source', ''),
                 'image_url': None,
                 'category': cat
             })
@@ -311,23 +239,6 @@ def insert_to_supabase(categorized, today):
             print(f'    [Supabase] {len(rows)}건 insert 완료')
         except Exception as e:
             print(f'    [Supabase] insert 실패: {e}')
-
-def insert_trends_to_supabase(ai_summary, today, talking_points=None):
-    if not ai_summary:
-        print('[Supabase] ai_summary 없음 — trends insert 스킵')
-        return
-    try:
-        payload = {
-            'date': today,
-            'top3': ai_summary.get('top3', []),
-            'category_summaries': ai_summary.get('category_summaries', {}),
-        }
-        if talking_points:
-            payload['talking_points'] = talking_points
-        supabase_client.table('news_trends').upsert(payload, on_conflict='date').execute()
-        print(f'[Supabase] trends insert 완료')
-    except Exception as e:
-        print(f'[Supabase] trends insert 실패: {e}')
 
 # ── Notion 블록 헬퍼 ─────────────────────────────────────
 def _t(text, bold=False, color="default"):
@@ -515,13 +426,8 @@ def main():
         print(f'  ⚠️  AI 요약 최종 실패, 빈 요약으로 계속 진행: {e}')
         ai_summary = {'top3': []}
 
-    print('    이야깃거리 생성 중...')
-    talking_points = build_ai_talking_points(categorized, ai_summary.get('top3', []))
-    if talking_points:
-        print(f'    이야깃거리 {len(talking_points.get("talking_points", []))}개 생성 완료')
-
     print('\n[3/4] 마크다운 저장 중...')
-    _retry('마크다운 저장', save_markdown, categorized, ai_summary, talking_points)
+    _retry('마크다운 저장', save_markdown, categorized, ai_summary)
 
     # [4/4] Notion 업로드는 ai-crew/notion_publisher.py가 담당
     # → 06:30에 AI 크리에이터가 뉴스 원문 + AI 콘텐츠를 하나의 페이지로 통합 생성

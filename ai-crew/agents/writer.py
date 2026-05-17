@@ -491,10 +491,6 @@ def run(brief: dict) -> dict:
         )
         quality_log.append((label, retries, issues))
 
-        # ── 💡 시아아빠 한 줄 앞 줄바꿈 강제 삽입 ──────────────
-        if "💡 시아아빠 한 줄" in caption:
-            caption = re.sub(r'\s*(💡 시아아빠 한 줄)', r'\n\n💡 시아아빠 한 줄', caption).lstrip()
-
         # ── 💡 시아아빠 한 줄 누락 자동 보완 ──────────────────
         if "시아아빠 한 줄" not in caption and "💡" not in caption:
             print(f"  ⚠️  [{label}] 💡 시아아빠 한 줄 누락 — 자동 보완 시도")

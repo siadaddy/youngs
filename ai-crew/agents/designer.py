@@ -1,6 +1,5 @@
 import os, json, re as _re, requests, time, subprocess
-from datetime import date, timedelta
-from pathlib import Path
+from datetime import date
 from urllib.parse import quote
 from dotenv import load_dotenv
 from utils.gemini_client import ask_gemini
@@ -43,16 +42,6 @@ def run(brief: dict, writer_output: dict) -> list:
     os.makedirs(DOCS_IMAGES_DIR, exist_ok=True)
 
     today = date.today().strftime("%Y-%m-%d")
-
-    # 30일 이전 이미지 자동 삭제
-    cutoff = (date.today() - timedelta(days=30)).strftime("%Y-%m-%d")
-    deleted = 0
-    for f in Path(DOCS_IMAGES_DIR).glob("*.png"):
-        if f.stem[:10] < cutoff and f.name != FALLBACK_FILENAME:
-            f.unlink()
-            deleted += 1
-    if deleted:
-        print(f"  🗑  30일 이전 이미지 {deleted}개 삭제")
 
     # ── 3개 프롬프트를 API 1번 호출로 생성 ──────────────────────
     items = brief["instagram"]
