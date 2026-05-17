@@ -59,6 +59,12 @@
     .mode-btn{padding:6px 20px;border-radius:16px;border:2px solid #FFB6C1;background:white;font-size:13px;font-weight:700;cursor:pointer;color:#FF9EBC;transition:all .15s}
     .mode-btn.on{background:#FF9EBC;color:white;border-color:#FF9EBC}
     .mode-btn:active{transform:scale(.93)}
+    /* 붓 두께 슬라이더 */
+    .size-row{display:none;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+    .size-row.show{display:flex}
+    .size-row span{font-size:12px;font-weight:700;color:#FF9EBC;width:28px;text-align:center}
+    #brush-size{-webkit-appearance:none;appearance:none;width:160px;height:6px;border-radius:3px;background:#FFCCE5;outline:none;cursor:pointer}
+    #brush-size::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#FF9EBC;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:pointer}
   </style>
 </head>
 <body>
@@ -98,6 +104,11 @@
     <div class="mode-row">
       <button class="mode-btn on" id="btn-bucket" onclick="setMode('bucket')">🪣 채우기</button>
       <button class="mode-btn" id="btn-brush" onclick="setMode('brush')">🖌️ 붓</button>
+    </div>
+    <div class="size-row" id="size-row">
+      <span>얇게</span>
+      <input type="range" id="brush-size" min="2" max="30" value="5">
+      <span>두껍게</span>
     </div>
     <div class="sel-row"><div id="sel-dot"></div><span id="sel-lbl">색을 골라서 터치하세요 🖌️</span></div>
     <div class="swatches" id="swatches"></div>
@@ -247,7 +258,8 @@ function boldenLines(id){
 
 // ══ 붓 그리기 ══
 function drawBrush(x1,y1,x2,y2){
-  const r=Math.round(5*(window.devicePixelRatio||1));
+  const css=parseInt(document.getElementById('brush-size').value)||5;
+  const r=Math.round(css*(window.devicePixelRatio||1));
   ctx.save();
   ctx.lineCap='round'; ctx.lineJoin='round';
   ctx.lineWidth=r*2;
@@ -261,6 +273,7 @@ function setMode(m){
   mode=m; painting=false;
   document.getElementById('btn-bucket').classList.toggle('on',m==='bucket');
   document.getElementById('btn-brush').classList.toggle('on',m==='brush');
+  document.getElementById('size-row').classList.toggle('show',m==='brush');
 }
 
 // ══ 플러드 필 ══
