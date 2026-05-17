@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProfileStore, FamilyMember, AgeGroup } from '../../store/useProfileStore';
 import { colors, shadows } from '../../constants/theme';
+import { FeedbackModal } from '../../components/FeedbackModal';
 
 const AGE_GROUPS: AgeGroup[] = ['아이', '청소년', '어른', '노인'];
 const AGE_EMOJI: Record<AgeGroup, string> = { 아이: '🧒', 청소년: '👦', 어른: '🧑', 노인: '👴' };
@@ -16,8 +17,9 @@ export default function ProfileScreen() {
   const [name, setName] = useState('');
   const [ageGroup, setAgeGroup] = useState<AgeGroup>('어른');
   const [allergyInput, setAllergyInput] = useState('');
+  const [showFeedback, setShowFeedback] = useState(false);
 
-  const bg = isDark ? colors.backgroundDark : '#F5F6FA';
+  const bg = isDark ? colors.backgroundDark : colors.background;
   const cardBg = isDark ? colors.cardDark : colors.card;
   const textColor = isDark ? '#FFFFFF' : colors.dark;
   const mutedColor = isDark ? colors.textMutedDark : colors.textMuted;
@@ -77,7 +79,7 @@ export default function ProfileScreen() {
 
           <Text style={[styles.label, { color: textColor }]}>이름</Text>
           <TextInput
-            style={[styles.input, { color: textColor, backgroundColor: isDark ? colors.surfaceDark : '#F8F8F8' }]}
+            style={[styles.input, { color: textColor, backgroundColor: isDark ? colors.surfaceDark : colors.surface }]}
             value={name}
             onChangeText={setName}
             placeholder="이름 입력"
@@ -91,7 +93,7 @@ export default function ProfileScreen() {
                 key={ag}
                 style={[
                   styles.ageBtn,
-                  { backgroundColor: ageGroup === ag ? colors.primary : (isDark ? colors.surfaceDark : '#F2F2F7') },
+                  { backgroundColor: ageGroup === ag ? colors.primary : (isDark ? colors.surfaceDark : colors.surface) },
                 ]}
                 onPress={() => setAgeGroup(ag)}
                 activeOpacity={0.7}
@@ -104,7 +106,7 @@ export default function ProfileScreen() {
 
           <Text style={[styles.label, { color: textColor }]}>알레르기 <Text style={{ color: mutedColor, fontWeight: '400' }}>(쉼표로 구분)</Text></Text>
           <TextInput
-            style={[styles.input, { color: textColor, backgroundColor: isDark ? colors.surfaceDark : '#F8F8F8' }]}
+            style={[styles.input, { color: textColor, backgroundColor: isDark ? colors.surfaceDark : colors.surface }]}
             value={allergyInput}
             onChangeText={setAllergyInput}
             placeholder="예: 견과류, 새우"
@@ -129,8 +131,24 @@ export default function ProfileScreen() {
           </View>
         )}
 
+        {/* 피드백 */}
+        <TouchableOpacity
+          style={[styles.feedbackBtn, { backgroundColor: isDark ? colors.surfaceDark : colors.accent }]}
+          onPress={() => setShowFeedback(true)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.feedbackEmoji}>💬</Text>
+          <View style={styles.feedbackInfo}>
+            <Text style={[styles.feedbackTitle, { color: textColor }]}>피드백 보내기</Text>
+            <Text style={[styles.feedbackSub, { color: mutedColor }]}>불편한 점이나 개선 아이디어를 알려주세요</Text>
+          </View>
+          <Text style={{ color: mutedColor, fontSize: 18 }}>›</Text>
+        </TouchableOpacity>
+
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <FeedbackModal visible={showFeedback} onClose={() => setShowFeedback(false)} />
     </View>
   );
 }
@@ -172,4 +190,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
   deleteText: { color: colors.error, fontSize: 13, fontWeight: '700' },
+  feedbackBtn: {
+    flexDirection: 'row', alignItems: 'center',
+    borderRadius: 20, padding: 18, marginBottom: 10,
+  },
+  feedbackEmoji: { fontSize: 28, marginRight: 14 },
+  feedbackInfo: { flex: 1 },
+  feedbackTitle: { fontSize: 16, fontWeight: '700', marginBottom: 3 },
+  feedbackSub: { fontSize: 13 },
 });
