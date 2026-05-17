@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>티니핑 색칠놀이 🌟</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{font-family:-apple-system,'Apple SD Gothic Neo',sans-serif;background:#FFF0F8;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none}
+
+    /* ── HOME ── */
+    #home{display:flex;flex-direction:column;height:100dvh}
+    .h-top{flex-shrink:0;padding:14px 14px 8px;background:#FFF0F8}
+    .h-title{text-align:center;font-size:clamp(20px,5vw,32px);font-weight:900;color:#FF6B9D;margin-bottom:3px}
+    .h-sub{text-align:center;font-size:clamp(12px,2.8vw,16px);color:#FF9EBC;font-weight:600;margin-bottom:10px}
+    .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+    .tab{padding:7px 18px;border-radius:20px;border:2px solid #FFB6C1;background:white;font-size:13px;font-weight:700;cursor:pointer;color:#FF9EBC;transition:all .15s}
+    .tab.on{background:#FF9EBC;color:white;border-color:#FF9EBC}
+    .tab:active{transform:scale(.93)}
+    .scroll-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 10px 20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+    .card{border-radius:16px;overflow:hidden;cursor:pointer;box-shadow:0 3px 12px rgba(255,107,157,.18);transition:transform .1s;background:white}
+    .card:active{transform:scale(.92)}
+    .card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#FFF0F8}
+    .card-lbl{padding:6px 6px 8px;text-align:center;font-size:clamp(11px,2.5vw,14px);font-weight:700;color:white;background:linear-gradient(135deg,#FF9EBC,#FF6B9D)}
+
+    /* ── COLORING ── */
+    #coloring{display:none;flex-direction:column;height:100dvh}
+    .c-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;flex-shrink:0;background:#FFF0F8}
+    .btn{padding:8px 14px;border-radius:20px;border:none;font-size:13px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.88);color:#444;box-shadow:0 2px 6px rgba(0,0,0,.09)}
+    .btn:active{transform:scale(.92)}
+    .c-title{font-size:clamp(15px,3.8vw,22px);font-weight:900;color:#FF6B9D;text-align:center;flex:1;padding:0 8px}
+    .c-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:4px 8px;min-height:0;background:#FFF0F8}
+    #canvas-wrap{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.14);background:white;touch-action:none}
+    #myCanvas{display:block;touch-action:none}
+    #loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.95);border-radius:14px;gap:12px}
+    .spin{width:40px;height:40px;border:4px solid #FFB6C1;border-top-color:#FF6B9D;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #load-txt{font-size:15px;font-weight:700;color:#FF6B9D}
+
+    /* ── PALETTE ── */
+    .palette{background:#FFF0F8;border-top:2px solid #FFCCE5;padding:7px 8px 10px;flex-shrink:0}
+    .sel-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:7px}
+    #sel-dot{width:20px;height:20px;border-radius:50%;border:2px solid #CCC;flex-shrink:0}
+    #sel-lbl{font-size:12px;font-weight:700;color:#555}
+    .swatches{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+    .sw{width:38px;height:38px;border-radius:50%;cursor:pointer;border:2px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;transition:transform .1s}
+    .sw.on{border:3.5px solid #111;transform:scale(1.22)!important}
+    .sw:active{transform:scale(.87)}
+
+    /* 섹션 레이블 */
+    .section-title{font-size:14px;font-weight:800;color:#FF6B9D;padding:6px 2px 4px;grid-column:1/-1}
+  </style>
+</head>
+<body>
+
+<!-- ── HOME ── -->
+<div id="home">
+  <div class="h-top">
+    <div class="h-title">🌟 티니핑 색칠놀이 🌟</div>
+    <div class="h-sub">원하는 티니핑을 터치해요! (총 <span id="total-count"></span>종)</div>
+    <div class="tabs">
+      <button class="tab on" onclick="showTab('all')">전체</button>
+      <button class="tab" onclick="showTab('dessert')">🍰 새콤달콤</button>
+      <button class="tab" onclick="showTab('misc')">✨ 티니핑</button>
+    </div>
+  </div>
+  <div class="scroll-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- ── COLORING ── -->
+<div id="coloring">
+  <div class="c-head">
+    <button class="btn" onclick="goHome()">← 뒤로</button>
+    <span class="c-title" id="c-title"></span>
+    <button class="btn" onclick="doReset()">🔄 초기화</button>
+  </div>
+  <div class="c-wrap">
+    <div id="canvas-wrap">
+      <canvas id="myCanvas"></canvas>
+      <div id="loading"><div class="spin"></div><div id="load-txt">불러오는 중...</div></div>
+    </div>
+  </div>
+  <div class="palette">
+    <div class="sel-row"><div id="sel-dot"></div><span id="sel-lbl">색을 골라서 터치하세요 🖌️</span></div>
+    <div class="swatches" id="swatches"></div>
+  </div>
+</div>
+
+<script>
+// ══ 이미지 기본 경로 ══
+const BASE = './tiniping-imgs/';
+
+// ══ 캐릭터 목록 ══
+const CHARS = [
+  // ─ 새콤달콤 캐치티니핑 (21종) ─
+  {name:'베리 하츄핑', file:'hkl_1.jpg',  cat:'dessert'},
+  {name:'포실핑',      file:'hkl_2.jpg',  cat:'dessert'},
+  {name:'말랑핑',      file:'hkl_3.jpg',  cat:'dessert'},
+  {name:'샤샤핑',      file:'hkl_4.jpg',  cat:'dessert'},
+  {name:'새콤핑',      file:'hkl_5.jpg',  cat:'dessert'},
+  {name:'달콤핑',      file:'hkl_6.jpg',  cat:'dessert'},
+  {name:'캔디핑',      file:'hkl_7.jpg',  cat:'dessert'},
+  {name:'머랭핑',      file:'hkl_8.jpg',  cat:'dessert'},
+  {name:'샌드핑',      file:'hkl_9.jpg',  cat:'dessert'},
+  {name:'또너핑',      file:'hkl_10.jpg', cat:'dessert'},
+  {name:'와플핑',      file:'hkl_11.jpg', cat:'dessert'},
+  {name:'롤리핑',      file:'hkl_12.jpg', cat:'dessert'},
+  {name:'마카핑',      file:'hkl_13.jpg', cat:'dessert'},
+  {name:'핫케핑',      file:'hkl_14.jpg', cat:'dessert'},
+  {name:'커핑&머핑',   file:'hkl_15.jpg', cat:'dessert'},
+  {name:'요거핑',      file:'hkl_16.jpg', cat:'dessert'},
+  {name:'눈꽃핑',      file:'hkl_17.jpg', cat:'dessert'},
+  {name:'푸딩핑',      file:'hkl_18.jpg', cat:'dessert'},
+  {name:'멜로핑',      file:'hkl_19.jpg', cat:'dessert'},
+  {name:'쪼꼬핑',      file:'hkl_20.jpg', cat:'dessert'},
+  {name:'뿌뿌핑',      file:'hkl_21.jpg', cat:'dessert'},
+
+  // ─ 티니핑 모음 (50종) ─
+  {name:'티니핑 1',    file:'cvip_1.webp',  cat:'misc'},
+  {name:'티니핑 2',    file:'cvip_2.webp',  cat:'misc'},
+  {name:'티니핑 3',    file:'cvip_3.webp',  cat:'misc'},
+  {name:'티니핑 4',    file:'cvip_4.webp',  cat:'misc'},
+  {name:'티니핑 5',    file:'cvip_5.webp',  cat:'misc'},
+  {name:'티니핑 6',    file:'cvip_6.webp',  cat:'misc'},
+  {name:'티니핑 7',    file:'cvip_7.webp',  cat:'misc'},
+  {name:'티니핑 8',    file:'cvip_8.webp',  cat:'misc'},
+  {name:'티니핑 9',    file:'cvip_9.webp',  cat:'misc'},
+  {name:'티니핑 10',   file:'cvip_10.webp', cat:'misc'},
+  {name:'티니핑 11',   file:'cvip_11.webp', cat:'misc'},
+  {name:'티니핑 12',   file:'cvip_12.webp', cat:'misc'},
+  {name:'티니핑 13',   file:'cvip_13.webp', cat:'misc'},
+  {name:'티니핑 14',   file:'cvip_14.webp', cat:'misc'},
+  {name:'티니핑 15',   file:'cvip_15.webp', cat:'misc'},
+  {name:'티니핑 16',   file:'cvip_16.webp', cat:'misc'},
+  {name:'티니핑 17',   file:'cvip_17.webp', cat:'misc'},
+  {name:'티니핑 18',   file:'cvip_18.webp', cat:'misc'},
+  {name:'티니핑 19',   file:'cvip_19.webp', cat:'misc'},
+  {name:'티니핑 20',   file:'cvip_20.webp', cat:'misc'},
+  {name:'티니핑 21',   file:'cvip_21.webp', cat:'misc'},
+  {name:'티니핑 22',   file:'cvip_22.webp', cat:'misc'},
+  {name:'티니핑 23',   file:'cvip_23.webp', cat:'misc'},
+  {name:'티니핑 24',   file:'cvip_24.webp', cat:'misc'},
+  {name:'티니핑 25',   file:'cvip_25.webp', cat:'misc'},
+  {name:'티니핑 26',   file:'cvip_26.webp', cat:'misc'},
+  {name:'티니핑 27',   file:'cvip_27.webp', cat:'misc'},
+  {name:'티니핑 28',   file:'cvip_28.webp', cat:'misc'},
+  {name:'티니핑 29',   file:'cvip_29.webp', cat:'misc'},
+  {name:'티니핑 30',   file:'cvip_30.webp', cat:'misc'},
+  {name:'티니핑 31',   file:'cvip_31.webp', cat:'misc'},
+  {name:'티니핑 32',   file:'cvip_32.webp', cat:'misc'},
+  {name:'티니핑 33',   file:'cvip_33.webp', cat:'misc'},
+  {name:'티니핑 34',   file:'cvip_34.webp', cat:'misc'},
+  {name:'티니핑 35',   file:'cvip_35.webp', cat:'misc'},
+  {name:'티니핑 36',   file:'cvip_36.webp', cat:'misc'},
+  {name:'티니핑 37',   file:'cvip_37.webp', cat:'misc'},
+  {name:'티니핑 38',   file:'cvip_38.webp', cat:'misc'},
+  {name:'티니핑 39',   file:'cvip_39.webp', cat:'misc'},
+  {name:'티니핑 40',   file:'cvip_40.webp', cat:'misc'},
+  {name:'티니핑 41',   file:'cvip_41.webp', cat:'misc'},
+  {name:'티니핑 42',   file:'cvip_42.webp', cat:'misc'},
+  {name:'티니핑 43',   file:'cvip_43.webp', cat:'misc'},
+  {name:'티니핑 44',   file:'cvip_44.webp', cat:'misc'},
+  {name:'티니핑 45',   file:'cvip_45.webp', cat:'misc'},
+  {name:'티니핑 얼굴', file:'cvip_face.webp',    cat:'misc'},
+  {name:'하트 정원',   file:'cvip_garden.webp',  cat:'misc'},
+  {name:'자는 티니핑', file:'cvip_sleep.webp',   cat:'misc'},
+  {name:'마법 티니핑', file:'cvip_magic.webp',   cat:'misc'},
+  {name:'친구들과 함께',file:'cvip_friends.webp',cat:'misc'},
+];
+
+// ══ 팔레트 ══
+const PAL = [
+  '#FF1744','#FF6B9D','#FF9EBC','#FFB6C1','#FFFFFF',
+  '#FF6D00','#FFA726','#FFD600','#FFF9C4','#FFFDE7',
+  '#1B5E20','#43A047','#7CB342','#A5D66F','#C8E6C9',
+  '#1A237E','#4A6FD4','#6B8CFF','#B0C4FF','#E8EAF6',
+  '#6A1B9A','#AB47BC','#D8B4FE','#795548','#9E9E9E',
+  '#F06292','#E91E63','#00BCD4','#009688','#000000',
+];
+const ERASER = '__er__';
+
+// ══ 상태 ══
+let curChar = null, origData = null, selColor = '#FFD600', curTab = 'all';
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d', {willReadFrequently:true});
+
+// ══ 색상 헬퍼 ══
+function hex2rgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+
+// ══ 플러드 필 ══
+function fill(sx, sy, fillHex) {
+  if (fillHex === ERASER) { if(origData) ctx.putImageData(origData,0,0); return; }
+  const [fr,fg,fb] = hex2rgb(fillHex);
+  const w = canvas.width, h = canvas.height;
+  const id = ctx.getImageData(0,0,w,h);
+  const d = id.data;
+  const si = (sy*w+sx)*4;
+  const sr=d[si],sg=d[si+1],sb=d[si+2];
+  if(sr<80&&sg<80&&sb<80) return; // 선 위 클릭
+  if(Math.abs(sr-fr)<6&&Math.abs(sg-fg)<6&&Math.abs(sb-fb)<6) return; // 이미 같은 색
+  const TOL=45;
+  const stack=[sy*w+sx];
+  const vis=new Uint8Array(w*h);
+  while(stack.length){
+    const i=stack.pop();
+    if(vis[i]) continue; vis[i]=1;
+    const p=i*4;
+    const r=d[p],g=d[p+1],b=d[p+2];
+    if(r<80&&g<80&&b<80) continue;
+    if(Math.abs(r-sr)>TOL||Math.abs(g-sg)>TOL||Math.abs(b-sb)>TOL) continue;
+    d[p]=fr;d[p+1]=fg;d[p+2]=fb;d[p+3]=255;
+    const x=i%w,y=(i/w)|0;
+    if(x>0)   stack.push(i-1);
+    if(x<w-1) stack.push(i+1);
+    if(y>0)   stack.push(i-w);
+    if(y<h-1) stack.push(i+w);
+  }
+  ctx.putImageData(id,0,0);
+}
+
+// ══ 캔버스 크기 ══
+function calcSize(iw,ih){
+  const pH=document.querySelector('.palette')?.offsetHeight||148;
+  const hH=document.querySelector('.c-head')?.offsetHeight||52;
+  const avH=window.innerHeight-pH-hH-16;
+  const avW=window.innerWidth-16;
+  const s=Math.min(avW/iw,avH/ih);
+  return{w:Math.floor(iw*s),h:Math.floor(ih*s)};
+}
+
+// ══ 이미지 로드 ══
+function loadChar(ch){
+  document.getElementById('loading').style.display='flex';
+  document.getElementById('load-txt').textContent=ch.name+' 불러오는 중...';
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=()=>{
+    const{w,h}=calcSize(img.naturalWidth,img.naturalHeight);
+    canvas.width=w; canvas.height=h;
+    const wrap=document.getElementById('canvas-wrap');
+    wrap.style.width=w+'px'; wrap.style.height=h+'px';
+    ctx.drawImage(img,0,0,w,h);
+    origData=ctx.getImageData(0,0,w,h);
+    document.getElementById('loading').style.display='none';
+  };
+  img.onerror=()=>{
+    document.getElementById('load-txt').textContent='이미지를 불러올 수 없어요 😢';
+  };
+  img.src=BASE+ch.file;
+}
+
+// ══ 터치/클릭 ══
+function getXY(e){
+  const r=canvas.getBoundingClientRect();
+  const sx=canvas.width/r.width, sy=canvas.height/r.height;
+  const s=e.changedTouches?e.changedTouches[0]:(e.touches?e.touches[0]:e);
+  return{x:Math.floor((s.clientX-r.left)*sx),y:Math.floor((s.clientY-r.top)*sy)};
+}
+canvas.addEventListener('touchend',e=>{
+  e.preventDefault();
+  const{x,y}=getXY(e);
+  fill(x,y,selColor);
+  if(navigator.vibrate) navigator.vibrate(18);
+},{passive:false});
+canvas.addEventListener('click',e=>{const{x,y}=getXY(e);fill(x,y,selColor);});
+
+// ══ 화면 전환 ══
+function openChar(ch){
+  curChar=ch;
+  document.getElementById('home').style.display='none';
+  document.getElementById('coloring').style.display='flex';
+  document.getElementById('c-title').textContent=ch.name;
+  loadChar(ch); pickColor(selColor);
+}
+function goHome(){
+  curChar=null; origData=null;
+  document.getElementById('coloring').style.display='none';
+  document.getElementById('home').style.display='flex';
+}
+function doReset(){if(confirm('처음부터 다시 색칠할까요? 🎨')){if(origData)ctx.putImageData(origData,0,0);}}
+
+// ══ 색상 선택 ══
+function pickColor(c){
+  selColor=c;
+  document.querySelectorAll('.sw').forEach(s=>s.classList.remove('on'));
+  document.querySelector(`.sw[data-c="${c}"]`)?.classList.add('on');
+  document.getElementById('sel-dot').style.background=c===ERASER?'#EEE':c;
+  document.getElementById('sel-lbl').textContent=c===ERASER?'🧹 지우개':'🖌️ 색칠 중!';
+}
+
+// ══ 탭 ══
+function showTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  event.target.classList.add('on');
+  renderGrid();
+}
+
+// ══ 그리드 ══
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  const filtered=curTab==='all'?CHARS:CHARS.filter(c=>c.cat===curTab);
+
+  if(curTab==='all'){
+    // 섹션 구분
+    const d=CHARS.filter(c=>c.cat==='dessert');
+    const m=CHARS.filter(c=>c.cat==='misc');
+    addSection('🍰 새콤달콤 캐치티니핑 ('+d.length+'종)',d,grid);
+    addSection('✨ 티니핑 모음 ('+m.length+'종)',m,grid);
+  } else {
+    filtered.forEach(ch=>grid.appendChild(makeCard(ch)));
+  }
+}
+
+function addSection(title,chars,grid){
+  const h=document.createElement('div');
+  h.className='section-title'; h.textContent=title;
+  grid.appendChild(h);
+  chars.forEach(ch=>grid.appendChild(makeCard(ch)));
+}
+
+function makeCard(ch){
+  const card=document.createElement('div');
+  card.className='card';
+  const img=document.createElement('img');
+  img.src=BASE+ch.file; img.alt=ch.name; img.loading='lazy';
+  const lbl=document.createElement('div');
+  lbl.className='card-lbl'; lbl.textContent=ch.name;
+  card.appendChild(img); card.appendChild(lbl);
+  card.addEventListener('click',()=>openChar(ch));
+  return card;
+}
+
+// ══ 팔레트 빌드 ══
+function buildPalette(){
+  const sw=document.getElementById('swatches');
+  PAL.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='sw';d.dataset.c=c;d.style.background=c;
+    if(['#FFFFFF','#FFFDE7','#FFF9C4','#C8E6C9','#E8EAF6'].includes(c))d.style.borderColor='#CCC';
+    d.addEventListener('click',()=>pickColor(c));
+    sw.appendChild(d);
+  });
+  const er=document.createElement('div');
+  er.className='sw';er.dataset.c=ERASER;
+  er.style.cssText='background:#F5F5F5;border-color:#CCC';
+  er.textContent='🧹';
+  er.addEventListener('click',()=>pickColor(ERASER));
+  sw.appendChild(er);
+}
+
+// ══ 초기화 ══
+function init(){
+  document.getElementById('total-count').textContent=CHARS.length;
+  buildPalette();
+  renderGrid();
+  pickColor(selColor);
+}
+
+window.addEventListener('DOMContentLoaded',init);
+window.addEventListener('resize',()=>{if(curChar)loadChar(curChar);});
+</script>
+</body>
+</html>
