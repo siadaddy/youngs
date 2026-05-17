@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>티니핑 색칠놀이 🌟</title>
+  <title>시아아빠의 색칠놀이 🌟</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,'Apple SD Gothic Neo',sans-serif;background:#FFF0F8;height:100dvh;overflow:hidden;user-select:none;-webkit-user-select:none}
@@ -13,7 +13,8 @@
     /* ── HOME ── */
     #home{display:flex;flex-direction:column;height:100dvh}
     .h-top{flex-shrink:0;padding:14px 14px 8px;background:#FFF0F8}
-    .h-title{text-align:center;font-size:clamp(20px,5vw,32px);font-weight:900;color:#FF6B9D;margin-bottom:3px}
+    .h-title{text-align:center;font-size:clamp(18px,4.5vw,30px);font-weight:900;color:#FF6B9D;margin-bottom:2px}
+    .h-made{text-align:center;font-size:clamp(10px,2.5vw,14px);color:#FFADD0;font-weight:700;margin-bottom:2px;letter-spacing:.5px}
     .h-sub{text-align:center;font-size:clamp(12px,2.8vw,16px);color:#FF9EBC;font-weight:600;margin-bottom:10px}
     .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
     .tab{padding:7px 18px;border-radius:20px;border:2px solid #FFB6C1;background:white;font-size:13px;font-weight:700;cursor:pointer;color:#FF9EBC;transition:all .15s}
@@ -59,12 +60,14 @@
 <!-- ── HOME ── -->
 <div id="home">
   <div class="h-top">
-    <div class="h-title">🌟 티니핑 색칠놀이 🌟</div>
-    <div class="h-sub">원하는 티니핑을 터치해요! (총 <span id="total-count"></span>종)</div>
+    <div class="h-title">🌟 시아아빠의 색칠놀이 🌟</div>
+    <div class="h-made">💕 시아아빠가 만들었어요 💕</div>
+    <div class="h-sub">원하는 캐릭터를 터치해요! (총 <span id="total-count"></span>종)</div>
     <div class="tabs">
       <button class="tab on" onclick="showTab('all')">전체</button>
       <button class="tab" onclick="showTab('dessert')">🍰 새콤달콤</button>
       <button class="tab" onclick="showTab('misc')">✨ 티니핑</button>
+      <button class="tab" onclick="showTab('carbot')">🤖 헬로카봇</button>
     </div>
   </div>
   <div class="scroll-wrap">
@@ -171,6 +174,32 @@ const CHARS = [
   {name:'자는 티니핑', file:'cvip_sleep.webp',   cat:'misc'},
   {name:'마법 티니핑', file:'cvip_magic.webp',   cat:'misc'},
   {name:'친구들과 함께',file:'cvip_friends.webp',cat:'misc'},
+
+  // ─ 헬로카봇 (24종) ─
+  {name:'카봇 1',  file:'carbot/cb_0.jpg',  cat:'carbot'},
+  {name:'카봇 2',  file:'carbot/cb_1.jpg',  cat:'carbot'},
+  {name:'카봇 3',  file:'carbot/cb_2.jpg',  cat:'carbot'},
+  {name:'카봇 4',  file:'carbot/cb_3.jpg',  cat:'carbot'},
+  {name:'카봇 5',  file:'carbot/cb_4.jpg',  cat:'carbot'},
+  {name:'카봇 6',  file:'carbot/cb_5.jpg',  cat:'carbot'},
+  {name:'카봇 7',  file:'carbot/cb_6.jpg',  cat:'carbot'},
+  {name:'카봇 8',  file:'carbot/cb_7.jpg',  cat:'carbot'},
+  {name:'카봇 9',  file:'carbot/cb_8.jpg',  cat:'carbot'},
+  {name:'카봇 10', file:'carbot/cb_9.jpg',  cat:'carbot'},
+  {name:'카봇 11', file:'carbot/cb_10.jpg', cat:'carbot'},
+  {name:'카봇 12', file:'carbot/cb_11.jpg', cat:'carbot'},
+  {name:'카봇 13', file:'carbot/cb_12.jpg', cat:'carbot'},
+  {name:'카봇 14', file:'carbot/cb_13.jpg', cat:'carbot'},
+  {name:'카봇 15', file:'carbot/cb_14.jpg', cat:'carbot'},
+  {name:'카봇 16', file:'carbot/cb_15.jpg', cat:'carbot'},
+  {name:'카봇 17', file:'carbot/cb_16.jpg', cat:'carbot'},
+  {name:'카봇 18', file:'carbot/cb_17.jpg', cat:'carbot'},
+  {name:'카봇 19', file:'carbot/cb_18.jpg', cat:'carbot'},
+  {name:'카봇 20', file:'carbot/cb_19.jpg', cat:'carbot'},
+  {name:'카봇 21', file:'carbot/cb_20.jpg', cat:'carbot'},
+  {name:'카봇 22', file:'carbot/cb_21.jpg', cat:'carbot'},
+  {name:'카봇 23', file:'carbot/cb_22.jpg', cat:'carbot'},
+  {name:'카봇 24', file:'carbot/cb_23.jpg', cat:'carbot'},
 ];
 
 // ══ 팔레트 ══
@@ -311,8 +340,10 @@ function renderGrid(){
     // 섹션 구분
     const d=CHARS.filter(c=>c.cat==='dessert');
     const m=CHARS.filter(c=>c.cat==='misc');
+    const b=CHARS.filter(c=>c.cat==='carbot');
     addSection('🍰 새콤달콤 캐치티니핑 ('+d.length+'종)',d,grid);
     addSection('✨ 티니핑 모음 ('+m.length+'종)',m,grid);
+    addSection('🤖 헬로카봇 ('+b.length+'종)',b,grid);
   } else {
     filtered.forEach(ch=>grid.appendChild(makeCard(ch)));
   }
