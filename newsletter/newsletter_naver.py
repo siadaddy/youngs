@@ -192,7 +192,7 @@ def extract_source(url):
     return '뉴스'
 
 # ── 마크다운 저장 ─────────────────────────────────────────
-def save_markdown(categorized, ai_summary):
+def save_markdown(categorized, ai_summary, talking_points=None):
     today_str = date.today().strftime('%Y년 %m월 %d일')
     lines = [f'# 📰 뉴스레터 - {today_str}', '']
 
@@ -227,11 +227,11 @@ def save_markdown(categorized, ai_summary):
     data_path = os.path.join(NEWSLETTER_DIR, f'{TODAY}_data.json')
     simplified = {cat: [{'title': a['title'], 'source': a['source'], 'link': a['link'], 'summary': a['summary']} for a in arts] for cat, arts in categorized.items()}
     with open(data_path, 'w', encoding='utf-8') as f:
-        json.dump({'ai_summary': ai_summary, 'categorized': simplified, 'collected_at': datetime.now().strftime('%Y-%m-%d %H:%M')}, f, ensure_ascii=False, indent=2)
+        json.dump({'ai_summary': ai_summary, 'categorized': simplified, 'collected_at': datetime.now().strftime('%Y-%m-%d %H:%M'), 'talking_points': talking_points}, f, ensure_ascii=False, indent=2)
     print(f'    데이터 저장 완료: {data_path}')
 
     insert_to_supabase(categorized, TODAY)
-    insert_trends_to_supabase(ai_summary, TODAY)
+    insert_trends_to_supabase(ai_summary, TODAY, talking_points=talking_points)
 
 
 def insert_to_supabase(categorized, today):
@@ -254,7 +254,50 @@ def insert_to_supabase(categorized, today):
         except Exception as e:
             print(f'    [Supabase] insert 실패: {e}')
 
-def insert_trends_to_supabase(ai_summary, today):
+def generate_talking_points(categorized: dict, top3: list) -> dict:
+    """오늘의 이야깃거리 3개 생성 — 대화 유도형 카드"""
+    top3_text = "\n".join(f"{i+1}. {t.get('title','')} ({t.get('category','')})" for i, t in enumerate(top3))
+    all_titles = []
+    for cat, arts in categorized.items():
+        for a in arts[:3]:
+            all_titles.append(f"[{cat}] {a['title']}")
+    articles_text = "\n".join(all_titles[:30])
+
+    prompt = f"""오늘의 주요 뉴스를 바탕으로 '오늘의 이야깃거리' 3개를 만들어주세요.
+직장 동료나 가족과 나눌 수 있는 대화 주제를 골라주세요.
+
+[오늘 TOP 3]
+{top3_text}
+
+[오늘 주요 뉴스]
+{articles_text}
+
+아래 JSON 형식으로만 응답하세요:
+{{
+  "one_line_insight": "오늘 뉴스를 한 문장으로 관통하는 인사이트",
+  "talking_points": [
+    {{
+      "topic": "이야깃거리 제목 (15자 이내)",
+      "context": "배경 설명 2~3문장. 왜 지금 중요한지 설명.",
+      "question": "상대방에게 던질 수 있는 질문 1개",
+      "business_impact": "우리 일상·경제에 미치는 영향 1문장"
+    }}
+  ]
+}}
+JSON 외 다른 텍스트 없이 응답하세요."""
+
+    raw = ask_ai(prompt, system="당신은 한국어 뉴스 큐레이터입니다. 항상 JSON으로만 응답합니다.")
+    if not raw:
+        return {}
+    try:
+        raw = raw.replace("```json", "").replace("```", "").strip()
+        return json.loads(raw)
+    except Exception as e:
+        print(f"    ⚠️ talking_points 파싱 실패: {e}")
+        return {}
+
+
+def insert_trends_to_supabase(ai_summary, today, talking_points=None):
     if not ai_summary:
         return
     # 비한국어 키 제거 (러시아어 등 AI가 잘못 생성한 경우)
@@ -267,6 +310,8 @@ def insert_trends_to_supabase(ai_summary, today):
             'top3': ai_summary.get('top3', []),
             'category_summaries': clean_sums,
         }
+        if talking_points:
+            payload['talking_points'] = talking_points
         supabase_client.table('news_trends').upsert(payload, on_conflict='date').execute()
         print(f'    [Supabase] trends insert 완료')
     except Exception as e:
@@ -458,8 +503,17 @@ def main():
         print(f'  ⚠️  AI 요약 최종 실패, 빈 요약으로 계속 진행: {e}')
         ai_summary = {'top3': []}
 
+    print('\n[2.5/4] 오늘의 이야깃거리 생성 중...')
+    try:
+        talking_points = generate_talking_points(categorized, ai_summary.get('top3', []))
+        tp_count = len(talking_points.get('talking_points', []))
+        print(f'    이야깃거리 {tp_count}개 생성 완료')
+    except Exception as e:
+        print(f'  ⚠️  이야깃거리 생성 실패 (무시): {e}')
+        talking_points = {}
+
     print('\n[3/4] 마크다운 저장 중...')
-    _retry('마크다운 저장', save_markdown, categorized, ai_summary)
+    _retry('마크다운 저장', save_markdown, categorized, ai_summary, talking_points)
 
     # [4/4] Notion 업로드는 ai-crew/notion_publisher.py가 담당
     # → 06:30에 AI 크리에이터가 뉴스 원문 + AI 콘텐츠를 하나의 페이지로 통합 생성
