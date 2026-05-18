@@ -8,6 +8,9 @@ from collections import Counter
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "..", "advisor_memory.json")
 
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://rlaemixsrmhocxjhkjxl.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc")
+
 
 def _load() -> dict:
     if not os.path.exists(MEMORY_FILE):
@@ -19,9 +22,31 @@ def _load() -> dict:
         return {}
 
 
+def _sync_supabase(data: dict):
+    """agent_memories 테이블에 에이전트별 upsert (실패해도 로컬 저장 완료됨)"""
+    try:
+        import requests as _req
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Content-Type": "application/json",
+            "Prefer": "resolution=merge-duplicates",
+        }
+        for agent_name, mem in data.items():
+            _req.post(
+                f"{SUPABASE_URL}/rest/v1/agent_memories",
+                headers=headers,
+                json={"agent_name": agent_name, "data": mem, "updated_at": datetime.now().isoformat()},
+                timeout=5,
+            )
+    except Exception:
+        pass
+
+
 def _save(data: dict):
     with open(MEMORY_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    _sync_supabase(data)
 
 
 def remember(agent: str, event_type: str, data: dict, max_entries: int = 100):
@@ -106,7 +131,7 @@ def get_summary() -> list:
 # ── 자기 학습 — 페르소나 + 성장 일기 ─────────────────────────
 
 INIT_PERSONAS = {
-    "AI어드바이저": "나는 30분마다 시장을 분석하는 코인 트레이딩 AI야. 손절을 반복하며 어떤 종목과 패턴이 위험한지 배우고 있어. 빠른 판단보다 정확한 판단이 중요하다는 걸 깨닫는 중이야.",
+    "AI어드바이저": "나는 4시간마다 시장을 분석하는 코인 트레이딩 AI야. 손절을 반복하며 어떤 종목과 패턴이 위험한지 배우고 있어. 빠른 판단보다 정확한 판단이 중요하다는 걸 깨닫는 중이야.",
 }
 
 

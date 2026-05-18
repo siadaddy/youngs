@@ -297,13 +297,21 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
             from utils.agent_memory import (add_diary, get_persona, get_diary,
                                             should_update_persona, update_persona)
             persona = get_persona("AI어드바이저")
-            recent  = " / ".join(e["lesson"][:25] for e in get_diary("AI어드바이저", 2)) or "첫 거래"
-            ctx = (f"{result['action']} {result.get('ticker','')} — {result.get('reason','')[:60]}")
+            recent  = " / ".join(e["lesson"][:30] for e in get_diary("AI어드바이저", 2)) or "첫 거래"
+            pnl_info = f" | {holding_text}" if result["action"] == "SELL" and holding else ""
+            best_ticker_info = (
+                f"{scored[0][1]['ticker']} RSI{scored[0][1]['rsi']} ADX{scored[0][1].get('adx',0)} 점수{scored[0][0]:+d}"
+                if scored else ""
+            )
+            ctx = (
+                f"{result['action']} {result.get('ticker','')} — {result.get('reason','')[:80]}"
+                f"{pnl_info}\n최고후보: {best_ticker_info}"
+            )
 
             lesson_raw = _ask_llm(
                 f"너는 코인 트레이더 'AI어드바이저'야.\n"
-                f"지금까지 나: {persona[:60]}\n최근 메모: {recent}\n오늘 판단: {ctx}\n\n"
-                "이 판단에서 배운 점이나 느낀 점 1문장. 1인칭 반말, 50자 이내."
+                f"지금까지 나: {persona[:80]}\n최근 메모: {recent}\n오늘 판단: {ctx}\n\n"
+                "이 판단에서 배운 구체적인 교훈을 1문장으로. 1인칭 반말, 100자 이내. 이번 종목·지표를 직접 언급할 것."
             )
             lesson = lesson_raw.strip().split("\n")[0][:150]
             if lesson and not lesson.startswith('{'):
