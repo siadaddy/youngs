@@ -31,7 +31,7 @@ def _ask_groq(prompt: str) -> str:
         {"role": "system", "content": SYSTEM},
         {"role": "user", "content": prompt},
     ]
-    payload = {"model": GROQ_MODEL, "messages": messages, "temperature": 0.3, "max_tokens": 300}
+    payload = {"model": GROQ_MODEL, "messages": messages, "temperature": 0.3, "max_tokens": 500}
 
     for key_idx, api_key in enumerate(GROQ_KEYS):
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
@@ -173,6 +173,16 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
         vb_str = "VB✅" if d.get("vb") else "VB❌"
         print(f"    {d['ticker']} | 점수:{score:+d} | RSI {d['rsi']} | {d['macd']} | {d['bb']} | ADX {adx} | {vb_str}")
 
+    # 미보유 상태인데 BUY 후보가 없으면 조기 HOLD 반환 (LLM 호출 비용 절약)
+    if not holding:
+        best_score = scored[0][0] if scored else 0
+        best_d = scored[0][1] if scored else {}
+        best_adx = best_d.get("adx", 0)
+        best_rsi = best_d.get("rsi", 50)
+        if best_score < 5 or best_adx < 28 or best_rsi < 28 or best_rsi > 65:
+            print(f"  ⏸  매수 조건 미충족 (최고점수 {best_score:+d}, ADX {best_adx}, RSI {best_rsi}) → HOLD 즉시 반환")
+            return {"action": "HOLD", "ticker": None, "reason": f"최고점수 {best_score:+d} / ADX {best_adx} / RSI {best_rsi} — 매수 조건 미충족, 관망"}
+
     rows = []
     for score, d in scored:
         adx = d.get("adx", 0)
@@ -220,14 +230,15 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
 【매수 규칙 — 모든 조건 동시 충족 시에만 BUY】
 1. 미보유 상태에서만 BUY 가능
 2. 스테이블코인 (USDT·USDC·DAI·BUSD·TUSD·FDUSD 등) → BUY 절대 금지
-3. RSI < 25 → BUY 금지 (급락 추세 — 반등 신호 아님)
-4. RSI > 70 → BUY 금지 (이미 과매수)
-5. ADX 25 미만 → BUY 금지 (방향성 없는 횡보장)
-6. 거래량 변화 -20% 이하 → BUY 금지 (참여자 이탈)
-7. 점수 +4 미만 → BUY 금지 (신호 불충분)
-8. 【최우선 BUY】 VB✅ + 거래량 +30% 이상 + 점수 +5 이상 + ADX 25 이상 → 강한 돌파, BUY
-9. 【일반 BUY】 점수 +5 이상 + ADX 30 이상 + MACD 골든크로스 + RSI 25~55 → BUY 고려
-10. 위 8·9 중 하나 이상 충족하고 3~7 위반 없을 때만 BUY — 애매하면 HOLD
+3. RSI < 28 → BUY 금지 (급락 추세 — 반등 신호 아님)
+4. RSI > 65 → BUY 금지 (이미 과매수 — 뒤늦은 진입 금지)
+5. ADX 28 미만 → BUY 금지 (방향성 없는 횡보장)
+6. 거래량 변화 -10% 이하 → BUY 금지 (참여자 이탈)
+7. 점수 +5 미만 → BUY 금지 (신호 불충분)
+8. 【최우선 BUY】 VB✅ + 거래량 +30% 이상 + 점수 +6 이상 + ADX 28 이상 → 강한 돌파, BUY
+9. 【일반 BUY】 점수 +6 이상 + ADX 32 이상 + MACD 골든크로스 + RSI 28~55 → BUY 고려
+10. 위 8·9 중 하나 이상 충족하고 3~7 위반 없을 때만 BUY — 애매하면 반드시 HOLD
+11. 확신 없으면 HOLD가 최선 — 진입 안 하는 것도 전략이다
 
 【보유 중 HOLD 우선 원칙 — 복합 조건 없이는 SELL 금지】
 11. 보유 3시간 미만: 시스템이 손절/익절 처리 — AI는 HOLD 유지. SELL 금지.

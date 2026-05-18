@@ -138,7 +138,7 @@ def analyze_ticker(ticker: str) -> dict | None:
     try:
         coin = ticker.replace("KRW-", "")
         df = pybithumb.get_ohlcv(coin, interval="minute30")
-        if df is None or len(df) < 30:
+        if df is None or len(df) < 50:
             return None
 
         close = df["close"]
