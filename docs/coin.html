@@ -780,11 +780,11 @@
     const timeEl = document.getElementById('bot-status-time');
     if (!badge || !updatedAt) return;
     const diff = (Date.now() - new Date(updatedAt.replace(' ', 'T'))) / 60000;
-    if (diff <= 5) {
-      badge.innerHTML = '🟢 실행 중';
+    if (diff <= 30) {
+      badge.innerHTML = '🟢 실행 완료';
       badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(16,185,129,.35);color:#34d399;background:rgba(16,185,129,.1);';
-    } else if (diff <= 30) {
-      badge.innerHTML = '🟡 지연';
+    } else if (diff <= 270) {
+      badge.innerHTML = '🟡 대기 중 (정상)';
       badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid rgba(245,158,11,.35);color:var(--gold);background:rgba(245,158,11,.1);';
     } else {
       badge.innerHTML = '🔴 중단 의심';
