@@ -11,12 +11,18 @@ from datetime import date, timedelta
 from utils.gemini_client import ask_ai
 from utils.agent_memory import remember, get_hints, add_diary
 
-DOCS_CONTENT_DIR  = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "content")
-WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "..", "docs", "weekly_trend.json")
+DOCS_CONTENT_DIR  = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "content")
+WEEKLY_TREND_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "docs", "weekly_trend.json")
 
-SYSTEM = """당신은 30년 경력의 수석 뉴스 큐레이터입니다.
-이번 주 뉴스 데이터를 분석해 독자에게 실질적인 인사이트를 제공합니다.
-JSON만 출력합니다. 다른 텍스트, 마크다운 코드블록 없이 순수 JSON만."""
+SYSTEM = """당신은 BMW 딜러십에 근무하는 30대 직장인을 위한 경제·기술 뉴스 큐레이터입니다.
+이번 주 뉴스를 날카롭게 분석해 "그래서 나한테 뭔 의미야?"에 바로 답하는 인사이트를 씁니다.
+
+글쓰기 원칙:
+- 구체적 기업명·수치·날짜가 없는 문장은 쓰지 않는다
+- "~이다", "~기 때문이다", "~것으로 예상된다" 패턴 3회 이상 반복 금지
+- "중요성이 증가", "새로운 산업 창출", "많은 기업들" 같은 공허한 표현 금지
+- 딱 이 뉴스를 읽은 독자가 내일 동료에게 꺼낼 수 있는 얘기를 써라
+- JSON만 출력. 코드블록(```) 없이."""
 
 # 표시할 카테고리 순서 (하이라이트·BMW는 집계에서 제외)
 _CAT_ORDER = [
@@ -71,7 +77,7 @@ def _aggregate(days_data: list[dict]) -> dict:
             cat_counts[cat] = cat_counts.get(cat, 0) + len(articles)
             if cat not in news_samples:
                 news_samples[cat] = []
-            for a in articles[:2]:
+            for a in articles[:5]:
                 title = a.get("title", "").strip()
                 if title and title not in news_samples[cat]:
                     news_samples[cat].append(title)
@@ -98,6 +104,27 @@ def _aggregate(days_data: list[dict]) -> dict:
     }
 
 
+def _close_json(s: str) -> str:
+    """잘린 JSON 문자열을 괄호/따옴표 균형을 맞춰 닫는다."""
+    in_str, escaped = False, False
+    for ch in s:
+        if escaped:
+            escaped = False
+            continue
+        if ch == '\\' and in_str:
+            escaped = True
+            continue
+        if ch == '"':
+            in_str = not in_str
+    if in_str:
+        s += '"'
+    opens = s.count('{') - s.count('}')
+    arr_opens = s.count('[') - s.count(']')
+    s += ']' * max(arr_opens, 0)
+    s += '}' * max(opens, 0)
+    return s
+
+
 def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
     """Gemini로 인사이트 분석 → JSON 반환"""
     weekly_hints = get_hints("AI주간트렌드")
@@ -105,14 +132,16 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
         f"  {o['name']}: {o['count']}건"
         for o in agg["category_counts"]
     )
-    headlines_text = "\n".join(f"  - {h}" for h in agg["all_headlines"][:35])
-    blogs_text     = "\n".join(f"  - {b}" for b in agg["blog_topics"][:7])
+    headlines_text = "\n".join(f"  - {h}" for h in agg["all_headlines"][:20])
+    blogs_text     = "\n".join(f"  - {b}" for b in agg["blog_topics"][:5])
 
-    # 카테고리별 기사 샘플
+    # 카테고리별 기사 샘플 (상위 4개 카테고리만)
+    top_cats = [o["name"] for o in agg["category_counts"][:4]]
     samples_text = ""
-    for cat, titles in agg["news_samples"].items():
+    for cat in top_cats:
+        titles = agg["news_samples"].get(cat, [])
         if titles:
-            samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {t}" for t in titles[:4])
+            samples_text += f"\n  [{cat}]\n" + "\n".join(f"    · {t}" for t in titles[:3])
 
     prompt = f"""아래는 지난 {days_analyzed}일간 AI 뉴스레터의 뉴스 데이터입니다.{weekly_hints}
 
@@ -125,45 +154,53 @@ def _ai_analysis(agg: dict, days_analyzed: int) -> dict:
 === 이번 주 블로그 주제 ===
 {blogs_text}
 
-=== 분야별 기사 샘플 ===
+=== 분야별 기사 샘플 (실제 뉴스 제목) ===
 {samples_text}
 
-위 데이터를 분석해서 아래 JSON 형식으로 출력하세요.
-수치·이름은 위 데이터에 있는 것만 사용. 없는 내용 창작 금지.
+위 데이터만 근거로 아래 JSON 형식으로 출력하세요.
+데이터에 없는 수치·기업명·사건 절대 창작 금지.
 
 {{
-  "week_summary": "이번 주 전체를 한 문장으로 — 핵심 키워드 2~3개 포함 (30자 내외)",
-  "hot_category": "가장 뉴스가 많았던 분야명 (위 분야명 그대로)",
+  "week_summary": "이번 주 전체를 한 문장으로 — 위 헤드라인에서 뽑은 핵심 키워드 2~3개 포함 (30자 내외)",
+  "hot_category": "기사 건수 1위 분야명 (위 분야명 그대로 복사)",
   "sections": [
     {{
-      "category": "분야명 (위 분야명 그대로)",
-      "top_issue": "이번 주 이 분야 핵심 이슈 (20자 내외)",
-      "insight": "2~3문장. 구체적 기업명·수치 포함. 왜 중요한지 + 앞으로 어떻게 될지."
+      "category": "분야명 (위 분야명 그대로 복사 — 절대 바꾸지 말 것)",
+      "top_issue": "위 기사 제목에서 뽑은 이번 주 핵심 이슈 한 줄 (20자 내외)",
+      "insight": "3문장. ①위 기사 제목에 실제로 등장한 기업명·인물명·수치 반드시 포함. ②왜 중요한지. ③앞으로 어떻게 될지."
     }}
   ],
-  "weekly_insight": "이번 주를 관통하는 큰 흐름 4~5문장. 분야 간 연결고리, 투자자·직장인 관점의 실질적 시사점 포함.",
+  "weekly_insight": "이번 주 뉴스를 관통하는 큰 흐름 4~5문장. 위 헤드라인에 실제로 등장한 이슈·기업·수치 언급. 분야 간 연결고리. BMW 딜러 직장인 관점의 실질적 시사점.",
   "next_watch": [
-    "다음 주 주목할 이슈나 일정 3~4개 (bullet 형식, 위 뉴스 흐름에서 유추)"
+    "위 뉴스 흐름에서 실제로 유추한 다음 주 주목 이슈 (막연한 '동향 주목' 금지 — 구체적 기업명·이벤트·날짜 포함)"
   ]
 }}
 
-규칙:
-- sections는 기사 건수 상위 4개 분야만 (0건 분야 제외)
-- weekly_insight는 반드시 200자 이상
-- 한국어·영어·이모지만. 한자·일본어 등 절대 금지
+⚠️ 반드시 지킬 규칙:
+- sections: 기사 건수 상위 4개 분야만 포함 (0건 분야 제외)
+- weekly_insight: 반드시 250자 이상
+- next_watch: 3~4개, 각 항목에 구체적 기업명 또는 이벤트명 포함
+- 한국어·영어·이모지만. 베트남어·러시아어·한자·일본어 등 절대 금지
 - JSON만 출력. 코드블록(```) 없이."""
 
-    raw = ask_ai(prompt, system=SYSTEM, temperature=0.65, json_mode=True, max_tokens=2000)
+    raw = ask_ai(prompt, system=SYSTEM, temperature=0.55, json_mode=False, max_tokens=4096)
+    import re as _re
     raw = raw.replace("```json", "").replace("```", "").strip()
+    raw = _re.sub(r'[Ѐ-ӿĀ-ɏḀ-ỿ]', '', raw)
 
     try:
         return json.loads(raw)
     except Exception:
-        import re
-        m = re.search(r'\{.*\}', raw, re.DOTALL)
+        # 잘린 JSON 복구: { ... } 추출 후 잘린 부분 닫기
+        m = _re.search(r'\{.*', raw, _re.DOTALL)
         if m:
-            return json.loads(m.group())
-        raise ValueError(f"JSON 파싱 실패: {raw[:200]}")
+            fragment = m.group()
+            fragment = _close_json(fragment)
+            try:
+                return json.loads(fragment)
+            except Exception:
+                pass
+        raise ValueError(f"JSON 파싱 실패: {raw[:300]}")
 
 
 def run():
