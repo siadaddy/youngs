@@ -16,6 +16,9 @@ from collections import Counter
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "..", "agent_memory.json")
 
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://rlaemixsrmhocxjhkjxl.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc")
+
 
 # ── 기본 I/O ──────────────────────────────────────────────────
 
@@ -29,9 +32,31 @@ def _load() -> dict:
         return {}
 
 
+def _sync_supabase(data: dict):
+    """agent_memories 테이블에 에이전트별 upsert (실패해도 로컬 저장 완료됨)"""
+    try:
+        import requests as _req
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Content-Type": "application/json",
+            "Prefer": "resolution=merge-duplicates",
+        }
+        for agent_name, mem in data.items():
+            _req.post(
+                f"{SUPABASE_URL}/rest/v1/agent_memories",
+                headers=headers,
+                json={"agent_name": agent_name, "data": mem, "updated_at": datetime.now().isoformat()},
+                timeout=5,
+            )
+    except Exception:
+        pass
+
+
 def _save(data: dict):
     with open(MEMORY_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    _sync_supabase(data)
 
 
 # ── 공개 API ──────────────────────────────────────────────────
