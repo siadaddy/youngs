@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-17 07:50",
+  "updated": "2026-05-18 09:00",
   "agents": {
     "AI어드바이저": {
       "win_rate": 34,
-      "total": 92,
-      "wins": 31,
-      "losses": 61,
-      "holding": "📊 BTC 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "total": 95,
+      "wins": 32,
+      "losses": 63,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -16,63 +16,64 @@
       ],
       "recent": [
         {
-          "time": "06:00",
-          "date": "2026-05-11",
+          "time": "09:00",
+          "date": "2026-05-18",
+          "ticker": "BTC",
+          "pnl": -1.01,
+          "action": "SELL",
+          "type": "force_exit"
+        },
+        {
+          "time": "01:30",
+          "date": "2026-05-17",
           "ticker": "BTC",
           "pnl": null,
           "action": "BUY"
         },
         {
-          "time": "05:16",
-          "date": "2026-05-11",
-          "ticker": "WLD",
-          "pnl": 0.48,
+          "time": "23:58",
+          "date": "2026-05-16",
+          "ticker": "SUNDOG",
+          "pnl": 0.3,
           "action": "SELL",
           "type": "take_profit"
         },
         {
-          "time": "02:00",
-          "date": "2026-05-11",
-          "ticker": "WLD",
+          "time": "23:30",
+          "date": "2026-05-16",
+          "ticker": "SUNDOG",
           "pnl": null,
           "action": "BUY"
         },
         {
-          "time": "01:27",
-          "date": "2026-05-11",
-          "ticker": "XRP",
-          "pnl": 5.18,
+          "time": "16:00",
+          "date": "2026-05-16",
+          "ticker": "BTC",
+          "pnl": -1.1,
           "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "02:00",
-          "date": "2026-05-08",
-          "ticker": "XRP",
-          "pnl": null,
-          "action": "BUY"
+          "type": "force_exit"
         }
       ],
-      "last_active": "2026-05-11 06:00",
+      "last_active": "2026-05-18 09:00",
       "diary": [
-        {
-          "date": "2026-05-11 06:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
-        },
-        {
-          "date": "2026-05-11 02:00",
-          "lesson": "나, 데이터 믿어야지.",
-          "trigger": "buy"
-        },
         {
           "date": "2026-05-08 02:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
+        },
+        {
+          "date": "2026-05-07 14:00",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
+        },
+        {
+          "date": "2026-05-07 07:06",
+          "lesson": "나, 데이터 믿어야지.",
+          "trigger": "buy"
         }
       ],
-      "persona": "나, 데이터 믿어. ",
-      "growth_score": 145
+      "persona": "나, 데이터 믿어. 손절 중요해.",
+      "growth_score": 143
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",
@@ -183,6 +184,20 @@
   },
   "log": [
     {
+      "time": "2026-05-18 09:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.0% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-05-17 01:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 매수 — RSI 30.3·ADX 56.7",
+      "type": "buy"
+    },
+    {
       "time": "2026-05-17",
       "agent": "박기획",
       "icon": "📋",
@@ -251,6 +266,27 @@
       "icon": "🎵",
       "msg": "📖 다양하게 골라도 결국 믿고 듣는 아티스트는 피할 수 없지.",
       "type": "diary"
+    },
+    {
+      "time": "2026-05-16 23:58",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SUNDOG 익절 +0.3% 🎯",
+      "type": "win"
+    },
+    {
+      "time": "2026-05-16 23:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SUNDOG 매수 — 진입",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-16 16:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.1% (8시간)",
+      "type": "exit"
     },
     {
       "time": "2026-05-16",
@@ -475,41 +511,6 @@
       "icon": "🤖",
       "msg": "TRAC 매수 — RSI 37.5·ADX 49.2",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-05 21:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ZIL 익절 +5.7% 🎯",
-      "type": "win"
-    },
-    {
-      "time": "2026-05-05 21:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ZIL 매수 — 거래량+76%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-05 20:07",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "AIOZ 강제청산 +0.0% (8시간)",
-      "type": "exit"
-    },
-    {
-      "time": "2026-05-05 19:01",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "AIOZ 매수 — RSI 46.2·거래량+38%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-05 14:47",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 손절 -4.29% → 학습 기록 🚫",
-      "type": "loss"
     },
     {
       "time": "2026-05-04",
