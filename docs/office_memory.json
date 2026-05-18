@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-17 07:50",
+  "updated": "2026-05-18 20:30",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 34,
-      "total": 92,
-      "wins": 31,
-      "losses": 61,
-      "holding": "📊 BTC 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "win_rate": 33,
+      "total": 97,
+      "wins": 32,
+      "losses": 65,
+      "holding": "📊 XRP 보유 중",
+      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -16,63 +16,63 @@
       ],
       "recent": [
         {
-          "time": "06:00",
-          "date": "2026-05-11",
-          "ticker": "BTC",
+          "time": "20:30",
+          "date": "2026-05-18",
+          "ticker": "XRP",
           "pnl": null,
           "action": "BUY"
         },
         {
-          "time": "05:16",
-          "date": "2026-05-11",
-          "ticker": "WLD",
-          "pnl": 0.48,
+          "time": "20:30",
+          "date": "2026-05-18",
+          "ticker": "SOL",
+          "pnl": -1.26,
           "action": "SELL",
-          "type": "take_profit"
+          "type": "force_exit"
         },
         {
-          "time": "02:00",
-          "date": "2026-05-11",
-          "ticker": "WLD",
+          "time": "14:30",
+          "date": "2026-05-18",
+          "ticker": "SOL",
           "pnl": null,
           "action": "BUY"
         },
         {
-          "time": "01:27",
-          "date": "2026-05-11",
-          "ticker": "XRP",
-          "pnl": 5.18,
+          "time": "10:03",
+          "date": "2026-05-18",
+          "ticker": "IRYS",
+          "pnl": -4.34,
           "action": "SELL",
-          "type": "take_profit"
+          "type": "stop_loss"
         },
         {
-          "time": "02:00",
-          "date": "2026-05-08",
-          "ticker": "XRP",
+          "time": "09:30",
+          "date": "2026-05-18",
+          "ticker": "IRYS",
           "pnl": null,
           "action": "BUY"
         }
       ],
-      "last_active": "2026-05-11 06:00",
+      "last_active": "2026-05-18 20:30",
       "diary": [
         {
-          "date": "2026-05-11 06:00",
+          "date": "2026-05-18 20:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-11 02:00",
+          "date": "2026-05-18 14:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-08 02:00",
+          "date": "2026-05-18 14:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 145
+      "growth_score": 153
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",
@@ -183,6 +183,55 @@
   },
   "log": [
     {
+      "time": "2026-05-18 20:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 매수 — RSI 28.3·ADX 56.7",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-18 20:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SOL 강제청산 -1.3% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-05-18 14:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SOL 매수 — RSI 31.8·ADX 41.5",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-18 10:03",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "IRYS 손절 -4.34% → 학습 기록 🚫",
+      "type": "loss"
+    },
+    {
+      "time": "2026-05-18 09:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "IRYS 매수 — RSI 35.5·ADX 53.5",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-18 09:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.0% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-05-17 01:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 매수 — RSI 30.3·ADX 56.7",
+      "type": "buy"
+    },
+    {
       "time": "2026-05-17",
       "agent": "박기획",
       "icon": "📋",
@@ -251,6 +300,27 @@
       "icon": "🎵",
       "msg": "📖 다양하게 골라도 결국 믿고 듣는 아티스트는 피할 수 없지.",
       "type": "diary"
+    },
+    {
+      "time": "2026-05-16 23:58",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SUNDOG 익절 +0.3% 🎯",
+      "type": "win"
+    },
+    {
+      "time": "2026-05-16 23:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SUNDOG 매수 — 진입",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-16 16:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.1% (8시간)",
+      "type": "exit"
     },
     {
       "time": "2026-05-16",
@@ -440,76 +510,6 @@
       "icon": "🤖",
       "msg": "ETH 강제청산 -1.1% (8시간)",
       "type": "exit"
-    },
-    {
-      "time": "2026-05-06 13:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ETH 매수 — RSI 31.8·ADX 31.0",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-06 09:28",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "REI 손절 -4.15% → 학습 기록 🚫",
-      "type": "loss"
-    },
-    {
-      "time": "2026-05-06 09:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "REI 매수 — RSI 53.0·거래량+123%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-06 09:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "TRAC 강제청산 -1.2% (8시간)",
-      "type": "exit"
-    },
-    {
-      "time": "2026-05-06 02:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "TRAC 매수 — RSI 37.5·ADX 49.2",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-05 21:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ZIL 익절 +5.7% 🎯",
-      "type": "win"
-    },
-    {
-      "time": "2026-05-05 21:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ZIL 매수 — 거래량+76%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-05 20:07",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "AIOZ 강제청산 +0.0% (8시간)",
-      "type": "exit"
-    },
-    {
-      "time": "2026-05-05 19:01",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "AIOZ 매수 — RSI 46.2·거래량+38%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-05 14:47",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "RSS3 손절 -4.29% → 학습 기록 🚫",
-      "type": "loss"
     },
     {
       "time": "2026-05-04",

@@ -4,30 +4,73 @@
     "buy_price": 2053.0,
     "qty": 24.2815,
     "invest_krw": 49850.0,
-    "buy_time": "2026-05-18 20:30",
-    "high_price": 2084.0
+    "buy_time": "2026-05-18 20:30"
   },
   "history": [
     {
       "time": "2026-05-18 20:30",
       "action": "BUY",
       "ticker": "XRP",
-      "price": 2053.0,
+      "price": 2052.0,
       "amount_krw": 49850.0,
-      "reason": "AI 매수 신호 (push 누락 — 복구 기록)",
+      "reason": "XRP의 RSI는 28.3으로 과매도 상태이며, MACD 골든크로스와 BB 중하단을 나타내고 있어 강한 매수 신호가 발생했습니다. 또한 ADX 56.7로 추세가 확인되며, 점수 +8로 신호가 충분하여 BUY에 적합합니다.",
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
     },
     {
-      "time": "2026-05-17 07:30",
+      "time": "2026-05-18 20:30",
       "action": "SELL",
-      "ticker": "BTC",
-      "price": null,
+      "ticker": "SOL",
+      "price": 125300.0,
       "amount_krw": 49850.0,
-      "reason": "시간초과 강제청산 (push 누락 — 복구 기록)",
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.26,
+      "pnl_krw": -628.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-18 14:30",
+      "action": "BUY",
+      "ticker": "SOL",
+      "price": 126900.0,
+      "amount_krw": 49850.0,
+      "reason": "SOL의 RSI는 31.8로 저점에 위치하고 있으며, MACD 골든크로스와 BB 중하단을 나타내고 있어 강한 매수 신호가 발생했습니다. 또한, ADX 41.5로 추세가 있는 것으로 나타나며, 점수 +7로 높은 신호를 보이고 있습니다.",
       "pnl_pct": null,
       "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-18 10:03",
+      "action": "SELL",
+      "ticker": "IRYS",
+      "price": 59.57,
+      "amount_krw": 49850.0,
+      "reason": "실시간 손절 -4.34% (기준 -4.0%)",
+      "pnl_pct": -4.34,
+      "pnl_krw": -2161.0,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-18 09:30",
+      "action": "BUY",
+      "ticker": "IRYS",
+      "price": 62.27,
+      "amount_krw": 49850.0,
+      "reason": "IRYS의 RSI는 35.5로 과매도 상태가 아니며, MACD는 상승하고 있습니다. 또한 ADX는 53.5로 추세가 있는 것으로 나타나며, 거래량도 증가하고 있습니다. 이러한 신호들이 BUY 조건을 충족하기 때문에 매수 결정합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
+    {
+      "time": "2026-05-18 09:00",
+      "action": "SELL",
+      "ticker": "BTC",
+      "price": 115550000.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.01,
+      "pnl_krw": -472.0,
       "dry_run": false
     },
     {
@@ -513,57 +556,13 @@
       "pnl_pct": 5.42,
       "pnl_krw": 2701.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-03 22:30",
-      "action": "BUY",
-      "ticker": "RSS3",
-      "price": 10.53,
-      "amount_krw": 49850.0,
-      "reason": "VB✅와 거래량 변화가 양호하며, 점수가 +4로 높은 편입니다. 또한 RSI가 32.3으로 과매도 상태이므로, 반등 가능성이 있습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
-    },
-    {
-      "time": "2026-05-03 22:30",
-      "action": "SELL",
-      "ticker": "ORCA",
-      "price": 3046.0,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목 ORCA의 기술 점수는 +3으로 낮고, RSI도 33.8로 낮으며, MACD도 하락하고 있습니다. 또한, 보유 시간이 60분으로 비교적 짧은 편이므로, 기술 점수가 낮고 반등 신호가 없는 경우 매도하는 것이 좋습니다.",
-      "pnl_pct": -1.26,
-      "pnl_krw": -630.0,
-      "dry_run": false
-    },
-    {
-      "time": "2026-05-03 21:30",
-      "action": "BUY",
-      "ticker": "ORCA",
-      "price": 3085.0,
-      "amount_krw": 49850.0,
-      "reason": "ORCA의 RSI는 43.0으로 중립적인 수준이며, MACD 골든크로스와 BB 중하단을 보이고 있습니다. 또한 ADX 25.2로 추세가 있는 것으로 나타나며, 점수 +5로 높은 매수 신호를 보이고 있습니다. 이러한 신호들이 강한 매수 신호로 판단되어 매수 결정합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
-    },
-    {
-      "time": "2026-05-03 21:28",
-      "action": "SELL",
-      "ticker": "GNO",
-      "price": 209600.0,
-      "amount_krw": 49850.0,
-      "reason": "실시간 익절 5.33% (기준 +5.0%)",
-      "pnl_pct": 5.33,
-      "pnl_krw": 2655.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 94,
+    "total_trades": 97,
     "wins": 32,
-    "losses": 62,
-    "total_pnl_krw": -42822.0,
+    "losses": 65,
+    "total_pnl_krw": -46083.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
@@ -705,6 +704,14 @@
       "blacklisted_until": null,
       "history": [
         "2026-05-06 09:28"
+      ]
+    },
+    "IRYS": {
+      "stop_loss_count": 1,
+      "last_stop_loss": "2026-05-18 10:03",
+      "blacklisted_until": null,
+      "history": [
+        "2026-05-18 10:03"
       ]
     }
   }
