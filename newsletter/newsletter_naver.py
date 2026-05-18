@@ -220,6 +220,7 @@ def save_markdown(categorized, ai_summary):
     print(f'    데이터 저장 완료: {data_path}')
 
     insert_to_supabase(categorized, TODAY)
+    insert_trends_to_supabase(ai_summary, TODAY)
 
 
 def insert_to_supabase(categorized, today):
@@ -230,6 +231,8 @@ def insert_to_supabase(categorized, today):
                 'date': today,
                 'title': a['title'],
                 'summary': a.get('summary', ''),
+                'link': a.get('link', ''),
+                'source': a.get('source', ''),
                 'image_url': None,
                 'category': cat
             })
@@ -239,6 +242,24 @@ def insert_to_supabase(categorized, today):
             print(f'    [Supabase] {len(rows)}건 insert 완료')
         except Exception as e:
             print(f'    [Supabase] insert 실패: {e}')
+
+def insert_trends_to_supabase(ai_summary, today):
+    if not ai_summary:
+        return
+    # 비한국어 키 제거 (러시아어 등 AI가 잘못 생성한 경우)
+    raw_sums = ai_summary.get('category_summaries', {})
+    clean_sums = {k: v for k, v in raw_sums.items()
+                  if k and all('가' <= c <= '힣' or c in ' /·()' or c.isascii() for c in k)}
+    try:
+        payload = {
+            'date': today,
+            'top3': ai_summary.get('top3', []),
+            'category_summaries': clean_sums,
+        }
+        supabase_client.table('news_trends').upsert(payload, on_conflict='date').execute()
+        print(f'    [Supabase] trends insert 완료')
+    except Exception as e:
+        print(f'    [Supabase] trends insert 실패: {e}')
 
 # ── Notion 블록 헬퍼 ─────────────────────────────────────
 def _t(text, bold=False, color="default"):
