@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-18 14:30",
+  "updated": "2026-05-18 20:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 33,
-      "total": 96,
+      "total": 97,
       "wins": 32,
-      "losses": 64,
-      "holding": "📊 SOL 보유 중",
-      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 65,
+      "holding": "💤 현재 보유 없음",
+      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "20:30",
+          "date": "2026-05-18",
+          "ticker": "SOL",
+          "pnl": -1.26,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "14:30",
           "date": "2026-05-18",
@@ -44,16 +52,9 @@
           "pnl": -1.01,
           "action": "SELL",
           "type": "force_exit"
-        },
-        {
-          "time": "01:30",
-          "date": "2026-05-17",
-          "ticker": "BTC",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-18 14:30",
+      "last_active": "2026-05-18 20:30",
       "diary": [
         {
           "date": "2026-05-18 14:30",
@@ -182,6 +183,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-18 20:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SOL 강제청산 -1.3% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-18 14:30",
       "agent": "AI어드바이저",
@@ -503,13 +511,6 @@
       "icon": "🤖",
       "msg": "ETH 매수 — RSI 31.8·ADX 31.0",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-06 09:28",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "REI 손절 -4.15% → 학습 기록 🚫",
-      "type": "loss"
     },
     {
       "time": "2026-05-04",

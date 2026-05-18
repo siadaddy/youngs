@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "SOL",
-    "buy_price": 126900.0,
-    "qty": 0.3928,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-18 14:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-18 20:30",
+      "action": "SELL",
+      "ticker": "SOL",
+      "price": 125300.0,
+      "amount_krw": 49850.0,
+      "reason": "6시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.26,
+      "pnl_krw": -628.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-18 14:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-03 22:30",
-      "action": "SELL",
-      "ticker": "ORCA",
-      "price": 3046.0,
-      "amount_krw": 49850.0,
-      "reason": "현재 보유 종목 ORCA의 기술 점수는 +3으로 낮고, RSI도 33.8로 낮으며, MACD도 하락하고 있습니다. 또한, 보유 시간이 60분으로 비교적 짧은 편이므로, 기술 점수가 낮고 반등 신호가 없는 경우 매도하는 것이 좋습니다.",
-      "pnl_pct": -1.26,
-      "pnl_krw": -630.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 96,
+    "total_trades": 97,
     "wins": 32,
-    "losses": 64,
-    "total_pnl_krw": -45455.0,
+    "losses": 65,
+    "total_pnl_krw": -46083.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 4.0,
     "take_profit_pct": 5.0
   },
-  "updated_at": "2026-05-18 14:30",
+  "updated_at": "2026-05-18 20:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
