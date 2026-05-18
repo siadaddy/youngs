@@ -2224,13 +2224,28 @@
       top3El.innerHTML = '';
       summariesEl.innerHTML = '';
 
-      const t = await fetchTrendsFromSupabase(dateStr);
+      // 해당 날짜 데이터 없으면 최근 데이터로 폴백 (최대 3일 전까지)
+      let t = null, actualDate = dateStr;
+      for (let i = 0; i < 4; i++) {
+        const d = new Date(dateStr);
+        d.setDate(d.getDate() - i);
+        const ds = d.toISOString().slice(0, 10);
+        try {
+          const row = await fetchTrendsFromSupabase(ds);
+          if (row && (row.top3?.length || Object.keys(row.category_summaries || {}).length)) {
+            t = row; actualDate = ds; break;
+          }
+        } catch (_) {}
+      }
+      if (!t) { skeleton.style.display = 'none'; section.style.display = 'none'; return; }
+
       const top3 = t.top3 || [];
       const summaries = t.category_summaries || {};
 
       skeleton.style.display = 'none';
 
       if (!top3.length && !Object.keys(summaries).length) { section.style.display = 'none'; return; }
+      dateStr = actualDate;
 
       // 날짜 서브텍스트 업데이트
       const dateSub = document.getElementById('trends-date-sub');
@@ -2278,7 +2293,13 @@
     const section = document.getElementById('talking-section');
     section.style.display = 'none';
     try {
-      const t = await fetchTrendsFromSupabase(dateStr);
+      let t = null;
+      for (let i = 0; i < 4; i++) {
+        const d = new Date(dateStr); d.setDate(d.getDate() - i);
+        const ds = d.toISOString().slice(0, 10);
+        try { const row = await fetchTrendsFromSupabase(ds); if (row) { t = row; break; } } catch (_) {}
+      }
+      if (!t) return;
       let tp = t.talking_points;
       if (!tp) { section.style.display = 'none'; return; }
       if (typeof tp === 'string') tp = JSON.parse(tp);
