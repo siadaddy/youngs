@@ -91,30 +91,41 @@ def build_ai_summary(categorized: dict) -> dict:
             all_articles.append(f"[{cat}] [{a['source']}] {a['title']}: {a['summary']}")
 
     articles_text = "\n".join(all_articles)
-    prompt = f"""오늘의 뉴스 기사들을 분석해주세요.
+    cat_list = list(categorized.keys())
+    cat_example = {cat: "2~3문장 핵심 요약" for cat in cat_list}
+
+    prompt = f"""오늘의 뉴스 기사들을 분석해주세요. 반드시 한국어로만 응답하세요.
 
 [오늘의 뉴스]
 {articles_text}
 
-아래 JSON 형식으로 정확히 응답하세요:
+아래 JSON 형식으로 정확히 응답하세요.
+⚠️ category_summaries의 키는 반드시 아래 목록 중 하나만 사용하세요 (임의로 바꾸거나 새로 만들지 마세요):
+{json.dumps(cat_list, ensure_ascii=False)}
+
 {{
   "top3": [
-    {{"rank": 1, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}},
-    {{"rank": 2, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}},
-    {{"rank": 3, "title": "제목", "why": "중요한 이유 한 문장", "category": "카테고리명"}}
+    {{"rank": 1, "title": "제목", "why": "중요한 이유 한 문장", "category": "위 목록 중 하나"}},
+    {{"rank": 2, "title": "제목", "why": "중요한 이유 한 문장", "category": "위 목록 중 하나"}},
+    {{"rank": 3, "title": "제목", "why": "중요한 이유 한 문장", "category": "위 목록 중 하나"}}
   ],
-  "category_summaries": {{
-    "카테고리명": "2~3문장 핵심 요약"
-  }}
+  "category_summaries": {json.dumps(cat_example, ensure_ascii=False)}
 }}
 JSON 외 다른 텍스트는 절대 포함하지 마세요."""
 
-    raw = ask_ai(prompt, system="당신은 뉴스 분석 전문가입니다. 항상 JSON으로만 응답합니다.")
+    raw = ask_ai(prompt, system="당신은 한국어 뉴스 분석 전문가입니다. 항상 JSON으로만 응답합니다.")
     if not raw:
         return {"top3": [], "category_summaries": {}}
     try:
         raw = raw.replace("```json", "").replace("```", "").strip()
-        return json.loads(raw)
+        result = json.loads(raw)
+        # 허용된 카테고리 키만 남기고 나머지 제거
+        valid_cats = set(cat_list)
+        result["category_summaries"] = {
+            k: v for k, v in result.get("category_summaries", {}).items()
+            if k in valid_cats
+        }
+        return result
     except Exception as e:
         print(f"    ⚠️ AI 요약 파싱 실패: {e}")
         return {"top3": [], "category_summaries": {}}
