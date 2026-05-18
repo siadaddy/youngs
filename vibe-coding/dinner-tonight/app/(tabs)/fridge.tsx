@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, useColorScheme,
+  View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, useColorScheme, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IngredientTag } from '../../components/IngredientTag';
@@ -16,7 +16,7 @@ export default function FridgeScreen() {
   const isDark = useColorScheme() === 'dark';
   const [activeCategory, setActiveCategory] = useState<IngredientCategory>('채소');
   const [customInput, setCustomInput] = useState('');
-  const { ingredients, addIngredient, removeIngredient } = useFridgeStore();
+  const { ingredients, addIngredient, removeIngredient, clearAll } = useFridgeStore();
 
   function handleAddCustom() {
     const trimmed = customInput.trim();
@@ -99,7 +99,19 @@ export default function FridgeScreen() {
         {/* Registered tags */}
         {ingredients.length > 0 && (
           <View style={[styles.card, { backgroundColor: cardBg }, shadows.sm]}>
-            <Text style={[styles.sectionTitle, { color: mutedColor }]}>등록된 재료 ({ingredients.length})</Text>
+            <View style={styles.registeredHeader}>
+              <Text style={[styles.sectionTitle, { color: mutedColor }]}>등록된 재료 ({ingredients.length})</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  Alert.alert('전체 삭제', '모든 재료를 삭제할까요?', [
+                    { text: '취소', style: 'cancel' },
+                    { text: '삭제', style: 'destructive', onPress: clearAll },
+                  ]);
+                }}
+              >
+                <Text style={styles.clearAllText}>전체 삭제</Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.tagRow}>
               {ingredients.map((item) => (
                 <IngredientTag key={item} name={item} onRemove={removeIngredient} />
@@ -136,4 +148,6 @@ const styles = StyleSheet.create({
   addBtn: { backgroundColor: colors.primary, borderRadius: 14, paddingHorizontal: 20, justifyContent: 'center' },
   addBtnText: { color: '#FFF', fontWeight: '700', fontSize: 15 },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  registeredHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
+  clearAllText: { fontSize: 13, fontWeight: '600', color: colors.error },
 });
