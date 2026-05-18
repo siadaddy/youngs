@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-18 09:30",
+  "updated": "2026-05-18 14:30",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 34,
-      "total": 95,
+      "win_rate": 33,
+      "total": 96,
       "wins": 32,
-      "losses": 63,
-      "holding": "📊 IRYS 보유 중",
-      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "losses": 64,
+      "holding": "📊 SOL 보유 중",
+      "hint": "⚠️ 최근 손절 2회 — ADX·거래량 조건 강화 | ⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "14:30",
+          "date": "2026-05-18",
+          "ticker": "SOL",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "10:03",
+          "date": "2026-05-18",
+          "ticker": "IRYS",
+          "pnl": -4.34,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
         {
           "time": "09:30",
           "date": "2026-05-18",
@@ -36,43 +51,28 @@
           "ticker": "BTC",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "23:58",
-          "date": "2026-05-16",
-          "ticker": "SUNDOG",
-          "pnl": 0.3,
-          "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "23:30",
-          "date": "2026-05-16",
-          "ticker": "SUNDOG",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-18 09:30",
+      "last_active": "2026-05-18 14:30",
       "diary": [
         {
-          "date": "2026-05-18 09:30",
+          "date": "2026-05-18 14:30",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-08 02:00",
+          "date": "2026-05-18 14:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-07 14:00",
+          "date": "2026-05-18 13:00",
           "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 144
+      "growth_score": 152
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",
@@ -182,6 +182,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-18 14:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SOL 매수 — RSI 31.8·ADX 41.5",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-18 10:03",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "IRYS 손절 -4.34% → 학습 기록 🚫",
+      "type": "loss"
+    },
     {
       "time": "2026-05-18 09:30",
       "agent": "AI어드바이저",
@@ -496,20 +510,6 @@
       "icon": "🤖",
       "msg": "REI 손절 -4.15% → 학습 기록 🚫",
       "type": "loss"
-    },
-    {
-      "time": "2026-05-06 09:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "REI 매수 — RSI 53.0·거래량+123%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-06 09:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "TRAC 강제청산 -1.2% (8시간)",
-      "type": "exit"
     },
     {
       "time": "2026-05-04",
