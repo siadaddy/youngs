@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 2032.0,
+    "qty": 24.5324,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-20 06:30"
+  },
   "history": [
+    {
+      "time": "2026-05-20 06:30",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 2032.0,
+      "amount_krw": 49850.0,
+      "reason": "XRP의 RSI는 40.5로 과매도 상태가 아니며, MACD 골든크로스와 BB 중하단을 고려하면 강한 매수 신호가 발생했습니다. 또한, ADX 32.3로 추세가 있는 것으로 나타나며, 점수 +5로 신호가 충분합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-20 03:30",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": -5.7,
       "pnl_krw": -2841.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 01:00",
-      "action": "BUY",
-      "ticker": "RSS3",
-      "price": 10.0,
-      "amount_krw": 49850.0,
-      "reason": "RSI 33.0으로 저점에 위치해 있으며, MACD 하락세에도 불구하고 ADX 35.2로 추세가 유지되고 있어 반등 가능성이 높다. 또한 거래량이 65% 증가하여 시장 참여자들이 관심을 보이고 있다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-20 03:30",
+  "updated_at": "2026-05-20 06:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
