@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-18 20:30",
+  "updated": "2026-05-20 03:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 33,
-      "total": 97,
+      "total": 98,
       "wins": 32,
-      "losses": 65,
-      "holding": "📊 XRP 보유 중",
+      "losses": 66,
+      "holding": "💤 현재 보유 없음",
       "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,14 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "03:30",
+          "date": "2026-05-20",
+          "ticker": "XRP",
+          "pnl": -1.02,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "20:30",
           "date": "2026-05-18",
@@ -44,16 +52,9 @@
           "pnl": -4.34,
           "action": "SELL",
           "type": "stop_loss"
-        },
-        {
-          "time": "09:30",
-          "date": "2026-05-18",
-          "ticker": "IRYS",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-18 20:30",
+      "last_active": "2026-05-20 03:30",
       "diary": [
         {
           "date": "2026-05-18 20:30",
@@ -182,6 +183,13 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-20 03:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 강제청산 -1.0% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-18 20:30",
       "agent": "AI어드바이저",
@@ -503,13 +511,6 @@
       "icon": "🤖",
       "msg": "ETH 매수 — RSI 38.6·ADX 39.5",
       "type": "buy"
-    },
-    {
-      "time": "2026-05-07 03:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ETH 강제청산 -1.1% (8시간)",
-      "type": "exit"
     },
     {
       "time": "2026-05-04",
