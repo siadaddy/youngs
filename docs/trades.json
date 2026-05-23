@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "EDEN",
+    "buy_price": 145.0,
+    "qty": 343.7931,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-23 18:30"
+  },
   "history": [
+    {
+      "time": "2026-05-23 18:30",
+      "action": "BUY",
+      "ticker": "EDEN",
+      "price": 145.0,
+      "amount_krw": 49850.0,
+      "reason": "EDEN의 RSI는 33.3으로 과매도 상태이며, MACD 골든크로스와 BB 중하단을 형성하고 있습니다. 또한, ADX 36.1로 추세가 있는 것으로 나타나며, 점수는 +7로 BUY 신호가 강합니다. 따라서, EDEN을 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 18:21",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 0.83,
       "pnl_krw": 413.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 10:00",
-      "action": "BUY",
-      "ticker": "BABY",
-      "price": 28.9,
-      "amount_krw": 49850.0,
-      "reason": "BABY의 RSI는 31.6으로 저점에 위치해 있으며, MACD는 상승하고 있고, 볼린저밴드 중하단에 위치해 있습니다. 또한, 거래량은 56% 증가했으며, ADX는 51.9로 추세가 있는 것으로 나타나고 있습니다. 이러한 신호들은 BABY에 대한 매수 신호를 나타내므로 BUY를 결정합니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 18:21",
+  "updated_at": "2026-05-23 18:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
