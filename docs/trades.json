@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "MTL",
+    "buy_price": 486.0,
+    "qty": 102.572,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-23 18:00"
+  },
   "history": [
+    {
+      "time": "2026-05-23 18:00",
+      "action": "BUY",
+      "ticker": "MTL",
+      "price": 486.0,
+      "amount_krw": 49850.0,
+      "reason": "MTL의 RSI는 37.3으로 과매도 상태가 아니며, ADX는 43.2로 추세가 있는 상태입니다. 또한, 거래량이 51% 증가하고 VB✅ 신호가 발생하여 BUY 신호가 강합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 17:00",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 6.89,
       "pnl_krw": 3433.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 08:00",
-      "action": "BUY",
-      "ticker": "RSS3",
-      "price": 9.339,
-      "amount_krw": 49850.0,
-      "reason": "RSI 45.7, MACD 상승, BB 중하단, 거래량-45%, ADX 25.2로 추세가 있는 상황에서 점수 +4로 BUY 신호가 발생하였습니다. 또한, 최근 17건의 거래 메모리에서 시간초과 청산이 10회 발생하였으므로, 추세 없는 횡보 구간 진입을 피하는 것이 좋습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 17:00",
+  "updated_at": "2026-05-23 18:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
