@@ -1,12 +1,12 @@
 {
-  "updated": "2026-05-23 18:30",
+  "updated": "2026-05-23 20:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 33,
-      "total": 101,
+      "win_rate": 32,
+      "total": 102,
       "wins": 33,
-      "losses": 68,
-      "holding": "📊 EDEN 보유 중",
+      "losses": 69,
+      "holding": "📊 XRP 보유 중",
       "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
       "blacklist": [
         "FORT(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "20:00",
+          "date": "2026-05-23",
+          "ticker": "XRP",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "18:49",
+          "date": "2026-05-23",
+          "ticker": "EDEN",
+          "pnl": 0.0,
+          "action": "SELL",
+          "type": "force_exit"
+        },
         {
           "time": "18:30",
           "date": "2026-05-23",
@@ -36,25 +51,15 @@
           "ticker": "MTL",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "17:00",
-          "date": "2026-05-23",
-          "ticker": "ETH",
-          "pnl": -1.52,
-          "action": "SELL",
-          "type": "force_exit"
-        },
-        {
-          "time": "12:00",
-          "date": "2026-05-23",
-          "ticker": "ETH",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-23 18:30",
+      "last_active": "2026-05-23 20:00",
       "diary": [
+        {
+          "date": "2026-05-23 20:00",
+          "lesson": "나, XRP의 RSI 34.9와 MACD를 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-23 18:30",
           "lesson": "나, EDEN의 RSI 33.3과 MACD를 믿어야지.",
@@ -64,15 +69,10 @@
           "date": "2026-05-23 18:00",
           "lesson": "MTL의 RSI 37.3과 ADX 43.2를 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-23 12:00",
-          "lesson": "나, ETH의 RSI 38.6과 MACD를 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 157
+      "growth_score": 158
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",
@@ -182,6 +182,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-23 20:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 매수 — RSI 34.9·ADX 44.7",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-23 18:49",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "EDEN 강제청산 +0.0% (8시간)",
+      "type": "exit"
+    },
     {
       "time": "2026-05-23 18:30",
       "agent": "AI어드바이저",
@@ -482,20 +496,6 @@
       "icon": "📋",
       "msg": "카드뉴스 주제 확정: 현대차 넥쏘, 수소차 시장 압도적 1위!",
       "type": "plan"
-    },
-    {
-      "time": "2026-05-11 06:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "BTC 매수 — RSI 36.2·거래량+27%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-11 05:16",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "WLD 익절 +0.48% 🎯",
-      "type": "win"
     },
     {
       "time": "2026-05-11",

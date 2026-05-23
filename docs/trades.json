@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 1986.0,
+    "qty": 25.088,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-23 20:00"
+  },
   "history": [
+    {
+      "time": "2026-05-23 20:00",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 1987.0,
+      "amount_krw": 49850.0,
+      "reason": "XRP의 RSI는 34.9로 과매도 상태이며, MACD 골든크로스와 볼린저밴드 중하단을 형성하고 있어 강한 매수 신호가 발생하였습니다. 또한, ADX 44.7로 추세가 있는 것으로 나타나며, 거래량도 163% 증가하여 참여자들의 관심이 높아진 것으로 보입니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 18:49",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 1.02,
       "pnl_krw": 506.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 11:00",
-      "action": "BUY",
-      "ticker": "BABY",
-      "price": 29.56,
-      "amount_krw": 49850.0,
-      "reason": "VB✅와 거래량 변화 +58% 이상이면서 점수 +4 이상으로 BUY 최우선 신호가 발생하였습니다. 또한 RSI 38.5로 과매도 상태가 아니며, MACD 상승으로 추세가 좋습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 18:49",
+  "updated_at": "2026-05-23 20:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
