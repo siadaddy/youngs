@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "EDEN",
-    "buy_price": 145.0,
-    "qty": 343.7931,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-23 18:30"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-23 18:49",
+      "action": "SELL",
+      "ticker": "EDEN",
+      "price": 145.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 148원 대비 -2.03%)",
+      "pnl_pct": 0.0,
+      "pnl_krw": 0.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 18:30",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 10:42",
-      "action": "SELL",
-      "ticker": "BABY",
-      "price": 29.19,
-      "amount_krw": 49850.0,
-      "reason": "실시간 트레일링 스탑 (고점 30원 대비 -2.54%)",
-      "pnl_pct": 0.83,
-      "pnl_krw": 413.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 101,
+    "total_trades": 102,
     "wins": 33,
-    "losses": 68,
+    "losses": 69,
     "total_pnl_krw": -47680.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 18:30",
+  "updated_at": "2026-05-23 18:49",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
