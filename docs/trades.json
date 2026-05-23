@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "ETH",
-    "buy_price": 3097000.0,
-    "qty": 0.016,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-23 12:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-23 17:00",
+      "action": "SELL",
+      "ticker": "ETH",
+      "price": 3050000.0,
+      "amount_krw": 49850.0,
+      "reason": "4시간 보유 + 수익률 -1% 미만",
+      "pnl_pct": -1.52,
+      "pnl_krw": -752.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 12:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 08:00",
-      "action": "SELL",
-      "ticker": "BABY",
-      "price": 29.32,
-      "amount_krw": 49850.0,
-      "reason": "보유 시간 150분이 경과하였으며, 수익률이 -2.53%로 낮고, 기술 점수도 낮아 죽은 포지션으로 판단되므로 청산한다. 또한 다른 종목에 비해 기술적 지표가 좋지 않아 기회 교체를 고려해야 한다.",
-      "pnl_pct": -2.53,
-      "pnl_krw": -1257.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 99,
+    "total_trades": 100,
     "wins": 32,
-    "losses": 67,
-    "total_pnl_krw": -47133.0,
+    "losses": 68,
+    "total_pnl_krw": -47885.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 12:00",
+  "updated_at": "2026-05-23 17:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
