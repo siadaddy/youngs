@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "MTL",
-    "buy_price": 486.0,
-    "qty": 102.572,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-23 18:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-23 18:21",
+      "action": "SELL",
+      "ticker": "MTL",
+      "price": 488.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 498원 대비 -2.01%)",
+      "pnl_pct": 0.41,
+      "pnl_krw": 205.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 18:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 09:32",
-      "action": "SELL",
-      "ticker": "RSS3",
-      "price": 9.981,
-      "amount_krw": 49850.0,
-      "reason": "실시간 익절 6.89% (기준 +5.0%)",
-      "pnl_pct": 6.89,
-      "pnl_krw": 3433.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 100,
-    "wins": 32,
+    "total_trades": 101,
+    "wins": 33,
     "losses": 68,
-    "total_pnl_krw": -47885.0,
+    "total_pnl_krw": -47680.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 18:00",
+  "updated_at": "2026-05-23 18:21",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
