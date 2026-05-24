@@ -1,12 +1,17 @@
 {
-  "holding": {
-    "ticker": "XRP",
-    "buy_price": 1986.0,
-    "qty": 25.088,
-    "invest_krw": 49850.0,
-    "buy_time": "2026-05-23 20:00"
-  },
+  "holding": null,
   "history": [
+    {
+      "time": "2026-05-24 23:14",
+      "action": "SELL",
+      "ticker": "XRP",
+      "price": 2018.0,
+      "amount_krw": 49850.0,
+      "reason": "실시간 트레일링 스탑 (고점 2,050원 대비 -1.56%)",
+      "pnl_pct": 1.61,
+      "pnl_krw": 803.0,
+      "dry_run": false
+    },
     {
       "time": "2026-05-23 20:00",
       "action": "BUY",
@@ -545,29 +550,18 @@
       "pnl_pct": null,
       "pnl_krw": null,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 15:25",
-      "action": "SELL",
-      "ticker": "BABY",
-      "price": 29.83,
-      "amount_krw": 49850.0,
-      "reason": "실시간 트레일링 스탑 (고점 31원 대비 -2.77%)",
-      "pnl_pct": 1.02,
-      "pnl_krw": 506.0,
-      "dry_run": false
     }
   ],
   "stats": {
-    "total_trades": 102,
-    "wins": 33,
+    "total_trades": 103,
+    "wins": 34,
     "losses": 69,
-    "total_pnl_krw": -47680.0,
+    "total_pnl_krw": -46877.0,
     "start_date": "2026-04-06",
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-23 20:00",
+  "updated_at": "2026-05-24 23:14",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
