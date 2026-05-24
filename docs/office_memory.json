@@ -1,10 +1,10 @@
 {
-  "updated": "2026-05-23 20:00",
+  "updated": "2026-05-25 08:00",
   "agents": {
     "AI어드바이저": {
-      "win_rate": 32,
-      "total": 102,
-      "wins": 33,
+      "win_rate": 33,
+      "total": 103,
+      "wins": 34,
       "losses": 69,
       "holding": "📊 XRP 보유 중",
       "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
@@ -15,6 +15,21 @@
         "NCT(3회 차단)"
       ],
       "recent": [
+        {
+          "time": "08:00",
+          "date": "2026-05-25",
+          "ticker": "XRP",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "23:14",
+          "date": "2026-05-24",
+          "ticker": "XRP",
+          "pnl": 1.61,
+          "action": "SELL",
+          "type": "take_profit"
+        },
         {
           "time": "20:00",
           "date": "2026-05-23",
@@ -36,25 +51,15 @@
           "ticker": "EDEN",
           "pnl": null,
           "action": "BUY"
-        },
-        {
-          "time": "18:21",
-          "date": "2026-05-23",
-          "ticker": "MTL",
-          "pnl": 0.41,
-          "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "18:00",
-          "date": "2026-05-23",
-          "ticker": "MTL",
-          "pnl": null,
-          "action": "BUY"
         }
       ],
-      "last_active": "2026-05-23 20:00",
+      "last_active": "2026-05-25 08:00",
       "diary": [
+        {
+          "date": "2026-05-25 08:00",
+          "lesson": "나, XRP의 RSI 48.2를 믿어야지.",
+          "trigger": "buy"
+        },
         {
           "date": "2026-05-23 20:00",
           "lesson": "나, XRP의 RSI 34.9와 MACD를 믿어야지.",
@@ -64,15 +69,10 @@
           "date": "2026-05-23 18:30",
           "lesson": "나, EDEN의 RSI 33.3과 MACD를 믿어야지.",
           "trigger": "buy"
-        },
-        {
-          "date": "2026-05-23 18:00",
-          "lesson": "MTL의 RSI 37.3과 ADX 43.2를 믿어야지.",
-          "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 158
+      "growth_score": 159
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",
@@ -182,6 +182,20 @@
     }
   },
   "log": [
+    {
+      "time": "2026-05-25 08:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 매수 — RSI 48.2·거래량+197%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-24 23:14",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 익절 +1.61% 🎯",
+      "type": "win"
+    },
     {
       "time": "2026-05-23 20:00",
       "agent": "AI어드바이저",
@@ -377,20 +391,6 @@
       "icon": "🤖",
       "msg": "SUNDOG 익절 +0.3% 🎯",
       "type": "win"
-    },
-    {
-      "time": "2026-05-16 23:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "SUNDOG 매수 — 진입",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-16 16:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "BTC 강제청산 -1.1% (8시간)",
-      "type": "exit"
     },
     {
       "time": "2026-05-16",

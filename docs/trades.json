@@ -1,6 +1,23 @@
 {
-  "holding": null,
+  "holding": {
+    "ticker": "XRP",
+    "buy_price": 2018.0,
+    "qty": 24.7026,
+    "invest_krw": 49850.0,
+    "buy_time": "2026-05-25 08:00"
+  },
   "history": [
+    {
+      "time": "2026-05-25 08:00",
+      "action": "BUY",
+      "ticker": "XRP",
+      "price": 2018.0,
+      "amount_krw": 49850.0,
+      "reason": "XRP의 RSI는 48.2로 매수 조건을 충족하며, MACD 골든크로스와 BB 중하단을 보이고 있습니다. 또한 거래량이 197% 증가하여 강한 매수 신호를 보이고 있습니다. 따라서 XRP를 매수합니다.",
+      "pnl_pct": null,
+      "pnl_krw": null,
+      "dry_run": false
+    },
     {
       "time": "2026-05-24 23:14",
       "action": "SELL",
@@ -539,17 +556,6 @@
       "pnl_pct": 5.19,
       "pnl_krw": 2587.0,
       "dry_run": false
-    },
-    {
-      "time": "2026-05-04 15:30",
-      "action": "BUY",
-      "ticker": "H",
-      "price": 290.0,
-      "amount_krw": 49850.0,
-      "reason": "VB✅와 거래량 변화 +23% 이상이면서 점수 +5 이상인 강한 돌파 신호가 나타나고, ADX 39.1로 추세가 있는 상황에서 매수 신호가 발생했습니다. 또한 RSI 22.2로 과매도 상태이기 때문에 반등 가능성이 있습니다.",
-      "pnl_pct": null,
-      "pnl_krw": null,
-      "dry_run": false
     }
   ],
   "stats": {
@@ -561,7 +567,7 @@
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-24 23:14",
+  "updated_at": "2026-05-25 08:00",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,
