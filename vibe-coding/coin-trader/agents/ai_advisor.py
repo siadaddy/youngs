@@ -12,7 +12,7 @@ def _sanitize(text: str) -> str:
     text = re.sub(r'[\u0400-\u04ff]', '', text)   # 키릴
     return text.strip()
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"), override=True)
 
 GROQ_KEYS    = [k for k in [os.getenv("GROQ_API_KEY"), os.getenv("GROQ_API_KEY_2"), os.getenv("GROQ_API_KEY_3"), os.getenv("GROQ_API_KEY_4")] if k]
 GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
@@ -195,7 +195,7 @@ def run(market_data: list, holding: dict | None, cooldown_tickers: list | None =
         )
     market_text = "\n".join(rows)
 
-    stop_loss = float(os.getenv("STOP_LOSS_PCT", "4.0"))
+    stop_loss = float(os.getenv("STOP_LOSS_PCT", "2.5"))
 
     # 보유 시간 계산
     hold_minutes = 0

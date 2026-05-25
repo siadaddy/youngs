@@ -166,8 +166,8 @@ def init_from_history(trades_path: str):
             continue
         reason = entry.get("reason", "")
         pnl = entry.get("pnl_pct")
-        # 손절 판별: reason에 "손절" 포함 또는 pnl < -3.5%
-        if "손절" in reason or (pnl is not None and pnl <= -3.5):
+        # 손절 판별: reason에 "손절" 포함 또는 pnl < -2.0% (STOP_LOSS 기준 근방)
+        if "손절" in reason or (pnl is not None and pnl <= -2.0):
             coin = entry.get("ticker", "").replace("KRW-", "").upper()
             if coin:
                 stop_losses.setdefault(coin, [])
