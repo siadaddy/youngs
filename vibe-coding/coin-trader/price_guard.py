@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
 
 STATE_FILE     = os.path.join(os.path.dirname(__file__), "state.json")
 COOLDOWN_FILE  = os.path.join(os.path.dirname(__file__), "cooldown.json")
@@ -220,11 +220,11 @@ def main():
     while True:
         try:
             # .env 매 루프마다 재로드 — 설정 변경 즉시 반영
-            load_dotenv(override=True)
-            STOP_LOSS         = float(os.getenv("STOP_LOSS_PCT", "4.0"))
-            TAKE_PROFIT       = float(os.getenv("TAKE_PROFIT_PCT", "5.0"))   # ★ 기본값 수정
-            TRAILING_STOP_PCT = float(os.getenv("TRAILING_STOP_PCT", "2.5"))
-            TRAILING_ACTIVATE = float(os.getenv("TRAILING_ACTIVATE_PCT", "3.0"))
+            load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
+            STOP_LOSS         = float(os.getenv("STOP_LOSS_PCT", "2.5"))
+            TAKE_PROFIT       = float(os.getenv("TAKE_PROFIT_PCT", "6.0"))
+            TRAILING_STOP_PCT = float(os.getenv("TRAILING_STOP_PCT", "1.5"))
+            TRAILING_ACTIVATE = float(os.getenv("TRAILING_ACTIVATE_PCT", "4.5"))
 
             # main.py 실행 중이면 스킵 (매매 충돌 방지)
             if os.path.exists(LOCK_FILE):

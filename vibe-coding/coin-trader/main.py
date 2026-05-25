@@ -16,18 +16,19 @@ from utils.blacklist import register_stop_loss, add_successful_trade, get_summar
 from utils.agent_memory import remember as mem_remember
 from utils.office_export import export as office_export
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
 
+YOUNGS_DIR    = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "youngs"))
 STATE_FILE    = os.path.join(os.path.dirname(__file__), "state.json")
 LOG_FILE      = os.path.join(os.path.dirname(__file__), "trader.log")
 IP_FILE       = os.path.join(os.path.dirname(__file__), "ip.txt")
 FAILURE_FILE  = os.path.join(os.path.dirname(__file__), "failure_state.json")
 LOCK_FILE     = os.path.join(os.path.dirname(__file__), "main.lock")
 NTFY_TOPIC   = os.getenv("NTFY_TOPIC", "siadad-aicrew")
-STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "4.0"))
-TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "5.0"))
-TRAILING_STOP_PCT  = float(os.getenv("TRAILING_STOP_PCT", "2.5"))
-TRAILING_ACTIVATE  = float(os.getenv("TRAILING_ACTIVATE_PCT", "3.0"))
+STOP_LOSS          = float(os.getenv("STOP_LOSS_PCT", "2.5"))
+TAKE_PROFIT        = float(os.getenv("TAKE_PROFIT_PCT", "6.0"))
+TRAILING_STOP_PCT  = float(os.getenv("TRAILING_STOP_PCT", "1.5"))
+TRAILING_ACTIVATE  = float(os.getenv("TRAILING_ACTIVATE_PCT", "4.5"))
 MAX_HOLD_HOURS     = float(os.getenv("MAX_HOLD_HOURS", "8.0"))
 DRY_RUN            = os.getenv("DRY_RUN", "true").lower() == "true"
 DAILY_LOSS_LIMIT   = float(os.getenv("DAILY_LOSS_LIMIT_KRW", "-7500"))  # 5만원 기준 일일 손실 한도
@@ -99,10 +100,7 @@ def _cleanup_orphaned_holdings(holding: dict | None):
 
     # trades.json 히스토리에서 최근 BUY 종목 목록 수집
     try:
-        repo_root = subprocess.check_output(
-            ["git", "rev-parse", "--show-toplevel"],
-            cwd=os.path.dirname(__file__), text=True
-        ).strip()
+        repo_root = YOUNGS_DIR
         trades_path = os.path.join(repo_root, "docs", "trades.json")
         with open(trades_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -457,11 +455,7 @@ def main():
     bl_file = os.path.join(os.path.dirname(__file__), "blacklist.json")
     if not os.path.exists(bl_file):
         try:
-            repo_root = subprocess.check_output(
-                ["git", "rev-parse", "--show-toplevel"],
-                cwd=os.path.dirname(__file__), text=True
-            ).strip()
-            init_from_history(os.path.join(repo_root, "docs", "trades.json"))
+            init_from_history(os.path.join(YOUNGS_DIR, "docs", "trades.json"))
         except Exception:
             pass
     # 블랙리스트 현황 로그 출력
@@ -692,10 +686,7 @@ def main():
 def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_holding: dict | None):
     """매매 결과를 docs/trades.json에 저장하고 GitHub에 push"""
     try:
-        repo_root = subprocess.check_output(
-            ["git", "rev-parse", "--show-toplevel"],
-            cwd=os.path.dirname(__file__), text=True
-        ).strip()
+        repo_root = YOUNGS_DIR
         trades_path = os.path.join(repo_root, "docs", "trades.json")
 
         # 기존 데이터 로드
@@ -708,6 +699,10 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
                 "total_pnl_krw": 0, "start_date": datetime.now().strftime("%Y-%m-%d"),
                 "stop_loss_pct": STOP_LOSS, "take_profit_pct": TAKE_PROFIT
             }}
+
+        # 설정값 항상 최신으로 갱신
+        data["stats"]["stop_loss_pct"]  = STOP_LOSS
+        data["stats"]["take_profit_pct"] = TAKE_PROFIT
 
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
@@ -823,10 +818,7 @@ def daily_report():
         f.write(today)
 
     try:
-        repo_root = subprocess.check_output(
-            ["git", "rev-parse", "--show-toplevel"],
-            cwd=os.path.dirname(__file__), text=True
-        ).strip()
+        repo_root = YOUNGS_DIR
         trades_path = os.path.join(repo_root, "docs", "trades.json")
 
         if not os.path.exists(trades_path):
