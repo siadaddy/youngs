@@ -784,7 +784,7 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
         except Exception as oe:
             log(f"  ⚠️  office_export 실패 (무시): {oe}")
 
-        # git push: 실제 체결된 경우(BUY 성공 or SELL 성공)만 커밋/푸시
+        # git push: 체결 시 즉시 / HOLD 시 2시간 이상 경과한 경우만
         actually_executed = (action == "BUY" and new_holding) or (action == "SELL" and new_holding is None)
         ticker_str = advice.get("ticker") or (new_holding["ticker"] if new_holding else "")
         dry_str = " [DRY]" if DRY_RUN else ""
@@ -797,9 +797,25 @@ def _publish_trades(action: str, advice: dict, new_holding: dict | None, old_hol
             subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
             log("  ✅ trades.json GitHub 업데이트 완료")
         else:
-            # 미체결(HOLD, SELL 차단 등): 로컬 파일만, git push 스킵
-            subprocess.run(["git", "restore", "--staged", "docs/trades.json", "docs/office_memory.json"], cwd=repo_root, check=False)
-            log("  ℹ️  미체결/HOLD — trades.json 로컬 갱신 (GitHub push 스킵)")
+            # HOLD: 마지막 push 후 2시간 이상 경과한 경우만 push (페이지 갱신)
+            try:
+                import time as _time
+                last_ct = subprocess.check_output(
+                    ["git", "log", "-1", "--format=%ct"], cwd=repo_root, text=True
+                ).strip()
+                hours_since = (_time.time() - int(last_ct)) / 3600 if last_ct else 99
+            except Exception:
+                hours_since = 99
+            if hours_since >= 2:
+                subprocess.run(
+                    ["git", "commit", "-m", f"status: {now_str} HOLD {ticker_str}{dry_str}"],
+                    cwd=repo_root, check=True
+                )
+                subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, check=True)
+                log("  ✅ trades.json GitHub 업데이트 완료 (HOLD 2시간 주기)")
+            else:
+                subprocess.run(["git", "restore", "--staged", "docs/trades.json", "docs/office_memory.json"], cwd=repo_root, check=False)
+                log(f"  ℹ️  HOLD — trades.json 로컬 갱신 (마지막 push {hours_since:.1f}h 전, 2h 미만 스킵)")
     except Exception as e:
         log(f"  ⚠️  trades.json 업데이트 실패 (무시): {e}")
 
