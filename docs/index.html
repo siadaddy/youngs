@@ -1412,20 +1412,6 @@
     <span class="line2">시아아빠의 AI 데일리</span>
   </h1>
   <p class="hero-desc">AI 크루가 매일 아침 최신 뉴스를 분석해 카드뉴스·블로그·음악 플레이리스트를 자동 생성합니다. BMW 딜러 직장인 시각의 경제·기술 인사이트.</p>
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-val" id="hero-stat-days">64</div>
-      <div class="stat-label">발행일</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">4명</div>
-      <div class="stat-label">AI 크루</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val" id="hero-stat-cards">320+</div>
-      <div class="stat-label">카드뉴스</div>
-    </div>
-  </div>
 </div>
 
 <!-- ─── 라이브 대시보드 ──────────────────────────────────── -->
@@ -2543,12 +2529,6 @@
         dates = arc.dates || [];
       }
       if (!dates.includes(today)) dates.unshift(today);
-
-      // 히어로 통계 업데이트
-      const daysEl = document.getElementById('hero-stat-days');
-      const cardsEl = document.getElementById('hero-stat-cards');
-      if (daysEl) daysEl.textContent = dates.length;
-      if (cardsEl) cardsEl.textContent = (dates.length * 5) + '+';
 
       const list = document.getElementById('date-list');
       list.innerHTML = '';
