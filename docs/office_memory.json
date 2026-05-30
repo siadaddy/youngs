@@ -6,8 +6,8 @@
       "total": 97,
       "wins": 32,
       "losses": 65,
-      "holding": "📊 XRP 보유 중",
-      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "holding": "⛔ 운용 종료",
+      "hint": "🏖️ 2026-05-25 운용 종료 | 103회 거래 | 최종 승률 33%",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -72,7 +72,10 @@
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 153
+      "growth_score": 153,
+      "status": "vacation",
+      "vacation_since": "2026-05-25",
+      "vacation_reason": "코인봇 운용 종료 (103회 거래, -46,877원)"
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",

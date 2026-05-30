@@ -22,14 +22,83 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e
 
 # ── 기본 I/O ──────────────────────────────────────────────────
 
-def _load() -> dict:
-    if not os.path.exists(MEMORY_FILE):
-        return {}
+def _load_from_supabase() -> dict:
+    """로컬 파일 없을 때 Supabase에서 에이전트 메모리 복원 (GitHub Actions용)."""
     try:
-        with open(MEMORY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+        import requests as _req, ast as _ast
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+        }
+        res = _req.get(
+            f"{SUPABASE_URL}/rest/v1/agent_memories?select=*",
+            headers=headers,
+            timeout=5,
+        )
+        if res.status_code != 200:
+            return {}
+        rows = res.json()
+        if not rows:
+            return {}
+
+        result = {}
+        for row in rows:
+            agent = row.get("agent_name", "")
+            if not agent:
+                continue
+            mem: dict = {}
+            # events 필드 (TEXT 또는 JSONB)
+            ev = row.get("events")
+            if isinstance(ev, dict):
+                mem.update(ev)
+            elif isinstance(ev, str) and ev.strip():
+                try:
+                    mem.update(json.loads(ev))
+                except Exception:
+                    try:
+                        mem.update(_ast.literal_eval(ev))
+                    except Exception:
+                        pass
+            # diary 필드
+            d = row.get("diary")
+            if isinstance(d, list):
+                mem["diary"] = d
+            elif isinstance(d, str) and d.strip():
+                try:
+                    mem["diary"] = json.loads(d)
+                except Exception:
+                    try:
+                        mem["diary"] = _ast.literal_eval(d)
+                    except Exception:
+                        pass
+            if row.get("persona"):
+                mem["persona"] = row["persona"]
+            if row.get("growth_score") is not None:
+                mem["growth_score"] = row["growth_score"]
+            if row.get("persona_updated_at"):
+                mem["persona_updated_at"] = row["persona_updated_at"]
+            result[agent] = mem
+
+        if result:
+            with open(MEMORY_FILE, "w", encoding="utf-8") as f:
+                json.dump(result, f, ensure_ascii=False, indent=2)
+            print(f"  🔄 Supabase에서 {len(result)}개 에이전트 메모리 복원 완료")
+        return result
+    except Exception as e:
+        print(f"  ⚠️  Supabase 메모리 로드 실패: {e}")
+    return {}
+
+
+def _load() -> dict:
+    if os.path.exists(MEMORY_FILE):
+        try:
+            with open(MEMORY_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if data:
+                return data
+        except Exception:
+            pass
+    return _load_from_supabase()
 
 
 def _sync_supabase(data: dict):
@@ -42,11 +111,21 @@ def _sync_supabase(data: dict):
             "Content-Type": "application/json",
             "Prefer": "resolution=merge-duplicates",
         }
+        _SKIP = {"persona", "diary", "growth_score", "persona_updated_at"}
         for agent_name, mem in data.items():
+            events = {k: v for k, v in mem.items() if k not in _SKIP}
             _req.post(
                 f"{SUPABASE_URL}/rest/v1/agent_memories",
                 headers=headers,
-                json={"agent_name": agent_name, "data": mem, "updated_at": datetime.now().isoformat()},
+                json={
+                    "agent_name":        agent_name,
+                    "events":            events,
+                    "diary":             mem.get("diary", []),
+                    "persona":           mem.get("persona", ""),
+                    "growth_score":      mem.get("growth_score", 0),
+                    "persona_updated_at": mem.get("persona_updated_at") or None,
+                    "updated_at":        datetime.now().isoformat(),
+                },
                 timeout=5,
             )
     except Exception:
@@ -83,6 +162,7 @@ def get_hints(agent: str) -> str:
     """직원별 학습 힌트 문자열 반환 (프롬프트 주입용). 실패 시 빈 문자열."""
     try:
         if agent == "박기획":       return _planner_hints()
+        if agent == "이작가":       return _writer_hints()
         if agent == "최디자":       return _designer_hints()
         if agent == "한뮤직":       return _music_hints()
         if agent == "AI주간트렌드": return _weekly_hints()
@@ -112,9 +192,9 @@ _KO_STOP = {
 }
 
 def _planner_hints() -> str:
+    mem = _load()
+    persona = mem.get("박기획", {}).get("persona", "")
     entries = recall("박기획", "topic_selection", days=14)
-    if not entries:
-        return ""
 
     word_counter = Counter()
     for e in entries:
@@ -124,36 +204,59 @@ def _planner_hints() -> str:
                     word_counter[w] += 1
 
     hot = [(w, c) for w, c in word_counter.most_common(6) if c >= 3]
-    if not hot:
-        return ""
 
-    hot_str = ", ".join(f"{w}({c}회)" for w, c in hot)
-    return (
-        f"\n\n📚 [기획자 학습 — {len(entries)}일치 데이터 기반]"
-        f"\n최근 14일 자주 다룬 키워드: {hot_str}"
-        "\n→ 위 키워드와 겹치는 주제는 피하고, 아직 덜 다룬 분야·각도 우선 선정."
-    )
+    parts = []
+    if persona:
+        parts.append(f"\n\n🎭 [박기획 현재 관점]\n{persona}\n→ 이 관점을 바탕으로 오늘 뉴스의 각도를 잡아라.")
+    if hot and entries:
+        hot_str = ", ".join(f"{w}({c}회)" for w, c in hot)
+        parts.append(
+            f"\n\n📚 [기획자 학습 — {len(entries)}일치 데이터 기반]"
+            f"\n최근 14일 자주 다룬 키워드: {hot_str}"
+            "\n→ 위 키워드와 겹치는 주제는 피하고, 아직 덜 다룬 분야·각도 우선 선정."
+        )
+    return "".join(parts)
 
 
 def _designer_hints() -> str:
+    mem = _load()
+    persona = mem.get("최디자", {}).get("persona", "")
     entries = recall("최디자", "image_result", days=7)
     failed = [e for e in entries if not e.get("success", True)]
-    if len(failed) < 2:
+
+    parts = []
+    if persona:
+        parts.append(f"\nDESIGNER INSIGHT: {persona}")
+
+    if len(failed) >= 2:
+        kw_counter = Counter()
+        for e in failed:
+            for kw in e.get("prompt_keywords", []):
+                kw_counter[kw] += 1
+        freq = [(kw, c) for kw, c in kw_counter.most_common(4) if c >= 2]
+        if freq:
+            parts.append("\nSTYLE NOTE — Recent prompt patterns with high failure rate (avoid these):")
+            for kw, c in freq:
+                parts.append(f"  - '{kw}' appeared in {c} failed prompts → use concrete alternatives")
+
+    return "\n".join(parts)
+
+
+def _writer_hints() -> str:
+    mem = _load()
+    persona = mem.get("이작가", {}).get("persona", "")
+    diary = mem.get("이작가", {}).get("diary", [])
+    if not persona and not diary:
         return ""
 
-    kw_counter = Counter()
-    for e in failed:
-        for kw in e.get("prompt_keywords", []):
-            kw_counter[kw] += 1
-
-    freq = [(kw, c) for kw, c in kw_counter.most_common(4) if c >= 2]
-    if not freq:
-        return ""
-
-    lines = ["\nSTYLE NOTE — Recent prompt patterns with high failure rate (avoid these):"]
-    for kw, c in freq:
-        lines.append(f"  - '{kw}' appeared in {c} failed prompts → use concrete alternatives")
-    return "\n".join(lines)
+    parts = []
+    if persona:
+        parts.append(f"\n\n✍️ [이작가 현재 문체 원칙]\n{persona}\n→ 이 관점을 글쓰기 스타일에 반영해라.")
+    if diary:
+        recent_lessons = [e["lesson"][:40] for e in diary[:3] if e.get("lesson")]
+        if recent_lessons:
+            parts.append("\n최근 학습: " + " / ".join(recent_lessons))
+    return "".join(parts)
 
 
 def _music_hints() -> str:
