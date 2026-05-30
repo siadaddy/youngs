@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🪙 AI 코인 트레이더 · 시아 아빠의 Claude 실험실</title>
-  <meta name="description" content="RSI·MACD·볼린저밴드·ADX 스코어링 + Groq AI 판단. 투자금 5만원, 4시간마다 자동 실행, 30초 실시간 감시." />
-  <meta property="og:title" content="🪙 AI 코인 트레이더 · 시아 아빠의 Claude 실험실" />
-  <meta property="og:description" content="AI가 코인을 직접 삽니다 — RSI·MACD·ADX 스코어링 + Groq AI 판단 · 실전 5만원 운용 중" />
+  <meta name="description" content="RSI·MACD·볼린저밴드·ADX 스코어링 + Groq AI 판단. 투자금 5만원, 103회 매매, 누적 -46,877원 기록 후 종료." />
+  <meta property="og:title" content="🪙 AI 코인 트레이더 (운용 종료) · 시아 아빠의 Claude 실험실" />
+  <meta property="og:description" content="AI가 코인을 직접 샀습니다 — 103회 매매 · 누적 -46,877원 · 2026-05-25 운용 종료" />
   <meta property="og:url" content="https://siadaddy.github.io/youngs/coin.html" />
   <meta property="og:image" content="https://siadaddy.github.io/youngs/og-image-v2.png" />
 
@@ -273,20 +273,32 @@
 <!-- ─── 코인 트레이더 ────────────────────────────────── -->
 <section class="section" id="coin-section">
   <div class="container">
-    <div class="section-eyebrow">🪙 AI Coin Trader . 실전 운용 중</div>
-    <div class="section-title">AI가 코인을 직접 삽니다</div>
+    <div class="section-eyebrow">🪙 AI Coin Trader . 운용 종료</div>
+    <div class="section-title">AI가 코인을 직접 샀습니다</div>
     <p class="section-sub">
       RSI . MACD . 볼린저밴드 . ADX . 변동성돌파 스코어링 → Groq AI 최종 판단<br>
-      투자금 5만원 . 4시간마다 실행 + 30초 실시간 감시 . 손절 -2.5% . 익절 +6% . 트레일링스탑 +2.0%/−1.5% . 4h 강제청산 . 일손실 -7,500원 한도
+      투자금 5만원 . 30분마다 실행 + 30초 실시간 감시 . 손절 -2.5% . 익절 +6% . 트레일링스탑 +4.5%/−1.5% . 4h 강제청산
       <span id="coin-dry-badge" style="display:none;margin-left:8px;"></span>
     </p>
+
+    <!-- 종료 안내 배너 -->
+    <div style="margin-top:24px;margin-bottom:8px;padding:20px 24px;border-radius:16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="font-size:1.2rem;">🛑</span>
+        <span style="font-size:.8rem;font-weight:800;letter-spacing:.08em;color:#f87171;text-transform:uppercase;">Bot Terminated · 2026-05-25</span>
+      </div>
+      <div style="font-size:.9rem;color:var(--text);line-height:1.7;">
+        총 <strong>103회</strong> 매매 · 누적 손익 <strong style="color:#f87171;">-46,877원</strong> 기록 후 운용을 종료했습니다.<br>
+        <span style="color:var(--muted2);font-size:.82rem;">손익비 구조 문제(설정 버그로 손절 -4% 적용) + 승률 33% → 구조적 손해 확인. 전략 재검토 예정.</span>
+      </div>
+    </div>
+
     <div class="tech-stack">
       <span class="tech-badge blue">🤖 Groq llama-3.3-70b</span>
       <span class="tech-badge red">🪙 Bithumb API</span>
       <span class="tech-badge gold">📊 RSI . MACD . ADX . BB</span>
-      <span class="tech-badge green">⚡ 4시간마다 자동 실행</span>
+      <span class="tech-badge" style="background:rgba(239,68,68,.12);color:#f87171;border-color:rgba(239,68,68,.2);">⛔ 운용 종료</span>
       <span class="tech-badge purple">🛡 일손실 -7,500원 한도</span>
-      <span class="tech-badge gold">🟠 트레일링스탑 +2.0%/−1.5% . 4h 강제청산</span>
       <span class="tech-badge" style="background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.25);">📚 학습 블랙리스트</span>
     </div>
 
