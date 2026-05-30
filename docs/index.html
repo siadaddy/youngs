@@ -1425,9 +1425,21 @@
     .ts-badge:hover { border-color: var(--bmw); color: var(--bmw-lt); }
 
     @media (max-width: 640px) {
-      .overview-stats { grid-template-columns: repeat(2, 1fr); }
-      .overview-problem { flex-direction: column; }
-      .overview-arrow { align-self: flex-start; padding: 4px 0; }
+      /* Problem / Solution */
+      .overview-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .overview-problem { flex-direction: column; gap: 12px; padding: 18px 16px; margin-bottom: 24px; }
+      .overview-arrow { align-self: center; padding: 4px 0; transform: rotate(90deg); font-size: 1.5rem; }
+      .overview-problem-body { font-size: .85rem; }
+      /* Automation Pipeline: 3열 그리드 (가로 스크롤 제거) */
+      .pipeline-wrap { flex-wrap: wrap; overflow-x: visible; gap: 8px; padding: 4px 0 4px; }
+      .pipeline-step { min-width: 0; flex: 0 0 calc(33.33% - 6px); padding: 10px 6px; }
+      .pipeline-step-icon { font-size: 1.2rem; }
+      .pipeline-step-label { font-size: .63rem; }
+      .pipeline-step-sub { font-size: .56rem; }
+      .pipeline-arrow { display: none; }
+      /* Tech Stack */
+      .tech-stack-wrap { gap: 6px; }
+      .ts-badge { font-size: .67rem; padding: 4px 9px; }
     }
     /* ─── 포트폴리오 카드 ───────────────────────────────── */
     .pf-category { font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; margin-top:8px; }
