@@ -2826,10 +2826,7 @@
     '최디자':  ['이미지 5장 생성 시작! 🎨','밝고 생동감 있게! 어둠은 NO 🚫','Bloomberg 스타일로 가볼게요','이번 이미지 완전 마음에 들어 ✨','프롬프트 최적화 완료!','색감이 너무 예쁜데? 🌈'],
     '한뮤직':  ['이번 주 플레이리스트 큐레이션 🎵','같은 아티스트 반복은 NO 😤','2000s 힙합 명곡 탐색 중!','BPM 150+ 러닝곡 수집 중 🏃','걸그룹 최신곡 업데이트 완료! 💃','70곡 큐레이션 마무리! 🎶'],
     'AI주간트렌드':['7일치 뉴스 데이터 집계 중 📊','이번 주 AI 뉴스가 제일 많아!','경제/금융 이슈 분석 완료','다음 주 주목 이슈 선정 중','전주 대비 변화 포인트 탐색 🔍','주간 인사이트 완성! 💼'],
-    'AI어드바이저':['🏖️ 휴가 중입니다~','코인봇 운용 종료 (5/25) 🔚','103회 거래 완주! 수고했어 💪','승률 33%... 다음엔 더 잘할게 🤔','데이터는 거짓말 안 해... 아마도','새 전략 구상 중이에요 📐'],
     '뉴스기자': ['RSS 1,200건 수집 완료! 📰','글로벌 뉴스 파이프라인 가동 중','속보 알림 대기 중 🚨','주요 5개 카테고리 분류 완료','오늘도 빠짐없이 다 긁었어요!','뉴스 품질 필터링 중... 🔎'],
-    '이가드':   ['🏖️ 임시 휴가 중!','모니터 꺼놨어요 😴','24시간 대기에서 해방! 🎉','코인봇 재가동 때 돌아올게요','지금은 충전 중... 💤','경보 시스템 대기 모드 🔕'],
-    '리포터':   ['🏖️ 리포트 없는 날의 행복 ✨','손익 계산에서 잠시 해방!','코인봇 재개 시 돌아옵니다','숫자 말고 자연이나 봅니다 🌿','잠시 충전 중! 📵','리포터도 쉬어야 산다 💆'],
   };
   const _MEETING = [
     ['박기획','일일 브리핑 시작합니다! 📋'],
@@ -2837,9 +2834,6 @@
     ['최디자','이미지 5장 모두 생성 완료 🎨'],
     ['한뮤직','이번 주 플레이리스트 갱신 🎵'],
     ['AI주간트렌드','이번 주 AI 뉴스 1위 📊'],
-    ['이가드','🏖️ 저는 잠깐 휴가 중입니다'],
-    ['AI어드바이저','코인봇 운용 종료. 수고했어요 🔚'],
-    ['리포터','🏖️ 리포트 없는 날... 좋네요'],
     ['박기획','모두 수고했어요! 내일도 화이팅 💪'],
   ];
 
@@ -2992,33 +2986,6 @@
         .filter(d => d.lesson && d.lesson.length > 5)
         .map(d => d.lesson.slice(0,30) + ' 📖');
       if (diaryLines.length) _LINES[id] = [...diaryLines, ...(_LINES[id]||[])].slice(0, 10);
-    }
-
-    if (a['AI어드바이저']) {
-      const ad = a['AI어드바이저'];
-      if (ad.status === 'vacation') {
-        _LINES['AI어드바이저'] = [
-          `🏖️ 휴가 중 (${ad.vacation_since||'2026-05-25'})`,
-          `코인봇 운용 종료 🔚`,
-          `총 103회 거래 완주!`,
-          `최종 승률 ${ad.win_rate||33}% 📊`,
-          '다음엔 더 잘할게요 💪',
-          '새 전략 구상 중... 📐',
-        ];
-      } else {
-        const lines = [];
-        if (ad.win_rate !== undefined) lines.push(`현재 승률 ${ad.win_rate}% (${ad.wins}승 ${ad.losses}패) 📊`);
-        if (ad.holding) lines.push(ad.holding);
-        if (ad.blacklist && ad.blacklist.length) lines.push(`🚫 차단 종목: ${ad.blacklist[0]}`);
-        if (ad.recent && ad.recent[0]) {
-          const r = ad.recent[0];
-          if (r.pnl !== null && r.pnl !== undefined)
-            lines.push(`최근 ${r.ticker} ${r.pnl > 0 ? '+' : ''}${r.pnl}% ${r.pnl > 0 ? '🎯' : '📉'}`);
-        }
-        if (ad.hint && ad.hint.startsWith('⚠️')) lines.push(ad.hint.slice(0, 32));
-        if (lines.length) _LINES['AI어드바이저'] = [...lines, ..._LINES['AI어드바이저']].slice(0, 8);
-        _addDiary('AI어드바이저', ad);
-      }
     }
 
     if (a['박기획']) {
@@ -3208,14 +3175,17 @@
     });
 
     // ── 캐릭터 초기 상태 ──────────────────────────────────
-    const chars = Object.entries(_CHARS).map(([id,def],i)=>({
-      id, def, x:def.homeX, y:def.homeY,
-      tx:def.homeX, ty:def.homeY,
-      frame:0, fTick:0, facing:1,
-      state:'idle', sTick: 40+i*35+Math.random()*80,
-      spd: 1.1+Math.random()*0.7,
-      bubble:null, bTick:0, _sy:def.homeY, _origSpd:0,
-    }));
+    const VACATION_CHARS = new Set(['AI어드바이저', '이가드', '리포터']);
+    const chars = Object.entries(_CHARS)
+      .filter(([id]) => !VACATION_CHARS.has(id))
+      .map(([id,def],i)=>({
+        id, def, x:def.homeX, y:def.homeY,
+        tx:def.homeX, ty:def.homeY,
+        frame:0, fTick:0, facing:1,
+        state:'idle', sTick: 40+i*35+Math.random()*80,
+        spd: 1.1+Math.random()*0.7,
+        bubble:null, bTick:0, _sy:def.homeY, _origSpd:0,
+      }));
 
     const MEET_POS=[{x:365,y:196},{x:418,y:196},{x:471,y:196},{x:365,y:318},{x:418,y:318},{x:471,y:318},{x:318,y:250},{x:512,y:250}];
     const BND={x1:22,y1:70,x2:876,y2:498};
