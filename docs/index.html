@@ -1482,9 +1482,12 @@
 </section>
 
 <!-- 🗣️ 오늘의 이야깃거리 -->
-<section class="section" id="talking-section" style="display:none">
+<section class="section" id="talking-section" style="display:none;background:linear-gradient(180deg,rgba(28,105,212,.06) 0%,transparent 100%);border-top:1px solid rgba(28,105,212,.18);">
   <div class="container">
-    <div class="section-eyebrow">🗣️ Today's Talking Points</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div class="section-eyebrow" style="margin-bottom:0">🗣️ Today's Talking Points</div>
+      <span style="font-size:.72rem;color:var(--muted);background:rgba(28,105,212,.12);border:1px solid rgba(28,105,212,.2);border-radius:99px;padding:2px 10px;">동료한테 꺼내볼 만한 얘기</span>
+    </div>
     <div class="section-title">오늘의 이야깃거리</div>
     <div id="talking-insight"></div>
     <div id="talking-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;"></div>
@@ -2347,7 +2350,13 @@
       '증가','감소','상승','하락','급등','급락','보도','발생','예상','전망',
       '이날','당시','지역','전국','국제','글로벌','세계','우리','자신','그것',
       '기간','시기','시점','부문','측면','영향','효과','원인','배경','조건',
-      '이어','하며','하여','통한','따른','관한','대해','에서의','으로의'
+      '이어','하며','하여','통한','따른','관한','대해','에서의','으로의',
+      // 뉴스 상투어
+      '특히','가운데','한편','이와','또한','그러나','하지만','오히려','실제로',
+      '사실상','결국','다만','우선','먼저','이를','역시','현지시간','것으로',
+      '아니라','중심으로','사진','영상','이에','뿐만','아울러','이처럼',
+      '따라서','그에','이로','인해','되면서','되며','하면서','이날부터',
+      '확대','대응','현장','기업들','업체','정부','당국','관계자'
     ]);
     const wordCount = {};
     cards.forEach(card => {
