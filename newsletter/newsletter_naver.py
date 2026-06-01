@@ -257,30 +257,45 @@ def insert_to_supabase(categorized, today):
 
 def generate_talking_points(categorized: dict, top3: list) -> dict:
     """오늘의 이야깃거리 3개 생성 — 대화 유도형 카드"""
-    top3_text = "\n".join(f"{i+1}. {t.get('title','')} ({t.get('category','')})" for i, t in enumerate(top3))
-    all_titles = []
+    # TOP3는 트렌드 브리핑에서 이미 다룸 → 이야깃거리에서 제외
+    top3_titles = [t.get('title', '') for t in top3]
+    top3_exclude = "\n".join(f"- {t}" for t in top3_titles if t)
+
+    # TOP3 제외한 나머지 기사 풀
+    other_articles = []
     for cat, arts in categorized.items():
-        for a in arts[:3]:
-            all_titles.append(f"[{cat}] {a['title']}")
-    articles_text = "\n".join(all_titles[:30])
+        for a in arts[:5]:
+            title = a.get('title', '')
+            summary = a.get('summary', '')[:120]
+            # TOP3와 겹치는 기사는 제외
+            if any(title[:15] in t or t[:15] in title for t in top3_titles):
+                continue
+            other_articles.append(f"[{cat}] {title}" + (f"\n  → {summary}" if summary else ""))
+    articles_text = "\n\n".join(other_articles[:25])
 
-    prompt = f"""오늘의 주요 뉴스를 바탕으로 '오늘의 이야깃거리' 3개를 만들어주세요.
-직장 동료나 가족과 나눌 수 있는 대화 주제를 골라주세요.
+    prompt = f"""오늘 뉴스 중 직장 동료와 점심·커피 타임에 꺼내기 좋은 이야깃거리 3개를 골라주세요.
 
-[오늘 TOP 3]
-{top3_text}
+⚠️ 아래 주제는 이미 'AI 트렌드 브리핑'에서 다뤘으므로 절대 사용하지 마세요:
+{top3_exclude}
 
-[오늘 주요 뉴스]
+[이야깃거리 후보 뉴스 — 위 제외 목록과 다른 주제에서만 선택]
 {articles_text}
+
+선택 기준:
+- 무겁지 않고 대화가 쉽게 이어지는 주제 우선
+- 의외성·놀라움·공감이 있는 뉴스
+- 스포츠·사회·기술 변화·생활 밀착 주제 환영
+- 3개가 서로 다른 카테고리/주제여야 함
+- 트렌드 브리핑 주제(경제·AI·국제 거시이슈)와 겹치지 않을수록 좋음
 
 아래 JSON 형식으로만 응답하세요:
 {{
-  "one_line_insight": "오늘 뉴스를 한 문장으로 관통하는 인사이트",
+  "one_line_insight": "오늘 뉴스 전체를 관통하는 흥미로운 한 줄 인사이트 (트렌드 브리핑 내용 반복 금지)",
   "talking_points": [
     {{
       "topic": "이야깃거리 제목 (15자 이내)",
-      "context": "배경 설명 2~3문장. 왜 지금 중요한지 설명.",
-      "question": "상대방에게 던질 수 있는 질문 1개",
+      "context": "배경 설명 2~3문장. 왜 재미있거나 중요한지.",
+      "question": "동료에게 던질 수 있는 대화 유도 질문 1개",
       "business_impact": "우리 일상·경제에 미치는 영향 1문장"
     }}
   ]
