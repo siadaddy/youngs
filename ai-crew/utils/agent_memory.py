@@ -17,7 +17,7 @@ from collections import Counter
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "..", "agent_memory.json")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://rlaemixsrmhocxjhkjxl.supabase.co")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
 
 # ── 기본 I/O ──────────────────────────────────────────────────

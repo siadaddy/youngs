@@ -11,8 +11,10 @@ from datetime import datetime, date
 from dotenv import load_dotenv
 from supabase import create_client
 
-SUPABASE_URL = 'https://rlaemixsrmhocxjhkjxl.supabase.co'
-SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc'
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://rlaemixsrmhocxjhkjxl.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+if not SUPABASE_KEY:
+    raise EnvironmentError("SUPABASE_KEY 환경변수가 설정되지 않았습니다.")
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def _sanitize(text: str) -> str:
