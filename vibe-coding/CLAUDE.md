@@ -1,5 +1,5 @@
 # 시아아빠의 AI 데일리 — Claude Code 컨텍스트
-> 마지막 업데이트: 2026-05-31
+> 마지막 업데이트: 2026-06-03
 
 ## 📦 프로젝트 구조
 
@@ -61,6 +61,12 @@
 - **ai-crew** (`ai-crew/.env`): Gemini 2.5-flash 우선 → Groq 폴백
 - **coin-trader** (`../coin-trader/.env`): 운용 종료 (키 보존)
 
+### Supabase 키 주의사항 (2026-06-03 변경)
+- GitHub Secret 이름: `SUPABASE_KEY` (service role 키, `sb_secret_...` 형식)
+- anon 키(`sb_publis_...`)는 **RLS 정책으로 쓰기 불가** → service role 키 필수
+- `newsletter_naver.py`, `agent_memory.py` 모두 env var에서만 읽음 (하드코딩 제거됨)
+- 키를 바꿨을 때 GitHub Secret → `SUPABASE_KEY` 값 업데이트 필요
+
 ---
 
 ## 🎭 AI 사무실 직원 현황
@@ -84,11 +90,11 @@
 
 | 파일 | 역할 |
 |------|------|
-| `newsletter/newsletter_naver.py` | 뉴스 수집 + AI 요약 + 오늘의 이야깃거리 → Supabase |
+| `newsletter/newsletter_naver.py` | 뉴스 수집 + AI 요약 + 오늘의 이야깃거리 → Supabase (TOP3 제외 별도 풀에서 생성) |
 | `ai-crew/agents/planner.py` | 카드뉴스 주제 선정 (삼천리 그룹 우선 포함 규칙 적용) |
 | `ai-crew/agents/writer.py` | 블로그 아티클 작성 (`get_hints("이작가")` 적용) |
 | `ai-crew/agents/designer.py` | 이미지 생성 + 30일 자동 정리 |
-| `ai-crew/agents/music_curator.py` | 음악 큐레이션 |
+| `ai-crew/agents/music_curator.py` | 음악 큐레이션 — **수집 주기 90일(분기)** (`_should_run_music()`) |
 | `ai-crew/agents/weekly_trend.py` | 주간 트렌드 (json_mode=False, max_tokens 4096) |
 | `ai-crew/utils/agent_memory.py` | 메모리 R/W + Supabase 동기화 + 페르소나 진화 |
 | `ai-crew/utils/office_export.py` | office_memory.json 생성 (휴가 에이전트 vacation 상태 보존) |
@@ -106,6 +112,11 @@
 - `ai-crew/main.py` 완료 시 자동 push
 - 수동 push: `git add docs/ && git commit -m "..." && git push origin main`
 
+### ⚠️ GitHub Actions 동시 push 주의
+`newsletter` job과 `aicrew` job이 같은 브랜치에 순차 push함.  
+로컬에서 수동 push 전 반드시 `git pull --rebase origin main` 먼저 실행.  
+(aicrew workflow도 `git pull --rebase origin main` 후 push — 2026-06-03 적용)
+
 ### ⚠️ 콘텐츠 수동 추가 시 주의
 오늘 날짜 카드를 수동으로 추가할 때는 **두 파일 모두 수정**해야 함:
 1. `docs/content.json` ← 오늘 날짜 페이지가 이 파일에서 captions 로드
@@ -117,6 +128,11 @@
 - `🚘 BMW` — CARD 01 자동차 카드로 우선 선별 (planner.py `_CAR_KW` 등록)
 - `🏢 삼천리 그룹` — 사업전략·실적·신사업 뉴스 시 5장 중 하나 강제 포함 (planner.py 규칙)
 - 골프 협찬·단순 행사 등은 삼천리 규칙 제외 대상
+
+### 🗣 오늘의 이야깃거리 (talking_points)
+- TOP3 트렌드 브리핑과 **별도 풀**에서 생성 — TOP3 주제 재사용 금지
+- `generate_talking_points()`에 TOP3 목록을 exclusion list로 전달, 가벼운/생활/스포츠 화제 우선
+- 트렌드 브리핑(🔥 Today's Trend Briefing)과 내용 중복 방지 목적 (2026-06-03 수정)
 
 ---
 
