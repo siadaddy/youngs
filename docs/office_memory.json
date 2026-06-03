@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-25 08:00",
+  "updated": "2026-05-18 20:30",
   "agents": {
     "AI어드바이저": {
       "win_rate": 33,
-      "total": 103,
-      "wins": 34,
-      "losses": 69,
-      "holding": "📊 XRP 보유 중",
-      "hint": "⚠️ 강제청산 10회 — 횡보 구간 진입 자제 | 🚫 차단 종목: FORT(5회 차단), EDU(5회 차단)",
+      "total": 97,
+      "wins": 32,
+      "losses": 65,
+      "holding": "⛔ 운용 종료",
+      "hint": "🏖️ 2026-05-25 운용 종료 | 103회 거래 | 최종 승률 33%",
       "blacklist": [
         "FORT(5회 차단)",
         "EDU(5회 차단)",
@@ -16,63 +16,66 @@
       ],
       "recent": [
         {
-          "time": "08:00",
-          "date": "2026-05-25",
+          "time": "20:30",
+          "date": "2026-05-18",
           "ticker": "XRP",
           "pnl": null,
           "action": "BUY"
         },
         {
-          "time": "23:14",
-          "date": "2026-05-24",
-          "ticker": "XRP",
-          "pnl": 1.61,
-          "action": "SELL",
-          "type": "take_profit"
-        },
-        {
-          "time": "20:00",
-          "date": "2026-05-23",
-          "ticker": "XRP",
-          "pnl": null,
-          "action": "BUY"
-        },
-        {
-          "time": "18:49",
-          "date": "2026-05-23",
-          "ticker": "EDEN",
-          "pnl": 0.0,
+          "time": "20:30",
+          "date": "2026-05-18",
+          "ticker": "SOL",
+          "pnl": -1.26,
           "action": "SELL",
           "type": "force_exit"
         },
         {
-          "time": "18:30",
-          "date": "2026-05-23",
-          "ticker": "EDEN",
+          "time": "14:30",
+          "date": "2026-05-18",
+          "ticker": "SOL",
+          "pnl": null,
+          "action": "BUY"
+        },
+        {
+          "time": "10:03",
+          "date": "2026-05-18",
+          "ticker": "IRYS",
+          "pnl": -4.34,
+          "action": "SELL",
+          "type": "stop_loss"
+        },
+        {
+          "time": "09:30",
+          "date": "2026-05-18",
+          "ticker": "IRYS",
           "pnl": null,
           "action": "BUY"
         }
       ],
-      "last_active": "2026-05-25 08:00",
+      "last_active": "2026-05-18 20:30",
       "diary": [
         {
-          "date": "2026-05-25 08:00",
-          "lesson": "나, XRP의 RSI 48.2를 믿어야지.",
+          "date": "2026-05-18 20:30",
+          "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-23 20:00",
-          "lesson": "나, XRP의 RSI 34.9와 MACD를 믿어야지.",
+          "date": "2026-05-18 14:30",
+          "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         },
         {
-          "date": "2026-05-23 18:30",
-          "lesson": "나, EDEN의 RSI 33.3과 MACD를 믿어야지.",
+          "date": "2026-05-18 14:00",
+          "lesson": "나, 데이터 믿어야지.",
           "trigger": "buy"
         }
       ],
       "persona": "나, 데이터 믿어. ",
-      "growth_score": 159
+      "growth_score": 153,
+      "status": "vacation",
+      "vacation_since": "2026-05-25",
+      "vacation_reason": "코인봇 운용 종료 (103회 거래, -46,877원)"
     },
     "박기획": {
       "hint": "⚠️ 반복 키워드: 'AI'(6회), '전기차'(5회), '반도체'(5회) — 새 각도 필요",
@@ -182,90 +185,6 @@
     }
   },
   "log": [
-    {
-      "time": "2026-05-25 08:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 매수 — RSI 48.2·거래량+197%",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-24 23:14",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 익절 +1.61% 🎯",
-      "type": "win"
-    },
-    {
-      "time": "2026-05-23 20:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 매수 — RSI 34.9·ADX 44.7",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-23 18:49",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "EDEN 강제청산 +0.0% (8시간)",
-      "type": "exit"
-    },
-    {
-      "time": "2026-05-23 18:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "EDEN 매수 — RSI 33.3·ADX 36.1",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-23 18:21",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "MTL 익절 +0.41% 🎯",
-      "type": "win"
-    },
-    {
-      "time": "2026-05-23 18:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "MTL 매수 — RSI 37.3·ADX 43.2",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-23 17:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ETH 강제청산 -1.5% (8시간)",
-      "type": "exit"
-    },
-    {
-      "time": "2026-05-23 12:00",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "ETH 매수 — RSI 38.6·ADX 64.9",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-23 04:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 강제청산 -1.1% (8시간)",
-      "type": "exit"
-    },
-    {
-      "time": "2026-05-20 06:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 매수 — RSI 40.5·ADX 32.3",
-      "type": "buy"
-    },
-    {
-      "time": "2026-05-20 03:30",
-      "agent": "AI어드바이저",
-      "icon": "🤖",
-      "msg": "XRP 강제청산 -1.0% (8시간)",
-      "type": "exit"
-    },
     {
       "time": "2026-05-18 20:30",
       "agent": "AI어드바이저",
@@ -393,6 +312,20 @@
       "type": "win"
     },
     {
+      "time": "2026-05-16 23:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "SUNDOG 매수 — 진입",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-16 16:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 강제청산 -1.1% (8시간)",
+      "type": "exit"
+    },
+    {
       "time": "2026-05-16",
       "agent": "박기획",
       "icon": "📋",
@@ -498,6 +431,34 @@
       "type": "plan"
     },
     {
+      "time": "2026-05-11 06:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "BTC 매수 — RSI 36.2·거래량+27%",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-11 05:16",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "WLD 익절 +0.48% 🎯",
+      "type": "win"
+    },
+    {
+      "time": "2026-05-11 02:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "WLD 매수 — RSI 63.8·ADX 37.5",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-11 01:27",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 익절 +5.18% 🎯",
+      "type": "win"
+    },
+    {
       "time": "2026-05-11",
       "agent": "AI주간트렌드",
       "icon": "📊",
@@ -510,6 +471,48 @@
       "icon": "📊",
       "msg": "📖 05/04 ~ 05/10 주간 분석 완료. 이번 주 핫이슈는 A",
       "type": "diary"
+    },
+    {
+      "time": "2026-05-08 02:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "XRP 매수 — RSI 28.3·ADX 59.7",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-08 00:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 강제청산 -1.3% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-05-07 14:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 매수 — RSI 30.8·ADX 57.9",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-07 13:30",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 강제청산 -1.2% (8시간)",
+      "type": "exit"
+    },
+    {
+      "time": "2026-05-07 07:06",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 매수 — RSI 38.6·ADX 39.5",
+      "type": "buy"
+    },
+    {
+      "time": "2026-05-07 03:00",
+      "agent": "AI어드바이저",
+      "icon": "🤖",
+      "msg": "ETH 강제청산 -1.1% (8시간)",
+      "type": "exit"
     },
     {
       "time": "2026-05-04",

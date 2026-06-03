@@ -410,9 +410,12 @@ def run(brief: dict) -> dict:
 
     # 최근 7일 학습 힌트 로드
     from utils.quality_tracker import get_adaptive_hints, record_run
+    from utils.agent_memory import get_hints
     adaptive_hints = get_adaptive_hints(days=7)
-    if adaptive_hints:
+    writer_hints = get_hints("이작가")
+    if adaptive_hints or writer_hints:
         print("  📚 학습 힌트 적용 중 (최근 반복 실패 항목 주의)")
+    adaptive_hints = (writer_hints + "\n" + adaptive_hints).strip() if writer_hints else adaptive_hints
 
 
     # ── 카드뉴스 ───────────────────────────────────────────────

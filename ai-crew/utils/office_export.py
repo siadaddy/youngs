@@ -173,6 +173,14 @@ def export():
     agents["한뮤직"]       = _music(mem)
     agents["AI주간트렌드"] = _weekly(mem)
 
+    # vacation 상태 필드 보존 (코인봇 종료 에이전트)
+    for vac_agent in ("AI어드바이저",):
+        prev = existing.get("agents", {}).get(vac_agent, {})
+        if prev.get("status") == "vacation" and vac_agent in agents:
+            agents[vac_agent]["status"]          = "vacation"
+            agents[vac_agent]["vacation_since"]  = prev.get("vacation_since", "")
+            agents[vac_agent]["vacation_reason"] = prev.get("vacation_reason", "")
+
     crew_log    = _crew_log(mem)
     advisor_log = [e for e in existing.get("log", []) if e.get("agent") == "AI어드바이저"]
     all_log     = crew_log + advisor_log

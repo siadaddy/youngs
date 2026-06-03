@@ -4,7 +4,8 @@
     "buy_price": 2018.0,
     "qty": 24.7026,
     "invest_krw": 49850.0,
-    "buy_time": "2026-05-25 08:00"
+    "buy_time": "2026-05-25 08:00",
+    "high_price": 2035.0
   },
   "history": [
     {
@@ -567,7 +568,7 @@
     "stop_loss_pct": 2.5,
     "take_profit_pct": 6.0
   },
-  "updated_at": "2026-05-25 08:00",
+  "updated_at": "2026-05-25 22:30",
   "blacklist": {
     "FORT": {
       "stop_loss_count": 5,

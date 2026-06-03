@@ -11,8 +11,10 @@ from datetime import datetime, date
 from dotenv import load_dotenv
 from supabase import create_client
 
-SUPABASE_URL = 'https://rlaemixsrmhocxjhkjxl.supabase.co'
-SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsYWVtaXhzcm1ob2N4amhranhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzOTMzMTQsImV4cCI6MjA5Mzk2OTMxNH0.5S-nlwoAUPZutqtOl1rkVOQC3ITn0DV6JEqJzejquHc'
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://rlaemixsrmhocxjhkjxl.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+if not SUPABASE_KEY:
+    raise EnvironmentError("SUPABASE_KEY 환경변수가 설정되지 않았습니다.")
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def _sanitize(text: str) -> str:
@@ -49,6 +51,7 @@ CATEGORIES = {
     '🏙️ 사회':           ['사회 이슈', '정치 뉴스', '복지 정책'],
     '🚗 자동차':          ['전기차 자동차', '현대차 기아', '자율주행'],
     '🚘 BMW':            ['BMW 뉴스', 'BMW 신차'],
+    '🏢 삼천리 그룹':    ['삼천리 그룹', '삼천리 에너지', '삼천리 뉴스'],
 }
 
 # ── AI 호출 ──────────────────────────────────────────────
@@ -192,7 +195,7 @@ def extract_source(url):
     return '뉴스'
 
 # ── 마크다운 저장 ─────────────────────────────────────────
-def save_markdown(categorized, ai_summary):
+def save_markdown(categorized, ai_summary, talking_points=None):
     today_str = date.today().strftime('%Y년 %m월 %d일')
     lines = [f'# 📰 뉴스레터 - {today_str}', '']
 
@@ -227,11 +230,11 @@ def save_markdown(categorized, ai_summary):
     data_path = os.path.join(NEWSLETTER_DIR, f'{TODAY}_data.json')
     simplified = {cat: [{'title': a['title'], 'source': a['source'], 'link': a['link'], 'summary': a['summary']} for a in arts] for cat, arts in categorized.items()}
     with open(data_path, 'w', encoding='utf-8') as f:
-        json.dump({'ai_summary': ai_summary, 'categorized': simplified, 'collected_at': datetime.now().strftime('%Y-%m-%d %H:%M')}, f, ensure_ascii=False, indent=2)
+        json.dump({'ai_summary': ai_summary, 'categorized': simplified, 'collected_at': datetime.now().strftime('%Y-%m-%d %H:%M'), 'talking_points': talking_points}, f, ensure_ascii=False, indent=2)
     print(f'    데이터 저장 완료: {data_path}')
 
     insert_to_supabase(categorized, TODAY)
-    insert_trends_to_supabase(ai_summary, TODAY)
+    insert_trends_to_supabase(ai_summary, TODAY, talking_points=talking_points)
 
 
 def insert_to_supabase(categorized, today):
@@ -254,7 +257,65 @@ def insert_to_supabase(categorized, today):
         except Exception as e:
             print(f'    [Supabase] insert 실패: {e}')
 
-def insert_trends_to_supabase(ai_summary, today):
+def generate_talking_points(categorized: dict, top3: list) -> dict:
+    """오늘의 이야깃거리 3개 생성 — 대화 유도형 카드"""
+    # TOP3는 트렌드 브리핑에서 이미 다룸 → 이야깃거리에서 제외
+    top3_titles = [t.get('title', '') for t in top3]
+    top3_exclude = "\n".join(f"- {t}" for t in top3_titles if t)
+
+    # TOP3 제외한 나머지 기사 풀
+    other_articles = []
+    for cat, arts in categorized.items():
+        for a in arts[:5]:
+            title = a.get('title', '')
+            summary = a.get('summary', '')[:120]
+            # TOP3와 겹치는 기사는 제외
+            if any(title[:15] in t or t[:15] in title for t in top3_titles):
+                continue
+            other_articles.append(f"[{cat}] {title}" + (f"\n  → {summary}" if summary else ""))
+    articles_text = "\n\n".join(other_articles[:25])
+
+    prompt = f"""오늘 뉴스 중 직장 동료와 점심·커피 타임에 꺼내기 좋은 이야깃거리 3개를 골라주세요.
+
+⚠️ 아래 주제는 이미 'AI 트렌드 브리핑'에서 다뤘으므로 절대 사용하지 마세요:
+{top3_exclude}
+
+[이야깃거리 후보 뉴스 — 위 제외 목록과 다른 주제에서만 선택]
+{articles_text}
+
+선택 기준:
+- 무겁지 않고 대화가 쉽게 이어지는 주제 우선
+- 의외성·놀라움·공감이 있는 뉴스
+- 스포츠·사회·기술 변화·생활 밀착 주제 환영
+- 3개가 서로 다른 카테고리/주제여야 함
+- 트렌드 브리핑 주제(경제·AI·국제 거시이슈)와 겹치지 않을수록 좋음
+
+아래 JSON 형식으로만 응답하세요:
+{{
+  "one_line_insight": "오늘 뉴스 전체를 관통하는 흥미로운 한 줄 인사이트 (트렌드 브리핑 내용 반복 금지)",
+  "talking_points": [
+    {{
+      "topic": "이야깃거리 제목 (15자 이내)",
+      "context": "배경 설명 2~3문장. 왜 재미있거나 중요한지.",
+      "question": "동료에게 던질 수 있는 대화 유도 질문 1개",
+      "business_impact": "우리 일상·경제에 미치는 영향 1문장"
+    }}
+  ]
+}}
+JSON 외 다른 텍스트 없이 응답하세요."""
+
+    raw = ask_ai(prompt, system="당신은 한국어 뉴스 큐레이터입니다. 항상 JSON으로만 응답합니다.")
+    if not raw:
+        return {}
+    try:
+        raw = raw.replace("```json", "").replace("```", "").strip()
+        return json.loads(raw)
+    except Exception as e:
+        print(f"    ⚠️ talking_points 파싱 실패: {e}")
+        return {}
+
+
+def insert_trends_to_supabase(ai_summary, today, talking_points=None):
     if not ai_summary:
         return
     # 비한국어 키 제거 (러시아어 등 AI가 잘못 생성한 경우)
@@ -267,6 +328,8 @@ def insert_trends_to_supabase(ai_summary, today):
             'top3': ai_summary.get('top3', []),
             'category_summaries': clean_sums,
         }
+        if talking_points:
+            payload['talking_points'] = talking_points
         supabase_client.table('news_trends').upsert(payload, on_conflict='date').execute()
         print(f'    [Supabase] trends insert 완료')
     except Exception as e:
@@ -458,8 +521,17 @@ def main():
         print(f'  ⚠️  AI 요약 최종 실패, 빈 요약으로 계속 진행: {e}')
         ai_summary = {'top3': []}
 
+    print('\n[2.5/4] 오늘의 이야깃거리 생성 중...')
+    try:
+        talking_points = generate_talking_points(categorized, ai_summary.get('top3', []))
+        tp_count = len(talking_points.get('talking_points', []))
+        print(f'    이야깃거리 {tp_count}개 생성 완료')
+    except Exception as e:
+        print(f'  ⚠️  이야깃거리 생성 실패 (무시): {e}')
+        talking_points = {}
+
     print('\n[3/4] 마크다운 저장 중...')
-    _retry('마크다운 저장', save_markdown, categorized, ai_summary)
+    _retry('마크다운 저장', save_markdown, categorized, ai_summary, talking_points)
 
     # [4/4] Notion 업로드는 ai-crew/notion_publisher.py가 담당
     # → 06:30에 AI 크리에이터가 뉴스 원문 + AI 콘텐츠를 하나의 페이지로 통합 생성

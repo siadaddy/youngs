@@ -194,7 +194,7 @@ def _should_run_music() -> bool:
         if not updated:
             return True
         last = datetime.strptime(updated, "%Y-%m-%d")
-        return (datetime.now() - last).days >= 7
+        return (datetime.now() - last).days >= 90
     except Exception:
         return True
 
