@@ -45,18 +45,23 @@ def _sanitize(text: str) -> str:
     return text.strip()
 
 
+_429_models: set = set()  # 이번 세션에서 429 발생한 모델 — 이후 호출에서 스킵
+
+
 def _call_gemini(prompt: str, system: str, temperature: float, max_tokens: int, json_mode: bool) -> str:
-    """Gemini API 직접 호출 — 키1→키2 순서, 각 키에서 2.0-flash→2.5-flash 시도"""
+    """Gemini API 직접 호출 — 2.5-flash 우선, 2.0-flash는 429 미발생 시에만 시도"""
     import time
     gemini_keys = [k for k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", "")] if k]
     if not gemini_keys:
         raise RuntimeError("GEMINI_API_KEY 없음")
 
-    gemini_models = ["gemini-2.0-flash", "gemini-2.5-flash"]
+    gemini_models = ["gemini-2.5-flash", "gemini-2.0-flash"]
 
     for key_idx, gemini_key in enumerate(gemini_keys):
         key_label = f"키{key_idx + 1}"
         for model_idx, gmodel in enumerate(gemini_models):
+            if gmodel in _429_models:
+                continue  # 이번 세션에서 이미 429난 모델 스킵
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{gmodel}:generateContent?key={gemini_key}"
             if system:
                 payload = {
@@ -84,17 +89,18 @@ def _call_gemini(prompt: str, system: str, temperature: float, max_tokens: int, 
                     status = getattr(getattr(e, 'response', None), 'status_code', 0)
                     print(f"  ⚠️  Gemini {key_label}/{gmodel} 시도 {attempt}/3 실패: {e}")
                     if status == 429:
-                        print(f"      429 → 즉시 다음 모델/키로 전환...")
-                        break  # 429는 재시도 없이 다음 모델로
+                        _429_models.add(gmodel)
+                        print(f"      429 → {gmodel} 이번 세션 스킵 처리, 다음 모델로 전환...")
+                        break
                     if attempt < 3:
                         print(f"      15초 대기 후 재시도...")
                         time.sleep(15)
 
-            # 이 모델 실패 → 다음 모델로
             if model_idx < len(gemini_models) - 1:
-                print(f"  ⏳ Gemini {key_label}/{gmodel} 실패 → 다음 모델...")
+                active = [m for m in gemini_models[model_idx+1:] if m not in _429_models]
+                if active:
+                    print(f"  ⏳ Gemini {key_label}/{gmodel} 실패 → {active[0]}...")
 
-        # 이 키 실패 → 다음 키로
         if key_idx < len(gemini_keys) - 1:
             print(f"  ⏳ Gemini {key_label} 소진 → 키{key_idx + 2}로 전환...")
 
