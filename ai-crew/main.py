@@ -304,6 +304,11 @@ def _publish_to_github(today, brief, written, images, newsletter_data):
         json.dump({"dates": dates}, f, ensure_ascii=False, indent=2)
 
     try:
+        # GitHub Actions 환경에서 git user 미설정 시 자동 세팅
+        subprocess.run(["git", "config", "user.name", "github-actions[bot]"],
+                       cwd=repo_root, check=False)
+        subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"],
+                       cwd=repo_root, check=False)
         subprocess.run(["git", "add", "docs/"], cwd=repo_root, check=True)
         subprocess.run(
             ["git", "commit", "-m", f"content: {today} 카드뉴스 자동 업데이트"],

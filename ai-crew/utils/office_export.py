@@ -6,7 +6,7 @@ import os, json, re
 from datetime import datetime
 from collections import Counter
 
-REPO_ROOT     = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+REPO_ROOT     = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OFFICE_FILE   = os.path.join(REPO_ROOT, "docs", "office_memory.json")
 MEM_FILE      = os.path.join(os.path.dirname(__file__), "..", "agent_memory.json")
 WEEKLY_FILE   = os.path.join(REPO_ROOT, "docs", "weekly_trend.json")
