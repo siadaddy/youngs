@@ -1,6 +1,5 @@
-import os, json, re as _re, requests, time, subprocess
+import os, json, re as _re, time, subprocess, textwrap
 from datetime import date
-from urllib.parse import quote
 from dotenv import load_dotenv
 from utils.gemini_client import ask_gemini
 from utils.agent_memory import remember, get_hints
@@ -82,11 +81,11 @@ Return ONLY a JSON array, no markdown:
         save_path  = os.path.join(DOCS_IMAGES_DIR, filename)
         pages_url  = f"{GITHUB_PAGES_BASE}/{filename}"
 
-        print(f"  🖼  이미지 {i+1}/{len(items)} 생성 중: {item['headline'][:30]}...")
-        success = _generate_image(img_prompt, save_path)
+        print(f"  🖼  이미지 {i+1}/{len(items)} PIL 카드 생성: {item['headline'][:30]}...")
+        success = _generate_image_pil(item["headline"], i, save_path)
 
         if not success:
-            print(f"  ⚠️  이미지 {i+1} 생성 실패 → fallback 이미지 사용")
+            print(f"  ⚠️  이미지 {i+1} PIL 생성 실패 → fallback 이미지 사용")
             fb_path = os.path.join(DOCS_IMAGES_DIR, FALLBACK_FILENAME)
             fb_url  = f"{GITHUB_PAGES_BASE}/{FALLBACK_FILENAME}"
             _ensure_fallback(fb_path)
@@ -102,15 +101,10 @@ Return ONLY a JSON array, no markdown:
             "url":      pages_url,
             "success":  success,
         })
-        keywords = [w for w in _re.sub(r'[^\w\s]', '', img_prompt).split() if len(w) > 3][:6]
         remember("최디자", "image_result", {
-            "headline":        item["headline"],
-            "prompt_keywords": keywords,
-            "success":         success,
+            "headline": item["headline"],
+            "success":  success,
         })
-
-        # 이미지 사이 간격 — 첫 번째 실패 후엔 더 길게 대기
-        time.sleep(15 if not success else 8)
 
     # ── 자기 반성 & 성장 학습 ────────────────────────────────────
     try:
@@ -151,40 +145,112 @@ Return ONLY a JSON array, no markdown:
     return images
 
 
-def _generate_image(prompt: str, save_path: str) -> bool:
-    """Pollinations.ai — 최대 3회 재시도, 429/5xx에 대기 후 재시도"""
-    from urllib.parse import quote
-    full_prompt = prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality, sharp focus"
-    encoded = quote(full_prompt)
-    url = (
-        f"https://image.pollinations.ai/prompt/{encoded}"
-        f"?width=768&height=768&model=flux&nologo=true&enhance=true"
-    )
+def _generate_image_pil(headline: str, card_index: int, save_path: str) -> bool:
+    """PIL로 그라디언트+텍스트 카드 이미지 생성 (외부 API 없음)"""
+    try:
+        from PIL import Image, ImageDraw, ImageFont
 
-    wait_times = [0, 20, 40]   # 1차 즉시 / 2차 20초 후 / 3차 40초 후
-    for attempt, wait in enumerate(wait_times, 1):
-        if wait:
-            print(f"    ⏳ {wait}초 후 재시도 ({attempt}/3)...")
-            time.sleep(wait)
-        try:
-            r = requests.get(url, timeout=120)
-            if r.status_code == 429:
-                print(f"    ⚠️  429 Too Many Requests")
-                continue
-            if r.status_code >= 500:
-                print(f"    ⚠️  {r.status_code} 서버 오류")
-                continue
-            r.raise_for_status()
-            if len(r.content) < 1000:
-                print("    ⚠️  응답 크기 너무 작음")
-                continue
-            with open(save_path, "wb") as f:
-                f.write(r.content)
-            return True
-        except Exception as e:
-            print(f"    ❌ 이미지 생성 오류: {e}")
+        W, H = 768, 768
 
-    return False
+        # 카드별 색상 테마: (배경_어두운, 배경_밝은, 액센트)
+        themes = [
+            ((8,  32,  88),  (30,  80, 180),  (100, 180, 255)),  # 블루
+            ((80, 30,   8),  (200,  90,  30),  (255, 170,  90)),  # 오렌지
+            ((8,  55,  28),  (28, 150,  80),  (100, 230, 150)),  # 그린
+            ((45,  8,  75),  (130,  45, 195),  (210, 140, 255)),  # 퍼플
+            ((8,  62,  75),  (28, 170, 195),  ( 90, 230, 245)),  # 틸
+        ]
+        dark, mid, accent = themes[card_index % len(themes)]
+
+        # ── 배경 그라디언트 ──────────────────────────────────────
+        bg = Image.new("RGB", (W, H))
+        bg_draw = ImageDraw.Draw(bg)
+        for y in range(H):
+            t = y / H
+            color = tuple(int(dark[i] + t * (mid[i] - dark[i])) for i in range(3))
+            bg_draw.line([(0, y), (W, y)], fill=color)
+
+        # ── RGBA 오버레이 (장식 원, 패널) ───────────────────────
+        overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ov_draw = ImageDraw.Draw(overlay)
+
+        # 우하단 큰 원
+        for sz, alpha in [(300, 35), (210, 22), (130, 13)]:
+            ov_draw.ellipse([W - sz, H - sz, W + sz // 2, H + sz // 2],
+                            fill=accent + (alpha,))
+        # 좌상단 작은 원
+        for sz, alpha in [(160, 30), (100, 18)]:
+            ov_draw.ellipse([-sz // 2, -sz // 2, sz, sz],
+                            fill=accent + (alpha,))
+
+        # 헤드라인 텍스트 패널 (반투명 어두운 박스)
+        ov_draw.rectangle([55, H // 2 - 150, W - 55, H // 2 + 150],
+                          fill=(0, 0, 0, 110))
+
+        # 하단 accent bar
+        ov_draw.rectangle([0, H - 10, W, H], fill=accent + (255,))
+
+        # 카드 번호 뱃지
+        bx, by, br = 58, 62, 28
+        ov_draw.ellipse([bx - br, by - br, bx + br, by + br], fill=accent + (230,))
+
+        # 합성
+        result = Image.alpha_composite(bg.convert("RGBA"), overlay).convert("RGB")
+        draw = ImageDraw.Draw(result)
+
+        # ── 폰트 로드 (한글 지원) ────────────────────────────────
+        font_paths = [
+            "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+            "/usr/share/fonts/noto-cjk/NotoSansCJKkr-Regular.otf",
+            "/System/Library/Fonts/AppleSDGothicNeo.ttc",
+            "/System/Library/Fonts/Supplemental/AppleGothic.ttf",
+        ]
+        font_large = font_small = None
+        for fp in font_paths:
+            if os.path.exists(fp):
+                try:
+                    font_large = ImageFont.truetype(fp, 50)
+                    font_small = ImageFont.truetype(fp, 26)
+                    break
+                except Exception:
+                    continue
+
+        # ── 뱃지 숫자 ────────────────────────────────────────────
+        badge_num = str(card_index + 1)
+        if font_small:
+            draw.text((bx, by), badge_num, fill=(10, 20, 50), font=font_small, anchor="mm")
+        else:
+            draw.text((bx - 6, by - 9), badge_num, fill=(10, 20, 50))
+
+        # ── 헤드라인 텍스트 ──────────────────────────────────────
+        lines = textwrap.wrap(headline, width=13)[:4]
+        y_cursor = H // 2 - len(lines) * 33
+        for line in lines:
+            if font_large:
+                bbox = draw.textbbox((0, 0), line, font=font_large)
+                tw = bbox[2] - bbox[0]
+                tx = (W - tw) // 2
+                draw.text((tx + 2, y_cursor + 2), line, font=font_large, fill=(0, 0, 0))
+                draw.text((tx, y_cursor), line, font=font_large, fill=(255, 255, 255))
+            else:
+                draw.text((W // 4, y_cursor), line[:20], fill=(255, 255, 255))
+            y_cursor += 66
+
+        # ── 사이트 푸터 ──────────────────────────────────────────
+        footer = "siadaddy.github.io/youngs"
+        if font_small:
+            bbox = draw.textbbox((0, 0), footer, font=font_small)
+            fw = bbox[2] - bbox[0]
+            draw.text(((W - fw) // 2, H - 38), footer,
+                      font=font_small, fill=(200, 220, 255))
+
+        result.save(save_path, "PNG")
+        return True
+
+    except Exception as e:
+        print(f"  ❌ PIL 카드 생성 실패: {e}")
+        return False
 
 
 def _ensure_fallback(path: str):

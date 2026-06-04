@@ -73,6 +73,7 @@ jobs:
       - name: 패키지 설치
         run: |
           pip install anthropic google-generativeai groq notion-client requests python-dotenv Pillow supabase
+          sudo apt-get install -y fonts-noto-cjk
 
       - name: AI Crew 실행
         env:
