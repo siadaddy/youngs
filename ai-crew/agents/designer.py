@@ -81,8 +81,11 @@ Return ONLY a JSON array, no markdown:
         save_path  = os.path.join(DOCS_IMAGES_DIR, filename)
         pages_url  = f"{GITHUB_PAGES_BASE}/{filename}"
 
-        print(f"  🖼  이미지 {i+1}/{len(items)} PIL 카드 생성: {item['headline'][:30]}...")
-        success = _generate_image_pil(item["headline"], i, save_path)
+        print(f"  🖼  이미지 {i+1}/{len(items)} 생성: {item['headline'][:30]}...")
+        success = _generate_image_hf(img_prompt, save_path)
+        if not success:
+            print(f"    → HF 실패, PIL 카드로 대체")
+            success = _generate_image_pil(item["headline"], i, save_path)
 
         if not success:
             print(f"  ⚠️  이미지 {i+1} PIL 생성 실패 → fallback 이미지 사용")
@@ -143,6 +146,48 @@ Return ONLY a JSON array, no markdown:
         print(f"  ⚠️  최디자 자기 반성 실패 (무시): {e}")
 
     return images
+
+
+def _generate_image_hf(prompt: str, save_path: str) -> bool:
+    """Hugging Face Inference API — FLUX.1-schnell, HF_TOKEN 필요"""
+    import requests as _req
+    hf_token = os.getenv("HF_TOKEN", "")
+    if not hf_token:
+        return False
+
+    full_prompt = prompt + ", bright vivid colors, clean modern design, optimistic mood, high quality"
+    headers = {
+        "Authorization": f"Bearer {hf_token}",
+        "Content-Type":  "application/json",
+        "x-wait-for-model": "true",
+    }
+    wait_times = [0, 30, 60]
+    for attempt, wait in enumerate(wait_times, 1):
+        if wait:
+            print(f"    ⏳ {wait}초 후 재시도 ({attempt}/3)...")
+            time.sleep(wait)
+        try:
+            r = _req.post(
+                "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+                headers=headers,
+                json={"inputs": full_prompt, "parameters": {"width": 768, "height": 768}},
+                timeout=120,
+            )
+            if r.status_code == 503:
+                print(f"    ⚠️  503 모델 로딩 중...")
+                continue
+            if r.status_code != 200:
+                print(f"    ⚠️  HF API {r.status_code}: {r.text[:100]}")
+                continue
+            if len(r.content) < 1000:
+                print("    ⚠️  응답 크기 너무 작음")
+                continue
+            with open(save_path, "wb") as f:
+                f.write(r.content)
+            return True
+        except Exception as e:
+            print(f"    ❌ HF 이미지 오류: {e}")
+    return False
 
 
 def _generate_image_pil(headline: str, card_index: int, save_path: str) -> bool:
