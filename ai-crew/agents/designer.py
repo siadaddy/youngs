@@ -168,7 +168,7 @@ def _generate_image_hf(prompt: str, save_path: str) -> bool:
             time.sleep(wait)
         try:
             r = _req.post(
-                "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+                "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
                 headers=headers,
                 json={"inputs": full_prompt, "parameters": {"width": 768, "height": 768}},
                 timeout=120,
