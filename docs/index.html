@@ -3175,8 +3175,8 @@
       }).join('');
     }
 
-    // 로그 피드 — Supabase ai_diary 우선, fallback → data.log
-    _loadDiaryFromSupabase(data.log || []);
+    // 로그 피드 — office_memory.json data.log 직접 사용
+    _renderLogFeed(data.log || []);
 
     // _LINES 실데이터로 보강
     _injectMemLines(data);
@@ -3270,63 +3270,6 @@
     const now = new Date();
     el.textContent = `📅 ${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}(${days[now.getDay()]}) ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   }, 60000);
-
-  // ── AI 학습 기록: Supabase ai_diary 조회 → employee_name 그룹핑 ──
-  const _LV_COLOR = { high: '#69f0ae', mid: '#ffd740', low: '#82b1ff' };
-
-  async function _loadDiaryFromSupabase(fallbackLog) {
-    const feedEl = document.getElementById('officeLogFeed');
-    if (!feedEl) return;
-
-    // 로딩 스피너
-    feedEl.innerHTML =
-      '<div style="padding:18px;text-align:center">' +
-      '<div class="spinner" style="width:22px;height:22px;margin:0 auto 8px"></div>' +
-      '<div style="font-size:.72rem;color:var(--muted2)">학습 기록 불러오는 중...</div></div>';
-
-    if (!window.supabaseClient) {
-      _renderLogFeed(fallbackLog);
-      return;
-    }
-
-    try {
-      const { data: rows, error } = await window.supabaseClient
-        .from('ai_diary')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error || !rows || rows.length === 0) throw new Error('no data');
-
-      // employee_name 기준 그룹핑 (삽입 순서 유지)
-      const groups = {};
-      rows.forEach(r => {
-        if (!groups[r.employee_name]) groups[r.employee_name] = [];
-        groups[r.employee_name].push(r);
-      });
-
-      feedEl.innerHTML = Object.entries(groups).map(([name, entries]) => `
-        <div style="padding:8px 0 4px;font-size:.68rem;font-weight:700;color:#00e5ff;
-                    border-bottom:1px solid rgba(0,229,255,.15);margin-bottom:4px">
-          ${name}
-          <span style="font-weight:400;color:var(--muted2)">${entries.length}건</span>
-        </div>
-        ${entries.map(e => {
-          const lvBadge = e.level
-            ? `<span class="olog-badge diary" style="color:${_LV_COLOR[e.level] || '#81d4fa'}">${e.level}</span>`
-            : `<span class="olog-badge diary">📖 일기</span>`;
-          return `<div class="olog-row">
-            <span class="olog-time">${e.date || ''}</span>
-            ${lvBadge}
-            <span class="olog-msg">${e.content || ''}</span>
-          </div>`;
-        }).join('')}
-      `).join('');
-
-    } catch (_) {
-      _renderLogFeed(fallbackLog);
-    }
-  }
 
   function _renderLogFeed(log) {
     const feedEl = document.getElementById('officeLogFeed');
