@@ -3220,30 +3220,71 @@
     // ── 배경 그리기 (낮/밤 자동 전환) ────────────────────
     function bg() {
       if (_NIGHT) {
-        // 🌙 밤 모드 — 야근 사무실 (다크 네이비)
-        ctx.fillStyle='#132540'; ctx.fillRect(0,58,CW,CH-58);
-        ctx.strokeStyle='rgba(0,180,255,0.10)'; ctx.lineWidth=0.5;
-        for(let x=0;x<CW;x+=48){ctx.beginPath();ctx.moveTo(x,58);ctx.lineTo(x,CH);ctx.stroke();}
-        for(let y=58;y<CH;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}
-        ctx.strokeStyle='rgba(0,229,255,0.08)'; ctx.lineWidth=1;
-        for(let x=0;x<CW;x+=240){ctx.beginPath();ctx.moveTo(x,58);ctx.lineTo(x,CH);ctx.stroke();}
-        const wg=ctx.createLinearGradient(0,0,0,62);
-        wg.addColorStop(0,'#0f1e38'); wg.addColorStop(1,'#172a4a');
-        ctx.fillStyle=wg; ctx.fillRect(0,0,CW,62);
-        ctx.fillStyle='#1d2c4a'; ctx.fillRect(0,54,CW,7);
-        ctx.shadowColor='#00e5ff'; ctx.shadowBlur=8;
-        ctx.strokeStyle='rgba(0,229,255,0.4)'; ctx.lineWidth=1;
-        ctx.beginPath();ctx.moveTo(0,58);ctx.lineTo(CW,58);ctx.stroke();
+        // 🌙 Tron 사이버펑크 — 원근 격자 바닥
+        const VX=CW/2, VY=62;
+
+        // 심우주 바닥 그라디언트
+        const floorG=ctx.createLinearGradient(0,VY,0,CH);
+        floorG.addColorStop(0,'#010408'); floorG.addColorStop(0.55,'#030810'); floorG.addColorStop(1,'#050d18');
+        ctx.fillStyle=floorG; ctx.fillRect(0,VY,CW,CH-VY);
+
+        // 소실점 원근 수직선 (VP→바닥 하단)
+        const NV=24;
+        for(let i=0;i<=NV;i++){
+          const bx=(CW/NV)*i;
+          const isC=(i===NV/2);
+          ctx.strokeStyle=isC?'rgba(0,229,255,0.50)':'rgba(0,229,255,0.09)';
+          ctx.lineWidth=isC?1.3:0.45;
+          ctx.beginPath(); ctx.moveTo(VX,VY); ctx.lineTo(bx,CH); ctx.stroke();
+        }
+
+        // 원근 수평선 (깊이감)
+        const NH=12;
+        for(let i=1;i<=NH;i++){
+          const t=Math.pow(i/NH,1.7);
+          const hy=VY+(CH-VY)*t;
+          const a=(0.06+t*0.22).toFixed(2);
+          ctx.strokeStyle=`rgba(0,229,255,${a})`;
+          ctx.lineWidth=0.4+t*0.65;
+          ctx.beginPath(); ctx.moveTo(0,hy); ctx.lineTo(CW,hy); ctx.stroke();
+        }
+
+        // 하단 네온 스트립
+        ctx.shadowColor='#00e5ff'; ctx.shadowBlur=16;
+        ctx.strokeStyle='rgba(0,229,255,0.65)'; ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(0,CH-1); ctx.lineTo(CW,CH-1); ctx.stroke();
         ctx.shadowBlur=0;
-        [{x:75,y:190,r:60,c:'rgba(28,105,212,0.07)'},{x:231,y:190,r:60,c:'rgba(255,213,79,0.05)'},
-         {x:668,y:190,r:60,c:'rgba(167,139,250,0.07)'},{x:826,y:190,r:60,c:'rgba(239,83,80,0.05)'},
-         {x:75,y:420,r:60,c:'rgba(102,187,106,0.06)'},{x:231,y:420,r:60,c:'rgba(0,188,212,0.06)'},
-         {x:668,y:420,r:60,c:'rgba(255,183,77,0.05)'},{x:826,y:420,r:60,c:'rgba(0,229,255,0.07)'},
+
+        // 코너 보라 앰비언트 글로우
+        [{sx:0},{sx:CW}].forEach(({sx})=>{
+          const g=ctx.createRadialGradient(sx,CH,0,sx,CH,270);
+          g.addColorStop(0,'rgba(124,77,255,0.10)'); g.addColorStop(1,'transparent');
+          ctx.fillStyle=g; ctx.fillRect(sx===0?0:CW-270,CH-270,270,270);
+        });
+
+        // 책상 포인트 라이트
+        [{x:75,y:190,r:62,c:'rgba(66,165,245,0.07)'},{x:231,y:190,r:62,c:'rgba(255,213,79,0.05)'},
+         {x:668,y:190,r:62,c:'rgba(206,147,216,0.07)'},{x:826,y:190,r:62,c:'rgba(239,83,80,0.05)'},
+         {x:75,y:420,r:62,c:'rgba(102,187,106,0.06)'},{x:231,y:420,r:62,c:'rgba(0,188,212,0.06)'},
+         {x:668,y:420,r:62,c:'rgba(255,183,77,0.05)'},{x:826,y:420,r:62,c:'rgba(0,229,255,0.07)'},
          {x:450,y:300,r:80,c:'rgba(0,229,255,0.04)'}].forEach(g=>{
           const gr=ctx.createRadialGradient(g.x,g.y,0,g.x,g.y,g.r);
           gr.addColorStop(0,g.c); gr.addColorStop(1,'transparent');
           ctx.fillStyle=gr; ctx.fillRect(g.x-g.r,g.y-g.r,g.r*2,g.r*2);
         });
+
+        // 천장 바
+        const cG=ctx.createLinearGradient(0,0,0,62);
+        cG.addColorStop(0,'#040d1c'); cG.addColorStop(1,'#091828');
+        ctx.fillStyle=cG; ctx.fillRect(0,0,CW,62);
+        ctx.fillStyle='#0d1e35'; ctx.fillRect(0,54,CW,8);
+
+        // 천장-바닥 네온 구분선
+        ctx.shadowColor='#00e5ff'; ctx.shadowBlur=12;
+        ctx.strokeStyle='rgba(0,229,255,0.55)'; ctx.lineWidth=1.3;
+        ctx.beginPath(); ctx.moveTo(0,62); ctx.lineTo(CW,62); ctx.stroke();
+        ctx.shadowBlur=0;
+
       } else {
         // ☀️ 낮 모드 — 따뜻한 오피스
         ctx.fillStyle='#c8a86a'; ctx.fillRect(0,58,CW,CH-58);
@@ -3253,7 +3294,6 @@
         ctx.fillStyle='#f0e6d4'; ctx.fillRect(0,0,CW,62);
         ctx.fillStyle='#d4b880'; ctx.fillRect(0,54,CW,7);
         ctx.fillStyle='#e8d4b4'; ctx.fillRect(0,28,CW,2);
-        // 햇살 반사 (바닥)
         const sunGlow=ctx.createLinearGradient(120,58,120,CH);
         sunGlow.addColorStop(0,'rgba(255,220,120,0.07)'); sunGlow.addColorStop(1,'transparent');
         ctx.fillStyle=sunGlow; ctx.fillRect(55,58,130,CH-58);
@@ -3263,32 +3303,47 @@
     function windows() {
       [55,220,390,560,725].forEach(wx=>{
         if (_NIGHT) {
-          // 🌙 밤 창문 — 도시 야경
-          ctx.fillStyle='#152743'; ctx.fillRect(wx,3,84,46);
-          const ng=ctx.createLinearGradient(wx+3,6,wx+3,46);
-          ng.addColorStop(0,'#080f1e'); ng.addColorStop(1,'#101e38');
-          ctx.fillStyle=ng; ctx.fillRect(wx+3,6,78,40);
-          ctx.fillStyle='#101d33';
-          [[wx+5,32,12,14],[wx+20,28,8,18],[wx+30,35,10,11],[wx+44,26,14,20],[wx+60,30,8,16],[wx+70,37,10,9]].forEach(([bx,by,bw,bh])=>ctx.fillRect(bx,by,bw,bh));
+          // 🌙 Cyberpunk 홀로그래픽 창문
+          const ww=84, wh=46;
+          ctx.fillStyle='#060e1c'; ctx.fillRect(wx,3,ww,wh);
+          // 내부 어두운 유리
+          const wgd=ctx.createLinearGradient(wx+3,6,wx+3,wh);
+          wgd.addColorStop(0,'#030810'); wgd.addColorStop(1,'#060f1c');
+          ctx.fillStyle=wgd; ctx.fillRect(wx+3,6,ww-6,wh-6);
+          // 스캔라인 오버레이
+          for(let ly=7;ly<wh;ly+=3){ctx.fillStyle='rgba(0,229,255,0.022)';ctx.fillRect(wx+3,ly,ww-6,1);}
+          // 빌딩 실루엣
+          [[wx+5,32,12,14],[wx+20,28,8,18],[wx+30,35,10,11],[wx+44,26,14,20],[wx+60,30,8,16],[wx+70,37,10,9]].forEach(([bx,by,bw,bh])=>{
+            ctx.fillStyle='#03070f'; ctx.fillRect(bx,by,bw,bh);
+          });
+          // 네온 도시 불빛
           const lc=['#ff9900','#00e5ff','#ff3366','#ffcc00','#00ff88','#4488ff','#ff6600'];
           [[wx+8,35],[wx+14,31],[wx+21,29],[wx+26,38],[wx+35,34],[wx+47,27],[wx+53,33],[wx+63,31],[wx+71,37],[wx+75,32]].forEach(([lx,ly],i)=>{
             ctx.fillStyle=lc[i%lc.length]; ctx.fillRect(lx,ly,2,2);
-            const lg=ctx.createRadialGradient(lx+1,ly+1,0,lx+1,ly+1,3);
-            lg.addColorStop(0,lc[i%lc.length]+'55'); lg.addColorStop(1,'transparent');
-            ctx.fillStyle=lg; ctx.fillRect(lx-2,ly-2,6,6);
+            const lg=ctx.createRadialGradient(lx+1,ly+1,0,lx+1,ly+1,4);
+            lg.addColorStop(0,lc[i%lc.length]+'66'); lg.addColorStop(1,'transparent');
+            ctx.fillStyle=lg; ctx.fillRect(lx-3,ly-3,8,8);
           });
-          ctx.fillStyle='#1e2c4a'; ctx.fillRect(wx+42,6,2,40); ctx.fillRect(wx+3,26,78,2);
-          ctx.fillStyle='#152743'; ctx.fillRect(wx-2,46,88,5);
-          ctx.strokeStyle='rgba(0,229,255,0.15)'; ctx.lineWidth=0.5; ctx.strokeRect(wx-2,46,88,5);
+          // 창문 프레임 구분선
+          ctx.fillStyle='#0a1830'; ctx.fillRect(wx+42,6,2,40); ctx.fillRect(wx+3,26,ww-6,2);
+          // 홀로그래픽 테두리 글로우
+          ctx.shadowColor='#00e5ff'; ctx.shadowBlur=7;
+          ctx.strokeStyle='rgba(0,229,255,0.40)'; ctx.lineWidth=0.9;
+          ctx.strokeRect(wx,3,ww,wh);
+          ctx.shadowBlur=0;
+          // 창문 틀 코너 악센트
+          ctx.fillStyle='#00e5ff';
+          [[wx,3],[wx+ww-4,3],[wx,3+wh-2],[wx+ww-4,3+wh-2]].forEach(([cx,cy])=>{ctx.fillRect(cx,cy,4,1);ctx.fillRect(cx,cy,1,4);});
+          // 창문 턱
+          ctx.fillStyle='#08152a'; ctx.fillRect(wx-2,wh+2,ww+4,5);
+          ctx.fillStyle='rgba(0,229,255,0.28)'; ctx.fillRect(wx-2,wh+6,ww+4,1);
         } else {
-          // ☀️ 낮 창문 — 맑은 하늘
+          // ☀️ 낮 창문
           ctx.fillStyle='#7a5c18'; ctx.fillRect(wx,3,84,46);
           ctx.fillStyle='#87ceeb'; ctx.fillRect(wx+3,6,78,40);
-          // 햇살
           const sg=ctx.createRadialGradient(wx+68,8,0,wx+68,8,28);
           sg.addColorStop(0,'rgba(255,220,100,0.65)'); sg.addColorStop(1,'transparent');
           ctx.fillStyle=sg; ctx.fillRect(wx+40,3,42,36);
-          // 구름
           ctx.fillStyle='rgba(255,255,255,.82)';
           [[wx+15,18,10,5],[wx+24,15,7,4],[wx+52,22,9,5]].forEach(([cx,cy,rx,ry])=>{
             ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.fill();
@@ -3303,24 +3358,37 @@
     function desk(x,y,w,h,owner){
       const ec={'박기획':'#4d90f0','최디자':'#ce93d8','한뮤직':'#66bb6a','AI주간트렌드':'#4dd0e1','AI어드바이저':'#00e5ff','뉴스기자':'#ffd54f','이가드':'#ef5350','리포터':'#ffb74d'}[owner]||'#00e5ff';
       if (_NIGHT) {
-        // 🌙 밤 책상 — 다크 네이비
-        ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.fillRect(x+4,y+h+1,w,8);
-        ctx.fillStyle='#192c51'; ctx.fillRect(x,y,w,h);
-        ctx.fillStyle='#203859'; ctx.fillRect(x+2,y+2,w-4,h-4);
-        ctx.strokeStyle=ec+'55'; ctx.lineWidth=0.8; ctx.strokeRect(x,y,w,h);
-        ctx.fillStyle='#132143'; ctx.fillRect(x+4,y+h,10,12); ctx.fillRect(x+w-14,y+h,10,12);
+        // 🌙 Cyberpunk 책상 — 네온 엣지
+        ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(x+4,y+h+1,w,8);
+        ctx.fillStyle='#060c1a'; ctx.fillRect(x,y,w,h);
+        ctx.fillStyle='#0c1424'; ctx.fillRect(x+2,y+2,w-4,h-4);
+        // 네온 엣지 글로우
+        ctx.shadowColor=ec; ctx.shadowBlur=9;
+        ctx.strokeStyle=ec+'80'; ctx.lineWidth=1; ctx.strokeRect(x,y,w,h);
+        ctx.shadowBlur=0;
+        // 코너 악센트
+        ctx.fillStyle=ec;
+        [[x,y],[x+w-4,y],[x,y+h-2],[x+w-4,y+h-2]].forEach(([cx,cy])=>{ctx.fillRect(cx,cy,4,1.5);ctx.fillRect(cx,cy,1.5,4);});
+        ctx.fillStyle='#040810'; ctx.fillRect(x+4,y+h,10,12); ctx.fillRect(x+w-14,y+h,10,12);
+        // 모니터
         const mx=x+w/2-14,my=y-38;
-        ctx.fillStyle='#132440'; ctx.fillRect(mx,my,28,25);
-        const sc={'박기획':'#123364','최디자':'#2f125c','한뮤직':'#12334a','AI주간트렌드':'#12324e','AI어드바이저':'#004864','뉴스기자':'#332400','이가드':'#330016','리포터':'#332100'}[owner]||'#0d2040';
+        ctx.fillStyle='#050a16'; ctx.fillRect(mx,my,28,25);
+        const sc={'박기획':'#0c2246','최디자':'#1a0840','한뮤직':'#062010','AI주간트렌드':'#062030','AI어드바이저':'#00304a','뉴스기자':'#201200','이가드':'#200010','리포터':'#201000'}[owner]||'#081428';
         ctx.fillStyle=sc; ctx.fillRect(mx+2,my+2,24,20);
-        ctx.fillStyle=ec+'cc';
+        // 모니터 스캔라인
+        for(let sl=my+2;sl<my+22;sl+=2){ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(mx+2,sl,24,1);}
+        ctx.fillStyle=ec+'e0';
         [4,7,10,13,16].forEach(dy=>{ctx.fillRect(mx+3,my+dy,6+Math.abs(Math.sin(dy*0.9))*9,1);});
-        const sg=ctx.createRadialGradient(mx+14,my+11,0,mx+14,my+11,22);
-        sg.addColorStop(0,ec+'2a'); sg.addColorStop(1,'transparent');
-        ctx.fillStyle=sg; ctx.fillRect(mx-8,my-8,44,44);
-        ctx.fillStyle='#132440'; ctx.fillRect(mx+12,my+25,4,7); ctx.fillRect(mx+8,my+32,12,2);
-        ctx.fillStyle='#1d2c43'; ctx.fillRect(x+5,y+4,18,13);
-        ctx.fillStyle=ec+'44'; [6,9,12].forEach(dy=>ctx.fillRect(x+7,y+dy,12,1));
+        // 모니터 글로우
+        ctx.shadowColor=ec; ctx.shadowBlur=14;
+        ctx.strokeStyle=ec+'55'; ctx.lineWidth=0.9; ctx.strokeRect(mx,my,28,25);
+        ctx.shadowBlur=0;
+        const sg=ctx.createRadialGradient(mx+14,my+11,0,mx+14,my+11,26);
+        sg.addColorStop(0,ec+'35'); sg.addColorStop(1,'transparent');
+        ctx.fillStyle=sg; ctx.fillRect(mx-12,my-12,52,52);
+        ctx.fillStyle='#050a16'; ctx.fillRect(mx+12,my+25,4,7); ctx.fillRect(mx+8,my+32,12,2);
+        ctx.fillStyle='#0a1220'; ctx.fillRect(x+5,y+4,18,13);
+        ctx.fillStyle=ec+'55'; [6,9,12].forEach(dy=>ctx.fillRect(x+7,y+dy,12,1));
       } else {
         // ☀️ 낮 책상 — 따뜻한 원목
         ctx.fillStyle='rgba(0,0,0,0.2)'; ctx.fillRect(x+4,y+h+1,w,8);
