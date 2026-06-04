@@ -839,10 +839,7 @@
 
     /* ─── AI 사무실 ──────────────────────────────────────── */
     #tab-office { padding: 0; background: var(--bg); }
-    .office-shell {
-      max-width: 1240px; margin: 0 auto;
-      padding: 28px 20px 40px;
-    }
+    .office-shell { max-width: 1240px; margin: 0 auto; padding: 28px 20px 40px; }
     .office-hdr { text-align: center; margin-bottom: 20px; }
     .office-hdr h2 {
       font-size: 1.55rem; font-weight: 900;
@@ -851,9 +848,7 @@
       margin-bottom: 6px;
     }
     .office-hdr p { font-size:.82rem; color:var(--muted2); }
-    .office-layout {
-      display: flex; gap: 16px; align-items: flex-start;
-    }
+    .office-layout { display: flex; gap: 16px; align-items: flex-start; }
     .office-canvas-wrap { flex: 1; min-width: 0; position: relative; }
     #officeCanvas {
       display:block; width:100%; height:auto; border-radius:14px;
@@ -861,114 +856,91 @@
       box-shadow: 0 0 40px rgba(0,229,255,0.08), 0 0 80px rgba(124,77,255,0.05), inset 0 0 0 1px rgba(0,229,255,0.05);
       image-rendering:pixelated; image-rendering:crisp-edges;
     }
-    /* ── 우측 데이터 패널 ── */
-    .office-rpanel {
-      width: 230px; flex-shrink: 0;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .orp-card {
-      background: rgba(4,10,24,0.88);
+    /* ── 사이드바 ── */
+    .office-sidebar {
+      width: 256px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      background: rgba(4,10,24,0.94);
       border: 1px solid rgba(0,229,255,0.18);
-      border-radius: 12px; padding: 12px 14px;
-      backdrop-filter: blur(12px);
+      border-radius: 14px; overflow: hidden;
+      backdrop-filter: blur(16px);
+      max-height: 520px;
     }
-    .orp-card-title {
-      font-size: .62rem; font-weight: 800; letter-spacing: .1em;
-      color: #00e5ff; text-transform: uppercase; margin-bottom: 10px;
+    .osb-header {
+      padding: 10px 14px 8px; flex-shrink: 0;
+      border-bottom: 1px solid rgba(0,229,255,0.12);
+      background: rgba(0,229,255,0.04);
       display: flex; align-items: center; justify-content: space-between;
     }
-    .orp-stat-row {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: .7rem; padding: 4px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+    .osb-title { font-size:.62rem; font-weight:900; letter-spacing:.12em; color:#00e5ff; text-transform:uppercase; }
+    .osb-updated { font-size:.57rem; color:var(--muted2); }
+    .osb-agents {
+      padding: 8px 10px; display: flex; flex-direction: column; gap: 5px;
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+      overflow-y: auto; flex-shrink: 0;
     }
-    .orp-stat-row:last-child { border-bottom: none; }
-    .orp-stat-label { color: var(--muted2); }
-    .orp-stat-val { font-weight: 700; color: var(--text); }
+    .osb-agent {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 9px; padding: 7px 9px; transition: border-color .2s;
+    }
+    .osb-agent:hover { border-color: rgba(0,229,255,0.22); }
+    .osb-agent.vacation { opacity: .48; }
+    .osb-agent-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .osb-agent-icon { font-size:.92rem; flex-shrink:0; line-height:1; }
+    .osb-agent-info { flex: 1; min-width: 0; }
+    .osb-agent-name { font-size:.7rem; font-weight:800; line-height:1.2; }
+    .osb-agent-role { font-size:.58rem; color:var(--muted2); line-height:1.2; }
+    .osb-agent-lv {
+      font-size:.59rem; font-weight:800; color:#ffd54f; white-space:nowrap;
+      background:rgba(255,213,79,.1); padding:1px 5px;
+      border-radius:99px; border:1px solid rgba(255,213,79,.2); flex-shrink:0;
+    }
+    .osb-bar-wrap { height:2px; background:rgba(255,255,255,0.07); border-radius:2px; margin-bottom:4px; overflow:hidden; }
+    .osb-bar-fill { height:100%; border-radius:2px; transition:width .6s ease; }
+    .osb-hint { font-size:.6rem; color:var(--muted2); line-height:1.4; word-break:break-all; }
+    .osb-diary { font-size:.58rem; color:#81d4fa; margin-top:2px; line-height:1.3; opacity:.8; }
+    .osb-vac-badge {
+      font-size:.57rem; padding:1px 5px; border-radius:8px;
+      background:rgba(255,213,79,.12); color:#ffd54f; font-weight:700; flex-shrink:0;
+    }
+    /* ── 활동 로그 피드 ── */
+    .osb-log-hdr {
+      padding:7px 12px 6px; flex-shrink:0;
+      font-size:.59rem; font-weight:800; letter-spacing:.1em;
+      color:#7c4dff; text-transform:uppercase;
+      border-bottom:1px solid rgba(124,77,255,0.15);
+      background:rgba(124,77,255,0.04);
+    }
+    .osb-log-feed { flex:1; overflow-y:auto; padding:2px 0; min-height:0; }
+    .osb-log-row {
+      display:flex; align-items:flex-start; gap:6px;
+      padding:4px 10px; border-bottom:1px solid rgba(255,255,255,0.03);
+      transition:background .12s;
+    }
+    .osb-log-row:hover { background:rgba(255,255,255,.02); }
+    .osb-log-icon { font-size:.76rem; flex-shrink:0; padding-top:1px; }
+    .osb-log-body { flex:1; min-width:0; }
+    .osb-log-msg { font-size:.62rem; color:var(--text); line-height:1.35; }
+    .osb-log-time { font-size:.55rem; color:var(--muted2); margin-top:1px; }
+    .osb-empty { padding:12px; text-align:center; color:var(--muted2); font-size:.7rem; }
     .orp-live-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: .6rem; font-weight: 700;
-      background: rgba(255,23,68,.18); color: #ff1744;
-      padding: 2px 8px; border-radius: 99px; border: 1px solid rgba(255,23,68,.3);
+      display:inline-flex; align-items:center; gap:4px;
+      font-size:.6rem; font-weight:700;
+      background:rgba(255,23,68,.18); color:#ff1744;
+      padding:2px 8px; border-radius:99px; border:1px solid rgba(255,23,68,.3);
     }
     .orp-live-dot {
-      width: 5px; height: 5px; border-radius: 50%; background: #ff1744;
-      animation: rpBlink 1s ease-in-out infinite;
+      width:5px; height:5px; border-radius:50%; background:#ff1744;
+      animation:rpBlink 1s ease-in-out infinite;
     }
     @keyframes rpBlink { 0%,100%{opacity:1;} 50%{opacity:.15;} }
-    @media(max-width:900px){
-      .office-layout { flex-direction: column; }
-      .office-rpanel { width: 100%; flex-direction: row; flex-wrap: wrap; }
-      .orp-card { flex: 1; min-width: 160px; }
+    @media(max-width:960px){
+      .office-layout { flex-direction:column; }
+      .office-sidebar { width:100%; max-height:none; }
+      .osb-agents { flex-direction:row; flex-wrap:wrap; }
+      .osb-agent { flex:1; min-width:140px; }
+      .osb-log-feed { max-height:220px; }
     }
-    .office-cards {
-      display:grid; grid-template-columns:repeat(4,1fr);
-      gap:10px; margin-top:16px;
-    }
-    .o-card {
-      background:var(--glass); border:1px solid var(--glass-border);
-      border-radius:10px; padding:10px 6px; text-align:center;
-      transition:all .2s; cursor:default;
-    }
-    .o-card:hover { border-color:rgba(0,188,212,.45); transform:translateY(-2px); }
-    .o-card .oc-icon { font-size:1.5rem; }
-    .o-card .oc-name { font-size:.72rem; font-weight:800; margin-top:4px; }
-    .o-card .oc-role { font-size:.62rem; color:var(--muted); margin-top:2px; }
-    .o-card .oc-stat { font-size:.62rem; color:var(--muted2); margin-top:5px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    @media(max-width:600px){ .office-cards{ grid-template-columns:repeat(2,1fr); } }
-
-    /* ─── AI 학습 기록 패널 ─────────────────────── */
-    .office-mem {
-      margin-top: 28px;
-      background: var(--glass); border: 1px solid var(--glass-border);
-      border-radius: 14px; overflow: hidden;
-    }
-    .office-mem-hdr {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 18px; border-bottom: 1px solid var(--glass-border);
-      background: rgba(0,188,212,.06);
-    }
-    .office-mem-hdr h3 { font-size:.9rem; font-weight:800; margin:0; color:#00e5ff; }
-    .office-mem-hdr span { font-size:.68rem; color:var(--muted2); }
-    .office-hints {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      padding: 12px 18px; border-bottom: 1px solid var(--glass-border);
-    }
-    .ohint {
-      display: flex; align-items: flex-start; gap: 6px;
-      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 8px; padding: 7px 10px; flex: 1; min-width: 160px;
-    }
-    .ohint .ohi { font-size: 1rem; flex-shrink:0; }
-    .ohint .ohd { display:flex; flex-direction:column; gap:2px; min-width:0; }
-    .ohint .ohn { font-size:.7rem; font-weight:800; }
-    .ohint .oht { font-size:.66rem; color:var(--muted2); line-height:1.4; word-break:break-all; }
-    .office-log-feed { max-height: 280px; overflow-y: auto; }
-    .olog-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 7px 18px; border-bottom: 1px solid var(--border);
-      transition: background .15s;
-    }
-    .olog-row:hover { background: rgba(255,255,255,.03); }
-    .olog-time { font-size:.62rem; color:var(--muted2); white-space:nowrap; min-width:92px; }
-    .olog-badge {
-      font-size:.6rem; font-weight:700; padding:2px 6px;
-      border-radius:99px; white-space:nowrap; flex-shrink:0;
-    }
-    .olog-badge.win  { background:rgba(76,175,80,.2); color:#69f0ae; }
-    .olog-badge.loss { background:rgba(244,67,54,.2); color:#ff5252; }
-    .olog-badge.buy  { background:rgba(33,150,243,.2); color:#82b1ff; }
-    .olog-badge.exit { background:rgba(255,152,0,.2); color:#ffd740; }
-    .olog-badge.sell { background:rgba(156,39,176,.2); color:#ea80fc; }
-    .olog-badge.plan { background:rgba(66,165,245,.2); color:#80d8ff; }
-    .olog-badge.design{ background:rgba(206,147,216,.2); color:#ea80fc; }
-    .olog-badge.music { background:rgba(102,187,106,.2); color:#b9f6ca; }
-    .olog-badge.trend { background:rgba(176,190,197,.2); color:#cfd8dc; }
-    .olog-badge.diary { background:rgba(129,212,250,.15); color:#81d4fa; }
-    .olog-badge.grow  { background:rgba(255,215,0,.15); color:#ffd740; }
-    .olog-msg { font-size:.72rem; color:var(--text); line-height:1.35; }
-    .office-mem-empty { padding:18px; text-align:center; color:var(--muted2); font-size:.78rem; }
 
     /* ─── AI 사무실 아이소메트릭 배경 ─────────────────────── */
     #office-iso-bg {
@@ -1882,7 +1854,6 @@
   <div class="office-layout">
     <!-- 캔버스 -->
     <div class="office-canvas-wrap">
-      <!-- 아이소메트릭 오피스 배경 (CSS) -->
       <div id="office-iso-bg" class="iso-night">
         <div class="iso-ceiling"></div>
         <div class="iso-floor-area"><div class="iso-floor-grid"></div></div>
@@ -1901,7 +1872,6 @@
         </div>
       </div>
       <canvas id="officeCanvas" width="900" height="520"></canvas>
-      <!-- 브리핑 보드: canvas(z-index:2) 위에 표시되도록 z-index:3으로 분리 -->
       <div id="briefing-board-outer" class="iso-night" style="position:absolute;inset:0;z-index:3;pointer-events:none">
         <div class="briefing-board">
           <div class="bb-header">
@@ -1919,34 +1889,19 @@
       </div>
     </div>
 
-    <!-- 우측 데이터 패널 -->
-    <div class="office-rpanel" id="officeRPanel">
-      <div class="orp-card">
-        <div class="orp-card-title" id="orp-advisor-title">🤖 AI 어드바이저 <span class="orp-live-badge"><span class="orp-live-dot"></span>LIVE</span></div>
-        <div id="orp-advisor" style="color:var(--muted2);font-size:.7rem">로딩 중...</div>
+    <!-- 우측 사이드바: 에이전트 상태 + 활동 로그 -->
+    <div class="office-sidebar" id="officeSidebar">
+      <div class="osb-header">
+        <span class="osb-title">⚡ AI 크루 상태</span>
+        <span class="osb-updated" id="osbUpdated">로딩 중...</span>
       </div>
-      <div class="orp-card">
-        <div class="orp-card-title">📰 오늘의 AI 뉴스</div>
-        <div id="orp-news" style="color:var(--muted2);font-size:.7rem">로딩 중...</div>
+      <div class="osb-agents" id="osbAgents">
+        <div class="osb-empty">데이터 로딩 중...</div>
       </div>
-      <div class="orp-card">
-        <div class="orp-card-title">🏆 성장 랭킹</div>
-        <div id="orp-rank" style="color:var(--muted2);font-size:.7rem">로딩 중...</div>
+      <div class="osb-log-hdr">📋 활동 로그</div>
+      <div class="osb-log-feed" id="osbLogFeed">
+        <div class="osb-empty">활동 기록 로딩 중...</div>
       </div>
-    </div>
-  </div>
-
-  <div class="office-cards" id="officeCards"></div>
-
-  <!-- AI 학습 기록 패널 -->
-  <div class="office-mem" id="officeMem" style="display:none">
-    <div class="office-mem-hdr">
-      <h3>🧠 AI 학습 기록 — 실시간 메모리</h3>
-      <span id="officeMemUpdated"></span>
-    </div>
-    <div class="office-hints" id="officeHints"></div>
-    <div class="office-log-feed" id="officeLogFeed">
-      <div class="office-mem-empty">학습 기록을 불러오는 중...</div>
     </div>
   </div>
 </div>
@@ -3047,138 +3002,55 @@
   let _officeMem = null;
   const normLv = s => Math.max(1, Math.round(Math.sqrt(s || 0)));
 
-  function _renderRPanel(data) {
-    if (!data || !data.agents) return;
-    const ad = data.agents['AI어드바이저'] || {};
-    const pl = data.agents['박기획'] || {};
-    const icons = {'박기획':'📋','최디자':'🎨','한뮤직':'🎵','AI주간트렌드':'📊','AI어드바이저':'🤖','뉴스기자':'📰','이가드':'🛡️','리포터':'📝'};
-
-    // 어드바이저 카드
-    const advEl = document.getElementById('orp-advisor');
-    const advTitle = document.getElementById('orp-advisor-title');
-    if (advEl) {
-      if (ad.status === 'vacation') {
-        if (advTitle) advTitle.innerHTML = '🤖 AI 어드바이저 <span style="font-size:.62rem;padding:2px 7px;border-radius:8px;background:rgba(255,213,79,.15);color:#ffd54f;font-weight:700">🏖️ 운용 종료</span>';
-        advEl.innerHTML = `
-          <div style="text-align:center;padding:10px 0">
-            <div style="font-size:1.4rem;margin-bottom:6px">🏖️</div>
-            <div style="font-size:.76rem;font-weight:700;color:#ffd54f;margin-bottom:4px">운용 종료 (${ad.vacation_since||'2026-05-25'})</div>
-            <div style="font-size:.67rem;color:var(--muted2);margin-bottom:10px">${ad.vacation_reason||'코인봇 운용 종료'}</div>
-          </div>
-          <div class="orp-stat-row">
-            <span class="orp-stat-label">총 거래</span>
-            <span class="orp-stat-val">103회</span>
-          </div>
-          <div class="orp-stat-row">
-            <span class="orp-stat-label">최종 승률</span>
-            <span class="orp-stat-val" style="color:#ef5350">${ad.win_rate||33}%</span>
-          </div>
-          <div class="orp-stat-row">
-            <span class="orp-stat-label">누적 손익</span>
-            <span class="orp-stat-val" style="color:#ef5350">-46,877원</span>
-          </div>
-        `;
-      } else {
-        const wr = ad.win_rate || 0;
-        const holding = ad.holding || '💤 대기 중';
-        const recent = (ad.recent || []).filter(r => r.pnl != null);
-        advEl.innerHTML = `
-          <div class="orp-stat-row">
-            <span class="orp-stat-label">승률</span>
-            <span class="orp-stat-val" style="color:${wr>=50?'#10b981':'#ef5350'}">${wr}%</span>
-          </div>
-          <div class="orp-stat-row">
-            <span class="orp-stat-label">거래</span>
-            <span class="orp-stat-val">${ad.total||0}회 ${ad.wins||0}W / ${ad.losses||0}L</span>
-          </div>
-          <div class="orp-stat-row" style="padding-bottom:8px">
-            <span class="orp-stat-label">포지션</span>
-            <span class="orp-stat-val" style="font-size:.65rem;color:#00e5ff">${holding}</span>
-          </div>
-          ${recent.slice(0,3).map(r=>`
-            <div class="orp-stat-row" style="font-size:.67rem">
-              <span class="orp-stat-label">${r.ticker}</span>
-              <span class="orp-stat-val" style="color:${r.pnl>0?'#10b981':'#ef5350'}">${r.pnl>0?'+':''}${r.pnl}%</span>
-            </div>`).join('')}
-        `;
-      }
-    }
-
-    // 뉴스 카드
-    const newsEl = document.getElementById('orp-news');
-    if (newsEl) {
-      const topics = pl.recent_topics || [];
-      newsEl.innerHTML = topics.slice(0,4).map(t=>`
-        <div style="font-size:.66rem;color:var(--muted2);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);line-height:1.4;word-break:keep-all">${t}</div>
-      `).join('') || '<div style="font-size:.68rem;color:var(--muted2)">뉴스 데이터 없음</div>';
-    }
-
-    // 성장 랭킹
-    const rankEl = document.getElementById('orp-rank');
-    if (rankEl) {
-      const ranked = Object.entries(data.agents)
-        .map(([id,a])=>({id, score:a.growth_score||0, icon:icons[id]||'🤖'}))
-        .sort((a,b)=>b.score-a.score).slice(0,5);
-      const medals = ['🥇','🥈','🥉','④','⑤'];
-      rankEl.innerHTML = ranked.map((r,i)=>`
-        <div class="orp-stat-row">
-          <span style="font-size:.7rem">${medals[i]} ${r.icon} ${r.id}</span>
-          <span class="orp-stat-val" style="color:#ffd54f;font-size:.7rem">Lv.${normLv(r.score)}</span>
-        </div>`).join('') || '<div style="font-size:.68rem;color:var(--muted2)">데이터 없음</div>';
-    }
-  }
+  function _renderRPanel(data) { /* sidebar handles rendering */ }
 
   function _renderMemPanel(data) {
     _officeMem = data;
-    _renderRPanel(data);
-    const panel = document.getElementById('officeMem');
-    if (!panel) return;
-    panel.style.display = '';
 
-    // 마지막 업데이트
-    const updEl = document.getElementById('officeMemUpdated');
-    if (updEl) updEl.textContent = '업데이트: ' + (data.updated || '');
+    // 사이드바 업데이트 시각
+    const updEl = document.getElementById('osbUpdated');
+    if (updEl) updEl.textContent = data.updated || '';
 
-    // 에이전트 힌트 카드
-    const hintsEl = document.getElementById('officeHints');
-    const agentOrder = ['박기획','뉴스기자','최디자','이가드','한뮤직','AI주간트렌드','리포터','AI어드바이저'];
-    const icons = {'박기획':'📋','최디자':'🎨','한뮤직':'🎵','AI주간트렌드':'📊','AI어드바이저':'🤖','뉴스기자':'📰','이가드':'🛡️','리포터':'📝'};
-    if (hintsEl && data.agents) {
-      hintsEl.innerHTML = agentOrder.map(id => {
+    // 에이전트 카드 목록
+    const agentsEl = document.getElementById('osbAgents');
+    if (agentsEl && data.agents) {
+      const ACTIVE_ORDER = ['박기획','최디자','한뮤직','AI주간트렌드','뉴스기자'];
+      const VAC_ORDER    = ['AI어드바이저','이가드','리포터'];
+      const icons    = {'박기획':'📋','최디자':'🎨','한뮤직':'🎵','AI주간트렌드':'📊','AI어드바이저':'🤖','뉴스기자':'📰','이가드':'🛡️','리포터':'📝'};
+      const roles    = {'박기획':'콘텐츠 기획','최디자':'이미지 디자인','한뮤직':'음악 큐레이션','AI주간트렌드':'주간 트렌드','AI어드바이저':'코인 어드바이저','뉴스기자':'뉴스 수집','이가드':'시장 감시','리포터':'리포트 작성'};
+      const barClrs  = {'박기획':'#42a5f5','최디자':'#ce93d8','한뮤직':'#66bb6a','AI주간트렌드':'#b0bec5','AI어드바이저':'#00e5ff','뉴스기자':'#ffcc02','이가드':'#ef5350','리포터':'#ffb74d'};
+      const allOrder = [...ACTIVE_ORDER, ...VAC_ORDER];
+      const maxScore = Math.max(...allOrder.map(id => data.agents[id]?.growth_score || 0), 1);
+
+      agentsEl.innerHTML = allOrder.map(id => {
         const a = data.agents[id];
         if (!a) return '';
-        const hint = a.hint || '';
-        const sub = a.holding || (a.last_summary ? a.last_summary.slice(0,30) : '') ||
-                    (a.recent_topics ? a.recent_topics[0]||'' : '') || '';
-        const score = a.growth_score || 0;
-        const persona = a.persona || '';
-        const latestDiary = (a.diary && a.diary[0]) ? a.diary[0].lesson : '';
-        const lv = normLv(score);
-        const scoreBar = score > 0
-          ? `<span style="font-size:.7rem;opacity:.5;margin-left:4px">Lv.${lv} ${'▪'.repeat(Math.min(lv,10))}</span>`
-          : '';
-        const isVacation = a.status === 'vacation';
-        const vacBadge = isVacation ? `<span style="font-size:.62rem;padding:1px 6px;border-radius:8px;background:rgba(255,213,79,.15);color:#ffd54f;font-weight:700;margin-left:4px">🏖️ 휴가</span>` : '';
-        return `<div class="ohint" style="${isVacation?'opacity:.6':''}">
-          <span class="ohi">${icons[id]||''}</span>
-          <div class="ohd" style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:4px">
-              <span class="ohn" style="color:${_CHARS[id]?.color||'#aaa'}">${id}</span>
-              ${vacBadge}
-              ${!isVacation ? scoreBar : ''}
+        const isVac  = a.status === 'vacation';
+        const score  = a.growth_score || 0;
+        const lv     = normLv(score);
+        const barW   = Math.round((score / maxScore) * 100);
+        const hint   = (a.hint || '').slice(0, 46);
+        const diary  = a.diary?.[0]?.lesson?.slice(0, 40) || '';
+        const clr    = barClrs[id] || '#00e5ff';
+        return `<div class="osb-agent${isVac?' vacation':''}">
+          <div class="osb-agent-top">
+            <span class="osb-agent-icon">${icons[id]||'🤖'}</span>
+            <div class="osb-agent-info">
+              <div class="osb-agent-name" style="color:${clr}">${id}</div>
+              <div class="osb-agent-role">${roles[id]||''}</div>
             </div>
-            <span class="oht">${hint}</span>
-            ${!isVacation ? (persona ? `<span class="oht" style="opacity:.55;font-style:italic">${persona.slice(0,38)}</span>` : (sub ? `<span class="oht" style="opacity:.65">${sub.slice(0,36)}</span>` : '')) : ''}
-            ${!isVacation && latestDiary ? `<span class="oht" style="opacity:.7;color:#81d4fa">📖 ${latestDiary.slice(0,40)}</span>` : ''}
+            ${isVac
+              ? `<span class="osb-vac-badge">🏖️ 휴가</span>`
+              : `<span class="osb-agent-lv">Lv.${lv}</span>`}
           </div>
+          ${!isVac ? `<div class="osb-bar-wrap"><div class="osb-bar-fill" style="width:${barW}%;background:${clr}"></div></div>` : ''}
+          ${hint ? `<div class="osb-hint">${hint}</div>` : ''}
+          ${!isVac && diary ? `<div class="osb-diary">📖 ${diary}</div>` : ''}
         </div>`;
       }).join('');
     }
 
-    // 로그 피드 — office_memory.json data.log 직접 사용
     _renderLogFeed(data.log || []);
-
-    // _LINES 실데이터로 보강
     _injectMemLines(data);
   }
 
@@ -3277,22 +3149,20 @@
   }, 60000);
 
   function _renderLogFeed(log) {
-    const feedEl = document.getElementById('officeLogFeed');
+    const feedEl = document.getElementById('osbLogFeed');
     if (!feedEl) return;
     if (!log || !log.length) {
-      feedEl.innerHTML = '<div class="office-mem-empty">아직 학습 기록이 없습니다</div>';
+      feedEl.innerHTML = '<div class="osb-empty">아직 활동 기록이 없습니다</div>';
       return;
     }
-    const typeLabel = { win:'익절', loss:'손절', buy:'매수', exit:'강제청산', sell:'매도',
-                        plan:'기획', design:'디자인', music:'음악', trend:'트렌드',
-                        diary:'학습일기', grow:'성장' };
     feedEl.innerHTML = log.map(e => {
       const t = e.time || ''; const disp = t.length > 10 ? t.slice(5) : t;
-      const badge = e.type || 'buy';
-      return `<div class="olog-row">
-        <span class="olog-time">${disp}</span>
-        <span class="olog-badge ${badge}">${e.icon || ''} ${typeLabel[badge] || badge}</span>
-        <span class="olog-msg">${e.msg || ''}</span>
+      return `<div class="osb-log-row">
+        <span class="osb-log-icon">${e.icon || '📌'}</span>
+        <div class="osb-log-body">
+          <div class="osb-log-msg">${e.msg || ''}</div>
+          <div class="osb-log-time">${disp}${e.agent ? ' · ' + e.agent : ''}</div>
+        </div>
       </div>`;
     }).join('');
   }
