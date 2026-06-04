@@ -1,6 +1,60 @@
 {
   "runs": [
     {
+      "date": "2026-06-05",
+      "cards": [
+        {
+          "label": "카드1",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드2",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드3",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드4",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드5",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "블로그",
+          "passed": false,
+          "retries": 2,
+          "issues": [
+            "품질 오류: ['단어 붙여쓰기']",
+            "품질 오류: ['단어 붙여쓰기']",
+            "반복 문장 2쌍",
+            "품질 오류: ['단어 붙여쓰기']"
+          ]
+        }
+      ],
+      "total_retries": 2,
+      "pass_rate": 0.83,
+      "issue_summary": [
+        "품질 오류: ['단어 붙여쓰기']",
+        "품질 오류: ['단어 붙여쓰기']",
+        "반복 문장 2쌍",
+        "품질 오류: ['단어 붙여쓰기']"
+      ]
+    },
+    {
       "date": "2026-06-04",
       "cards": [
         {
@@ -1499,66 +1553,7 @@
         "품질 오류: ['라틴확장(독어 등)']",
         "반복 문장 2쌍"
       ]
-    },
-    {
-      "date": "2026-05-05",
-      "cards": [
-        {
-          "label": "카드1",
-          "passed": false,
-          "retries": 2,
-          "issues": [
-            "품질 오류: ['단어 붙여쓰기']",
-            "품질 오류: ['단어 붙여쓰기']",
-            "품질 오류: ['단어 붙여쓰기']"
-          ]
-        },
-        {
-          "label": "카드2",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "카드3",
-          "passed": false,
-          "retries": 2,
-          "issues": [
-            "품질 오류: ['조사 중복']",
-            "품질 오류: ['조사 중복']",
-            "품질 오류: ['조사 중복']"
-          ]
-        },
-        {
-          "label": "카드4",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "카드5",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "블로그",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        }
-      ],
-      "total_retries": 4,
-      "pass_rate": 0.67,
-      "issue_summary": [
-        "품질 오류: ['단어 붙여쓰기']",
-        "품질 오류: ['단어 붙여쓰기']",
-        "품질 오류: ['단어 붙여쓰기']",
-        "품질 오류: ['조사 중복']",
-        "품질 오류: ['조사 중복']",
-        "품질 오류: ['조사 중복']"
-      ]
     }
   ],
-  "updated": "2026-06-04"
+  "updated": "2026-06-05"
 }
