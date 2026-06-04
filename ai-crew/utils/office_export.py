@@ -1,14 +1,14 @@
 """
 AI 사무실 학습 기록 export — ai-crew 측
-agent_memory.json → docs/office_memory.json 에 4명 에이전트 학습 기록 병합 저장
+agent_memories (Supabase) → docs/office_memory.json 에 4명 에이전트 학습 기록 병합 저장
 """
 import os, json, re
 from datetime import datetime
 from collections import Counter
+from utils.agent_memory import _load as _load_mem
 
 REPO_ROOT     = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OFFICE_FILE   = os.path.join(REPO_ROOT, "docs", "office_memory.json")
-MEM_FILE      = os.path.join(os.path.dirname(__file__), "..", "agent_memory.json")
 WEEKLY_FILE   = os.path.join(REPO_ROOT, "docs", "weekly_trend.json")
 
 
@@ -164,7 +164,7 @@ def _crew_log(mem):
 
 def export():
     """office_memory.json에 ai-crew 에이전트 데이터 병합 저장"""
-    mem      = _load(MEM_FILE)
+    mem      = _load_mem()  # 로컬 agent_memory.json → 없으면 Supabase 자동 복구
     existing = _load(OFFICE_FILE) if os.path.exists(OFFICE_FILE) else {}
     agents   = existing.get("agents", {})
 
