@@ -93,7 +93,7 @@
 | `newsletter/newsletter_naver.py` | 뉴스 수집 + AI 요약 + 오늘의 이야깃거리 → Supabase (TOP3 제외 별도 풀에서 생성) |
 | `ai-crew/agents/planner.py` | 카드뉴스 주제 선정 (삼천리 그룹 우선 포함 규칙 적용) |
 | `ai-crew/agents/writer.py` | 블로그 아티클 작성 (`get_hints("이작가")` 적용) |
-| `ai-crew/agents/designer.py` | 이미지 생성 + 30일 자동 정리 |
+| `ai-crew/agents/designer.py` | 이미지 생성 — **HuggingFace FLUX.1-schnell** (`HF_TOKEN`) → PIL 카드 폴백 |
 | `ai-crew/agents/music_curator.py` | 음악 큐레이션 — **수집 주기 90일(분기)** (`_should_run_music()`) |
 | `ai-crew/agents/weekly_trend.py` | 주간 트렌드 (json_mode=False, max_tokens 4096) |
 | `ai-crew/utils/agent_memory.py` | 메모리 R/W + Supabase 동기화 + 페르소나 진화 |
