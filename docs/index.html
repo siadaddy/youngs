@@ -3237,12 +3237,16 @@
     if (el('bb-date')) el('bb-date').textContent = '📅 ' + dateStr;
     if (!data) return;
 
-    // 🤖 AI어드바이저 현황
-    const adv = data.agents?.['AI어드바이저'];
-    if (adv && el('bb-trade')) {
-      const hold = (adv.holding || '대기 중').replace(/🔴|🟢|📊/g,'').trim();
-      const wr = adv.win_rate !== undefined ? adv.win_rate + '%' : '--';
-      el('bb-trade').textContent = `🤖 ${hold} | 승률 ${wr}`;
+    // 🎨 최디자 이미지 성공률 (vacation 아닌 크루 상태)
+    const dsn = data.agents?.['최디자'];
+    if (el('bb-trade')) {
+      const rate = dsn?.success_rate;
+      if (rate !== undefined && rate > 0) {
+        el('bb-trade').textContent = `🎨 이미지 성공률 ${rate}% | 크루 활동 중`;
+      } else {
+        const activeCount = Object.values(data.agents || {}).filter(a => a.status !== 'vacation').length;
+        el('bb-trade').textContent = `🤖 콘텐츠 크루 ${activeCount}명 활동 중`;
+      }
     }
 
     // 📰 박기획 최신 토픽
@@ -3252,10 +3256,11 @@
       el('bb-news').textContent = '📰 ' + (t.length > 18 ? t.slice(0,17)+'…' : t);
     }
 
-    // 🏆 성장 점수 1위
+    // 🏆 성장 점수 1위 — vacation 에이전트 제외
     if (el('bb-top') && data.agents) {
       let topName = '', topScore = -1;
       Object.entries(data.agents).forEach(([name, d]) => {
+        if (d.status === 'vacation') return;
         if ((d.growth_score || 0) > topScore) { topScore = d.growth_score; topName = name; }
       });
       if (topName) el('bb-top').textContent = `🏆 ${topName} Lv.${normLv(topScore)} 리드`;
