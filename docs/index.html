@@ -3228,30 +3228,30 @@
         floorG.addColorStop(0,'#010408'); floorG.addColorStop(0.55,'#030810'); floorG.addColorStop(1,'#050d18');
         ctx.fillStyle=floorG; ctx.fillRect(0,VY,CW,CH-VY);
 
-        // 소실점 원근 수직선 (VP→바닥 하단)
-        const NV=24;
+        // 소실점 원근 수직선 (VP→바닥 하단) — pixelated 렌더링 대응해 굵게
+        const NV=20;
         for(let i=0;i<=NV;i++){
           const bx=(CW/NV)*i;
           const isC=(i===NV/2);
-          ctx.strokeStyle=isC?'rgba(0,229,255,0.50)':'rgba(0,229,255,0.09)';
-          ctx.lineWidth=isC?1.3:0.45;
+          ctx.strokeStyle=isC?'rgba(0,229,255,0.75)':'rgba(0,229,255,0.22)';
+          ctx.lineWidth=isC?2.5:1;
           ctx.beginPath(); ctx.moveTo(VX,VY); ctx.lineTo(bx,CH); ctx.stroke();
         }
 
         // 원근 수평선 (깊이감)
-        const NH=12;
+        const NH=10;
         for(let i=1;i<=NH;i++){
           const t=Math.pow(i/NH,1.7);
           const hy=VY+(CH-VY)*t;
-          const a=(0.06+t*0.22).toFixed(2);
+          const a=(0.15+t*0.35).toFixed(2);
           ctx.strokeStyle=`rgba(0,229,255,${a})`;
-          ctx.lineWidth=0.4+t*0.65;
+          ctx.lineWidth=1+t*1.5;
           ctx.beginPath(); ctx.moveTo(0,hy); ctx.lineTo(CW,hy); ctx.stroke();
         }
 
         // 하단 네온 스트립
-        ctx.shadowColor='#00e5ff'; ctx.shadowBlur=16;
-        ctx.strokeStyle='rgba(0,229,255,0.65)'; ctx.lineWidth=1.2;
+        ctx.shadowColor='#00e5ff'; ctx.shadowBlur=20;
+        ctx.strokeStyle='rgba(0,229,255,0.85)'; ctx.lineWidth=2;
         ctx.beginPath(); ctx.moveTo(0,CH-1); ctx.lineTo(CW,CH-1); ctx.stroke();
         ctx.shadowBlur=0;
 
