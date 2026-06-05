@@ -1061,8 +1061,9 @@
       align-items: center;
       gap: 0;
       margin-top: 6px;
-      background: rgba(2,6,18,0.96);
-      border: 1px solid rgba(0,229,255,0.22);
+      position: relative; z-index: 3;
+      background: rgba(2,6,18,0.98);
+      border: 1px solid rgba(0,229,255,0.28);
       border-radius: 8px;
       overflow: hidden;
       font-family: 'JetBrains Mono', 'Consolas', monospace;
@@ -3170,6 +3171,9 @@
 
     // ── 배경 그리기 (낮/밤 자동 전환) ────────────────────
     function bg() {
+      // 항상 캔버스 전체를 다크로 채워 iso-bg HTML이 비치지 않도록
+      ctx.fillStyle='#020612'; ctx.fillRect(0,0,CW,CH);
+
       if (_NIGHT) {
         // 🌙 Tron 사이버펑크 — 원근 격자 바닥
         const VX=CW/2, VY=62;
@@ -4045,7 +4049,7 @@
 
     // ── 렌더링 ───────────────────────────────────────────────
     function render(){
-      _NIGHT = new Date().getHours()>=19||new Date().getHours()<7;
+      _NIGHT = true; // 사무실 캔버스는 항상 다크 Tron 모드
       ctx.clearRect(0,0,CW,CH);
       const _isoBg=document.getElementById('office-iso-bg');
       if(_isoBg)_isoBg.className='iso-night';
