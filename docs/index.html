@@ -3188,34 +3188,8 @@
 
     const canvas = document.getElementById('officeCanvas');
     const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
     const CW = 900, CH = 520;
-
-    // ── 책장 책 색상 미리 계산 ──────────────────────────────
-    const BKCOLS = ['#c62828','#283593','#1b5e20','#f57f17','#6a1b9a','#00838f','#bf360c','#e65100'];
-    const BOOKS = Array.from({length:3}, (_,row) => {
-      const shelf=[]; let bx=0;
-      for(let b=0;b<7;b++){const w=7+(b%3); shelf.push({x:bx,w,c:BKCOLS[(row*7+b)%BKCOLS.length]}); bx+=w+2;}
-      return shelf;
-    });
-
-    // ── 캐릭터 초기 상태 ──────────────────────────────────
-    const VACATION_CHARS = new Set(['AI어드바이저', '이가드', '리포터']);
-    const chars = Object.entries(_CHARS)
-      .filter(([id]) => !VACATION_CHARS.has(id))
-      .map(([id,def],i)=>({
-        id, def, x:def.homeX, y:def.homeY,
-        tx:def.homeX, ty:def.homeY,
-        frame:0, fTick:0, facing:1,
-        state:'idle', sTick: 40+i*35+Math.random()*80,
-        spd: 1.1+Math.random()*0.7,
-        bubble:null, bTick:0, _sy:def.homeY, _origSpd:0,
-      }));
-
-    const MEET_POS=[{x:365,y:196},{x:418,y:196},{x:471,y:196},{x:365,y:318},{x:418,y:318},{x:471,y:318},{x:318,y:250},{x:512,y:250}];
-    const BND={x1:22,y1:70,x2:876,y2:498};
-    const COFFEE={x:855,y:445};
-    let meetTimer=1800+Math.floor(Math.random()*900), inMeet=false, mStep=0, mLTick=0;
 
     // ── 배경 그리기 (낮/밤 자동 전환) ────────────────────
     function bg() {
@@ -3926,116 +3900,210 @@
       });
     }
 
+    // ── 에이전트 모니터 UI ───────────────────────────────────
+    // 상단 2개(브리핑보드 좌우) + 하단 3개 풀로우
+    const MONITORS = [
+      {id:'박기획',      icon:'📋', color:'#4d90f0', x:5,   y:66,  w:252, h:216, role:'CONTENT PLANNER'},
+      {id:'뉴스기자',    icon:'📰', color:'#ffd54f', x:643, y:66,  w:252, h:216, role:'NEWS COLLECTOR' },
+      {id:'최디자',      icon:'🎨', color:'#ce93d8', x:5,   y:290, w:292, h:225, role:'IMAGE DESIGNER' },
+      {id:'AI주간트렌드',icon:'📊', color:'#4dd0e1', x:306, y:290, w:284, h:225, role:'TREND ANALYST'   },
+      {id:'한뮤직',      icon:'🎵', color:'#66bb6a', x:599, y:290, w:296, h:225, role:'MUSIC CURATOR'   },
+    ];
+    const MS = {}; MONITORS.forEach(m=>{MS[m.id]={waveP:Math.random()*Math.PI*2};});
+    let tick = 0;
+
+    function monBase(m) {
+      const {x,y,w,h,color,icon,id,role}=m;
+      ctx.fillStyle='#010508'; ctx.fillRect(x,y,w,h);
+      for(let ly=y;ly<y+h;ly+=4){ctx.fillStyle='rgba(0,0,0,0.20)';ctx.fillRect(x,ly,w,1);}
+      ctx.shadowColor=color; ctx.shadowBlur=12;
+      ctx.strokeStyle=color+'bb'; ctx.lineWidth=1.5; ctx.strokeRect(x,y,w,h);
+      ctx.shadowBlur=0;
+      ctx.fillStyle=color;
+      [[x,y],[x+w-6,y],[x,y+h-2],[x+w-6,y+h-2]].forEach(([cx,cy])=>{ctx.fillRect(cx,cy,6,2);ctx.fillRect(cx,cy,2,6);});
+      const hg=ctx.createLinearGradient(x,y,x,y+22);
+      hg.addColorStop(0,color+'35'); hg.addColorStop(1,color+'08');
+      ctx.fillStyle=hg; ctx.fillRect(x,y,w,22);
+      ctx.font='bold 8px monospace'; ctx.fillStyle=color; ctx.textAlign='left';
+      ctx.fillText(`${icon} ${id} — ${role}`,x+8,y+14);
+      const da=(Math.sin(tick*0.05)+1)/2;
+      ctx.fillStyle=`rgba(0,255,136,${(0.4+da*0.6).toFixed(2)})`;
+      ctx.beginPath(); ctx.arc(x+w-12,y+11,3,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=color+'44'; ctx.lineWidth=0.8;
+      ctx.beginPath(); ctx.moveTo(x+4,y+22); ctx.lineTo(x+w-4,y+22); ctx.stroke();
+    }
+
+    function monPlanner(m) {
+      const {x,y,w,color}=m; const cy=y+26;
+      const topics=(_officeMem?.agents?.['박기획']?.recent_topics||['AI 반도체 투자 급증','현대차 수소 전략','국내 물가 동향','기후 테크 스타트업']);
+      const hint=(_officeMem?.agents?.['박기획']?.hint||'✅ 다양한 주제 선정 중').slice(0,36);
+      ctx.font='7px monospace'; ctx.fillStyle=color+'88'; ctx.textAlign='left';
+      ctx.fillText(hint,x+8,cy+8);
+      let pos=0,curT=0,curC=0;
+      const totalL=topics.reduce((s,t)=>s+t.length,0)+topics.length*5;
+      const rawP=(tick*0.16)%(totalL+20);
+      for(let i=0;i<topics.length;i++){if(rawP<pos+topics[i].length+5){curT=i;curC=Math.floor(rawP-pos);break;}pos+=topics[i].length+5;}
+      topics.slice(0,4).forEach((topic,i)=>{
+        const ty=cy+22+i*36;
+        ctx.fillStyle=color+'30'; ctx.fillRect(x+8,ty,16,13);
+        ctx.fillStyle=color; ctx.font='bold 7px monospace'; ctx.fillText(`0${i+1}`,x+12,ty+10);
+        ctx.font='7.5px monospace';
+        const isA=i===curT;
+        const txt=isA?topic.slice(0,Math.max(0,curC))+(Math.floor(tick/15)%2===0?'█':''):topic;
+        ctx.fillStyle=i<curT?color+'cc':(isA?'#ffffff':color+'55');
+        ctx.fillText(txt.slice(0,24),x+29,ty+10);
+        if(i<curT){ctx.fillStyle='#00ff88cc';ctx.fillText('✓',x+w-14,ty+10);}
+      });
+    }
+
+    function monNews(m) {
+      const {x,y,w,h,color}=m; const cy=y+26;
+      const scanY=cy+8+((tick*0.9)%(h-52));
+      ctx.fillStyle='rgba(0,229,255,0.032)'; ctx.fillRect(x+4,scanY,w-8,3);
+      const cats=[{icon:'🤖',name:'AI/IT',col:'#4d90f0'},{icon:'💰',name:'경제',col:'#4dd0e1'},
+                  {icon:'🚗',name:'자동차',col:'#ce93d8'},{icon:'📋',name:'사회',col:'#66bb6a'},{icon:'⚡',name:'사건',col:'#ffd54f'}];
+      const cellW=Math.floor((w-16)/5);
+      cats.forEach((cat,i)=>{
+        const cx=x+8+i*cellW;
+        ctx.fillStyle=cat.col+'18'; ctx.fillRect(cx,cy+4,cellW-2,50);
+        ctx.strokeStyle=cat.col+'44'; ctx.lineWidth=0.8; ctx.strokeRect(cx,cy+4,cellW-2,50);
+        ctx.font='10px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff'; ctx.fillText(cat.icon,cx+cellW/2-1,cy+20);
+        ctx.font='5.5px monospace'; ctx.fillStyle=cat.col; ctx.fillText(cat.name,cx+cellW/2-1,cy+31);
+        ctx.font='bold 8px monospace'; ctx.fillStyle='#fff'; ctx.fillText('5건',cx+cellW/2-1,cy+44);
+      });
+      const lines=(_officeMem?.agents?.['박기획']?.recent_topics||['현대차 수소차 글로벌 공략','AI반도체 수요 급증','코스피 2500선 돌파','기상청 폭염 예보','BMW 신차 라인업 공개']);
+      const scrollP=((tick*0.32)%(lines.length*22));
+      const si=Math.floor(scrollP/22), off=scrollP%22;
+      const feedY=cy+62, feedH=h-(feedY-y)-6;
+      ctx.save(); ctx.beginPath(); ctx.rect(x+4,feedY,w-8,feedH); ctx.clip();
+      for(let i=-1;i<4;i++){
+        const idx=(si+i+lines.length)%lines.length;
+        const lineY=feedY+i*22-off+14;
+        const isTop=i===0;
+        ctx.fillStyle=color+(isTop?'ff':'44'); ctx.fillRect(x+8,lineY-8,3,11);
+        ctx.font=(isTop?'bold ':'')+' 7px monospace'; ctx.textAlign='left';
+        ctx.fillStyle=isTop?'#ffffffcc':'#ffffff44';
+        ctx.fillText(lines[idx].slice(0,28),x+15,lineY);
+      }
+      ctx.restore();
+    }
+
+    function monDesigner(m) {
+      const {x,y,w,h,color}=m; const cy=y+26;
+      const rate=_officeMem?.agents?.['최디자']?.success_rate??93;
+      const hint=(_officeMem?.agents?.['최디자']?.hint||'').slice(0,34);
+      ctx.font='7px monospace'; ctx.fillStyle=color+'88'; ctx.textAlign='left';
+      ctx.fillText(hint,x+8,cy+8);
+      const COLS=['#ff4081','#7c4dff','#00e5ff','#69f0ae','#ffd740','#ff6d00','#e040fb','#00bcd4','#76ff03','#ff5252','#fff176','#80cbc4'];
+      const cs=13,cols=12,rows=7, gX=x+8, gY=cy+18;
+      const revP=((tick*0.65)%(cols*rows+35));
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+        const idx=r*cols+c;
+        if(idx<revP){const col=COLS[(idx*3+Math.floor(tick/25))%COLS.length]; ctx.globalAlpha=Math.min(1,(revP-idx)/6); ctx.fillStyle=col; ctx.fillRect(gX+c*cs,gY+r*cs,cs-2,cs-2); ctx.globalAlpha=1;}
+        else{ctx.fillStyle='#0a1220'; ctx.fillRect(gX+c*cs,gY+r*cs,cs-2,cs-2);}
+      }
+      const barY=gY+rows*cs+10;
+      ctx.fillStyle='#111c30'; ctx.fillRect(x+8,barY,w-16,10);
+      const aR=rate*Math.min(1,tick/80);
+      const bg2=ctx.createLinearGradient(x+8,barY,x+8+(w-16),barY);
+      bg2.addColorStop(0,'#7c4dff'); bg2.addColorStop(1,'#ce93d8');
+      ctx.fillStyle=bg2; ctx.fillRect(x+8,barY,(w-16)*aR/100,10);
+      ctx.shadowColor=color; ctx.shadowBlur=8; ctx.strokeStyle=color+'66'; ctx.lineWidth=1; ctx.strokeRect(x+8,barY,w-16,10); ctx.shadowBlur=0;
+      ctx.font='bold 7px monospace'; ctx.fillStyle='#fff'; ctx.textAlign='right';
+      ctx.fillText(`SUCCESS RATE  ${Math.round(aR)}%`,x+w-8,barY+8);
+    }
+
+    function monTrend(m) {
+      const {x,y,w,h,color}=m; const cy=y+26;
+      const summary=(_officeMem?.agents?.['AI주간트렌드']?.last_summary||'AI, 경제, 자동차 격변').slice(0,40);
+      const hot=_officeMem?.agents?.['AI주간트렌드']?.hot||'AI/인공지능';
+      ctx.font='7px monospace'; ctx.fillStyle=color+'88'; ctx.textAlign='left'; ctx.fillText(summary,x+8,cy+8);
+      const cats=[{label:'AI/IT',val:0.88,col:'#4d90f0'},{label:'경제',val:0.72,col:'#4dd0e1'},
+                  {label:'자동차',val:0.65,col:'#ce93d8'},{label:'사회',val:0.55,col:'#66bb6a'},{label:'사건',val:0.42,col:'#ffd54f'}];
+      const bH=16,gap=7,maxBW=w-60,chartY=cy+20;
+      cats.forEach((cat,i)=>{
+        const by=chartY+i*(bH+gap);
+        const aW=cat.val*maxBW*Math.min(1,(tick-i*10)/70);
+        ctx.font='7px monospace'; ctx.fillStyle='#b0bec5cc'; ctx.textAlign='left'; ctx.fillText(cat.label,x+8,by+11);
+        ctx.fillStyle='#ffffff08'; ctx.fillRect(x+50,by,maxBW,bH);
+        if(aW>0){const bg3=ctx.createLinearGradient(x+50,by,x+50+aW,by); bg3.addColorStop(0,cat.col+'99'); bg3.addColorStop(1,cat.col); ctx.fillStyle=bg3; ctx.fillRect(x+50,by,aW,bH);}
+        ctx.font='bold 6.5px monospace'; ctx.fillStyle=cat.col; ctx.textAlign='right'; ctx.fillText(`${Math.round(cat.val*100)}%`,x+w-8,by+11);
+      });
+      const bY=chartY+cats.length*(bH+gap)+8;
+      ctx.fillStyle=color+'22'; ctx.fillRect(x+8,bY,w-16,18);
+      ctx.shadowColor=color; ctx.shadowBlur=6;
+      ctx.font='bold 7.5px monospace'; ctx.fillStyle=color; ctx.textAlign='center';
+      ctx.fillText(`🔥 HOT: ${hot}`,x+w/2,bY+12); ctx.shadowBlur=0;
+    }
+
+    function monMusic(m) {
+      const {x,y,w,h,color}=m; const cy=y+26;
+      const hint=(_officeMem?.agents?.['한뮤직']?.hint||'🎵 음악 큐레이션').slice(0,34);
+      ctx.font='7px monospace'; ctx.fillStyle=color+'88'; ctx.textAlign='left'; ctx.fillText(hint,x+8,cy+8);
+      const waveY=cy+22,waveH=80,bars=36,barW=Math.floor((w-20)/bars)-1;
+      for(let b=0;b<bars;b++){
+        const ph=(tick*0.07)+b*0.38+MS[m.id].waveP;
+        const bh=Math.max(3,(Math.abs(Math.sin(ph)*Math.cos(ph*0.4))*waveH*0.9+3));
+        const wg=ctx.createLinearGradient(0,waveY+waveH/2-bh/2,0,waveY+waveH/2+bh/2);
+        wg.addColorStop(0,'#66bb6a'); wg.addColorStop(0.5,'#4dd0e1'); wg.addColorStop(1,'#66bb6a44');
+        ctx.fillStyle=wg; ctx.fillRect(x+10+b*(barW+1),waveY+waveH/2-bh/2,barW,bh);
+      }
+      const genres=['K-POP','HIP-HOP','R&B','JAZZ','EDM','INDIE','CLASSICAL'];
+      const curr=genres[Math.floor(tick/100)%genres.length];
+      ctx.font='7px monospace'; ctx.fillStyle=color; ctx.textAlign='left';
+      ctx.fillText(`▶ NOW CURATING: ${curr}`,x+8,cy+22+waveH+14);
+      const tagCols={'K-POP':'#ff4081','HIP-HOP':'#ffd740','R&B':'#ce93d8','JAZZ':'#4dd0e1','EDM':'#69f0ae','INDIE':'#ff9800','CLASSICAL':'#b0bec5'};
+      let tagX=x+8; const tagY=cy+22+waveH+26;
+      genres.slice(0,5).forEach(g=>{
+        const col=tagCols[g]||color, tw=ctx.measureText(g).width+10;
+        if(tagX+tw>x+w-4) return;
+        ctx.fillStyle=col+'1a'; ctx.strokeStyle=col+'88'; ctx.lineWidth=0.8;
+        ctx.fillRect(tagX,tagY,tw,12); ctx.strokeRect(tagX,tagY,tw,12);
+        ctx.fillStyle=g===curr?col:'#ffffff66'; ctx.font='6px monospace'; ctx.textAlign='left';
+        ctx.fillText(g,tagX+5,tagY+9); tagX+=tw+4;
+      });
+    }
+
+    const drawFn={'박기획':monPlanner,'뉴스기자':monNews,'최디자':monDesigner,'AI주간트렌드':monTrend,'한뮤직':monMusic};
+
     // ── 렌더링 ───────────────────────────────────────────────
     function render(){
-      // 시간에 따라 낮/밤 모드 자동 전환
-      const _h = new Date().getHours();
-      _NIGHT = _h >= 19 || _h < 7;
-
+      _NIGHT = new Date().getHours()>=19||new Date().getHours()<7;
       ctx.clearRect(0,0,CW,CH);
-      // CSS 아이소메트릭 배경 낮/밤 동기화
       const _isoBg=document.getElementById('office-iso-bg');
-      if(_isoBg)_isoBg.className=_NIGHT?'iso-night':'iso-day';
+      if(_isoBg)_isoBg.className='iso-night';
       const _bbOuter=document.getElementById('briefing-board-outer');
-      if(_bbOuter)_bbOuter.className=_NIGHT?'iso-night':'iso-day';
+      if(_bbOuter)_bbOuter.className='iso-night';
 
-      // 발 아래 타원 그림자
-      const sorted=[...chars].sort((a,b)=>a.y-b.y);
-      sorted.forEach(c=>{
-        const rows=c.def.spr[0];
-        const cH=rows.length*_PX, cW2=rows[0].length*_PX;
-        const cx=Math.round(c.x)+cW2/2;
-        const cy=Math.round(c.y)+cH+1;
-        if(cy>CH-2)return;
-        ctx.save();
-        ctx.globalAlpha=0.28;
-        ctx.fillStyle='#000';
-        ctx.beginPath();
-        ctx.ellipse(cx,cy,cW2*0.38,3,0,0,Math.PI*2);
-        ctx.fill();
-        ctx.restore();
-      });
+      bg();
+      windows();
+      MONITORS.forEach(m=>{ monBase(m); if(drawFn[m.id]) drawFn[m.id](m); });
 
-      // 캐릭터 Y-sort (원근감)
-      sorted.forEach(c=>{drawChar(c);nameTag(c);});
-
-      // 회의 배너
-      if(inMeet&&chars.every(c=>Math.abs(c.x-c.tx)<6&&Math.abs(c.y-c.ty)<6)){
-        ctx.fillStyle='rgba(1,4,14,.9)'; ctx.fillRect(305,178,290,24);
-        ctx.shadowColor='#00e5ff'; ctx.shadowBlur=10;
-        ctx.strokeStyle='rgba(0,229,255,.6)'; ctx.lineWidth=1; ctx.strokeRect(305,178,290,24);
-        ctx.fillStyle='#00e5ff'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
-        ctx.fillText('📋 일일 브리핑 회의 진행 중...', 450, 194);
-        ctx.shadowBlur=0; ctx.textAlign='left';
-      }
-
-      bubbles(chars);
-
-      // ── 실시간 시계 + 낮/밤 표시 ──────────────────────────
+      // 실시간 시계
       const now=new Date();
-      const hh=String(now.getHours()).padStart(2,'0');
-      const mm=String(now.getMinutes()).padStart(2,'0');
-      const label=(_NIGHT?'🌙':'☀️')+' '+hh+':'+mm;
+      const label=`🌙 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
       ctx.font='bold 9px sans-serif'; ctx.textAlign='right';
       const tw=ctx.measureText(label).width+14;
-      ctx.fillStyle=_NIGHT?'rgba(2,6,18,0.82)':'rgba(255,248,232,0.88)';
+      ctx.fillStyle='rgba(2,6,18,0.82)';
       ctx.beginPath();
       if(ctx.roundRect)ctx.roundRect(CW-tw-6,63,tw,15,4);
       else ctx.rect(CW-tw-6,63,tw,15);
       ctx.fill();
-      ctx.strokeStyle=_NIGHT?'rgba(0,229,255,0.3)':'rgba(180,140,60,0.4)';
-      ctx.lineWidth=0.7;
+      ctx.strokeStyle='rgba(0,229,255,0.3)'; ctx.lineWidth=0.7;
       ctx.beginPath();
       if(ctx.roundRect)ctx.roundRect(CW-tw-6,63,tw,15,4);
       else ctx.rect(CW-tw-6,63,tw,15);
       ctx.stroke();
-      ctx.fillStyle=_NIGHT?'#00e5ff':'#7a5c18';
-      ctx.fillText(label,CW-8,74);
+      ctx.fillStyle='#00e5ff'; ctx.fillText(label,CW-8,74);
       ctx.textAlign='left';
+      tick++;
     }
 
-    // ── 루프 (≈15fps 레트로 감성) ────────────────────────────
-    let last=0;
-    (function loop(ts){
+    (function loop(){
       if(!_officeActive) return;
-      if(ts-last>=66){update();render();last=ts;}
+      render();
       requestAnimationFrame(loop);
-    })(0);
-
-    // ── 클릭으로 말 걸기 ─────────────────────────────────────
-    canvas.addEventListener('click',e=>{
-      const r=canvas.getBoundingClientRect();
-      const mx=(e.clientX-r.left)*(CW/r.width);
-      const my=(e.clientY-r.top)*(CH/r.height);
-      chars.forEach(c=>{
-        const cw=c.def.spr[0][0].length*_PX, ch=c.def.spr[0].length*_PX;
-        if(mx>=c.x&&mx<=c.x+cw&&my>=c.y&&my<=c.y+ch){
-          const pool=_LINES[c.id]||[];
-          c.bubble=pool[Math.floor(Math.random()*pool.length)];
-          c.bTick=240;
-        }
-      });
-    });
-
-    // ── 하단 캐릭터 카드 생성 ─────────────────────────────────
-    const cardsEl=document.getElementById('officeCards');
-    if(cardsEl){
-      cardsEl.innerHTML=Object.entries(_CHARS).map(([id,def])=>`
-        <div class="o-card" style="border-color:${def.color}33">
-          <div class="oc-icon">${def.icon}</div>
-          <div class="oc-name" style="color:${def.color}">${id}</div>
-          <div class="oc-role">${def.role}</div>
-          <div class="oc-stat" id="ostat_${id.replace(/\W/g,'_')}">💤 대기 중</div>
-        </div>`).join('');
-      setInterval(()=>{
-        chars.forEach(c=>{
-          const el=document.getElementById('ostat_'+c.id.replace(/\W/g,'_'));
-          if(!el)return;
-          const st={idle:'💤 대기 중',walk:'🚶 이동 중',meet:'📋 회의 중',home:'🏠 자리로 복귀',coffee:'☕ 커피 타임',window:'🌤️ 창문 구경',stretch:'🙆 스트레칭',think:'🤔 고민 중',rush:'🏃 급하게!',phone:'📱 통화 중',sneak:'🤫 몰래 접근',dance:'🕺 춤추는 중',read:'📖 독서 중',wboard:'✏️ 화이트보드',snack:'🍩 간식 타임',chat:'💬 동료와 대화',printer:'🖨️ 출력 중',nap:'😴 잠깐 졸기',patrol:'👁️ 순찰 중',report:'📋 보고 중',water:'💧 물 마시러',exercise:'💪 자리 운동'};
-          el.textContent=c.bubble?c.bubble.slice(0,22)+(c.bubble.length>22?'…':''):(st[c.state]||'💤 대기 중');
-        });
-      },1800);
-    }
+    })();
   }
   // ══════════════════════════════════════════════════════════
 
