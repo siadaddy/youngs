@@ -1102,6 +1102,70 @@
     /* canvas는 iso-bg 위에 */
     .office-canvas-wrap > #officeCanvas { position: relative; z-index: 2; }
 
+    /* ─── 리포트 탭 ──────────────────────────────── */
+    .report-sec-hdr {
+      font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .report-sec-hdr::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    /* 아카이브 */
+    .arch-month { margin-bottom: 28px; }
+    .arch-month-hdr {
+      font-size: .8rem; font-weight: 700; color: var(--text);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .arch-month-hdr span {
+      font-size: .7rem; font-weight: 600; color: var(--muted);
+      background: rgba(255,255,255,.05); padding: 2px 8px;
+      border-radius: 99px; border: 1px solid var(--border);
+    }
+    .arch-days { display: flex; flex-wrap: wrap; gap: 6px; }
+    .arch-day {
+      width: 44px; padding: 6px 0; border-radius: 8px; cursor: pointer;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      text-align: center; transition: all .18s ease;
+    }
+    .arch-day:hover { background: rgba(28,105,212,.12); border-color: rgba(28,105,212,.35); }
+    .arch-day.active { background: rgba(28,105,212,.2); border-color: var(--bmw-lt); }
+    .arch-day-num { font-size: .82rem; font-weight: 700; color: var(--text); }
+    .arch-day-dow { font-size: .6rem; color: var(--muted); margin-top: 2px; }
+    .arch-day.active .arch-day-num { color: var(--bmw-lt); }
+    .arch-day.arch-sun .arch-day-dow { color: #f87171; }
+    .arch-preview {
+      margin-top: 10px; border-radius: 10px;
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .arch-preview-inner { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .arch-card-row { display: flex; align-items: baseline; gap: 10px; }
+    .arch-card-num {
+      font-size: .7rem; font-weight: 800; color: var(--bmw-lt);
+      width: 22px; flex-shrink: 0;
+    }
+    .arch-card-title { font-size: .88rem; color: var(--muted2); line-height: 1.45; }
+    .arch-blog-row {
+      margin-top: 6px; padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: .78rem; color: var(--muted); font-style: italic;
+    }
+    /* 월간 통계 */
+    .mstat-top { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .mstat-card {
+      flex: 1; min-width: 120px; padding: 18px 20px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      border-radius: 12px; text-align: center;
+    }
+    .mstat-num { font-size: 1.8rem; font-weight: 900; color: var(--bmw-lt); }
+    .mstat-label { font-size: .72rem; color: var(--muted); margin-top: 4px; font-weight: 600; }
+    .mstat-bars { display: flex; flex-direction: column; gap: 10px; }
+    .mstat-row { display: flex; align-items: center; gap: 10px; }
+    .mstat-mlabel { width: 64px; font-size: .75rem; color: var(--muted2); flex-shrink: 0; text-align: right; }
+    .mstat-bar-wrap { flex: 1; background: rgba(255,255,255,.05); border-radius: 4px; height: 12px; overflow: hidden; }
+    .mstat-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg,var(--bmw),var(--accent2)); transition: width 1s ease; }
+    .mstat-count { width: 36px; font-size: .75rem; font-weight: 700; color: var(--bmw-lt); flex-shrink: 0; }
     /* ─── 히스토리 필터 탭 ──────────────────────── */
     .hist-filter-bar {
       display: flex; gap: 6px; flex-wrap: wrap;
@@ -1607,7 +1671,7 @@
 <!-- ─── 탭 바 ──────────────────────────────────────────── -->
 <div class="tab-bar">
   <button class="tab-btn active" onclick="switchTab('news')">📰 AI 뉴스레터</button>
-  <button class="tab-btn" onclick="switchTab('weekly')">📊 AI 주간 트렌드</button>
+  <button class="tab-btn" onclick="switchTab('weekly')">📊 리포트</button>
   <button class="tab-btn" onclick="switchTab('music')">🌌 뮤직 유니버스</button>
   <button class="tab-btn" onclick="switchTab('office')">🏢 AI 사무실</button>
   <button class="theme-toggle" id="theme-toggle" title="다크/라이트 모드">🌙</button>
@@ -1728,9 +1792,12 @@
 <div class="tab-content" id="tab-weekly">
 <section class="section" id="weekly-section">
   <div class="container">
-    <div class="section-eyebrow">📊 Weekly Trend . 매주 월요일 자동 분석</div>
-    <div class="section-title">주간 트렌드 브리핑</div>
-    <p class="section-sub">지난 7일간 AI가 분석한 뉴스 흐름 — 분야별 이슈 빈도 . 핵심 인사이트 . 다음 주 주목 포인트</p>
+    <div class="section-eyebrow">📊 Report . AI 분석 리포트 센터</div>
+    <div class="section-title">리포트 센터</div>
+    <p class="section-sub">주간 트렌드 브리핑 · 카드뉴스 아카이브 · 월간 발행 통계</p>
+
+    <!-- 리포트 섹션 서브 헤더 -->
+    <div class="report-sec-hdr">📅 주간 트렌드 브리핑</div>
 
     <!-- 로딩 상태 -->
     <div id="weekly-loading" style="text-align:center;padding:60px 0;color:var(--muted)">
@@ -1796,6 +1863,20 @@
       </div>
 
     </div><!-- /weekly-content -->
+
+    <!-- ── 카드뉴스 아카이브 ──────────────────────────── -->
+    <div class="report-sec-hdr" style="margin-top:48px">📰 카드뉴스 아카이브</div>
+    <div id="report-archive-wrap">
+      <div id="report-archive-loading" style="text-align:center;padding:32px 0;color:var(--muted);font-size:.9rem">
+        아카이브 로딩 중...
+      </div>
+      <div id="report-archive-content"></div>
+    </div>
+
+    <!-- ── 월간 발행 통계 ──────────────────────────────── -->
+    <div class="report-sec-hdr" style="margin-top:48px">📈 월간 발행 통계</div>
+    <div id="monthly-stats-content" style="margin-bottom:48px"></div>
+
   </div>
 </section>
 </div><!-- /tab-weekly -->
@@ -2681,7 +2762,7 @@
     document.querySelectorAll('button.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
     tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
     if (tab === 'news') init();
-    if (tab === 'weekly') initWeekly();
+    if (tab === 'weekly') initReport();
     if (tab === 'office') initOffice();
     if (tab === 'music') {
       const fr = document.getElementById('music-iframe');
@@ -2792,6 +2873,138 @@
       empty.style.display = 'block';
       console.error('weekly_trend.json 로드 실패:', e);
     }
+  }
+
+  // ── 리포트 탭: 아카이브 + 월간통계 ─────────────────────────
+  let _reportLoaded = false;
+  async function initReport() {
+    initWeekly();
+    if (_reportLoaded) return;
+    _reportLoaded = true;
+    try {
+      const arch = await fetch('archive.json?v=' + Date.now()).then(r => r.json());
+      const dates = arch.dates || [];
+      _renderArchive(dates);
+      _renderMonthlyStats(dates);
+    } catch(e) {
+      document.getElementById('report-archive-loading').textContent = '아카이브를 불러올 수 없습니다';
+    }
+  }
+
+  function _renderArchive(dates) {
+    const loadingEl = document.getElementById('report-archive-loading');
+    const contentEl = document.getElementById('report-archive-content');
+    if (!contentEl) return;
+    if (!dates.length) { if (loadingEl) loadingEl.textContent = '아카이브 데이터 없음'; return; }
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    const DOW = ['일','월','화','수','목','금','토'];
+    const byMonth = {};
+    dates.forEach(d => {
+      const m = d.slice(0, 7);
+      if (!byMonth[m]) byMonth[m] = [];
+      byMonth[m].push(d);
+    });
+
+    contentEl.innerHTML = Object.entries(byMonth)
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(([month, mDates]) => {
+        const [y, m] = month.split('-');
+        const tiles = mDates.map(d => {
+          const dow = DOW[new Date(d + 'T00:00:00').getDay()];
+          const isSun = new Date(d + 'T00:00:00').getDay() === 0;
+          return `<div class="arch-day${isSun?' arch-sun':''}" data-date="${d}" onclick="_archClick('${d}','${month}')">
+            <div class="arch-day-num">${d.slice(8)}</div>
+            <div class="arch-day-dow">${dow}</div>
+          </div>`;
+        }).join('');
+        return `<div class="arch-month">
+          <div class="arch-month-hdr">${y}년 ${parseInt(m)}월 <span>${mDates.length}일 발행</span></div>
+          <div class="arch-days" id="arch-days-${month}">${tiles}</div>
+          <div class="arch-preview" id="arch-preview-${month}" style="display:none"></div>
+        </div>`;
+      }).join('');
+  }
+
+  async function _archClick(date, month) {
+    const previewEl = document.getElementById(`arch-preview-${month}`);
+    if (!previewEl) return;
+    // 같은 날 다시 클릭 → 닫기
+    if (previewEl.dataset.active === date && previewEl.style.display !== 'none') {
+      previewEl.style.display = 'none';
+      previewEl.dataset.active = '';
+      document.querySelectorAll('.arch-day.active').forEach(el => el.classList.remove('active'));
+      return;
+    }
+    // 같은 월 내 기존 선택 해제
+    document.querySelectorAll(`#arch-days-${month} .arch-day.active`).forEach(el => el.classList.remove('active'));
+    const tile = document.querySelector(`.arch-day[data-date="${date}"]`);
+    if (tile) tile.classList.add('active');
+
+    previewEl.innerHTML = '<div style="padding:14px 20px;color:var(--muted);font-size:.85rem">로딩 중...</div>';
+    previewEl.style.display = 'block';
+    previewEl.dataset.active = date;
+
+    try {
+      const data = await fetch(`content/${date}.json`).then(r => r.json());
+      const cards = (data.captions || []).map((c, i) =>
+        `<div class="arch-card-row">
+          <span class="arch-card-num">${String(i+1).padStart(2,'0')}</span>
+          <span class="arch-card-title">${c.headline || ''}</span>
+        </div>`).join('');
+      const blog = data.blog_title
+        ? `<div class="arch-blog-row">📝 ${data.blog_title}</div>` : '';
+      previewEl.innerHTML = `<div class="arch-preview-inner">${cards}${blog}</div>`;
+    } catch(e) {
+      previewEl.innerHTML = '<div style="padding:14px 20px;color:var(--muted);font-size:.85rem">데이터를 불러올 수 없습니다</div>';
+    }
+  }
+
+  function _renderMonthlyStats(dates) {
+    const el = document.getElementById('monthly-stats-content');
+    if (!el || !dates.length) return;
+
+    const byMonth = {};
+    dates.forEach(d => { const m = d.slice(0,7); byMonth[m] = (byMonth[m]||0)+1; });
+    const entries = Object.entries(byMonth).sort((a,b)=>a[0].localeCompare(b[0]));
+    const maxDays = Math.max(...entries.map(([,v])=>v));
+    const totalDays = dates.length;
+
+    // 연속 발행 스트릭 계산
+    let streak = 0;
+    const today = new Date().toISOString().slice(0,10);
+    const sortedDates = [...dates].sort().reverse();
+    let cur = new Date(today);
+    for (const d of sortedDates) {
+      if (d === cur.toISOString().slice(0,10)) { streak++; cur.setDate(cur.getDate()-1); }
+      else break;
+    }
+
+    el.innerHTML = `
+      <div class="mstat-top">
+        <div class="mstat-card"><div class="mstat-num">${totalDays}</div><div class="mstat-label">총 발행일</div></div>
+        <div class="mstat-card"><div class="mstat-num">${totalDays * 5}</div><div class="mstat-label">카드뉴스 총량</div></div>
+        <div class="mstat-card"><div class="mstat-num">${streak}</div><div class="mstat-label">연속 발행 🔥</div></div>
+        <div class="mstat-card"><div class="mstat-num">${entries.length}</div><div class="mstat-label">활동 월수</div></div>
+      </div>
+      <div class="mstat-bars">
+        ${entries.reverse().map(([m, days]) => {
+          const [y, mo] = m.split('-');
+          const pct = (days / maxDays * 100).toFixed(0);
+          return `<div class="mstat-row">
+            <div class="mstat-mlabel">${y}.${mo}</div>
+            <div class="mstat-bar-wrap">
+              <div class="mstat-bar" style="width:0%" data-w="${pct}%"></div>
+            </div>
+            <div class="mstat-count">${days}일</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    // 바 애니메이션
+    requestAnimationFrame(() => {
+      el.querySelectorAll('.mstat-bar').forEach(b => { b.style.width = b.dataset.w; });
+    });
   }
 
   // 테마 초기화
