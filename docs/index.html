@@ -3885,6 +3885,7 @@
     // 상단 2개(브리핑보드 좌우) + 하단 3개 풀로우
     const MONITORS = [
       {id:'박기획',      icon:'📋', color:'#4d90f0', x:5,   y:66,  w:252, h:216, role:'CONTENT PLANNER'},
+      {id:'__radar__',   icon:'📡', color:'#00ff88', x:257, y:66,  w:386, h:216, role:'SYSTEM STATUS', title:'AI CREW HQ'},
       {id:'뉴스기자',    icon:'📰', color:'#ffd54f', x:643, y:66,  w:252, h:216, role:'NEWS COLLECTOR' },
       {id:'최디자',      icon:'🎨', color:'#ce93d8', x:5,   y:290, w:292, h:225, role:'IMAGE DESIGNER' },
       {id:'AI주간트렌드',icon:'📊', color:'#4dd0e1', x:306, y:290, w:284, h:225, role:'TREND ANALYST'   },
@@ -3906,12 +3907,131 @@
       hg.addColorStop(0,color+'35'); hg.addColorStop(1,color+'08');
       ctx.fillStyle=hg; ctx.fillRect(x,y,w,22);
       ctx.font='bold 8px monospace'; ctx.fillStyle=color; ctx.textAlign='left';
-      ctx.fillText(`${icon} ${id} — ${role}`,x+8,y+14);
+      ctx.fillText(`${icon} ${m.title||id} — ${role}`,x+8,y+14);
       const da=(Math.sin(tick*0.05)+1)/2;
       ctx.fillStyle=`rgba(0,255,136,${(0.4+da*0.6).toFixed(2)})`;
       ctx.beginPath(); ctx.arc(x+w-12,y+11,3,0,Math.PI*2); ctx.fill();
       ctx.strokeStyle=color+'44'; ctx.lineWidth=0.8;
       ctx.beginPath(); ctx.moveTo(x+4,y+22); ctx.lineTo(x+w-4,y+22); ctx.stroke();
+    }
+
+    function monRadar(m) {
+      const {x,y,w,h}=m;
+      const hdrH=22;
+      // 레이더 중심 — 좌측 2/3 영역에 원형
+      const rx=x+w*0.38, ry=y+hdrH+(h-hdrH)/2;
+      const R=Math.min((h-hdrH)*0.44, w*0.28);
+
+      // 동심원 3개
+      [1,0.67,0.33].forEach((f,i)=>{
+        ctx.strokeStyle=`rgba(0,255,136,${0.08+i*0.05})`;
+        ctx.lineWidth=0.7; ctx.beginPath(); ctx.arc(rx,ry,R*f,0,Math.PI*2); ctx.stroke();
+      });
+      // 크로스헤어
+      ctx.strokeStyle='rgba(0,255,136,0.10)'; ctx.lineWidth=0.5;
+      [[rx-R,ry,rx+R,ry],[rx,ry-R,rx,ry+R]].forEach(([x1,y1,x2,y2])=>{
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      });
+      const d45=R*0.707;
+      ctx.beginPath(); ctx.moveTo(rx-d45,ry-d45); ctx.lineTo(rx+d45,ry+d45); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(rx+d45,ry-d45); ctx.lineTo(rx-d45,ry+d45); ctx.stroke();
+
+      // 스윕 트레일
+      const sweepAng=(tick*0.022)%(Math.PI*2);
+      for(let i=0;i<22;i++){
+        const a=sweepAng-i*0.10;
+        ctx.strokeStyle=`rgba(0,255,136,${((1-i/22)*0.22).toFixed(2)})`;
+        ctx.lineWidth=1.2-i*0.04;
+        ctx.beginPath(); ctx.moveTo(rx,ry);
+        ctx.lineTo(rx+Math.cos(a)*R,ry+Math.sin(a)*R); ctx.stroke();
+      }
+      // 스윕 메인 라인
+      ctx.strokeStyle='rgba(0,255,180,0.92)'; ctx.lineWidth=1.8;
+      ctx.shadowColor='#00ffaa'; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.moveTo(rx,ry);
+      ctx.lineTo(rx+Math.cos(sweepAng)*R,ry+Math.sin(sweepAng)*R); ctx.stroke();
+      ctx.shadowBlur=0;
+
+      // 에이전트 블립 (5개 — 고정 각도/반경)
+      const blips=[
+        {name:'박기획',  col:'#4d90f0', a:-2.10, r:0.72},
+        {name:'뉴스기자',col:'#ffd54f', a:-0.85, r:0.58},
+        {name:'최디자',  col:'#ce93d8', a: 1.15, r:0.68},
+        {name:'트렌드',  col:'#4dd0e1', a: 2.55, r:0.52},
+        {name:'한뮤직',  col:'#66bb6a', a:-3.40, r:0.63},
+      ];
+      blips.forEach(b=>{
+        const bx=rx+Math.cos(b.a)*R*b.r, by=ry+Math.sin(b.a)*R*b.r;
+        const diff=((sweepAng-b.a)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+        const blip=diff<0.55?Math.pow(1-diff/0.55,1.5):0;
+        ctx.globalAlpha=0.6+blip*0.4;
+        ctx.shadowColor=b.col; ctx.shadowBlur=4+blip*16;
+        ctx.fillStyle=b.col;
+        ctx.beginPath(); ctx.arc(bx,by,2.5+blip*2.5,0,Math.PI*2); ctx.fill();
+        ctx.shadowBlur=0; ctx.globalAlpha=1;
+        ctx.font='5.5px monospace'; ctx.fillStyle=b.col+'bb'; ctx.textAlign='center';
+        ctx.fillText(b.name, bx, by+(b.a>0?-6:9));
+      });
+
+      // 중심 점
+      ctx.fillStyle='#00ff88'; ctx.shadowColor='#00ff88'; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.arc(rx,ry,3.5,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+
+      // 우측 상태 패널
+      const sx=x+w*0.70, sy=y+hdrH+18;
+      const agents=_officeMem?.agents||{};
+      const active=Object.values(agents).filter(a=>a.status!=='vacation').length||4;
+      const total=Object.keys(agents).length||5;
+
+      ctx.textAlign='left';
+      ctx.font='6px monospace'; ctx.fillStyle='rgba(0,255,136,0.45)';
+      ctx.fillText('● SYSTEM STATUS',sx,sy);
+
+      ctx.font='bold 20px monospace'; ctx.fillStyle='#00ff88';
+      ctx.shadowColor='#00ff88'; ctx.shadowBlur=12;
+      ctx.fillText(`${active}`,sx,sy+28);
+      ctx.shadowBlur=0;
+      ctx.font='12px monospace'; ctx.fillStyle='rgba(0,255,136,0.55)';
+      ctx.fillText(`/${total} ONLINE`,sx+16,sy+28);
+
+      ctx.font='6px monospace'; ctx.fillStyle='rgba(0,229,255,0.5)';
+      ctx.fillText('AGENTS ACTIVE',sx,sy+40);
+
+      // 구분선
+      ctx.strokeStyle='rgba(0,255,136,0.15)'; ctx.lineWidth=0.6;
+      ctx.beginPath(); ctx.moveTo(sx,sy+48); ctx.lineTo(x+w-10,sy+48); ctx.stroke();
+
+      // 실시간 시계
+      const now=new Date();
+      const ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+      ctx.font='bold 9px monospace'; ctx.fillStyle='#4dd0e1';
+      ctx.fillText(ts,sx,sy+62);
+
+      // 스캔 문자열 (깜빡)
+      const scanTxt=['SCANNING ···','SCANNING ·· ','SCANNING ·  ','SCANNING    '][Math.floor(tick/10)%4];
+      ctx.font='6px monospace'; ctx.fillStyle='rgba(0,255,136,0.3)';
+      ctx.fillText(scanTxt,sx,sy+76);
+
+      // 오늘 날짜
+      const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+      const d=new Date();
+      ctx.font='5.5px monospace'; ctx.fillStyle='rgba(77,208,225,0.4)';
+      ctx.fillText(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${days[d.getDay()]}`,sx,sy+90);
+
+      // 하단 크루 파이프라인 표시
+      const pipes=[{n:'PLAN',c:'#4d90f0'},{n:'WRITE',c:'#80cbc4'},{n:'DESIGN',c:'#ce93d8'},{n:'PUB',c:'#00ff88'}];
+      let px2=sx; const pipeY=sy+106;
+      pipes.forEach((p,i)=>{
+        ctx.font='bold 6px monospace'; ctx.fillStyle=p.c;
+        const tw=ctx.measureText(p.n).width;
+        ctx.fillText(p.n,px2,pipeY);
+        if(i<pipes.length-1){
+          ctx.fillStyle='rgba(0,255,136,0.25)';
+          ctx.fillText('→',px2+tw+2,pipeY);
+          px2+=tw+14;
+        }
+      });
     }
 
     function monPlanner(m) {
@@ -4045,7 +4165,7 @@
       });
     }
 
-    const drawFn={'박기획':monPlanner,'뉴스기자':monNews,'최디자':monDesigner,'AI주간트렌드':monTrend,'한뮤직':monMusic};
+    const drawFn={'박기획':monPlanner,'__radar__':monRadar,'뉴스기자':monNews,'최디자':monDesigner,'AI주간트렌드':monTrend,'한뮤직':monMusic};
 
     // ── 렌더링 ───────────────────────────────────────────────
     function render(){
