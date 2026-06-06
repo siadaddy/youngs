@@ -1,6 +1,58 @@
 {
   "runs": [
     {
+      "date": "2026-06-07",
+      "cards": [
+        {
+          "label": "카드1",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드2",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드3",
+          "passed": false,
+          "retries": 2,
+          "issues": [
+            "제목-본문 불일치",
+            "제목-본문 불일치",
+            "제목-본문 불일치"
+          ]
+        },
+        {
+          "label": "카드4",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "카드5",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        },
+        {
+          "label": "블로그",
+          "passed": true,
+          "retries": 0,
+          "issues": []
+        }
+      ],
+      "total_retries": 2,
+      "pass_rate": 0.83,
+      "issue_summary": [
+        "제목-본문 불일치",
+        "제목-본문 불일치",
+        "제목-본문 불일치"
+      ]
+    },
+    {
       "date": "2026-06-06",
       "cards": [
         {
@@ -1511,62 +1563,7 @@
       "total_retries": 0,
       "pass_rate": 1.0,
       "issue_summary": []
-    },
-    {
-      "date": "2026-05-07",
-      "cards": [
-        {
-          "label": "카드1",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "카드2",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "카드3",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "카드4",
-          "passed": false,
-          "retries": 2,
-          "issues": [
-            "품질 오류: ['단어 붙여쓰기']",
-            "품질 오류: ['단어 붙여쓰기']",
-            "품질 오류: ['단어 붙여쓰기']"
-          ]
-        },
-        {
-          "label": "카드5",
-          "passed": true,
-          "retries": 0,
-          "issues": []
-        },
-        {
-          "label": "블로그",
-          "passed": false,
-          "retries": 1,
-          "issues": [
-            "품질 오류: ['조사 중복']"
-          ]
-        }
-      ],
-      "total_retries": 3,
-      "pass_rate": 0.67,
-      "issue_summary": [
-        "품질 오류: ['단어 붙여쓰기']",
-        "품질 오류: ['단어 붙여쓰기']",
-        "품질 오류: ['단어 붙여쓰기']",
-        "품질 오류: ['조사 중복']"
-      ]
     }
   ],
-  "updated": "2026-06-06"
+  "updated": "2026-06-07"
 }
