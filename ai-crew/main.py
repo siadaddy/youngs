@@ -150,7 +150,8 @@ def main():
             print(f"  ⚠️  음악 큐레이션 실패: {e}")
             notify("⚠️ 음악 큐레이션 실패", f"music.json 미갱신\n오류: {e}", priority="high")
     else:
-        print("  ⏭  음악 수집 스킵 (마지막 수집 7일 미경과)")
+        print("  ⏭  음악 수집 스킵 (마지막 수집 90일 미경과)")
+        music_curator.reflect()  # 큐레이션 없는 날도 일일 성찰 일기 작성
 
     # ── 주간 트렌드 브리핑 (월요일만) ───────────────────────
     if _should_run_weekly_trend():

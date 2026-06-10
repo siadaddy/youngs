@@ -249,5 +249,63 @@ def save(new_songs: list):
     print(f"  💾 music.json({len(all_songs)}곡) + music_{today}.json({len(new_songs)}곡 신규) 저장 완료")
 
 
+def reflect():
+    """매일 실행 — 음악 큐레이션 없는 날도 짧은 성찰 일기 작성"""
+    try:
+        from utils.agent_memory import add_diary, get_persona, get_diary, should_update_persona, update_persona
+        from datetime import datetime
+
+        # 오늘 이미 일기 썼으면 스킵
+        today = date.today().strftime("%Y-%m-%d")
+        recent = get_diary("한뮤직", 3)
+        if recent and recent[0].get("date", "") == today:
+            print("  ⏭  한뮤직 일기 이미 작성됨 — 스킵")
+            return
+
+        persona = get_persona("한뮤직")
+        recent_str = " / ".join(e["lesson"][:25] for e in recent[:2]) or "아직 기록 없음"
+
+        # 현재 음악 파일에서 컨텍스트 추출
+        music_path = os.path.join(DOCS_PATH, "music.json")
+        ctx = ""
+        if os.path.exists(music_path):
+            try:
+                with open(music_path, "r", encoding="utf-8") as f:
+                    mdata = json.load(f)
+                songs = mdata.get("songs", [])
+                total = len(songs)
+                from collections import Counter as _C
+                genres = [s.get("g","") for s in songs if s.get("g")]
+                top_genres = [g for g, _ in _C(genres).most_common(3)]
+                ctx = f"현재 플레이리스트 {total}곡, 주요 장르: {', '.join(top_genres)}"
+            except Exception:
+                ctx = "플레이리스트 유지 중"
+
+        lesson_raw = ask_gemini25_first(
+            f"너는 음악 큐레이터 '한뮤직'이야.\n"
+            f"나: {persona[:60]}\n최근 메모: {recent_str}\n현황: {ctx}\n\n"
+            "오늘 음악과 청취자에 대해 느낀 점 1문장. 1인칭 반말, 50자 이내.",
+            temperature=0.85, max_tokens=80,
+        )
+        lesson = lesson_raw.strip().split("\n")[0][:150]
+        if lesson:
+            add_diary("한뮤직", lesson, trigger="daily_reflect")
+            print(f"  📝 한뮤직 일일 성찰: {lesson[:45]}")
+
+        if should_update_persona("한뮤직"):
+            diary_str = "\n".join(f"- {e['lesson']}" for e in get_diary("한뮤직", 7))
+            new_p = ask_gemini25_first(
+                f"너는 음악 큐레이터 '한뮤직'이야.\n지금까지 나: {persona}\n"
+                f"최근 학습 일기:\n{diary_str}\n\n"
+                "이 경험을 바탕으로 지금의 나를 2문장으로. 1인칭 반말, 70자 이내.",
+                temperature=0.8, max_tokens=120,
+            ).strip().split("\n")[0][:300]
+            if new_p:
+                update_persona("한뮤직", new_p)
+                print("  ✨ 한뮤직 페르소나 진화 완료")
+    except Exception as e:
+        print(f"  ⚠️  한뮤직 일일 성찰 실패 (무시): {e}")
+
+
 if __name__ == "__main__":
     save(run())

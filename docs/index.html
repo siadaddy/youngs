@@ -878,6 +878,7 @@
       padding: 8px 10px; display: flex; flex-direction: column; gap: 5px;
       border-bottom: 1px solid rgba(0,229,255,0.08);
       overflow-y: auto; flex-shrink: 0;
+      max-height: 310px;
     }
     .osb-agent {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
@@ -937,7 +938,7 @@
     @media(max-width:960px){
       .office-layout { flex-direction:column; }
       .office-sidebar { width:100%; max-height:none; }
-      .osb-agents { flex-direction:row; flex-wrap:wrap; }
+      .osb-agents { flex-direction:row; flex-wrap:wrap; max-height:none; }
       .osb-agent { flex:1; min-width:140px; }
       .osb-log-feed { max-height:220px; }
     }
