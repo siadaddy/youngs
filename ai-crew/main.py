@@ -120,6 +120,9 @@ def main():
         images = [{"headline": item["headline"], "prompt": "", "path": None,
                    "url": None, "success": False} for item in brief["instagram"]]
 
+    # ── Supabase 저장 (card_news, articles) ──────────────────
+    _insert_to_supabase(today, written, images)
+
     # ── 결과 요약 ────────────────────────────────────────────
     img_ok = sum(1 for img in images if img["success"])
 
@@ -241,6 +244,45 @@ def _create_youtube_playlist(songs: list, today: str):
         print("  ⚠️  유튜브 플레이리스트 생성 타임아웃 (5분 초과)")
     except Exception as e:
         print(f"  ⚠️  유튜브 플레이리스트 생성 오류: {e}")
+
+
+def _insert_to_supabase(today: str, written: dict, images: list):
+    """카드뉴스·블로그 아티클을 Supabase card_news / articles 테이블에 저장"""
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_KEY")
+    if not url or not key:
+        print("  ⚠️  SUPABASE_URL/KEY 미설정 — Supabase 저장 스킵")
+        return
+    try:
+        from supabase import create_client
+        client = create_client(url, key)
+
+        cards = [
+            {
+                "headline":    c["headline"],
+                "caption":     c["caption"],
+                "image_url":   images[i]["url"] if i < len(images) else None,
+                "source_url":  c.get("source_url", ""),
+                "source_name": c.get("source_name", ""),
+            }
+            for i, c in enumerate(written.get("captions", []))
+        ]
+        if cards:
+            client.table("card_news").upsert(
+                {"date": today, "cards": cards}, on_conflict="date"
+            ).execute()
+            print(f"  ✅ Supabase card_news 저장 완료 ({len(cards)}개)")
+
+        article_content = written.get("article", "")
+        article_title   = written.get("blog_title", "")
+        if article_content:
+            client.table("articles").upsert(
+                {"date": today, "title": article_title, "content": article_content},
+                on_conflict="date",
+            ).execute()
+            print("  ✅ Supabase articles 저장 완료")
+    except Exception as e:
+        print(f"  ⚠️  Supabase 저장 실패 (무시): {e}")
 
 
 def _publish_to_github(today, brief, written, images, newsletter_data):
